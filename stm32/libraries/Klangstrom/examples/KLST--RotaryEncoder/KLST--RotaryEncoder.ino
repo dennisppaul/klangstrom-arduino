@@ -46,7 +46,7 @@ void event_receive(const uint8_t event, const float* data) {
     Serial.print(", ");
     Serial.print(data[KLST_EVENT_DATA_TICK] - data[KLST_EVENT_DATA_PREVIOUS_TICK]);
     Serial.println();
-    klst_led_toggle(LED_00);
+    klst::led_toggle(LED_00);
   }
   if (event == KLST_EVENT_ENCODER_01) {
     Serial.print("ENCODER_01 ROTATION: ");
@@ -54,7 +54,7 @@ void event_receive(const uint8_t event, const float* data) {
     Serial.print(", ");
     Serial.print(data[KLST_EVENT_DATA_TICK] - data[KLST_EVENT_DATA_PREVIOUS_TICK]);
     Serial.println();
-    klst_led_toggle(LED_01);
+    klst::led_toggle(LED_01);
   }
   if (event == KLST_EVENT_ENCODER_02) {
     Serial.print("ENCODER_02 ROTATION: ");
@@ -62,7 +62,7 @@ void event_receive(const uint8_t event, const float* data) {
     Serial.print(", ");
     Serial.print(data[KLST_EVENT_DATA_TICK] - data[KLST_EVENT_DATA_PREVIOUS_TICK]);
     Serial.println();
-    klst_led_toggle(LED_02);
+    klst::led_toggle(LED_02);
   }
   if (event == KLST_EVENT_ENCODER_BUTTON_00) {
     Serial.print("ENCODER_00 BUTTON  : ");

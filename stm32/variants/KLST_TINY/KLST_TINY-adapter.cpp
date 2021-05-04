@@ -19,8 +19,8 @@
 bool mKLSTOptionEnableBeat = true;
 bool mKLSTOptionEnableEncoders = true;
 bool mKLSTOptionEnableSerialPorts = true;
-bool mKLSTOptionEnableProgrammerButton = true;
-bool mKLSTOptionEnableDebug = false;
+bool mKLSTOptionEnableProgrammerButton = false;
+bool mKLSTOptionEnableUSBSerialDebug = false;
 uint8_t mKLSTAudioLine = KLST_MIC;
 
 /* beat */
@@ -251,15 +251,19 @@ void KLST_pre_setup() {
   	/* beat */
 	if (mKLSTOptionEnableBeat) {
 		mKLSTBeatTimer = new HardwareTimer(TIM5);
-		klst_set_BPM(240);
+		klst::beats_per_minute(120);
 		mKLSTBeatTimer->attachInterrupt(KLST_IT_beat_callback);
 	}
 
 	/* debug serial via USB */
-	if (mKLSTOptionEnableDebug) {
+	// @todo(does it make sense to evaluate it here? or rather in `KLST_post_setup`)
+	if (mKLSTOptionEnableUSBSerialDebug) {
 		Serial.begin(KLST_UART_BAUD);
-		while (!Serial) {
-			; // wait for serial port to connect. Needed for native USB
+		uint32_t mIterationGuard = 0;
+		while (!Serial && mIterationGuard < 1000000) {
+			// wait for serial port to connect. needed for native USB …
+			// but only for a limited number of iterations.
+		  mIterationGuard++;
 		}
 	}
 }
@@ -322,6 +326,7 @@ void KLST_post_setup() {
 	/* programmer button */
 	if (mKLSTOptionEnableProgrammerButton) {
 		pinMode(BUTTON_PROGRAMMER, INPUT);
+    attachInterrupt(BUTTON_PROGRAMMER, KLST_jump_to_bootloader, RISING);
 	}
 }
 
@@ -418,12 +423,11 @@ void KLST_loop() {
 
 #ifdef __cplusplus
 
-/* @todo(move UART callbacks to `data_receive(const uint8_t sender, uint8_t* data, uint8_t length)`) */
 /**
  * SERIAL_00 callback
  */
 // void serialEvent1() {
-// 	klst_led(LED_01, true);
+// 	klst::led(LED_01, true);
 // 	while (Serial1.available()) {
 //       	uint8_t mValue = Serial1.read();
 // 		data_receive(KLST_SENDER_SERIAL_00, &mValue, 1);
@@ -434,14 +438,14 @@ void KLST_loop() {
  * SERIAL_01 callback
  */
 // void serialEvent4() {
-// 	klst_led(LED_02, true);
+// 	klst::led(LED_02, true);
 // 	while (Serial4.available()) {
 //       	uint8_t mValue = Serial4.read();
 // 		data_receive(KLST_SENDER_SERIAL_01, &mValue, 1);
 //     }
 // }
 
-void klst_option(uint8_t pOption, uint8_t pValue) {
+void klst::option(uint8_t pOption, uint8_t pValue) {
 	switch (pOption) {
 		case KLST_OPTION_AUDIO_INPUT:
 			mKLSTAudioLine = pValue;
@@ -461,7 +465,7 @@ void klst_option(uint8_t pOption, uint8_t pValue) {
 	}
 }
 
-void klst_led(uint8_t pLED, bool pState) {
+void klst::led(uint8_t pLED, bool pState) {
 	// @todo(maybe replace with `KLST_LED_00`)
 	switch (pLED) {
 		case LED_00:
@@ -476,7 +480,7 @@ void klst_led(uint8_t pLED, bool pState) {
 	}
 }
 
-void klst_led_toggle(uint8_t pLED) {
+void klst::led_toggle(uint8_t pLED) {
 	// @todo(maybe replace with `KLST_LED_00`)
 	switch (pLED) {
 		case LED_00:
@@ -491,17 +495,17 @@ void klst_led_toggle(uint8_t pLED) {
 	}
 }
 
-void klst_set_BPM(float pBPM) {
+void klst::beats_per_minute(float pBPM) {
 	if (pBPM == 0) { return; }
-	klst_set_BPM_ms((uint32_t)((60.0 / pBPM) * 1000000));
+	klst::beats_per_minute_ms((uint32_t)((60.0 / pBPM) * 1000000));
 }
 
-void klst_set_BPM_ms(uint32_t pMicroSeconds) {
+void klst::beats_per_minute_ms(uint32_t pMicroSeconds) {
 	mKLSTBeatIntervalDuration = pMicroSeconds;
 	mKLSTBeatTimer->setOverflow(mKLSTBeatIntervalDuration, MICROSEC_FORMAT);
 }
 
-bool klst_button_state(uint8_t pButton) {
+bool klst::button_state(uint8_t pButton) {
 	switch (pButton) {
 		case KLST_BUTTON_ENCODER_00:
 			return !mKLSTENCODER_00ButtonState;
@@ -515,9 +519,21 @@ bool klst_button_state(uint8_t pButton) {
 	return false;
 }
 
-bool klst_pin_state(uint8_t pButton) {
+bool klst::pin_state(uint8_t pButton) {
 	return !digitalRead(pButton);
 }
+
+void data_transmit(const uint8_t pSender, uint8_t* pData, uint8_t pDataLength) {
+  switch(pSender) {
+    case KLST_RECEIVER_SERIAL_00:
+      SERIAL_00.write(pData, pDataLength);
+      break;
+    case KLST_RECEIVER_SERIAL_01:
+      SERIAL_01.write(pData, pDataLength);
+      break;
+  }
+}
+
 
 #endif // __cplusplus
 

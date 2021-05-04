@@ -197,9 +197,11 @@ extern "C" {
 #if defined(__clang__)
 # pragma clang diagnostic push
 # pragma clang diagnostic ignored "-Wunused-variable"
+# pragma clang diagnostic ignored "-Wstrict-aliasing"
 #elif defined(__GNUC__)
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wunused-variable"
+#pragma GCC diagnostic ignored "-Wstrict-aliasing"
 #endif
 
 
@@ -894,7 +896,7 @@ extern "C" {
         float xhalf = 0.5f*x;
         int i = *(int*)&x;
         i = 0x5f3759df - (i>>1);
-        x = *(float*)&i;
+        x = *(float*)&i; // @note(original code … breaks strict-aliasing rules)
         return x*(1.5f - xhalf*x*x);
     }
     

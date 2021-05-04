@@ -29,7 +29,9 @@
 /* data */
 
 #define KLST_SENDER_SERIAL_00           0x03  
+#define KLST_RECEIVER_SERIAL_00         0x03  
 #define KLST_SENDER_SERIAL_01           0x04  
+#define KLST_RECEIVER_SERIAL_01         0x04  
 
 /* options */
 

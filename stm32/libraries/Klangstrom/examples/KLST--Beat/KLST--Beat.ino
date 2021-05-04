@@ -1,5 +1,5 @@
 //
-//  KLST--RotartyEncoders
+//  KLST--Beat
 //  Klangstrom – a node+text-based synthesizer library
 //
 //
@@ -14,8 +14,7 @@ NodeVCOFunction mVCO;
 NodeDAC         mDAC;
 
 float mFreq = 110.0;
-bool mLED_00_Toggle = false;
-bool mLED_01_Toggle = false;
+bool mLEDToggle = false;
 uint32_t mBeatDuration = 0;
 uint32_t mBeatDurationBase= 1000;
 uint32_t mBeatDurationMax= 120000;
@@ -34,25 +33,23 @@ void setup() {
 
   Klang::unlock();
 
-  klst_set_BPM(120);
+  klst::beats_per_minute(120);
 }
 
 void beat(uint32_t pBeat) {
-  mLED_01_Toggle = !mLED_01_Toggle;
-  klst_led(LED_02, mLED_01_Toggle);
-
-  mVCO.set_frequency(mFreq * ( mLED_01_Toggle ? 1 : 2 ) - 110 * mBeatDuration / mBeatDurationMax);
+  mLEDToggle = !mLEDToggle;
+  klst::led(LED_01, mLEDToggle);
+  mVCO.set_frequency(mFreq * ( mLEDToggle ? 1 : 2 ) - 110 * mBeatDuration / mBeatDurationMax);
   mBeatDuration += mBeatDurationInc;
   if (mBeatDuration > mBeatDurationMax) {
     mBeatDuration=0;
   }
-  klst_set_BPM_ms(mBeatDurationBase+mBeatDuration);
+  klst::beats_per_minute_ms(mBeatDurationBase+mBeatDuration);
 }
 
 void loop() {
-  mLED_00_Toggle = !mLED_00_Toggle;
   delay(500);
-  klst_led(LED_00, mLED_00_Toggle);
+  klst::led_toggle(LED_00);
 }
 
 void audioblock(SIGNAL_TYPE* pOutputLeft, SIGNAL_TYPE* pOutputRight, SIGNAL_TYPE* pInputLeft, SIGNAL_TYPE* pInputRight) {

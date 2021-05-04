@@ -45,12 +45,12 @@ void loop() {
 //      digitalWrite(LED_01, HIGH);
 //    }
 
-  klst_led(LED_00, true);
+  klst::led(LED_00, true);
   mCounter++;
   mCounter %= 3;
   mVCO.set_frequency(mFreq + mFreq * mCounter);
   delay(100);
-  klst_led(LED_00, false);
+  klst::led(LED_00, false);
   delay(100);
 }
 
@@ -67,11 +67,11 @@ void data_receive(const uint8_t sender, uint8_t* data, uint8_t length) {
   Serial.println("data_receive");
   if (sender == KLST_SENDER_SERIAL_00) {
     Serial.println("SERIAL_00");
-    klst_led(LED_01, true);
+    klst::led(LED_01, true);
   }
   if (sender == KLST_SENDER_SERIAL_01) {
     Serial.println("SERIAL_01");
-    klst_led(LED_02, true);
+    klst::led(LED_02, true);
   }
 }
 

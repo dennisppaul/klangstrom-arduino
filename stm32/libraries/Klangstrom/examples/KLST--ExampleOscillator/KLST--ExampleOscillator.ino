@@ -26,17 +26,12 @@ void setup() {
   mVCO.set_waveform(NodeVCOFunction::WAVEFORM::SINE);
 
   Klang::unlock();
-
-  pinMode(PB5, OUTPUT);
-  digitalWrite(PB5, HIGH);
-  Serial.begin(115200);
-  Serial.println("KLST_TINY");
 }
 
 void loop() {
-  digitalWrite(PB5, HIGH);
+  klst::led(LED_00, true);
   delay(1000);
-  digitalWrite(PB5, LOW);
+  klst::led(LED_00, true);
   delay(1000);
   mCounter++;
   if (mCounter > 10) {
