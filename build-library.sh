@@ -10,7 +10,7 @@ copyModul() {
 
     if [ -d $DST_DIR ]; then
         echo "    removing existing folder: $DST_DIR"
-        rm -rf $DST_DIR
+        rm -r $DST_DIR
     fi
 
     echo "    copying folder          : $SRC_DIR"
