@@ -1,12 +1,18 @@
+/* IMPLEMENTATION */
+#define VOCLIB_IMPLEMENTATION
+#ifdef VOCLIB_IMPLEMENTATION
+
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include "voclib.h"
+
 extern float klang_math_sin(float r);
 extern float klang_math_sinh(float r);
 extern float klang_math_cos(float r);
 extern float klang_math_fast_sqrt(float r);
-
-/* IMPLEMENTATION */
-#define VOCLIB_IMPLEMENTATION
-#ifdef VOCLIB_IMPLEMENTATION
 
 #include <math.h>
 #include <assert.h>
@@ -482,6 +488,10 @@ float voclib_get_formant_shift ( const voclib_instance* instance )
 {
     return instance->formant_shift;
 }
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* VOCLIB_IMPLEMENTATION */
 

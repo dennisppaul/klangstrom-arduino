@@ -22,5 +22,5 @@ echo
 
 copyModul shared
 copyModul stm32
+copyModul desktop
 #copyModul vcvrack
-#copyModul desktop

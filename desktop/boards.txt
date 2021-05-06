@@ -1,0 +1,12 @@
+sdl.name=Klangstrom (SDL)
+sdl.upload.tool=sdlexecprog
+sdl.upload.wait_for_upload_port=false
+sdl.build.board=KLST_SDL
+sdl.build.core=sdl
+
+menu.upload_method=Upload method
+
+sdl.menu.upload_method.sdlexec=Execute SDL
+sdl.menu.upload_method.sdlexec.upload.protocol=1
+sdl.menu.upload_method.sdlexec.upload.options=-g
+sdl.menu.upload_method.sdlexec.upload.tool=sdlexecprog

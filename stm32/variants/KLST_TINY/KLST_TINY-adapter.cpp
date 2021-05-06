@@ -19,7 +19,7 @@
 bool mKLSTOptionEnableBeat = true;
 bool mKLSTOptionEnableEncoders = true;
 bool mKLSTOptionEnableSerialPorts = true;
-bool mKLSTOptionEnableProgrammerButton = false;
+bool mKLSTOptionEnableProgrammerButton = true;
 bool mKLSTOptionEnableUSBSerialDebug = false;
 uint8_t mKLSTAudioLine = KLST_MIC;
 
@@ -323,9 +323,9 @@ void KLST_post_setup() {
 		mKLSTBeatTimer->resume();
 	}
 
-	/* programmer button */
-	if (mKLSTOptionEnableProgrammerButton) {
-		pinMode(BUTTON_PROGRAMMER, INPUT);
+  /* programmer button */
+  if (mKLSTOptionEnableProgrammerButton) {
+    pinMode(BUTTON_PROGRAMMER, INPUT);
     attachInterrupt(BUTTON_PROGRAMMER, KLST_jump_to_bootloader, RISING);
 	}
 }
@@ -333,6 +333,31 @@ void KLST_post_setup() {
 uint32_t KLST_boot_address() {
   return 0x1FFF0000; // boot address for KLST_TINY
 //   return 0x1FF09800; // boot address for KLST_CORE
+}
+
+void KLST_shutdown_toggle_leds(const uint16_t pDelay) {
+  delay(pDelay);
+  digitalWrite(LED_00, !digitalRead(LED_00));
+  digitalWrite(LED_01, !digitalRead(LED_01));
+  digitalWrite(LED_02, !digitalRead(LED_02));
+}
+
+void KLST_shutdown() {
+  /* stop timers */
+  HAL_TIM_Encoder_Stop(&htim3, TIM_CHANNEL_ALL);
+  HAL_TIM_Encoder_Stop(&htim8, TIM_CHANNEL_ALL);
+  HAL_TIM_Encoder_Stop(&htim2, TIM_CHANNEL_ALL);
+  mKLSTBeatTimer->pause();
+  /* stop audio */
+  HAL_SAI_DMAStop(&hsai_BlockB1);
+  HAL_SAI_DMAStop(&hsai_BlockA1);
+  /* flash LEDs */
+  digitalWrite(LED_00, LOW);
+  digitalWrite(LED_01, HIGH);
+  digitalWrite(LED_02, LOW);
+  for (uint8_t i=16; i > 0; i--) {
+    KLST_shutdown_toggle_leds(24 + 12 * i);
+  }
 }
 
 void KLST_handle_encoders() {

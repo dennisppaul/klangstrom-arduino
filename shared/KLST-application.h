@@ -11,7 +11,9 @@
 /* klangstrom application */
 
 //@todo(reintroduce `SIGNAL_TYPE` aka `float` + `EVENT_TYPE` + `KLANG_SAMPLES_PER_AUDIO_BLOCK`)
+#if KLST_ARCH!=KLST_ARCH_CPU
 #define KLANG_SAMPLES_PER_AUDIO_BLOCK 512
+#endif
 
 #ifdef __cplusplus
 namespace klangstrom{};

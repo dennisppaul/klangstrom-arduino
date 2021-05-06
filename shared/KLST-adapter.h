@@ -13,6 +13,13 @@
 * usually these functions are not used on application side.
 */
 
+//@todo(question: how do we get "Klang.hpp" to compile in stm32 context? maybe move it to from libraries to cores?)
+// #if KLST_ARCH==KLST_ARCH_CPU
+#ifdef __cplusplus
+#include "Klang.hpp"
+#endif
+// #endif
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -25,6 +32,7 @@ void KLST_fill_buffer(uint32_t *pTXBuffer, uint32_t *pRXBuffer, uint16_t pBuffer
 void KLST_start_audio_codec();
 void KLST_jump_to_bootloader();
 uint32_t KLST_boot_address();
+void KLST_shutdown();
 
 #ifdef __cplusplus
 }

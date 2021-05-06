@@ -67,6 +67,7 @@ void KLST_jump_to_bootloader() {
 	/* Set the address of the entry point to bootloader */
   volatile uint32_t BootAddr = KLST_boot_address();
 
+  KLST_shutdown();
 	/* Disable all interrupts */
 	__disable_irq();
 
