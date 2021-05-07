@@ -20,8 +20,9 @@ recipe.hooks.prebuild.1.pattern=date
 compiler.path=/usr/bin/
 compiler.klst_define=-DKLST_ARCH=2
 compiler.klst_shared=../../../shared
-compiler.klst_lib_src=../../libraries/Klangstrom/src
-compiler.klst_shared_lib=../../libraries/Klangstrom/lib/klangstrom.a
+compiler.klst_lib_src=./Klangstrom
+#compiler.klst_lib_src=../../libraries/Klangstrom/src
+#compiler.klst_shared_lib=../../libraries/Klangstrom/lib/klangstrom.a
 
 compiler.c.cmd=clang
 compiler.c.flags=-c -g -MMD -flto -Wall -std=c11 {compiler.klst_define}
@@ -53,7 +54,8 @@ compiler.c.linker.cmd=clang++
 compiler.ldflags=
 compiler.c.linker.libpath=cores/sdl/lib
 compiler.c.linker.SDL2flags=-lm -liconv -Wl,-framework,CoreAudio -Wl,-framework,AudioToolbox -Wl,-framework,ForceFeedback -lobjc -Wl,-framework,CoreVideo -Wl,-framework,Cocoa -Wl,-framework,Carbon -Wl,-framework,IOKit -Wl,-weak_framework,QuartzCore -Wl,-weak_framework,Metal
-recipe.c.combine.pattern="{compiler.path}{compiler.c.linker.cmd}" {compiler.c.linker.SDL2flags} {runtime.platform.path}/{compiler.c.linker.libpath}/libSDL2.a {build.core.path}/{compiler.klst_shared_lib} "{build.path}/{archive_file}" "-L{build.path}" {object_files} -o "{build.path}/{build.project_name}.exec" {compiler.ldflags}
+recipe.c.combine.pattern="{compiler.path}{compiler.c.linker.cmd}" {compiler.c.linker.SDL2flags} {runtime.platform.path}/{compiler.c.linker.libpath}/libSDL2.a "{build.path}/{archive_file}" "-L{build.path}" {object_files} -o "{build.path}/{build.project_name}.exec" {compiler.ldflags}
+#recipe.c.combine.pattern="{compiler.path}{compiler.c.linker.cmd}" {compiler.c.linker.SDL2flags} {runtime.platform.path}/{compiler.c.linker.libpath}/libSDL2.a {build.core.path}/{compiler.klst_shared_lib} "{build.path}/{archive_file}" "-L{build.path}" {object_files} -o "{build.path}/{build.project_name}.exec" {compiler.ldflags}
 
 # execute program @todo(maybe move to upload? only works in CLI)
 # recipe.hooks.linking.postlink.1.pattern="{build.path}/{build.project_name}.exec"

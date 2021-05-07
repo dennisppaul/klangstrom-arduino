@@ -1,3 +1,4 @@
+# See: https://arduino.github.io/arduino-cli/latest/platform-specification/
 # See: https://github.com/arduino/Arduino/wiki/Arduino-IDE-1.5-3rd-party-Hardware-specification
 
 menu.pnum=Board part number
@@ -15,9 +16,9 @@ menu.upload_method=Upload method
 # KLANGSTROM board
 
 Klangstrom.name=Klangstrom (STM32)
-
 Klangstrom.build.core=arduino
 Klangstrom.build.board=Klangstrom
+Klangstrom.build.variant_h=variant_{build.board}.h
 Klangstrom.build.extra_flags=-D{build.product_line} {build.enable_usb} {build.xSerial}
 
 # KLST_TINY board
@@ -66,13 +67,13 @@ Klangstrom.menu.xserial.disabled=Disabled (No Serial support)
 Klangstrom.menu.xserial.disabled.build.xSerial=
 
 # USB connectivity
-Klangstrom.menu.usb.none=None
 Klangstrom.menu.usb.CDCgen=CDC (generic 'Serial' supersede U(S)ART)
 Klangstrom.menu.usb.CDCgen.build.enable_usb={build.usb_flags} -DUSBD_USE_CDC
 Klangstrom.menu.usb.CDC=CDC (no generic 'Serial')
 Klangstrom.menu.usb.CDC.build.enable_usb={build.usb_flags} -DUSBD_USE_CDC -DDISABLE_GENERIC_SERIALUSB
 Klangstrom.menu.usb.HID=HID (keyboard and mouse)
 Klangstrom.menu.usb.HID.build.enable_usb={build.usb_flags} -DUSBD_USE_HID_COMPOSITE
+Klangstrom.menu.usb.none=None
 Klangstrom.menu.xusb.FS=Low/Full Speed
 Klangstrom.menu.xusb.HS=High Speed
 Klangstrom.menu.xusb.HS.build.usb_speed=-DUSE_USB_HS
