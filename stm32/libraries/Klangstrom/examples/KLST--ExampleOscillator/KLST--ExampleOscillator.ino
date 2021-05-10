@@ -8,6 +8,7 @@
 #include "Nodes.hpp"
 
 using namespace klang;
+using namespace klangstrom;
 
 NodeVCOFunction mVCO;
 NodeDAC         mDAC;
@@ -28,9 +29,9 @@ void setup() {
 }
 
 void loop() {
-    klst::led(LED_00, true);
+    led(LED_00, true);
     delay(1000);
-    klst::led(LED_00, true);
+    led(LED_00, true);
     delay(1000);
     mCounter++;
     if (mCounter > 10) {

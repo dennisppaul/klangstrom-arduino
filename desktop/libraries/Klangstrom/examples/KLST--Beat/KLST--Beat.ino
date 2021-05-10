@@ -8,6 +8,7 @@
 #include "Nodes.hpp"
 
 using namespace klang;
+using namespace klangstrom;
 
 NodeVCOFunction mVCO;
 NodeDAC         mDAC;
@@ -30,23 +31,23 @@ void setup() {
 
     Klang::unlock();
 
-    klst::beats_per_minute(120);
+    beats_per_minute(120);
 }
 
 void beat(uint32_t pBeat) {
     mLEDToggle = !mLEDToggle;
-    klst::led(LED_01, mLEDToggle);
+    led(LED_01, mLEDToggle);
     mVCO.set_frequency(mFreq * ( mLEDToggle ? 1 : 2 ) - 110 * mBeatDuration / mBeatDurationMax);
     mBeatDuration += mBeatDurationInc;
     if (mBeatDuration > mBeatDurationMax) {
         mBeatDuration = 0;
     }
-    klst::beats_per_minute_ms(mBeatDurationBase + mBeatDuration);
+    beats_per_minute_ms(mBeatDurationBase + mBeatDuration);
 }
 
 void loop() {
     delay(500);
-    klst::led_toggle(LED_00);
+    led_toggle(LED_00);
 }
 
 void audioblock(SIGNAL_TYPE* pOutputLeft, SIGNAL_TYPE* pOutputRight, SIGNAL_TYPE* pInputLeft, SIGNAL_TYPE* pInputRight) {

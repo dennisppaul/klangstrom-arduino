@@ -1,28 +1,31 @@
 //
-//  KLST-adapter.h
-//  Klangstrom – a node+text-based synthesizer library
+// KlangstromApplicationInterfaceArduino.h
+// Klangstrom 
 //
 //
 //
 
-#ifndef KLST_adapter_h
-#define KLST_adapter_h
+#ifndef KlangstromApplicationInterfaceArduino_h
+#define KlangstromApplicationInterfaceArduino_h
 
-/* 
-* functions related to low-level operations implemented in adapter.
-* usually these functions are not used on application side.
-*/
-
-//@todo(question: how do we get "Klang.hpp" to compile in stm32 context? maybe move it to from libraries to cores?)
-// #if KLST_ARCH==KLST_ARCH_CPU
 #ifdef __cplusplus
-#include "Klang.hpp"
+#include "KlangstromDefines.hpp"
 #endif
-// #endif
+#include "KlangstromDefinesArduino.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+/* --- hardware-related functions ---
+ * 
+ * implemented in `KLST_XXX-adapter.cpp`
+ * 
+ * functions related to low-level operations implemented in adapter.
+ * usually these functions are not used on application side.
+ *
+ */
+
 
 void KLST_pre_setup();
 void KLST_post_setup();
@@ -38,13 +41,17 @@ void KLST_shutdown();
 }
 #endif
 
-/*
-* functions 
-*/
+/* --- application-related functions ---
+ * 
+ * implemented in `KLST-adapter.cpp` or `KLST_XXX-adapter.cpp`
+ *
+ * see also `KlangstromApplicationInterface.hpp`
+ *
+ */
 
 #ifdef __cplusplus
 
-namespace klst {
+namespace klangstrom {
     void option(uint8_t pOption, uint8_t pValue);
     void beats_per_minute(float pBPM);
     void beats_per_minute_ms(uint32_t pMicroSeconds);
@@ -52,10 +59,10 @@ namespace klst {
     void led_toggle(uint8_t pLED);
     bool button_state(uint8_t pButton);
     bool pin_state(uint8_t pButton);
-    void event_transmit(const uint8_t pEvent, float* pPayload);
+    void event_transmit(EVENT_TYPE pEvent, float* pPayload);
     void data_transmit(const uint8_t pSender, uint8_t* pData, uint8_t pDataLength);
 };
 
 #endif
 
-#endif /* KLST_adapter_h */
+#endif /* KlangstromApplicationInterfaceArduino_h */

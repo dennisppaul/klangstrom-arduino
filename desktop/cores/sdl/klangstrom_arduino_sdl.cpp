@@ -9,6 +9,8 @@
 #include <cstdlib>
 #include <thread>
 #include <cstring>
+#include <vector>
+
 #include "SDL.h"
 #include "SDL_audio.h"
 #include "SDL_render.h"
@@ -30,18 +32,42 @@
 
 /* KLST -------------------------------------------------------------------------------- */
 
-#include "KLST_SDL-adapter.h"
+//@todo(move this to `KlangstromDefines`)
 
-WEAK void setup() {}
-WEAK void loop() {}
-WEAK void beat(uint32_t pBeat) {}
-WEAK void audioblock(SIGNAL_TYPE* pOutputLeft, SIGNAL_TYPE* pOutputRight, SIGNAL_TYPE* pInputLeft, SIGNAL_TYPE* pInputRight) {
-    for (int i = 0; i < KLANG_SAMPLES_PER_AUDIO_BLOCK; i++) { 
-        pOutputLeft[i] = 0; pOutputRight[i] = 0; 
-        pInputLeft[i] = 0; pInputRight[i] = 0; } 
-}
-WEAK void event_receive(const EVENT_TYPE event, const float* data) {}
-WEAK void data_receive(uint8_t* data, uint8_t length) {}
+#if defined(KLANG_TARGET_MCU)
+#define KLANG_NL "\n\r"
+#else
+#define KLANG_NL "\n"
+#endif
+
+#if (KLANG_DEBUG_LEVEL == 0)
+#define  KLANG_LOG_ERR(...)
+#define  KLANG_LOG(...)
+#define  KLANG_LOG_SIM(...)
+#elif (KLANG_DEBUG_LEVEL == 1)
+#define  KLANG_LOG_ERR(...)       printf(__VA_ARGS__);\
+printf(KLANG_NL);
+#define  KLANG_LOG(...)
+#define  KLANG_LOG_SIM(...)
+#elif (KLANG_DEBUG_LEVEL == 2)
+#define  KLANG_LOG_ERR(...)   printf(__VA_ARGS__);\
+printf(KLANG_NL);
+#define  KLANG_LOG(...)       printf(__VA_ARGS__);\
+printf(KLANG_NL);
+#define  KLANG_LOG_SIM(...)
+#elif (KLANG_DEBUG_LEVEL >= 3)
+#define  KLANG_LOG_ERR(...)   printf(__VA_ARGS__);\
+printf(KLANG_NL);
+#define  KLANG_LOG(...)       printf(__VA_ARGS__);\
+printf(KLANG_NL);
+#define  KLANG_LOG_SIM(...)   printf(__VA_ARGS__);\
+printf(KLANG_NL);
+#endif
+
+/* KLST -------------------------------------------------------------------------------- */
+
+#include "KLST_SDL-adapter.h"
+#include "KlangstromApplicationArduino.h"
 
 float FLOAT_32(uint8_t* pBytes, uint32_t pOffset) {
     float output;
@@ -60,10 +86,8 @@ void delay(uint32_t pMS) {
 
 /* KLST -------------------------------------------------------------------------------- */
 
-using namespace klang;
+using namespace klangstrom;
 using namespace std;
-
-#define OSC_TRANSMIT_OUTPUT_BUFFER_SIZE 1024
 
 thread mOSCThread;
 UdpTransmitSocket *mTransmitSocket = nullptr;
@@ -318,6 +342,7 @@ void klangstrom_arduino_beats_per_minute(float pBPM) {
         klangstrom_arduino_beats_per_minute_ms(pMicroSeconds);
     }
 }
+
 // void klangstrom_arduino_beats_per_minute(float pBPM) {
 //     if (mTimerID > 0) {
 //         bool mOK = SDL_RemoveTimer(mTimerID);
@@ -351,6 +376,11 @@ void klangstrom_arduino_beats_per_minute_ms(uint32_t pMicroSeconds) {
 }
 
 void init_audio_output() {
+    for (int i = 0; i < KLANG_SAMPLES_PER_AUDIO_BLOCK * 2; i++) {
+        mInternalAudioOutputBufferLeft[i] = 0.0;
+        mInternalAudioOutputBufferRight[i] = 0.0;
+    }
+
     if (SDL_GetNumAudioDevices(AUDIO_OUTPUT) < 1) {
         KLANG_LOG_ERR("+++ (ERROR) unable to get audio output device! Error: %s", SDL_GetError());
     } else {
@@ -476,11 +506,18 @@ void init_renderer() {
 void init_SDL() {
     KLANG_LOG("++++++++++++++++++++++++++++++++++++++++++++++++++");
     KLANG_LOG("+++ @Klang_SDL                                 +++");
-    KLANG_LOG("+++ KLANG_AUDIO_RATE              : %i      +++", KLANG_AUDIO_RATE);
-    KLANG_LOG("+++ KLANG_AUDIO_BLOCKS            : %i         +++", KLANG_AUDIO_BLOCKS);
-    KLANG_LOG("+++ KLANG_SAMPLES_PER_AUDIO_BLOCK : %i        +++", KLANG_SAMPLES_PER_AUDIO_BLOCK);
-    KLANG_LOG("+++ KLANG_SIGNAL_TYPE             : %i          +++", KLANG_SIGNAL_TYPE);
-
+    KLANG_LOG("+++ KLANG_AUDIO_RATE              : %i", KLANG_AUDIO_RATE);
+#ifdef KLANG_AUDIO_BLOCKS
+    KLANG_LOG("+++ KLANG_AUDIO_BLOCKS            : %i", KLANG_AUDIO_BLOCKS);
+#endif
+    KLANG_LOG("+++ KLANG_SAMPLES_PER_AUDIO_BLOCK : %i", KLANG_SAMPLES_PER_AUDIO_BLOCK);
+#ifdef KLANG_AUDIO_BLOCKS
+    KLANG_LOG("+++ KLANG_SIGNAL_TYPE             : %i", KLANG_SIGNAL_TYPE);
+#endif
+    KLANG_LOG("+++ KLANG_OSC_TRANSMIT_ADDRESS    : %s", KLANG_OSC_TRANSMIT_ADDRESS);
+    KLANG_LOG("+++ KLANG_OSC_TRANSMIT_PORT       : %i", KLANG_OSC_TRANSMIT_PORT);
+    KLANG_LOG("+++ KLANG_OSC_RECEIVE_PORT        : %i", KLANG_OSC_RECEIVE_PORT);
+    
     if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_TIMER) < 0) {
         KLANG_LOG_ERR("@klangstrom_arduino unable to init SDL: %s", SDL_GetError());
     }
@@ -492,47 +529,76 @@ void shutdown_main() {
     SDL_Quit();
 }
 
+void process_KLANG_OSC_CMD(const osc::ReceivedMessage &msg) {
+#ifdef DEBUG_OSC
+    KLANG_LOG("@sdlApp onReceive *KLANG_OSC_CMD*     : %s", KLANG_OSC_CMD);
+#endif
+    uint8_t mData[msg.ArgumentCount()];
+    uint8_t i = 0;
+    for (osc::ReceivedMessage::const_iterator arg = msg.ArgumentsBegin();
+            arg != msg.ArgumentsEnd(); ++arg) {
+        mData[i] = (uint8_t) arg->AsInt32();
+        i++;
+    }
+    data_receive(mData, msg.ArgumentCount());
+}
+
+void process_KLANG_OSC_DATA(const osc::ReceivedMessage &msg) {
+#ifdef DEBUG_OSC
+    KLANG_LOG("@sdlApp onReceive *KLANG_OSC_DATA* : %s", KLANG_OSC_DATA);
+#endif
+    if (msg.ArgumentCount() > 1) {
+        const uint8_t mLength = msg.ArgumentCount() - 1;
+        osc::ReceivedMessage::const_iterator arg = msg.ArgumentsBegin();
+        const uint8_t mSender = (uint8_t)arg->AsInt32();
+        ++arg;
+        uint8_t mData[mLength];
+        uint8_t i = 0;
+        while(arg != msg.ArgumentsEnd()) {
+            mData[i] = (uint8_t) arg->AsInt32();
+            ++arg;
+            ++i;
+        }
+        data_receive(mSender, mData, mLength);
+    }
+}
+
+void process_KLANG_OSC_MIDI_IN(const osc::ReceivedMessage &msg) {
+#ifdef DEBUG_OSC
+    KLANG_LOG("@sdlApp onReceive *KLANG_OSC_MIDI_IN* : %s", KLANG_OSC_MIDI_IN);
+#endif
+    EVENT_TYPE mMidiInEvent;
+    if (msg.ArgumentCount() > 0) {
+        osc::ReceivedMessage::const_iterator arg = msg.ArgumentsBegin();
+        mMidiInEvent = (EVENT_TYPE) arg->AsInt32();
+        if (msg.ArgumentCount() > 1) {
+            float mData[msg.ArgumentCount() - 1];
+            uint8_t i = 0;
+            for (osc::ReceivedMessage::const_iterator args = msg.ArgumentsBegin();
+                    args != msg.ArgumentsEnd(); ++args) {
+                if (i == 0) { args++; }
+                mData[i] = (float) args->AsInt32();
+                i++;
+            }
+                event_receive(mMidiInEvent, mData);
+        } else {
+                event_receive(mMidiInEvent, nullptr);
+        }
+    }
+}
+
 class MOscPacketListener : public osc::OscPacketListener {
 protected:
     void ProcessMessage(const osc::ReceivedMessage &msg,
                         const IpEndpointName &remoteEndpoint) override {
         (void) remoteEndpoint; // suppress unused parameter warning
         try {
-            msg.ArgumentCount();
             if (strcmp(msg.AddressPattern(), KLANG_OSC_CMD) == 0) {
-#ifdef DEBUG_OSC
-                KLANG_LOG("@sdlApp onReceive *KLANG_OSC_CMD*     : %s", KLANG_OSC_CMD);
-#endif
-                uint8_t mData[msg.ArgumentCount()];
-                uint8_t i = 0;
-                for (osc::ReceivedMessage::const_iterator arg = msg.ArgumentsBegin();
-                     arg != msg.ArgumentsEnd(); ++arg) {
-                    mData[i] = (uint8_t) arg->AsInt32();
-                    i++;
-                }
-                 data_receive(mData, msg.ArgumentCount());
+                process_KLANG_OSC_CMD(msg);
+            } else if (strcmp(msg.AddressPattern(), KLANG_OSC_DATA) == 0) {
+                process_KLANG_OSC_DATA(msg);
             } else if (strcmp(msg.AddressPattern(), KLANG_OSC_MIDI_IN) == 0) {
-#ifdef DEBUG_OSC
-                KLANG_LOG("@sdlApp onReceive *KLANG_OSC_MIDI_IN* : %s", KLANG_OSC_MIDI_IN);
-#endif
-                EVENT_TYPE mMidiInEvent;
-                if (msg.ArgumentCount() > 0) {
-                    osc::ReceivedMessage::const_iterator arg = msg.ArgumentsBegin();
-                    mMidiInEvent = (EVENT_TYPE) arg->AsInt32();
-                    if (msg.ArgumentCount() > 1) {
-                        float mData[msg.ArgumentCount() - 1];
-                        uint8_t i = 0;
-                        for (osc::ReceivedMessage::const_iterator args = msg.ArgumentsBegin();
-                             args != msg.ArgumentsEnd(); ++args) {
-                            if (i == 0) { args++; }
-                            mData[i] = (float) args->AsInt32();
-                            i++;
-                        }
-                         event_receive(mMidiInEvent, mData);
-                    } else {
-                         event_receive(mMidiInEvent, nullptr);
-                    }
-                }
+                process_KLANG_OSC_MIDI_IN(msg);
 #ifdef DEBUG_OSC
             } else {
                 KLANG_LOG("@sdlApp onReceive: %s, %d", msg.AddressPattern(), msg.ArgumentCount());
@@ -614,6 +680,7 @@ void osc_thread() {
 }
 
 void klangstrom_arduino_event_transmit(EVENT_TYPE pEvent, float *data) {
+    // @todo(implement all events)
     char buffer[OSC_TRANSMIT_OUTPUT_BUFFER_SIZE];
     osc::OutboundPacketStream p(buffer, OSC_TRANSMIT_OUTPUT_BUFFER_SIZE);
     if (pEvent == EVENT_MIDI_IN_NOTE_ON) {
@@ -628,14 +695,43 @@ void klangstrom_arduino_event_transmit(EVENT_TYPE pEvent, float *data) {
     }
 }
 
+void klangstrom_arduino_data_transmit(const uint8_t pSender, uint8_t* pData, uint8_t pDataLength) {
+    // @todo(implement all events)
+    char buffer[OSC_TRANSMIT_OUTPUT_BUFFER_SIZE];
+    osc::OutboundPacketStream p(buffer, OSC_TRANSMIT_OUTPUT_BUFFER_SIZE);
+    p << osc::BeginBundleImmediate
+      << osc::BeginMessage(KLANG_OSC_DATA);
+    p << pSender;
+    for (uint8_t i=0; i<pDataLength; i++) {
+        p << pData[i];
+    }
+    p <<  osc::EndMessage
+        << osc::EndBundle;
+    mTransmitSocket->Send(p.Data(), p.Size());
+}
+
+void klangstrom_arduino_sim_transmit(std::vector<float> &pData) {
+    char buffer[OSC_TRANSMIT_OUTPUT_BUFFER_SIZE];
+    osc::OutboundPacketStream p(buffer, OSC_TRANSMIT_OUTPUT_BUFFER_SIZE);
+    p << osc::BeginBundleImmediate
+      << osc::BeginMessage(OSC_TRANSMIT_SIM);
+    for (int n : pData) {
+        p << n;
+    }
+    p << osc::EndMessage
+      << osc::EndBundle;
+    mTransmitSocket->Send(p.Data(), p.Size());
+}
+
 void init_osc() {
     mOSCThread = thread(osc_thread);
     IpEndpointName mEndpointName = IpEndpointName(KLANG_OSC_TRANSMIT_ADDRESS, KLANG_OSC_TRANSMIT_PORT);
     mTransmitSocket = new UdpTransmitSocket(mEndpointName);
 
     /* --- OSC send test --- */
-    float data[3] = {0, 36, 100};
-    klangstrom_arduino_event_transmit(EVENT_MIDI_IN_NOTE_ON, data);
+    // //@todo(remove this … it s just a test)
+    // float data[3] = {0, 36, 100};
+    // klangstrom_arduino_event_transmit(EVENT_MIDI_IN_NOTE_ON, data);
 }
 
 void shutdown_osc() {
@@ -644,7 +740,9 @@ void shutdown_osc() {
 
 int main(int argc, char **argv) {
     init_osc();
+    std::cout << std::flush;
     init_main();
+    std::cout << std::flush;
     loop_main();
     shutdown_main();
     shutdown_osc();

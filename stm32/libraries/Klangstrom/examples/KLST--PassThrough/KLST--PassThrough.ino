@@ -5,12 +5,14 @@
 //
 //
 
+using namespace klangstrom;
+
 void setup() {}
 
 void loop() {
-    klst::led(LED_00, true);
+    led(LED_00, true);
     delay(1000);
-    klst::led(LED_00, false);
+    led(LED_00, false);
     delay(1000);
 }
 

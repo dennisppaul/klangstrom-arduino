@@ -5,8 +5,24 @@ sdl.build.board=KLST_SDL
 sdl.build.core=sdl
 
 menu.upload_method=Upload method
+menu.samplingrate=Sampling Rate
+menu.audioblock=Sample per Audio Block
 
 sdl.menu.upload_method.sdlexec=Execute SDL
 sdl.menu.upload_method.sdlexec.upload.protocol=1
 sdl.menu.upload_method.sdlexec.upload.options=-g
 sdl.menu.upload_method.sdlexec.upload.tool=sdlexecprog
+
+sdl.menu.samplingrate.xx44100xx=44100Hz
+sdl.menu.samplingrate.xx44100xx.build.flags.samplingrate=44100
+sdl.menu.samplingrate.xx48000xx=48000Hz
+sdl.menu.samplingrate.xx48000xx.build.flags.samplingrate=48000
+
+sdl.menu.audioblock.2048=2048 samples
+sdl.menu.audioblock.2048.build.flags.audioblock=2048
+sdl.menu.audioblock.1024=1024 samples
+sdl.menu.audioblock.1024.build.flags.audioblock=1024
+sdl.menu.audioblock.512=512 samples
+sdl.menu.audioblock.512.build.flags.audioblock=512
+sdl.menu.audioblock.256=256 samples
+sdl.menu.audioblock.256.build.flags.audioblock=256

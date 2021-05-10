@@ -20,14 +20,11 @@
 extern "C" {
 #endif
 
-#include "KLST-defines.h"
-#include "KLST-adapter.h"
-
-// #include "klangstrom_arduino_defines.h"
-#include "klangstrom_arduino_proxy.h"
+#include "KlangstromDefinesArduino.h"
+#include "KlangstromApplicationInterfaceArduino.h"
 #include "KLST_SDL-adapter.h"
 
-//@todo(move funtion declarations to shared header file `KLST-application.h` )
+//@todo(move function declarations to shared header file `KLST-application.h` )
 // #include "KLST-application.h"
 void setup();
 void loop();

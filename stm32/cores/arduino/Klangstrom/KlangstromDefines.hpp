@@ -1,0 +1,156 @@
+//
+//  KlangstromDefines.hpp
+//  Klangstrom
+//
+//
+//
+
+#ifndef KlangstromDefines_hpp
+#define KlangstromDefines_hpp
+
+//@todo(@maybe add application specific debugging flags)
+
+/* --- USER DEFINES --- */
+#define SIGNAL_TYPE_FLOAT 1
+#define SIGNAL_TYPE_INT16 2
+
+#if __has_include("KlangConfiguration.h")
+#include "KlangConfiguration.h"
+#endif
+
+#ifndef KLANG_AUDIO_RATE
+#define KLANG_AUDIO_RATE                  48000
+#ifdef DEBUG_SHOW_DEFAULT_WARNINGS
+#warning setting KLANG_AUDIO_RATE to default value: 48000
+#endif
+#endif
+
+#ifndef KLANG_AUDIO_BLOCKS
+#define KLANG_AUDIO_BLOCKS                16
+#ifdef DEBUG_SHOW_DEFAULT_WARNINGS
+#warning setting KLANG_AUDIO_BLOCKS to default value: 16
+#endif
+#endif
+
+#ifndef KLANG_SAMPLES_PER_AUDIO_BLOCK
+#define KLANG_SAMPLES_PER_AUDIO_BLOCK     512
+#ifdef DEBUG_SHOW_DEFAULT_WARNINGS
+#warning setting KLANG_SAMPLES_PER_AUDIO_BLOCK to default value: 512
+#endif
+#endif
+
+#ifndef KLANG_SIGNAL_TYPE
+#define KLANG_SIGNAL_TYPE                 SIGNAL_TYPE_FLOAT
+#ifdef DEBUG_SHOW_DEFAULT_WARNINGS
+#warning setting KLANG_SIGNAL_TYPE to default value: SIGNAL_TYPE_FLOAT
+#endif
+#endif
+
+/* --- SIGNAL --- */
+
+#if (KLANG_SIGNAL_TYPE==SIGNAL_TYPE_INT16)
+typedef int16_t     SIGNAL_TYPE;
+#elif (KLANG_SIGNAL_TYPE==SIGNAL_TYPE_FLOAT)
+typedef float       SIGNAL_TYPE;
+#else
+#error KLANG_SIGNAL_TYPE not defined
+#endif
+
+/* --- TYPEDEFS --- */
+
+typedef uint8_t EVENT_TYPE;
+typedef uint8_t EVENT_DATA;
+
+namespace klangstrom {
+    /* --- EVENT_TYPE (HID) --- */
+
+    static const EVENT_TYPE EVENT_RESERVED_01               = 0x00;
+    static const EVENT_TYPE EVENT_RESERVED_02               = 0x01;
+    static const EVENT_TYPE EVENT_RAW_DATA                  = 0x02;
+    static const EVENT_TYPE EVENT_MOUSE_PRESSED             = 0x03;
+    static const EVENT_TYPE EVENT_MOUSE_RELEASED            = 0x04;
+    static const EVENT_TYPE EVENT_MOUSE_MOVED               = 0x05;
+    static const EVENT_TYPE EVENT_MOUSE_DRAGGED             = 0x06;
+    static const EVENT_TYPE EVENT_KEY_PRESSED               = 0x07;
+    static const EVENT_TYPE EVENT_KEY_RELEASED              = 0x08;
+    
+    /* --- EVENT_TYPE (PERIPHERALS) --- */
+
+    static const EVENT_TYPE EVENT_RESERVED_03               = 0x09;
+    static const EVENT_TYPE EVENT_RESERVED_04               = 0x0A;
+    static const EVENT_TYPE EVENT_ENCODER_ROTATE_00         = 0x0B;
+    static const EVENT_TYPE EVENT_ENCODER_ROTATE_01         = 0x0C;
+    static const EVENT_TYPE EVENT_ENCODER_ROTATE_02         = 0x0D;
+    static const EVENT_TYPE EVENT_ENCODER_BUTTON_00         = 0x0E;
+    static const EVENT_TYPE EVENT_ENCODER_BUTTON_01         = 0x0F;
+    static const EVENT_TYPE EVENT_ENCODER_BUTTON_02         = 0x10;
+
+    static const EVENT_DATA TICK                            = 0x00;
+    static const EVENT_DATA PREVIOUS_TICK                   = 0x01;
+    static const EVENT_DATA BUTTON_STATE                    = 0x00;
+
+
+    /* --- EVENT_DATA LOCATIONS (HID) --- */
+
+    static const EVENT_DATA X                               = 0x00;
+    static const EVENT_DATA Y                               = 0x01;
+    static const EVENT_DATA BUTTON                          = 0x02;
+    static const EVENT_DATA LEFT                            = 0x00;
+    static const EVENT_DATA MIDDLE                          = 0x01;
+    static const EVENT_DATA RIGHT                           = 0x02;
+    static const EVENT_DATA KEY                             = 0x00;
+
+    /* --- EVENT_TYPE (MIDI) --- */
+
+    // @REF([Summary of MIDI Messages](https://www.midi.org/specifications/item/table-1-summary-of-midi-message))
+
+    static const EVENT_TYPE EVENT_MIDI_IN_NOTE_ON           = 0x09;
+    static const EVENT_TYPE EVENT_MIDI_IN_NOTE_OFF          = 0x0A;
+    static const EVENT_TYPE EVENT_MIDI_IN_CC                = 0x0B;
+    static const EVENT_TYPE EVENT_MIDI_IN_PROGRAM_CHANGE    = 0x0C;
+    static const EVENT_TYPE EVENT_MIDI_IN_SYSEX             = 0x0D;
+    // @TODO("implement other message types like *System Real-Time Messages* ( aka *Midi Clock* )")
+
+    /* --- EVENT_DATA LOCATIONS (MIDI) --- */
+
+    static const EVENT_DATA CHANNEL                         = 0x00;
+    static const EVENT_DATA NOTE                            = 0x01;
+    static const EVENT_DATA VELOCITY                        = 0x02;
+    static const EVENT_DATA NUMBER                          = 0x01;
+    static const EVENT_DATA VALUE                           = 0x02;
+    static const EVENT_DATA PROG_NUM                        = 0x01;
+}
+
+/* --- OSC_ADDRESS_PATTERNS --- */
+
+#define KLANG_OSC_CMD                   "/klang/command"
+#define KLANG_OSC_DATA                  "/klang/data"
+#define KLANG_OSC_MIDI_IN               "/klang/midi_in"
+#define KLANG_OSC_MIDI_OUT              "/klang/midi_out"
+
+#ifndef KLANG_OSC_TRANSMIT_ADDRESS
+#define KLANG_OSC_TRANSMIT_ADDRESS      "224.0.0.1"
+#ifdef DEBUG_SHOW_DEFAULT_WARNINGS
+#warning setting KLANG_OSC_TRANSMIT_ADDRESS to default value: "224.0.0.1"
+#endif
+#endif
+
+#ifndef KLANG_OSC_TRANSMIT_PORT
+#define KLANG_OSC_TRANSMIT_PORT         7000
+#ifdef DEBUG_SHOW_DEFAULT_WARNINGS
+#warning setting KLANG_OSC_TRANSMIT_PORT to default value: 7000
+#endif
+#endif
+
+#ifndef KLANG_OSC_RECEIVE_PORT
+#define KLANG_OSC_RECEIVE_PORT          7001
+#ifdef DEBUG_SHOW_DEFAULT_WARNINGS
+#warning setting KLANG_OSC_RECEIVE_PORT to default value: 7001
+#endif
+#endif
+
+///* --- INCLUDE MARKER --- */
+// 
+// #define KLANG_DEFINES
+
+#endif /* KlangstromDefines_hpp */

@@ -18,7 +18,7 @@ version=1.0.0
 recipe.hooks.prebuild.1.pattern=date
 
 compiler.path=/usr/bin/
-compiler.klst_define=-DKLST_ARCH=2
+compiler.klst_define=-DKLST_ARCH=2 -DKLANG_SAMPLES_PER_AUDIO_BLOCK={build.flags.audioblock} -DKLANG_AUDIO_RATE={build.flags.samplingrate} -DKLANG_DEBUG_LEVEL=2 -DKLANG_SIGNAL_TYPE=1 -DKLANG_OSC_TRANSMIT_PORT=7001 -DKLANG_OSC_RECEIVE_PORT=7001
 compiler.klst_shared=../../../shared
 compiler.klst_lib_src=./Klangstrom
 #compiler.klst_lib_src=../../libraries/Klangstrom/src

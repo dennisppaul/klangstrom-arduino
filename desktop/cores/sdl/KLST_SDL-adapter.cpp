@@ -6,8 +6,9 @@
 //
 
 #include "Arduino.h"
-#include "KLST-adapter.h"
-#include "KLST-application.h"
+#include "KlangstromDefinesArduino.h"
+#include "KlangstromApplicationArduino.h"
+#include "KlangstromApplicationInterfaceArduino.h"
 #include "klangstrom_arduino_sdl.h"
 #include "KLST_SDL-adapter.h"
 
@@ -29,40 +30,39 @@ bool* getLEDs() {
     return mLEDs;
 }
 
-void klst::option(uint8_t pOption, uint8_t pValue) {}
+void klangstrom::option(uint8_t pOption, uint8_t pValue) {}
 
-void klst::beats_per_minute(float pBPM) { klangstrom_arduino_beats_per_minute(pBPM); }
+void klangstrom::beats_per_minute(float pBPM) { klangstrom_arduino_beats_per_minute(pBPM); }
 
-void klst::beats_per_minute_ms(uint32_t pMicroSeconds) { klangstrom_arduino_beats_per_minute_ms(pMicroSeconds); }
+void klangstrom::beats_per_minute_ms(uint32_t pMicroSeconds) { klangstrom_arduino_beats_per_minute_ms(pMicroSeconds); }
 
-void klst::led(uint8_t pLED, bool pState) {
+void klangstrom::led(uint8_t pLED, bool pState) {
     const uint8_t mLED = pLED - LED_00; 
     const uint8_t mID = (mLED >= NUMBER_OF_LEDS) ? (NUMBER_OF_LEDS-1) : mLED;
     mLEDs[mID] = pState;
+
+    std::vector<float> mData;
+    mData.push_back(KLST_OSC_SIM_LED);
+    mData.push_back(pLED);
+    mData.push_back(pState);
+    klangstrom_arduino_sim_transmit(mData);
 }
 
-void klst::led_toggle(uint8_t pLED) {
+void klangstrom::led_toggle(uint8_t pLED) {
     const uint8_t mLED = pLED - LED_00; 
     const uint8_t mID = (mLED >= NUMBER_OF_LEDS) ? (NUMBER_OF_LEDS-1) : mLED;
-    mLEDs[mID] = !mLEDs[mID];
+    led(mID, !mLEDs[mID]);
 }
 
-bool klst::button_state(uint8_t pButton) { return false; }
+bool klangstrom::button_state(uint8_t pButton) { return false; }
 
-bool klst::pin_state(uint8_t pButton) { return false; }
+bool klangstrom::pin_state(uint8_t pButton) { return false; }
 
-void klst::event_transmit(const uint8_t pEvent, float* pPayload) {}
+void klangstrom::event_transmit(const uint8_t pEvent, float* pPayload) { klangstrom_arduino_event_transmit(pEvent, pPayload); }
 
-void klst::data_transmit(const uint8_t pSender, uint8_t* pData, uint8_t pDataLength) {}
+void klangstrom::data_transmit(const uint8_t pSender, uint8_t* pData, uint8_t pDataLength) { klangstrom_arduino_data_transmit(pSender, pData, pDataLength); }
 
 /* ----------------------------------------------------------------------------------------------------- */
-
-// uint16_t mDelayMilliSeconds = 0;
-// 
-// void delay(uint32_t pMS) { 
-//     KLST_LOG_AP("<delay(%i)> " << pMS);
-//     mDelayMilliSeconds = pMS; 
-// }
 
 int digitalRead(uint32_t pPin) {  
     KLST_LOG_AP("<digitalRead(%i)> " << pPin);
@@ -74,22 +74,17 @@ void digitalWrite(uint32_t pPin, uint32_t pValue) {
     KLST_LOG_AP("<digitalWrite(%i << %i)> " << pPin << ", " << pValue);
     uint8_t mID = (pPin >= NUMBER_OF_PINS) ? (NUMBER_OF_PINS-1) : pPin;
     mPins[mID] = pValue;
+
+    std::vector<float> mData;
+    mData.push_back(KLST_OSC_SIM_DIGITAL_WRITE);
+    mData.push_back(pPin);
+    mData.push_back(pValue);
+    klangstrom_arduino_sim_transmit(mData);
 }
 
-void pinMode(uint32_t pPin, uint32_t pMode) { 
+void pinMode(uint32_t pPin, uint32_t pMode) {
     KLST_LOG_AP("<pinMode(%i << %i)> " << pPin << ", " << pMode);
 }
-// namespace klst {
-//     void option(uint8_t pOption, uint8_t pValue);
-//     void beats_per_minute(float pBPM);
-//     void beats_per_minute_ms(uint32_t pMicroSeconds);
-//     void led(uint8_t pLED, bool pState);
-//     void led_toggle(uint8_t pLED);
-//     bool button_state(uint8_t pButton);
-//     bool pin_state(uint8_t pButton);
-//     void event_transmit(const uint8_t pEvent, float* pPayload);
-//     void data_transmit(const uint8_t pSender, uint8_t* pData, uint8_t pDataLength);
-// };
 
 // /* ----------------------------------------------------------------------------------------------------------------- */
 // 
@@ -204,7 +199,7 @@ void pinMode(uint32_t pPin, uint32_t pMode) {
 //   	/* beat */
 // 	if (mKLSTOptionEnableBeat) {
 // 		mKLSTBeatTimer = new HardwareTimer(TIM5);
-// 		klst::beats_per_minute(120);
+// 		klangstrom::beats_per_minute(120);
 // 		mKLSTBeatTimer->attachInterrupt(KLST_IT_beat_callback);
 // 	}
 // 
@@ -344,7 +339,7 @@ void pinMode(uint32_t pPin, uint32_t pMode) {
 // 		if (mLength > 0) {
 // 			uint8_t mData[mLength];
 // 			SERIAL_00.readBytes(mData, mLength);
-// 			data_receive(KLST_SENDER_SERIAL_00, mData, mLength);
+// 			data_receive(KLST_SERIAL_00, mData, mLength);
 // 		}
 // 	}
 // 	{
@@ -352,7 +347,7 @@ void pinMode(uint32_t pPin, uint32_t pMode) {
 // 		if (mLength > 0) {
 // 			uint8_t mData[mLength];
 // 			SERIAL_01.readBytes(mData, mLength);
-// 			data_receive(KLST_SENDER_SERIAL_01, mData, mLength);
+// 			data_receive(KLST_SERIAL_01, mData, mLength);
 // 		}
 // 	}
 // }
@@ -380,10 +375,10 @@ void pinMode(uint32_t pPin, uint32_t pMode) {
 //  * SERIAL_00 callback
 //  */
 // // void serialEvent1() {
-// // 	klst::led(LED_01, true);
+// // 	klangstrom::led(LED_01, true);
 // // 	while (Serial1.available()) {
 // //       	uint8_t mValue = Serial1.read();
-// // 		data_receive(KLST_SENDER_SERIAL_00, &mValue, 1);
+// // 		data_receive(KLST_SERIAL_00, &mValue, 1);
 // //     }
 // // }
 // 
@@ -391,14 +386,14 @@ void pinMode(uint32_t pPin, uint32_t pMode) {
 //  * SERIAL_01 callback
 //  */
 // // void serialEvent4() {
-// // 	klst::led(LED_02, true);
+// // 	klangstrom::led(LED_02, true);
 // // 	while (Serial4.available()) {
 // //       	uint8_t mValue = Serial4.read();
-// // 		data_receive(KLST_SENDER_SERIAL_01, &mValue, 1);
+// // 		data_receive(KLST_SERIAL_01, &mValue, 1);
 // //     }
 // // }
 // 
-// void klst::option(uint8_t pOption, uint8_t pValue) {
+// void klangstrom::option(uint8_t pOption, uint8_t pValue) {
 // 	switch (pOption) {
 // 		case KLST_OPTION_AUDIO_INPUT:
 // 			mKLSTAudioLine = pValue;
@@ -418,7 +413,7 @@ void pinMode(uint32_t pPin, uint32_t pMode) {
 // 	}
 // }
 // 
-// void klst::led(uint8_t pLED, bool pState) {
+// void klangstrom::led(uint8_t pLED, bool pState) {
 // 	// @todo(maybe replace with `KLST_LED_00`)
 // 	switch (pLED) {
 // 		case LED_00:
@@ -433,7 +428,7 @@ void pinMode(uint32_t pPin, uint32_t pMode) {
 // 	}
 // }
 // 
-// void klst::led_toggle(uint8_t pLED) {
+// void klangstrom::led_toggle(uint8_t pLED) {
 // 	// @todo(maybe replace with `KLST_LED_00`)
 // 	switch (pLED) {
 // 		case LED_00:
@@ -448,17 +443,17 @@ void pinMode(uint32_t pPin, uint32_t pMode) {
 // 	}
 // }
 // 
-// void klst::beats_per_minute(float pBPM) {
+// void klangstrom::beats_per_minute(float pBPM) {
 // 	if (pBPM == 0) { return; }
-// 	klst::beats_per_minute_ms((uint32_t)((60.0 / pBPM) * 1000000));
+// 	klangstrom::beats_per_minute_ms((uint32_t)((60.0 / pBPM) * 1000000));
 // }
 // 
-// void klst::beats_per_minute_ms(uint32_t pMicroSeconds) {
+// void klangstrom::beats_per_minute_ms(uint32_t pMicroSeconds) {
 // 	mKLSTBeatIntervalDuration = pMicroSeconds;
 // 	mKLSTBeatTimer->setOverflow(mKLSTBeatIntervalDuration, MICROSEC_FORMAT);
 // }
 // 
-// bool klst::button_state(uint8_t pButton) {
+// bool klangstrom::button_state(uint8_t pButton) {
 // 	switch (pButton) {
 // 		case KLST_BUTTON_ENCODER_00:
 // 			return !mKLSTENCODER_00ButtonState;
@@ -472,16 +467,16 @@ void pinMode(uint32_t pPin, uint32_t pMode) {
 // 	return false;
 // }
 // 
-// bool klst::pin_state(uint8_t pButton) {
+// bool klangstrom::pin_state(uint8_t pButton) {
 // 	return !digitalRead(pButton);
 // }
 // 
 // void data_transmit(const uint8_t pSender, uint8_t* pData, uint8_t pDataLength) {
 //   switch(pSender) {
-//     case KLST_RECEIVER_SERIAL_00:
+//     case KLST_SERIAL_00:
 //       SERIAL_00.write(pData, pDataLength);
 //       break;
-//     case KLST_RECEIVER_SERIAL_01:
+//     case KLST_SERIAL_01:
 //       SERIAL_01.write(pData, pDataLength);
 //       break;
 //   }

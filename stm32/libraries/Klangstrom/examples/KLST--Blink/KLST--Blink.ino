@@ -8,6 +8,7 @@
 #include "Nodes.hpp"
 
 using namespace klang;
+using namespace klangstrom;
 
 NodeVCOFunction mVCO;
 NodeDAC         mDAC;
@@ -22,15 +23,15 @@ void setup() {
 }
 
 void loop() {
-    klst::led(LED_00, true);    // turn LED_00 on ( `true` is ON )
-    mVCO.set_amplitude(0.25);    // set amplitude to 50%
+    led(LED_00, true);    // turn LED_00 on ( `true` is ON )
+    mVCO.set_amplitude(0.25);   // set amplitude to 50%
     delay(1000);                // wait for a second
-    klst::led(LED_00, false);   // turn LED_00 off ( `false` is OFF )
+    led(LED_00, false);   // turn LED_00 off ( `false` is OFF )
     mVCO.set_amplitude(0.0);    // set amplitude to 0%
     delay(1000);                // wait for a second
 }
 
-void audioblock(float* pOutputLeft, float* pOutputRight, float* pInputLeft, float* pInputRight) {
+void audioblock(SIGNAL_TYPE* pOutputLeft, SIGNAL_TYPE* pOutputRight, SIGNAL_TYPE* pInputLeft, SIGNAL_TYPE* pInputRight) {
     /* process next audio block */
     mDAC.process_frame(pOutputLeft, pOutputRight);
 }

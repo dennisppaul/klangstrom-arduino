@@ -11,8 +11,11 @@
 
 #include "pins_arduino.h"
 #include "Arduino.h"
-#include "KLST-adapter.h"
-#include "KLST-application.h"
+#include "KlangstromDefinesArduino.h"
+#include "KlangstromApplicationArduino.h"
+#include "KlangstromApplicationInterfaceArduino.h"
+
+using namespace klangstrom;
 
 /* options */
 
@@ -98,7 +101,7 @@ void KLST_start_audio_codec() {
 
 #if SANITY_TEST
 float osc_phi = 0;
-float osc_phi_inc = 220.0f / 48000.0f; // generating 440Hz
+float osc_phi_inc = 220.0f / (float)KLANG_AUDIO_RATE); // generating 440Hz
 
 void FillBuffer(uint32_t *mTXBuffer, uint32_t *mRXBuffer, uint16_t len) {
 	for (uint16_t i = 0; i < len; i++) {
@@ -180,10 +183,10 @@ void WM8731_delay(uint32_t pDelay) {
 // void KLST_RxCpltCallback(UART_HandleTypeDef *huart) {
 // void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) {
 // 	if (huart == SERIAL_00_Handle) {
-// 		data_receive(KLST_SENDER_SERIAL_00, mSERIAL_00_BUFFER, KLST_SERIAL_BUFFER_SIZE);
+// 		data_receive(KLST_SERIAL_00, mSERIAL_00_BUFFER, KLST_SERIAL_BUFFER_SIZE);
 // 		HAL_UART_Receive_IT(SERIAL_00_Handle, mSERIAL_00_BUFFER, KLST_SERIAL_BUFFER_SIZE);
 // 	} else if (huart == SERIAL_01_Handle) {
-// 		data_receive(KLST_SENDER_SERIAL_01, mSERIAL_01_BUFFER, KLST_SERIAL_BUFFER_SIZE);
+// 		data_receive(KLST_SERIAL_01, mSERIAL_01_BUFFER, KLST_SERIAL_BUFFER_SIZE);
 // 		HAL_UART_Receive_IT(SERIAL_01_Handle, mSERIAL_01_BUFFER, KLST_SERIAL_BUFFER_SIZE);
 // 	}
 // }
@@ -251,7 +254,7 @@ void KLST_pre_setup() {
   	/* beat */
 	if (mKLSTOptionEnableBeat) {
 		mKLSTBeatTimer = new HardwareTimer(TIM5);
-		klst::beats_per_minute(120);
+		klangstrom::beats_per_minute(120);
 		mKLSTBeatTimer->attachInterrupt(KLST_IT_beat_callback);
 	}
 
@@ -309,8 +312,8 @@ void KLST_post_setup() {
 		MX_TIM8_Init();
 
 		pinMode(ENCODER_00_BUTTON, INPUT);
-  		pinMode(ENCODER_01_BUTTON, INPUT);
-  		pinMode(ENCODER_02_BUTTON, INPUT);
+  	pinMode(ENCODER_01_BUTTON, INPUT);
+  	pinMode(ENCODER_02_BUTTON, INPUT);
 
 		HAL_TIM_Encoder_Start(&htim3, TIM_CHANNEL_ALL);
 		HAL_TIM_Encoder_Start(&htim8, TIM_CHANNEL_ALL);
@@ -365,46 +368,46 @@ void KLST_handle_encoders() {
 	const int16_t mEncoder_00TickCount = (int16_t)ENCODER_00_TIMER->CNT;
 	if (mKLSTENCODER_00TickCount != mEncoder_00TickCount) {
 		const float f[2] = {(float)mEncoder_00TickCount, (float)mKLSTENCODER_00TickCount};
-		event_receive(KLST_EVENT_ENCODER_00, f);
+		event_receive(EVENT_ENCODER_ROTATE_00, f);
 		mKLSTENCODER_00TickCount = mEncoder_00TickCount;
 	}
 	const int16_t mEncoder_01TickCount = (int16_t)ENCODER_01_TIMER->CNT;
 	if (mKLSTENCODER_01TickCount != mEncoder_01TickCount) {
 		const float f[2] = {(float)mEncoder_01TickCount, (float)mKLSTENCODER_01TickCount};
-		event_receive(KLST_EVENT_ENCODER_01, f);
+		event_receive(EVENT_ENCODER_ROTATE_01, f);
 		mKLSTENCODER_01TickCount = mEncoder_01TickCount;
 	}
 	const int16_t mEncoder_02TickCount = (int16_t)ENCODER_02_TIMER->CNT;
 	if (mKLSTENCODER_02TickCount != mEncoder_02TickCount) {
 		const float f[2] = {(float)mEncoder_02TickCount, (float)mKLSTENCODER_02TickCount};
-		event_receive(KLST_EVENT_ENCODER_02, f);
+		event_receive(EVENT_ENCODER_ROTATE_02, f);
 		mKLSTENCODER_02TickCount = mEncoder_02TickCount;
 	}
 	/* buttons */
 	bool mENCODER_00ButtonState = digitalRead(ENCODER_00_BUTTON);
 	if (mKLSTENCODER_00ButtonState != mENCODER_00ButtonState) {
 		if (mENCODER_00ButtonState) {
-			event_receive(KLST_EVENT_ENCODER_BUTTON_00, mKLST_RELEASED);
+			event_receive(EVENT_ENCODER_BUTTON_00, mKLST_RELEASED);
 		} else {
-			event_receive(KLST_EVENT_ENCODER_BUTTON_00, mKLST_PRESSED);
+			event_receive(EVENT_ENCODER_BUTTON_00, mKLST_PRESSED);
 		}
 		mKLSTENCODER_00ButtonState = mENCODER_00ButtonState;
 	}
 	bool mENCODER_01ButtonState = digitalRead(ENCODER_01_BUTTON);
 	if (mKLSTENCODER_01ButtonState != mENCODER_01ButtonState) {
 		if (mENCODER_01ButtonState) {
-			event_receive(KLST_EVENT_ENCODER_BUTTON_01, mKLST_RELEASED);
+			event_receive(EVENT_ENCODER_BUTTON_01, mKLST_RELEASED);
 		} else {
-			event_receive(KLST_EVENT_ENCODER_BUTTON_01, mKLST_PRESSED);
+			event_receive(EVENT_ENCODER_BUTTON_01, mKLST_PRESSED);
 		}
 		mKLSTENCODER_01ButtonState = mENCODER_01ButtonState;
 	}
 	bool mENCODER_02ButtonState = digitalRead(ENCODER_02_BUTTON);
 	if (mKLSTENCODER_02ButtonState != mENCODER_02ButtonState) {
 		if (mENCODER_02ButtonState) {
-			event_receive(KLST_EVENT_ENCODER_BUTTON_02, mKLST_RELEASED);
+			event_receive(EVENT_ENCODER_BUTTON_02, mKLST_RELEASED);
 		} else {
-			event_receive(KLST_EVENT_ENCODER_BUTTON_02, mKLST_PRESSED);
+			event_receive(EVENT_ENCODER_BUTTON_02, mKLST_PRESSED);
 		}
 		mKLSTENCODER_02ButtonState = mENCODER_02ButtonState;
 	}
@@ -416,7 +419,7 @@ void KLST_handleSerialPorts() {
 		if (mLength > 0) {
 			uint8_t mData[mLength];
 			SERIAL_00.readBytes(mData, mLength);
-			data_receive(KLST_SENDER_SERIAL_00, mData, mLength);
+			data_receive(KLST_SERIAL_00, mData, mLength);
 		}
 	}
 	{
@@ -424,7 +427,7 @@ void KLST_handleSerialPorts() {
 		if (mLength > 0) {
 			uint8_t mData[mLength];
 			SERIAL_01.readBytes(mData, mLength);
-			data_receive(KLST_SENDER_SERIAL_01, mData, mLength);
+			data_receive(KLST_SERIAL_01, mData, mLength);
 		}
 	}
 }
@@ -452,10 +455,10 @@ void KLST_loop() {
  * SERIAL_00 callback
  */
 // void serialEvent1() {
-// 	klst::led(LED_01, true);
+// 	klangstrom::led(LED_01, true);
 // 	while (Serial1.available()) {
 //       	uint8_t mValue = Serial1.read();
-// 		data_receive(KLST_SENDER_SERIAL_00, &mValue, 1);
+// 		data_receive(KLST_SERIAL_00, &mValue, 1);
 //     }
 // }
 
@@ -463,14 +466,14 @@ void KLST_loop() {
  * SERIAL_01 callback
  */
 // void serialEvent4() {
-// 	klst::led(LED_02, true);
+// 	klangstrom::led(LED_02, true);
 // 	while (Serial4.available()) {
 //       	uint8_t mValue = Serial4.read();
-// 		data_receive(KLST_SENDER_SERIAL_01, &mValue, 1);
+// 		data_receive(KLST_SERIAL_01, &mValue, 1);
 //     }
 // }
 
-void klst::option(uint8_t pOption, uint8_t pValue) {
+void klangstrom::option(uint8_t pOption, uint8_t pValue) {
 	switch (pOption) {
 		case KLST_OPTION_AUDIO_INPUT:
 			mKLSTAudioLine = pValue;
@@ -484,13 +487,13 @@ void klst::option(uint8_t pOption, uint8_t pValue) {
 		case KLST_OPTION_BEAT:
 			mKLSTOptionEnableBeat = pValue;
 			break;
-		case KLST_OPTION_PROGRAMMMER_BUTTON:
+		case KLST_OPTION_PROGRAMMER_BUTTON:
 			mKLSTOptionEnableProgrammerButton = pValue;
 			break;
 	}
 }
 
-void klst::led(uint8_t pLED, bool pState) {
+void klangstrom::led(uint8_t pLED, bool pState) {
 	// @todo(maybe replace with `KLST_LED_00`)
 	switch (pLED) {
 		case LED_00:
@@ -505,7 +508,7 @@ void klst::led(uint8_t pLED, bool pState) {
 	}
 }
 
-void klst::led_toggle(uint8_t pLED) {
+void klangstrom::led_toggle(uint8_t pLED) {
 	// @todo(maybe replace with `KLST_LED_00`)
 	switch (pLED) {
 		case LED_00:
@@ -520,17 +523,17 @@ void klst::led_toggle(uint8_t pLED) {
 	}
 }
 
-void klst::beats_per_minute(float pBPM) {
+void klangstrom::beats_per_minute(float pBPM) {
 	if (pBPM == 0) { return; }
-	klst::beats_per_minute_ms((uint32_t)((60.0 / pBPM) * 1000000));
+	klangstrom::beats_per_minute_ms((uint32_t)((60.0 / pBPM) * 1000000));
 }
 
-void klst::beats_per_minute_ms(uint32_t pMicroSeconds) {
+void klangstrom::beats_per_minute_ms(uint32_t pMicroSeconds) {
 	mKLSTBeatIntervalDuration = pMicroSeconds;
 	mKLSTBeatTimer->setOverflow(mKLSTBeatIntervalDuration, MICROSEC_FORMAT);
 }
 
-bool klst::button_state(uint8_t pButton) {
+bool klangstrom::button_state(uint8_t pButton) {
 	switch (pButton) {
 		case KLST_BUTTON_ENCODER_00:
 			return !mKLSTENCODER_00ButtonState;
@@ -544,16 +547,16 @@ bool klst::button_state(uint8_t pButton) {
 	return false;
 }
 
-bool klst::pin_state(uint8_t pButton) {
+bool klangstrom::pin_state(uint8_t pButton) {
 	return !digitalRead(pButton);
 }
 
-void data_transmit(const uint8_t pSender, uint8_t* pData, uint8_t pDataLength) {
+void klangstrom::data_transmit(const uint8_t pSender, uint8_t* pData, uint8_t pDataLength) {
   switch(pSender) {
-    case KLST_RECEIVER_SERIAL_00:
+    case KLST_SERIAL_00:
       SERIAL_00.write(pData, pDataLength);
       break;
-    case KLST_RECEIVER_SERIAL_01:
+    case KLST_SERIAL_01:
       SERIAL_01.write(pData, pDataLength);
       break;
   }

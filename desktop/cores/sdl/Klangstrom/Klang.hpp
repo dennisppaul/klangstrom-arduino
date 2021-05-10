@@ -62,27 +62,6 @@
 #endif
 #endif
 
-#ifndef KLANG_OSC_TRANSMIT_ADDRESS
-#define KLANG_OSC_TRANSMIT_ADDRESS     "224.0.0.1"
-#ifdef DEBUG_SHOW_DEFAULT_WARNINGS
-#warning setting KLANG_OSC_TRANSMIT_ADDRESS to default value: "224.0.0.1"
-#endif
-#endif
-
-#ifndef KLANG_OSC_TRANSMIT_PORT
-#define KLANG_OSC_TRANSMIT_PORT     7000
-#ifdef DEBUG_SHOW_DEFAULT_WARNINGS
-#warning setting KLANG_OSC_TRANSMIT_PORT to default value: 7000
-#endif
-#endif
-
-#ifndef KLANG_OSC_RECEIVE_PORT
-#define KLANG_OSC_RECEIVE_PORT     7001
-#ifdef DEBUG_SHOW_DEFAULT_WARNINGS
-#warning setting KLANG_OSC_RECEIVE_PORT to default value: 7001
-#endif
-#endif
-
 #if !defined(SIGNAL_TYPE_FLOAT) && !defined(SIGNAL_TYPE_INT16)
 #warning SIGNAL_TYPE is not defined properly. choosing `SIGNAL_TYPE_FLOAT`. check if `KlangDefines.hpp` is included in `KlangConfiguration.h`?
 #endif

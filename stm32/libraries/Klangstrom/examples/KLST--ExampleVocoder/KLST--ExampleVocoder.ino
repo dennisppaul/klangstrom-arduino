@@ -10,6 +10,7 @@
 #include "Nodes.hpp"
 
 using namespace klang;
+using namespace klangstrom;
 
 NodeDAC                 mDAC;
 NodeVocoder             mVocoder{24, 4, 256};

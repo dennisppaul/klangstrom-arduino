@@ -8,12 +8,16 @@
 #ifndef klangstrom_arduino_sdl_h
 #define klangstrom_arduino_sdl_h
 
-// #include "klangstrom_arduino_defines.h"
-#include "KLST-defines.h"
-#include "KLST-adapter.h"
+#include <vector>
 
-const int SCREEN_WIDTH = 1280;
-const int SCREEN_HEIGHT = 720;
+#include "KlangstromDefines.hpp"
+#include "KlangstromDefinesArduino.h"
+#include "KlangstromApplicationInterfaceArduino.h"
+#include "klangstrom_arduino_osc_simlator.h"
+
+const uint16_t SCREEN_WIDTH = 1024;
+const uint16_t SCREEN_HEIGHT = 768;
+const uint16_t OSC_TRANSMIT_OUTPUT_BUFFER_SIZE = 1024;
 
 //@todo maybe merge this into `KLST_SDL-adapter.h`
 void klangstrom_arduino_beats_per_minute(float pBPM);
@@ -45,7 +49,9 @@ void shutdown_main();
 
 /* klang::KlangApplicationInterface */
 
-void klang_sdl_event_transmit(EVENT_TYPE pEvent, float *data);
+void klangstrom_arduino_event_transmit(EVENT_TYPE pEvent, float *data);
+void klangstrom_arduino_data_transmit(const uint8_t pSender, uint8_t* pData, uint8_t pDataLength);
+void klangstrom_arduino_sim_transmit(std::vector<float> &pData);
 
 #endif /* klangstrom_arduino_sdl_h */
  

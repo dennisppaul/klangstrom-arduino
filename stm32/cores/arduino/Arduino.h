@@ -34,8 +34,8 @@
 #endif
 
 #include "wiring.h"
-#include "KLST-defines.h"
-#include "KLST-adapter.h"
+#include "KlangstromDefinesArduino.h"
+#include "KlangstromApplicationInterfaceArduino.h"
 
 /* sketch */
 

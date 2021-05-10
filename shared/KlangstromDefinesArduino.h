@@ -1,12 +1,16 @@
 //
-//  KLST-defines.h
-//  Klang – a node+text-based synthesizer library
+// KlangstromDefinesArduino.h
+// Klang
 //
 //
 //
 
-#ifndef KLST_defines_h
-#define KLST_defines_h
+#ifndef KlangstromDefinesArduino_h
+#define KlangstromDefinesArduino_h
+
+/* *premature* klang defines */
+
+typedef float       SIGNAL_TYPE;
 
 /* platform / architecture */
 
@@ -28,10 +32,9 @@
 
 /* data */
 
-#define KLST_SENDER_SERIAL_00           0x03  
-#define KLST_RECEIVER_SERIAL_00         0x03  
-#define KLST_SENDER_SERIAL_01           0x04  
-#define KLST_RECEIVER_SERIAL_01         0x04  
+//@todo(maybe move this to `KlangstromDefines`)
+#define KLST_SERIAL_00           0x03  
+#define KLST_SERIAL_01           0x04  
 
 /* options */
 
@@ -45,21 +48,6 @@
 #define KLST_ENABLE                         0x01
 #define KLST_OPTION_SERIAL_PORTS        0x05
 #define KLST_OPTION_BEAT                0x06
-#define KLST_OPTION_PROGRAMMMER_BUTTON  0x07
+#define KLST_OPTION_PROGRAMMER_BUTTON   0x07
 
-/* events */
-
-#define KLST_EVENT_RESERVED_01          0x00
-#define KLST_EVENT_RESERVED_02          0x01
-#define KLST_EVENT_ENCODER_00           0x02
-#define KLST_EVENT_ENCODER_01           0x03
-#define KLST_EVENT_ENCODER_02           0x04
-#define KLST_EVENT_ENCODER_BUTTON_00    0x05
-#define KLST_EVENT_ENCODER_BUTTON_01    0x06
-#define KLST_EVENT_ENCODER_BUTTON_02    0x07
-
-#define KLST_EVENT_DATA_TICK            0x00
-#define KLST_EVENT_DATA_PREVIOUS_TICK   0x01
-#define KLST_EVENT_DATA_BUTTON_STATE    0x00
-
-#endif /* KLST_defines_h */
+#endif /* KlangstromDefinesArduino_h */

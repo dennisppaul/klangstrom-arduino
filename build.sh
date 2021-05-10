@@ -1,6 +1,6 @@
 #! /bin/zsh
 
-PATH_TO_MODULES=../klangstrom/klangstrom/platforms/klangstrom-arduino/klangstrom
+PATH_TO_MODULES=../klangstrom/klangstrom/platforms/klangstrom-arduino
 MY_PATH=`pwd`
 
 copyPlatfrom() {

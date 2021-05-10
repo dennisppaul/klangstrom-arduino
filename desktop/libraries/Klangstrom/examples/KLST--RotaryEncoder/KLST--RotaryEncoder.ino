@@ -8,6 +8,7 @@
 #include "Nodes.hpp"
 
 using namespace klang;
+using namespace klangstrom;
 
 NodeVCOFunction mVCO;
 NodeDAC         mDAC;
@@ -31,70 +32,74 @@ void setup() {
 }
 
 void loop() {
-    /*  note that the iteration time for each loop needs to be kept short because all
-        events ( e.g encoder, serial ) are processed right after loop is finished.
-    */
+    /* note that the iteration time for each loop needs to be kept short because all
+     * events ( e.g encoder, serial ) are processed right after loop is finished.
+     */
     delay(100);
 }
 
 void event_receive(const uint8_t event, const float* data) {
-    /* print encoder states + toggle LEDs*/
-    if (event == KLST_EVENT_ENCODER_00) {
-        Serial.print("ENCODER_00 ROTATION: ");
-        Serial.print(data[KLST_EVENT_DATA_TICK]);
-        Serial.print(", ");
-        Serial.print(data[KLST_EVENT_DATA_TICK] - data[KLST_EVENT_DATA_PREVIOUS_TICK]);
-        Serial.println();
-        klst::led_toggle(LED_00);
-    }
-    if (event == KLST_EVENT_ENCODER_01) {
-        Serial.print("ENCODER_01 ROTATION: ");
-        Serial.print(data[KLST_EVENT_DATA_TICK]);
-        Serial.print(", ");
-        Serial.print(data[KLST_EVENT_DATA_TICK] - data[KLST_EVENT_DATA_PREVIOUS_TICK]);
-        Serial.println();
-        klst::led_toggle(LED_01);
-    }
-    if (event == KLST_EVENT_ENCODER_02) {
-        Serial.print("ENCODER_02 ROTATION: ");
-        Serial.print(data[KLST_EVENT_DATA_TICK]);
-        Serial.print(", ");
-        Serial.print(data[KLST_EVENT_DATA_TICK] - data[KLST_EVENT_DATA_PREVIOUS_TICK]);
-        Serial.println();
-        klst::led_toggle(LED_02);
-    }
-    if (event == KLST_EVENT_ENCODER_BUTTON_00) {
-        Serial.print("ENCODER_00 BUTTON  : ");
-        Serial.println((int)data[KLST_EVENT_DATA_BUTTON_STATE]);
-    }
-    if (event == KLST_EVENT_ENCODER_BUTTON_01) {
-        Serial.print("ENCODER_01 BUTTON  : ");
-        Serial.println((int)data[KLST_EVENT_DATA_BUTTON_STATE]);
-    }
-    if (event == KLST_EVENT_ENCODER_BUTTON_02) {
-        Serial.print("ENCODER_02 BUTTON  : ");
-        Serial.println((int)data[KLST_EVENT_DATA_BUTTON_STATE]);
-    }
+    print_encoder_state(event, data);
 
     /* encoders change the frequency when rotated and change the amplitude when pressed */
     switch (event) {
-        case KLST_EVENT_ENCODER_BUTTON_00:
-        case KLST_EVENT_ENCODER_BUTTON_01:
-        case KLST_EVENT_ENCODER_BUTTON_02:
-            if (data[KLST_EVENT_DATA_BUTTON_STATE]) {
+        case EVENT_ENCODER_BUTTON_00:
+        case EVENT_ENCODER_BUTTON_01:
+        case EVENT_ENCODER_BUTTON_02:
+            if (data[BUTTON_STATE]) {
                 mADSR.start();
             } else {
                 mADSR.stop();
             }
-            //      mVCO.set_amplitude(data[KLST_EVENT_DATA_BUTTON_STATE] ? 0.5 : 0.0);
+            //      mVCO.set_amplitude(data[BUTTON_STATE] ? 0.5 : 0.0);
             break;
-        case KLST_EVENT_ENCODER_00:
-        case KLST_EVENT_ENCODER_01:
-        case KLST_EVENT_ENCODER_02:
-            float mFreqChange = data[KLST_EVENT_DATA_TICK] - data[KLST_EVENT_DATA_PREVIOUS_TICK];
+        case EVENT_ENCODER_ROTATE_00:
+        case EVENT_ENCODER_ROTATE_01:
+        case EVENT_ENCODER_ROTATE_02:
+            float mFreqChange = data[TICK] - data[PREVIOUS_TICK];
             mFreq += mFreqChange;
             mVCO.set_frequency(mFreq);
             break;
+    }
+}
+
+void print_encoder_state(const uint8_t event, const float* data) {
+    /* print encoder states + toggle LEDs*/
+    if (event == EVENT_ENCODER_ROTATE_00) {
+        Serial.print("ENCODER_00 ROTATION: ");
+        Serial.print(data[TICK]);
+        Serial.print(", ");
+        Serial.print(data[TICK] - data[PREVIOUS_TICK]);
+        Serial.println();
+        led_toggle(LED_00);
+    }
+    if (event == EVENT_ENCODER_ROTATE_01) {
+        Serial.print("ENCODER_01 ROTATION: ");
+        Serial.print(data[TICK]);
+        Serial.print(", ");
+        Serial.print(data[TICK] - data[PREVIOUS_TICK]);
+        Serial.println();
+        led_toggle(LED_01);
+    }
+    if (event == EVENT_ENCODER_ROTATE_02) {
+        Serial.print("ENCODER_02 ROTATION: ");
+        Serial.print(data[TICK]);
+        Serial.print(", ");
+        Serial.print(data[TICK] - data[PREVIOUS_TICK]);
+        Serial.println();
+        led_toggle(LED_02);
+    }
+    if (event == EVENT_ENCODER_BUTTON_00) {
+        Serial.print("ENCODER_00 BUTTON  : ");
+        Serial.println((int)data[BUTTON_STATE]);
+    }
+    if (event == EVENT_ENCODER_BUTTON_01) {
+        Serial.print("ENCODER_01 BUTTON  : ");
+        Serial.println((int)data[BUTTON_STATE]);
+    }
+    if (event == EVENT_ENCODER_BUTTON_02) {
+        Serial.print("ENCODER_02 BUTTON  : ");
+        Serial.println((int)data[BUTTON_STATE]);
     }
 }
 

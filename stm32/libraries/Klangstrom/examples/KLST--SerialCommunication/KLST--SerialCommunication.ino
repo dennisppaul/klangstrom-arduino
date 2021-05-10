@@ -8,6 +8,7 @@
 #include "Nodes.hpp"
 
 using namespace klang;
+using namespace klangstrom;
 
 NodeVCOFunction mVCO;
 NodeDAC         mDAC;
@@ -21,56 +22,43 @@ void setup() {
     Klang::lock();
     Klang::connect(mVCO,    Node::CH_OUT_SIGNAL, mDAC,    NodeDAC::CH_IN_SIGNAL_LEFT);
     mVCO.set_frequency(mFreq);
-    mVCO.set_amplitude(0.5);
+    mVCO.set_amplitude(0.25);
     mVCO.set_waveform(NodeVCOFunction::WAVEFORM::SINE);
     Klang::unlock();
 }
 
 void loop() {
-    Serial.println("--");
-    SERIAL_00.println("00");
-    SERIAL_01.println("01");
-
-    //    while (SERIAL_00.available()) {
-    //      int reval = SERIAL_00.read();
-    //      Serial.println(">");
-    //      Serial.write(reval);
-    //      digitalWrite(LED_02, HIGH);
-    //    }
-    //    while (SERIAL_01.available()) {
-    //      int reval = SERIAL_01.read();
-    //      Serial.println(">");
-    //      Serial.write(reval);
-    //      digitalWrite(LED_01, HIGH);
-    //    }
-
-    klst::led(LED_00, true);
+    led(LED_00, true);
     mCounter++;
     mCounter %= 3;
     mVCO.set_frequency(mFreq + mFreq * mCounter);
-    delay(100);
-    klst::led(LED_00, false);
-    delay(100);
+
+    uint8_t mData[3] = {42, 23, 3};
+    data_transmit(KLST_SERIAL_00, mData, 3);
+
+    delay(500);
+    led(LED_00, false);
+    delay(500);
 }
 
-//void serialEvent() {
-//  while (Serial.available()) {
-//    char c = Serial.read();
-//    Serial.print(c);
-//    SERIAL_00.print(c);
-//    SERIAL_01.print(c);
-//  }
-//}
-
 void data_receive(const uint8_t sender, uint8_t* data, uint8_t length) {
-    Serial.println("data_receive");
-    if (sender == KLST_SENDER_SERIAL_00) {
-        Serial.println("SERIAL_00");
-        klst::led(LED_01, true);
+    if (sender == KLST_SERIAL_00) {
+        Serial.print("SERIAL_00 :: ");
+        led(LED_01, true);
+        for (int i=0; i<length; i++) {
+            Serial.print((int)data[i]);
+            Serial.print(" ");
+        }
+        Serial.println();
     }
-    if (sender == KLST_SENDER_SERIAL_01) {
-        Serial.println("SERIAL_01");
-        klst::led(LED_02, true);
+    if (sender == KLST_SERIAL_01) {
+        Serial.print("SERIAL_01 :: ");
+        led(LED_02, true);
+        for (int i=0; i<length; i++) {
+            Serial.print((int)data[i]);
+            Serial.print(" ");
+        }
+        Serial.println();
     }
 }
 

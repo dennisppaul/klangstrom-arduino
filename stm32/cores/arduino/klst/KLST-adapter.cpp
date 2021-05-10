@@ -1,11 +1,11 @@
 #include "pins_arduino.h"
 #include "Arduino.h"
 
-#include "KLST-adapter.h"
-#include "KLST-application.h"
+#include "KlangstromDefinesArduino.h"
+#include "KlangstromApplicationArduino.h"
+#include "KlangstromApplicationInterfaceArduino.h"
 
-
-extern void audioblock(float* pOutputLeft, float* pOutputRight, float* pInputLeftRX, float* pInputRight);
+extern void audioblock(SIGNAL_TYPE* pOutputLeft, SIGNAL_TYPE* pOutputRight, SIGNAL_TYPE* pInputLeftRX, SIGNAL_TYPE* pInputRight);
 
 #ifdef __cplusplus
 extern "C" {
@@ -21,14 +21,16 @@ const uint32_t M_MASK_RIGHT = ~(M_MASK_LEFT);
 /**
  * fills buffer with new block of samples
  */
+SIGNAL_TYPE mLeftTX[KLANG_SAMPLES_PER_AUDIO_BLOCK];
+SIGNAL_TYPE mRightTX[KLANG_SAMPLES_PER_AUDIO_BLOCK];
+SIGNAL_TYPE mLeftRX[KLANG_SAMPLES_PER_AUDIO_BLOCK];
+SIGNAL_TYPE mRightRX[KLANG_SAMPLES_PER_AUDIO_BLOCK];
 WEAK void KLST_fill_buffer(uint32_t *pTXBuffer, uint32_t *pRXBuffer, uint16_t pBufferLength) {
-//@todo(reintroduce `SIGNAL_TYPE` aka `float` + `KLANG_SAMPLES_PER_AUDIO_BLOCK` )
-  #define KLANG_SAMPLES_PER_AUDIO_BLOCK 512
   /* @todo (check if it is more smart to not instantiate the arrays every time) */
-  auto *mLeftTX = new float[KLANG_SAMPLES_PER_AUDIO_BLOCK];
-  auto *mRightTX = new float[KLANG_SAMPLES_PER_AUDIO_BLOCK];
-  auto *mLeftRX = new float[KLANG_SAMPLES_PER_AUDIO_BLOCK];
-  auto *mRightRX = new float[KLANG_SAMPLES_PER_AUDIO_BLOCK];
+//   auto *mLeftTX = new SIGNAL_TYPE[KLANG_SAMPLES_PER_AUDIO_BLOCK];
+//   auto *mRightTX = new SIGNAL_TYPE[KLANG_SAMPLES_PER_AUDIO_BLOCK];
+//   auto *mLeftRX = new SIGNAL_TYPE[KLANG_SAMPLES_PER_AUDIO_BLOCK];
+//   auto *mRightRX = new SIGNAL_TYPE[KLANG_SAMPLES_PER_AUDIO_BLOCK];
   /* unpack receive buffer to sample */
   for (int i = 0; i < KLANG_SAMPLES_PER_AUDIO_BLOCK; i++) {
     const uint32_t p = pRXBuffer[i];
@@ -50,10 +52,10 @@ WEAK void KLST_fill_buffer(uint32_t *pTXBuffer, uint32_t *pRXBuffer, uint16_t pB
       // int16_t mR = (int16_t) (mRightTX[i] * 32767.0f);
       // pTXBuffer[i] = ((uint32_t) (uint16_t) mL) << 0 | ((uint32_t) (uint16_t) mR) << 16;
   }
-  delete[] mLeftTX;
-  delete[] mRightTX;
-  delete[] mLeftRX;
-  delete[] mRightRX;
+//   delete[] mLeftTX;
+//   delete[] mRightTX;
+//   delete[] mLeftRX;
+//   delete[] mRightRX;
 }
 
 /*
