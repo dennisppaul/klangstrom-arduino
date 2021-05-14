@@ -13,7 +13,7 @@
 #include "KlangstromDefines.hpp"
 #include "KlangstromDefinesArduino.h"
 #include "KlangstromApplicationInterfaceArduino.h"
-#include "klangstrom_arduino_osc_simlator.h"
+#include "KLST_Simulator.h"
 
 const uint16_t SCREEN_WIDTH = 1024;
 const uint16_t SCREEN_HEIGHT = 768;

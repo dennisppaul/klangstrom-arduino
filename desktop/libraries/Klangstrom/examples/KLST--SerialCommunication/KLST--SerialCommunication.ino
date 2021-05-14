@@ -17,7 +17,7 @@ float mFreq = 55;
 int mCounter = 0;
 
 void setup() {
-    Serial.begin(115200);
+    KLST_LOG.begin(115200);
 
     Klang::lock();
     Klang::connect(mVCO,    Node::CH_OUT_SIGNAL, mDAC,    NodeDAC::CH_IN_SIGNAL_LEFT);
@@ -28,37 +28,37 @@ void setup() {
 }
 
 void loop() {
-    led(LED_00, true);
     mCounter++;
     mCounter %= 3;
     mVCO.set_frequency(mFreq + mFreq * mCounter);
 
     uint8_t mData[3] = {42, 23, 3};
-    data_transmit(KLST_SERIAL_00, mData, 3);
+    data_transmit(SERIAL_00, mData, 3);
 
+    led(LED_00, true);
     delay(500);
     led(LED_00, false);
     delay(500);
 }
 
 void data_receive(const uint8_t sender, uint8_t* data, uint8_t length) {
-    if (sender == KLST_SERIAL_00) {
-        Serial.print("SERIAL_00 :: ");
+    if (sender == SERIAL_00) {
+        KLST_LOG.print("SERIAL_00 :: ");
         led(LED_01, true);
         for (int i=0; i<length; i++) {
-            Serial.print((int)data[i]);
-            Serial.print(" ");
+            KLST_LOG.print((int)data[i]);
+            KLST_LOG.print(" ");
         }
-        Serial.println();
+        KLST_LOG.println();
     }
-    if (sender == KLST_SERIAL_01) {
-        Serial.print("SERIAL_01 :: ");
+    if (sender == SERIAL_01) {
+        KLST_LOG.print("SERIAL_01 :: ");
         led(LED_02, true);
         for (int i=0; i<length; i++) {
-            Serial.print((int)data[i]);
-            Serial.print(" ");
+            KLST_LOG.print((int)data[i]);
+            KLST_LOG.print(" ");
         }
-        Serial.println();
+        KLST_LOG.println();
     }
 }
 

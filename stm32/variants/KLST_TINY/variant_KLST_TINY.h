@@ -197,8 +197,8 @@ extern "C" {
 #endif
 
 #ifdef __cplusplus
-  #define SERIAL_00               Serial1
-  #define SERIAL_01               Serial4
+  #define KLST_SERIAL_00          Serial1
+  #define KLST_SERIAL_01          Serial4
   #define KLST_LOG                Serial
 #endif
 

@@ -26,6 +26,8 @@
 #include <thread>
 #include <chrono>
 
+extern KLST_Simulator mSimulator;
+
 #define Q(x) #x
 #define QUOTE(x) Q(x)
 #define APP_HEADER QUOTE(KLANG_APP_CLASS.hpp)
@@ -255,7 +257,7 @@ void loop_renderer() {
         r.y = 20;
         r.w = mWidth;
         r.h = mHeight;
-        if (getLEDs()[i]) {
+        if (mSimulator.getLEDs()[i]) {
             SDL_SetRenderDrawColor(gRenderer, 0xFF, 0x00, 0x00, 0xFF);
             SDL_RenderFillRect(gRenderer, &r);
         } else {
@@ -540,7 +542,7 @@ void process_KLANG_OSC_CMD(const osc::ReceivedMessage &msg) {
         mData[i] = (uint8_t) arg->AsInt32();
         i++;
     }
-    data_receive(mData, msg.ArgumentCount());
+    data_receive(ALL_PERIPHERALS, mData, msg.ArgumentCount());
 }
 
 void process_KLANG_OSC_DATA(const osc::ReceivedMessage &msg) {
@@ -588,17 +590,25 @@ void process_KLANG_OSC_MIDI_IN(const osc::ReceivedMessage &msg) {
 }
 
 class MOscPacketListener : public osc::OscPacketListener {
+
+private:
+    bool addr_pattern_equals(const osc::ReceivedMessage &msg, const char *pAddrPatter) {
+        return (strcmp(msg.AddressPattern(), pAddrPatter) == 0);
+    }
+
 protected:
     void ProcessMessage(const osc::ReceivedMessage &msg,
                         const IpEndpointName &remoteEndpoint) override {
         (void) remoteEndpoint; // suppress unused parameter warning
         try {
-            if (strcmp(msg.AddressPattern(), KLANG_OSC_CMD) == 0) {
+            if (addr_pattern_equals(msg, KLANG_OSC_CMD)) {
                 process_KLANG_OSC_CMD(msg);
-            } else if (strcmp(msg.AddressPattern(), KLANG_OSC_DATA) == 0) {
+            } else if (addr_pattern_equals(msg, KLANG_OSC_DATA)) {
                 process_KLANG_OSC_DATA(msg);
-            } else if (strcmp(msg.AddressPattern(), KLANG_OSC_MIDI_IN) == 0) {
+            } else if (addr_pattern_equals(msg, KLANG_OSC_MIDI_IN)) {
                 process_KLANG_OSC_MIDI_IN(msg);
+            } else if (addr_pattern_equals(msg, KLANG_OSC_SIM)) {
+                mSimulator.process_receive(msg);
 #ifdef DEBUG_OSC
             } else {
                 KLANG_LOG("@sdlApp onReceive: %s, %d", msg.AddressPattern(), msg.ArgumentCount());
@@ -714,7 +724,7 @@ void klangstrom_arduino_sim_transmit(std::vector<float> &pData) {
     char buffer[OSC_TRANSMIT_OUTPUT_BUFFER_SIZE];
     osc::OutboundPacketStream p(buffer, OSC_TRANSMIT_OUTPUT_BUFFER_SIZE);
     p << osc::BeginBundleImmediate
-      << osc::BeginMessage(OSC_TRANSMIT_SIM);
+      << osc::BeginMessage(KLANG_OSC_SIM);
     for (int n : pData) {
         p << n;
     }

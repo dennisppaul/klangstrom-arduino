@@ -42,9 +42,7 @@
 #define LED_BUILTIN               LED_00
 #define KLST_UART_BAUD            115200
 
-#define SERIAL_00                 0x15
-#define SERIAL_01                 0x16
-#define KLST_LOG                  0x17
+#define KLST_LOG                  Serial
 
 #define INPUT                     0x18
 #define OUTPUT                    0x19
@@ -56,6 +54,5 @@ void delay(uint32_t pMS);
 int digitalRead(uint32_t pPin);
 void digitalWrite(uint32_t pPin, uint32_t pValue);
 void pinMode(uint32_t pPin, uint32_t pMode);
-bool* getLEDs();
 
 #endif /* _VARIANT_KLST_SDL_ */

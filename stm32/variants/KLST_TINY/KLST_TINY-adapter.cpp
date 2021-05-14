@@ -247,8 +247,8 @@ void KLST_pre_setup() {
 	// HAL_UART_Receive_IT(SERIAL_00_Handle, mSERIAL_00_BUFFER, KLST_SERIAL_BUFFER_SIZE);
 	// HAL_UART_Receive_IT(SERIAL_01_Handle, mSERIAL_01_BUFFER, KLST_SERIAL_BUFFER_SIZE);
 	if (mKLSTOptionEnableSerialPorts) {
-		SERIAL_00.begin(KLST_UART_BAUD);
-		SERIAL_01.begin(KLST_UART_BAUD);
+		KLST_SERIAL_00.begin(KLST_UART_BAUD);
+		KLST_SERIAL_01.begin(KLST_UART_BAUD);
 	}
 
   	/* beat */
@@ -415,19 +415,19 @@ void KLST_handle_encoders() {
 
 void KLST_handleSerialPorts() {
 	{
-		const uint8_t mLength = SERIAL_00.available();
+		const uint8_t mLength = KLST_SERIAL_00.available();
 		if (mLength > 0) {
 			uint8_t mData[mLength];
-			SERIAL_00.readBytes(mData, mLength);
-			data_receive(KLST_SERIAL_00, mData, mLength);
+			KLST_SERIAL_00.readBytes(mData, mLength);
+			data_receive(SERIAL_00, mData, mLength);
 		}
 	}
 	{
-		const uint8_t mLength = SERIAL_01.available();
+		const uint8_t mLength = KLST_SERIAL_01.available();
 		if (mLength > 0) {
 			uint8_t mData[mLength];
-			SERIAL_01.readBytes(mData, mLength);
-			data_receive(KLST_SERIAL_01, mData, mLength);
+			KLST_SERIAL_01.readBytes(mData, mLength);
+			data_receive(SERIAL_01, mData, mLength);
 		}
 	}
 }
@@ -458,7 +458,7 @@ void KLST_loop() {
 // 	klangstrom::led(LED_01, true);
 // 	while (Serial1.available()) {
 //       	uint8_t mValue = Serial1.read();
-// 		data_receive(KLST_SERIAL_00, &mValue, 1);
+// 		data_receive(SERIAL_00, &mValue, 1);
 //     }
 // }
 
@@ -469,7 +469,7 @@ void KLST_loop() {
 // 	klangstrom::led(LED_02, true);
 // 	while (Serial4.available()) {
 //       	uint8_t mValue = Serial4.read();
-// 		data_receive(KLST_SERIAL_01, &mValue, 1);
+// 		data_receive(SERIAL_01, &mValue, 1);
 //     }
 // }
 
@@ -553,11 +553,11 @@ bool klangstrom::pin_state(uint8_t pButton) {
 
 void klangstrom::data_transmit(const uint8_t pSender, uint8_t* pData, uint8_t pDataLength) {
   switch(pSender) {
-    case KLST_SERIAL_00:
-      SERIAL_00.write(pData, pDataLength);
+    case SERIAL_00:
+      KLST_SERIAL_00.write(pData, pDataLength);
       break;
-    case KLST_SERIAL_01:
-      SERIAL_01.write(pData, pDataLength);
+    case SERIAL_01:
+      KLST_SERIAL_01.write(pData, pDataLength);
       break;
   }
 }

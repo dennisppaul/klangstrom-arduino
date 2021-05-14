@@ -11,6 +11,7 @@
 //@todo(@maybe add application specific debugging flags)
 
 /* --- USER DEFINES --- */
+
 #define SIGNAL_TYPE_FLOAT 1
 #define SIGNAL_TYPE_INT16 2
 
@@ -58,12 +59,20 @@ typedef float       SIGNAL_TYPE;
 
 /* --- TYPEDEFS --- */
 
+typedef uint8_t DATA_PERIPHERAL_TYPE;
 typedef uint8_t EVENT_TYPE;
 typedef uint8_t EVENT_DATA;
 
+/**
+ * this block defines constants for `event_transmit` + `event_receive` operations
+ * including some peripherals like encoders + buttons
+ */
 namespace klangstrom {
+
     /* --- EVENT_TYPE (HID) --- */
 
+    // @todo(add payload description as comment. see `EVENT_ENCODER_ROTATE_XX`)
+    
     static const EVENT_TYPE EVENT_RESERVED_01               = 0x00;
     static const EVENT_TYPE EVENT_RESERVED_02               = 0x01;
     static const EVENT_TYPE EVENT_RAW_DATA                  = 0x02;
@@ -76,19 +85,16 @@ namespace klangstrom {
     
     /* --- EVENT_TYPE (PERIPHERALS) --- */
 
-    static const EVENT_TYPE EVENT_RESERVED_03               = 0x09;
-    static const EVENT_TYPE EVENT_RESERVED_04               = 0x0A;
-    static const EVENT_TYPE EVENT_ENCODER_ROTATE_00         = 0x0B;
-    static const EVENT_TYPE EVENT_ENCODER_ROTATE_01         = 0x0C;
-    static const EVENT_TYPE EVENT_ENCODER_ROTATE_02         = 0x0D;
-    static const EVENT_TYPE EVENT_ENCODER_BUTTON_00         = 0x0E;
-    static const EVENT_TYPE EVENT_ENCODER_BUTTON_01         = 0x0F;
-    static const EVENT_TYPE EVENT_ENCODER_BUTTON_02         = 0x10;
+    static const EVENT_TYPE EVENT_ENCODER_ROTATE_00         = 0x09; // [TICK,PREVIOUS_TICK]
+    static const EVENT_TYPE EVENT_ENCODER_ROTATE_01         = 0x0A;
+    static const EVENT_TYPE EVENT_ENCODER_ROTATE_02         = 0x0B;
+    static const EVENT_TYPE EVENT_ENCODER_BUTTON_00         = 0x0C; // [BUTTON_STATE]
+    static const EVENT_TYPE EVENT_ENCODER_BUTTON_01         = 0x0D;
+    static const EVENT_TYPE EVENT_ENCODER_BUTTON_02         = 0x0E;
 
     static const EVENT_DATA TICK                            = 0x00;
     static const EVENT_DATA PREVIOUS_TICK                   = 0x01;
     static const EVENT_DATA BUTTON_STATE                    = 0x00;
-
 
     /* --- EVENT_DATA LOCATIONS (HID) --- */
 
@@ -104,7 +110,7 @@ namespace klangstrom {
 
     // @REF([Summary of MIDI Messages](https://www.midi.org/specifications/item/table-1-summary-of-midi-message))
 
-    static const EVENT_TYPE EVENT_MIDI_IN_NOTE_ON           = 0x09;
+    static const EVENT_TYPE EVENT_MIDI_IN_NOTE_ON           = 0x09; // [???]
     static const EVENT_TYPE EVENT_MIDI_IN_NOTE_OFF          = 0x0A;
     static const EVENT_TYPE EVENT_MIDI_IN_CC                = 0x0B;
     static const EVENT_TYPE EVENT_MIDI_IN_PROGRAM_CHANGE    = 0x0C;
@@ -121,12 +127,29 @@ namespace klangstrom {
     static const EVENT_DATA PROG_NUM                        = 0x01;
 }
 
+/**
+ * this block defines constants for `data_transmit` + `data_receive` operations
+ * including peripherals like UART, SPI, I2C
+ */
+namespace klangstrom {
+    static const DATA_PERIPHERAL_TYPE PERIPHERAL_RESERVED_01    = 0x00;
+    static const DATA_PERIPHERAL_TYPE ALL_PERIPHERALS           = 0x01;
+    static const DATA_PERIPHERAL_TYPE SERIAL_00                 = 0x02;
+    static const DATA_PERIPHERAL_TYPE SERIAL_01                 = 0x03;
+};
+
 /* --- OSC_ADDRESS_PATTERNS --- */
 
-#define KLANG_OSC_CMD                   "/klang/command"
-#define KLANG_OSC_DATA                  "/klang/data"
-#define KLANG_OSC_MIDI_IN               "/klang/midi_in"
-#define KLANG_OSC_MIDI_OUT              "/klang/midi_out"
+/**
+ * this block defines constants for OSC communications
+ */
+namespace klangstrom {
+    static const char  KLANG_OSC_CMD[]                              = "/klang/command";
+    static const char  KLANG_OSC_DATA[]                             = "/klang/data";
+    static const char  KLANG_OSC_MIDI_IN[]                          = "/klang/midi_in";
+    static const char  KLANG_OSC_MIDI_OUT[]                         = "/klang/midi_out";
+    static const char  KLANG_OSC_SIM[]                              = "/klang/sim";
+};
 
 #ifndef KLANG_OSC_TRANSMIT_ADDRESS
 #define KLANG_OSC_TRANSMIT_ADDRESS      "224.0.0.1"
@@ -148,9 +171,5 @@ namespace klangstrom {
 #warning setting KLANG_OSC_RECEIVE_PORT to default value: 7001
 #endif
 #endif
-
-///* --- INCLUDE MARKER --- */
-// 
-// #define KLANG_DEFINES
 
 #endif /* KlangstromDefines_hpp */

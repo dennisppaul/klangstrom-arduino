@@ -12,10 +12,6 @@
 #include "klangstrom_arduino_sdl.h"
 #include "KLST_SDL-adapter.h"
 
-static const uint8_t NUMBER_OF_PINS = NUMBER_OF_GPIO_PINS;
-static int8_t mPins[NUMBER_OF_PINS] = { LOW };
-static bool mLEDs[NUMBER_OF_LEDS] = { false };
-
 using namespace std;
 
 #ifdef DEBUG_ARDUINO_PROXY
@@ -24,11 +20,9 @@ using namespace std;
 #define  KLST_LOG_AP(...)
 #endif
 
-/* ----------------------------------------------------------------------------------------------------- */
+KLST_Simulator mSimulator;
 
-bool* getLEDs() {
-    return mLEDs;
-}
+/* ----------------------------------------------------------------------------------------------------- */
 
 void klangstrom::option(uint8_t pOption, uint8_t pValue) {}
 
@@ -37,21 +31,11 @@ void klangstrom::beats_per_minute(float pBPM) { klangstrom_arduino_beats_per_min
 void klangstrom::beats_per_minute_ms(uint32_t pMicroSeconds) { klangstrom_arduino_beats_per_minute_ms(pMicroSeconds); }
 
 void klangstrom::led(uint8_t pLED, bool pState) {
-    const uint8_t mLED = pLED - LED_00; 
-    const uint8_t mID = (mLED >= NUMBER_OF_LEDS) ? (NUMBER_OF_LEDS-1) : mLED;
-    mLEDs[mID] = pState;
-
-    std::vector<float> mData;
-    mData.push_back(KLST_OSC_SIM_LED);
-    mData.push_back(pLED);
-    mData.push_back(pState);
-    klangstrom_arduino_sim_transmit(mData);
+    mSimulator.led(pLED, pState);
 }
 
 void klangstrom::led_toggle(uint8_t pLED) {
-    const uint8_t mLED = pLED - LED_00; 
-    const uint8_t mID = (mLED >= NUMBER_OF_LEDS) ? (NUMBER_OF_LEDS-1) : mLED;
-    led(mID, !mLEDs[mID]);
+    mSimulator.led_toggle(pLED);
 }
 
 bool klangstrom::button_state(uint8_t pButton) { return false; }
@@ -65,26 +49,22 @@ void klangstrom::data_transmit(const uint8_t pSender, uint8_t* pData, uint8_t pD
 /* ----------------------------------------------------------------------------------------------------- */
 
 int digitalRead(uint32_t pPin) {  
-    KLST_LOG_AP("<digitalRead(%i)> " << pPin);
-    uint8_t mID = (pPin >= NUMBER_OF_PINS) ? (NUMBER_OF_PINS-1) : pPin;
-    return mPins[mID];
+    return mSimulator.digitalRead(pPin);
 }
 
 void digitalWrite(uint32_t pPin, uint32_t pValue) { 
     KLST_LOG_AP("<digitalWrite(%i << %i)> " << pPin << ", " << pValue);
-    uint8_t mID = (pPin >= NUMBER_OF_PINS) ? (NUMBER_OF_PINS-1) : pPin;
-    mPins[mID] = pValue;
-
-    std::vector<float> mData;
-    mData.push_back(KLST_OSC_SIM_DIGITAL_WRITE);
-    mData.push_back(pPin);
-    mData.push_back(pValue);
-    klangstrom_arduino_sim_transmit(mData);
+    mSimulator.digitalWrite(pPin, pValue);
 }
 
 void pinMode(uint32_t pPin, uint32_t pMode) {
     KLST_LOG_AP("<pinMode(%i << %i)> " << pPin << ", " << pMode);
 }
+
+
+
+
+
 
 // /* ----------------------------------------------------------------------------------------------------------------- */
 // 

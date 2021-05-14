@@ -32,9 +32,9 @@ typedef float       SIGNAL_TYPE;
 
 /* data */
 
-//@todo(maybe move this to `KlangstromDefines`)
-#define KLST_SERIAL_00           0x03  
-#define KLST_SERIAL_01           0x04  
+// @todo(move this to `KlangstromDefines`)
+// #define KLST_SERIAL_00           0x03  
+// #define KLST_SERIAL_01           0x04  
 
 /* options */
 

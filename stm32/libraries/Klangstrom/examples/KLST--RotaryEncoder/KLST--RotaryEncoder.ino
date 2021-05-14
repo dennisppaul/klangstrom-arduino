@@ -92,14 +92,17 @@ void print_encoder_state(const uint8_t event, const float* data) {
     if (event == EVENT_ENCODER_BUTTON_00) {
         Serial.print("ENCODER_00 BUTTON  : ");
         Serial.println((int)data[BUTTON_STATE]);
+        led(LED_00, data[BUTTON_STATE] > 0);
     }
     if (event == EVENT_ENCODER_BUTTON_01) {
         Serial.print("ENCODER_01 BUTTON  : ");
         Serial.println((int)data[BUTTON_STATE]);
+        led(LED_01, data[BUTTON_STATE] > 0);
     }
     if (event == EVENT_ENCODER_BUTTON_02) {
         Serial.print("ENCODER_02 BUTTON  : ");
         Serial.println((int)data[BUTTON_STATE]);
+        led(LED_02, data[BUTTON_STATE] > 0);
     }
 }
 
