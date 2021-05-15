@@ -1,8 +1,5 @@
 //
-//  ExampleMixer2.hpp
-//  Klang – a node+text-based synthesizer library
-//
-//
+//  ExampleMixer2
 //
 
 #include "Nodes.hpp"

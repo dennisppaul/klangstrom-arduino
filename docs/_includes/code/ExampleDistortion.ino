@@ -1,8 +1,5 @@
 //
-//  ExampleDistortion.hpp
-//  Klang – a node+text-based synthesizer library
-//
-//
+//  ExampleDistortion
 //
 
 #include "Nodes.hpp"

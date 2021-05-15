@@ -1,8 +1,5 @@
 //
-//  ExampleOscillators.hpp
-//  Klang – a node+text-based synthesizer library
-//
-//
+//  ExampleOscillators
 //
 
 #include "Nodes.hpp"

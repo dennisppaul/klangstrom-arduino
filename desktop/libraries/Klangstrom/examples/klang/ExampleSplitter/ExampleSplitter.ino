@@ -1,8 +1,5 @@
 //
-//  ExampleSplitter.hpp
-//  Klang – a node+text-based synthesizer library
-//
-//
+//  ExampleSplitter
 //
 
 #include "Nodes.hpp"

@@ -1,8 +1,5 @@
 //
-//  ExampleWavetables.hpp
-//  Klang – a node+text-based synthesizer library
-//
-//
+//  ExampleWavetables
 //
 
 #include "Nodes.hpp"

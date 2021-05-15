@@ -1,8 +1,5 @@
 //
-//  ExampleReverb.hpp
-//  Klang – a node+text-based synthesizer library
-//
-//
+//  ExampleReverb
 //
 
 #define KLANG_EXT_NODE_REVERB

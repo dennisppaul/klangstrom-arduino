@@ -1,8 +1,5 @@
 //
-//  ExampleMixer4Stereo.hpp
-//  Klang – a node+text-based synthesizer library
-//
-//
+//  ExampleMixer4Stereo
 //
 
 #include "Nodes.hpp"

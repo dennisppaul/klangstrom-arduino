@@ -1,8 +1,5 @@
 //
-//  ExampleSampler.hpp
-//  Klang – a node+text-based synthesizer library
-//
-//
+//  ExampleSampler
 //
 
 #include "Nodes.hpp"

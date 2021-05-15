@@ -1,8 +1,5 @@
 //
-//  ExampleDelay.hpp
-//  Klang – a node+text-based synthesizer library
-//
-//
+//  ExampleDelay
 //
 
 //@todo(out of memory on KLST_TINY)

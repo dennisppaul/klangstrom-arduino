@@ -1,8 +1,5 @@
 //
 //  KLST--PassThrough
-//  Klangstrom – a node+text-based synthesizer library
-//
-//
 //
 
 using namespace klangstrom;

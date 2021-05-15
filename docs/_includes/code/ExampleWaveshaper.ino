@@ -1,8 +1,5 @@
 //
-//  ExampleWaveshaper.hpp
-//  Klang – a node+text-based synthesizer library
-//
-//
+//  ExampleWaveshaper
 //
 
 #include "Nodes.hpp"

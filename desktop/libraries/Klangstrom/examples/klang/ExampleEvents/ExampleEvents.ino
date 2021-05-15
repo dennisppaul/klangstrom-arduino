@@ -1,8 +1,5 @@
 //
-//  ExampleEvents.hpp
-//  Klang – a node+text-based synthesizer library
-//
-//
+//  ExampleEvents
 //
 
 #include "Nodes.hpp"

@@ -1,8 +1,5 @@
 //
 //  KLST--SerialCommunication
-//  Klangstrom – a node+text-based synthesizer library
-//
-//
 //
 
 #include "Nodes.hpp"

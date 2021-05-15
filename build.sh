@@ -30,5 +30,5 @@ copyPlatfrom desktop
 echo "###"
 echo 
 
-#@todo(copy examples from `./stm32/libraries/Klangstrom/examples/klang` to `./docs/_includes/code`)
-find ./stm32/libraries/Klangstrom/examples/klang -name '*.ino' -exec cp {} ./docs/_includes/code/ \;
+# copy examples to doc
+find $PATH_TO_MODULES/libraries/Klangstrom/examples/klang -name '*.ino' -exec cp {} ./docs/_includes/code/ \;

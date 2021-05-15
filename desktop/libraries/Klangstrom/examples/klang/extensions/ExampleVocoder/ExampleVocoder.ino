@@ -1,8 +1,5 @@
 //
-//  ExampleVocoder.hpp
-//  Klang – a node+text-based synthesizer library
-//
-//
+//  ExampleVocoder
 //
 
 #define KLANG_EXT_NODE_VOCODER

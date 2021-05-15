@@ -1,8 +1,5 @@
 //
-//  ExampleLFOs.hpp
-//  Klang – a node+text-based synthesizer library
-//
-//
+//  ExampleLFOs
 //
 
 #include "Nodes.hpp"

@@ -1,8 +1,5 @@
 //
-//  KLST--ExampleTextToSpeechSAM.hpp
-//  Klangstrom – a node+text-based synthesizer library
-//
-//
+//  ExampleTextToSpeechSAM
 //
 
 #define KLANG_EXT_NODE_TEXT_TO_SPEECH_SAM

@@ -1,8 +1,5 @@
 //
-//  ExamplePatch16.hpp
-//  Klang – a node+text-based synthesizer library
-//
-//
+//  ExamplePatch16
 //
 
 #include "Nodes.hpp"

@@ -1,8 +1,5 @@
 //
-//  ExamplePhaser.hpp
-//  Klang – a node+text-based synthesizer library
-//
-//
+//  ExamplePhaser
 //
 
 #include "Nodes.hpp"

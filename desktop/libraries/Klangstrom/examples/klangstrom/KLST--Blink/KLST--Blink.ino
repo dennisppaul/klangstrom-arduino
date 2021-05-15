@@ -1,8 +1,5 @@
 //
 //  KLST--Blink
-//  Klangstrom – a node+text-based synthesizer library
-//
-//
 //
 
 #include "Nodes.hpp"

@@ -1,8 +1,5 @@
 //
-//  ExampleChorus.hpp
-//  Klang – a node+text-based synthesizer library
-//
-//
+//  ExampleChorus
 //
 
 #include "Nodes.hpp"

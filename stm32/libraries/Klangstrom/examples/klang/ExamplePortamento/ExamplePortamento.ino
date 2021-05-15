@@ -1,8 +1,5 @@
 //
-//  ExamplePortamento.hpp
-//  Klang – a node+text-based synthesizer library
-//
-//
+//  ExamplePortamento
 //
 
 #include "Nodes.hpp"

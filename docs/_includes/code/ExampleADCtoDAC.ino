@@ -1,8 +1,5 @@
 //
-//  ExampleADCtoDAC.hpp
-//  Klang – a node+text-based synthesizer library
-//
-//
+//  ExampleADCtoDAC
 //
 
 #include "Nodes.hpp"

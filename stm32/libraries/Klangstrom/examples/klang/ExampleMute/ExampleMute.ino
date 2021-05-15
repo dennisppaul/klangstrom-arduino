@@ -1,8 +1,5 @@
 //
-//  ExampleMute.hpp
-//  Klang – a node+text-based synthesizer library
-//
-//
+//  ExampleMute
 //
 
 #include "Nodes.hpp"
