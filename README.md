@@ -1,4 +1,4 @@
-<img src="./assets/KLST--app-icon.png" alt="KLST--app-icon" width="256"/>
+<img src="./assets/KLST--app-icon.png" alt="KLST--app-icon"/>
 
 *Klangstrom* (KLST) is an infrastructure to facilitate generative, networked, embedded sound + music + composition. *klangstrom* is comprised of two software libraries ( *klang* a node+text-based sound synthesis library and *strom* a node+text-based generative composition library ), an embedded hardware platform, and a programming environment to allow seamless development of generative, networked, embedded sound + music + composition applications.
 
