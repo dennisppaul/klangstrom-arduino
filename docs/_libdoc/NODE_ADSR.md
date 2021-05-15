@@ -24,3 +24,7 @@ this node provides a envelope with four different stages: (A)ttack (D)ecay (S)us
 - STOP
 
 
+```c
+{% include code/ExampleADSR.ino %}
+```
+
