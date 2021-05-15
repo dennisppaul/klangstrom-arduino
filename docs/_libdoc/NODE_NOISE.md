@@ -20,3 +20,7 @@ this node produces a noise signal. if `SIMPLEX` is selected a stride can be spec
 - STRIDE_F32
 
 
+```c
+{% include code/ExampleNoise.ino %}
+```
+

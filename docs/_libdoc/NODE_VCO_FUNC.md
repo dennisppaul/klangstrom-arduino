@@ -23,3 +23,7 @@ the oscillator node produces a periodic signal from a selectable function. the f
 - WAVEFORM_I8
 
 
+```c
+{% include code/ExampleOscillators.ino %}
+```
+

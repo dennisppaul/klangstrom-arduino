@@ -19,3 +19,7 @@ this node allows to mute an entire branch of nodes connected to this its input. 
 - MUTE_I8
 
 
+```c
+{% include code/ExampleMute.ino %}
+```
+

@@ -23,3 +23,7 @@ the wavetable node produces a periodic signal from a chunk of memory ( wavetable
 - WAVEFORM_I8
 
 
+```c
+{% include code/ExampleOscillators.ino %}
+```
+

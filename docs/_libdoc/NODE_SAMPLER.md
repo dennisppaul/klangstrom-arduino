@@ -19,3 +19,7 @@ this node can store and repoduce a sample of arbitrary length. @note(this node i
 - SPEED_F32
 
 
+```c
+{% include code/ExampleSampler.ino %}
+```
+

@@ -22,3 +22,7 @@ this filter node is a low filter with resonance. all inputs are *patchable* i.e 
 - RESONANCE_F32
 
 
+```c
+{% include code/ExampleFilters.ino %}
+```
+

@@ -16,3 +16,7 @@ index: 32
 the ADC ( (A)nalog (D)igital (C)onverter ) node represents a connection to the underlying hardware sound input. it accepts mono or stereo outputs.
 
 
+```c
+{% include code/ExampleADCtoDAC.ino %}
+```
+

@@ -23,3 +23,7 @@ this nodes mixes 4 incoming signal into 2. it also allows to define the mix valu
 - PAN_I8_F32
 
 
+```c
+{% include code/ExampleMixer4Stereo.ino %}
+```
+

@@ -21,3 +21,7 @@ this nodes mixes 2 incoming signal into 1. it also allows to define the mix rati
 - MIX_F32
 
 
+```c
+{% include code/ExampleMixer2.ino %}
+```
+

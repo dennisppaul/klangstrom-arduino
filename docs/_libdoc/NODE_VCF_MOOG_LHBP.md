@@ -23,3 +23,7 @@ this filter node is a high, low, and bandpass filter with resonance. all inputs 
 - TYPE_I8
 
 
+```c
+{% include code/ExampleFilters.ino %}
+```
+

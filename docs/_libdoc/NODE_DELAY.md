@@ -22,3 +22,7 @@ this node applies a delay ( + filter ) effect to the incoming signal.
 - FILTER_F32
 
 
+```c
+{% include code/ExampleDelay.ino %}
+```
+

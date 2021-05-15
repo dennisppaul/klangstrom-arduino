@@ -23,3 +23,7 @@ this node applies a phaser effect to the incoming signal. author/source: [Xavier
 - RANGE_MAX_F32
 
 
+```c
+{% include code/ExamplePhaser.ino %}
+```
+

@@ -23,3 +23,7 @@ this node allows the variation of a value over time.
 - STOP
 
 
+```c
+{% include code/ExampleEnvelope.ino %}
+```
+

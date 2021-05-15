@@ -15,3 +15,7 @@ index: 57
 this node stores an incoming signal block in a buffer for later use. it is one of the few nodes that allows to connect multiply inputs to its output.
 
 
+```c
+{% include code/ExampleSplitter.ino %}
+```
+

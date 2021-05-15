@@ -21,3 +21,7 @@ this node interpolates from one a current value to a desired value over time.
 - SPEED_F32
 
 
+```c
+{% include code/ExamplePortamento.ino %}
+```
+

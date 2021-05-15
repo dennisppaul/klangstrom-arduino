@@ -24,3 +24,7 @@ this node applies a chorus effect to the incoming signal. author/source: [Xavier
 - SWEEP_F32
 
 
+```c
+{% include code/ExampleChorus.ino %}
+```
+

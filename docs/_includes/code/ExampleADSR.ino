@@ -1,5 +1,8 @@
 //
-//  ExampleADSR.ino
+//  ExampleADSR.hpp
+//  Klang – a node+text-based synthesizer library
+//
+//
 //
 
 #include "Nodes.hpp"

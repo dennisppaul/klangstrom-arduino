@@ -30,3 +30,7 @@ index: 53
 a patch is a collection of one or more nodes. this node facilitates a structure to encapsulate complex node arrangements in one singal node. this node has 16 signal input and 16 output.
 
 
+```c
+{% include code/ExamplePatch16.ino %}
+```
+

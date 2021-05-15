@@ -21,3 +21,7 @@ this node applies distortion to the incoming signal. the clipping type can be `C
 - TYPE_I8
 
 
+```c
+{% include code/ExampleDistortion.ino %}
+```
+
