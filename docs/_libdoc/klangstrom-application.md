@@ -2,7 +2,7 @@
 layout: libdoc
 title: Klangstrom ( Application )
 permalink: /klangstrom-application/
-index: 2
+index: 1
 ---
 
 @todo(this page needs improvement!)

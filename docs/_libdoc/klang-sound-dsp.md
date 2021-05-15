@@ -2,7 +2,7 @@
 layout: libdoc
 title: Klang ( Sound + Digital Signal Processing )
 permalink: /klang-sound-dsp/
-index: 1
+index: 2
 ---
 
 @todo(this page needs improvement!)

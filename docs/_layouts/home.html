@@ -11,19 +11,19 @@ layout: default
         {{ content }}
     </div>
 
-    <p>---</p>
+    <p>-----------------------------------------------------------------------------------------</p>
 
     <div class="libdoc-list">
         <h2>Library Documentation</h2>
         <p>
             {% assign items = site.libdoc | sort: 'index' %}
-            {% for page in items reversed %}
+            {% for page in items %}
                 -&nbsp;<a href="{{ page.url | relative_url }}">{{ page.title }}</a></br>
             {% endfor %}
         </p>
     </div>
 
-    <p>---</p>
+    <p>-----------------------------------------------------------------------------------------</p>
         
     {%- if site.posts.size > 0 -%}
         <h2>Releases</h2>
