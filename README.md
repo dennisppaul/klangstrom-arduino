@@ -14,7 +14,7 @@ note, that this repository is only used for arduino hardware library ( board ) r
 - download + unpack *klangstrom-arduino* release ( or clone repository )
 - rename folder to `klangstrom`
 - move `klangstrom` folder to the arduino `hardware` folder ( e.g on MacOS `~/Documents/Arduino/hardware/` )
-- restart Arduino
+- (re)start Arduino
 
 ### default location of hardware folder on MacOS
 
