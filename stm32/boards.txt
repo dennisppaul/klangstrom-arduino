@@ -48,15 +48,15 @@ Klangstrom.menu.pnum.KLST_CORE.build.variant=KLST_CORE
 Klangstrom.menu.pnum.KLST_CORE.build.cmsis_lib_gcc=arm_cortexM7lfsp_math
 
 # Upload menu
-Klangstrom.menu.upload_method.swdMethod=STM32CubeProgrammer (SWD)
-Klangstrom.menu.upload_method.swdMethod.upload.protocol=0
-Klangstrom.menu.upload_method.swdMethod.upload.options=-g
-Klangstrom.menu.upload_method.swdMethod.upload.tool=stm32CubeProg
-
 Klangstrom.menu.upload_method.dfuMethod=STM32CubeProgrammer (DFU)
 Klangstrom.menu.upload_method.dfuMethod.upload.protocol=2
 Klangstrom.menu.upload_method.dfuMethod.upload.options=-g
 Klangstrom.menu.upload_method.dfuMethod.upload.tool=stm32CubeProg
+
+Klangstrom.menu.upload_method.swdMethod=STM32CubeProgrammer (SWD)
+Klangstrom.menu.upload_method.swdMethod.upload.protocol=0
+Klangstrom.menu.upload_method.swdMethod.upload.options=-g
+Klangstrom.menu.upload_method.swdMethod.upload.tool=stm32CubeProg
 
 ################################################################################
 # Serialx activation

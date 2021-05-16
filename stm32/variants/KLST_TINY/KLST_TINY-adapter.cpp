@@ -247,8 +247,12 @@ void KLST_pre_setup() {
 	// HAL_UART_Receive_IT(SERIAL_00_Handle, mSERIAL_00_BUFFER, KLST_SERIAL_BUFFER_SIZE);
 	// HAL_UART_Receive_IT(SERIAL_01_Handle, mSERIAL_01_BUFFER, KLST_SERIAL_BUFFER_SIZE);
 	if (mKLSTOptionEnableSerialPorts) {
+#ifdef HAL_UART_MODULE_ENABLED
 		KLST_SERIAL_00.begin(KLST_UART_BAUD);
 		KLST_SERIAL_01.begin(KLST_UART_BAUD);
+#else
+#warning @Klangstrom :: serial ports are not enabled in board options. ignore this warning if this was intended.
+#endif
 	}
 
   	/* beat */
@@ -261,13 +265,15 @@ void KLST_pre_setup() {
 	/* debug serial via USB */
 	// @todo(does it make sense to evaluate it here? or rather in `KLST_post_setup`)
 	if (mKLSTOptionEnableUSBSerialDebug) {
+    #if defined (USBCON) && defined(USBD_USE_CDC)
 		Serial.begin(KLST_UART_BAUD);
 		uint32_t mIterationGuard = 0;
 		while (!Serial && mIterationGuard < 1000000) {
 			// wait for serial port to connect. needed for native USB …
-			// but only for a limited number of iterations.
-		  mIterationGuard++;
+      // but only for a limited number of iterations.
+      mIterationGuard++;
 		}
+		#endif
 	}
 }
 
@@ -346,6 +352,10 @@ void KLST_shutdown_toggle_leds(const uint16_t pDelay) {
 }
 
 void KLST_shutdown() {
+  /* stop USB */
+  #if defined (USBCON) && defined(USBD_USE_CDC)
+  SerialUSB.end();
+  #endif
   /* stop timers */
   HAL_TIM_Encoder_Stop(&htim3, TIM_CHANNEL_ALL);
   HAL_TIM_Encoder_Stop(&htim8, TIM_CHANNEL_ALL);
@@ -414,6 +424,7 @@ void KLST_handle_encoders() {
 }
 
 void KLST_handleSerialPorts() {
+#ifdef HAL_UART_MODULE_ENABLED
 	{
 		const uint8_t mLength = KLST_SERIAL_00.available();
 		if (mLength > 0) {
@@ -430,6 +441,7 @@ void KLST_handleSerialPorts() {
 			data_receive(SERIAL_01, mData, mLength);
 		}
 	}
+#endif
 }
 
 void KLST_loop() {
@@ -553,12 +565,14 @@ bool klangstrom::pin_state(uint8_t pButton) {
 
 void klangstrom::data_transmit(const uint8_t pSender, uint8_t* pData, uint8_t pDataLength) {
   switch(pSender) {
+#ifdef HAL_UART_MODULE_ENABLED
     case SERIAL_00:
       KLST_SERIAL_00.write(pData, pDataLength);
       break;
     case SERIAL_01:
       KLST_SERIAL_01.write(pData, pDataLength);
       break;
+#endif
   }
 }
 

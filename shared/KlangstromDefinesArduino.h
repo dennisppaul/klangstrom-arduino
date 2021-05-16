@@ -30,12 +30,6 @@ typedef float       SIGNAL_TYPE;
 #define KLST_BUTTON_ENCODER_02          0x02
 #define KLST_BUTTON_PROGRAMMER          0x03
 
-/* data */
-
-// @todo(move this to `KlangstromDefines`)
-// #define KLST_SERIAL_00           0x03  
-// #define KLST_SERIAL_01           0x04  
-
 /* options */
 
 // enum KLST_OPTION { AUDIO_INPUT, ENCODERS, SERIAL_PORTS, BEAT}; // @todo(consider replacing defines with enum)

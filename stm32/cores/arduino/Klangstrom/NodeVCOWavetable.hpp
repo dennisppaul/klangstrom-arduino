@@ -101,6 +101,11 @@ namespace klang {
             return false;
         }
         
+        void set_array_ptr(const uint16_t pArrayPtr) {
+            const uint16_t mLastIndex = M_BUFFER_LENGTH - 1;
+            mArrayPtr = pArrayPtr > mLastIndex ? mLastIndex : pArrayPtr;
+        }
+        
         void set_command(const KLANG_CMD_TYPE pCommand, KLANG_CMD_TYPE* pPayLoad) {
             switch (pCommand) {
                 case KLANG_SET_FREQUENCY_F32:

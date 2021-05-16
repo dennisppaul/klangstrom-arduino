@@ -12,7 +12,7 @@ void setup() {
     /*  by default the programmer button is configured to trigger
         a reset and send the board into DFU mode once pressed.
         the option below deactivates the automatic behavior. */
-    option(KLST_OPTION_PROGRAMMMER_BUTTON, false);
+    option(KLST_OPTION_PROGRAMMER_BUTTON, false);
 }
 
 void loop() {
