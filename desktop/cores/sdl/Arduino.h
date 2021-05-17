@@ -6,6 +6,7 @@
 #include <stdbool.h>
 #include <string.h>
 #include <math.h>
+#include "KLST_Includes.h"
 
 #ifndef WEAK
 #define WEAK __attribute__ ((weak))
