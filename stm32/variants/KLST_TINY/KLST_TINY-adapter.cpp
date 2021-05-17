@@ -352,6 +352,7 @@ void KLST_shutdown_toggle_leds(const uint16_t pDelay) {
 }
 
 void KLST_shutdown() {
+  //@todo(check if other peripherals also need to be reset e.g GPIOs, SPI, I2C. see https://github.com/viktorvano/STM32-Bootloader/blob/master/README.md )
   /* stop USB */
   #if defined (USBCON) && defined(USBD_USE_CDC)
   SerialUSB.end();
