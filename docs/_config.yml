@@ -39,6 +39,7 @@ minima:
 
 include:
   - _pages
+#  - _manual
 #  - _libdoc
  
 # Exclude from processing.
@@ -65,6 +66,8 @@ collections:
   libdoc:
     title: Library Documentation
     output: true
-    order: 
-      - klangstrom-application.md
-      - klang-sound-dsp.md
+    permalink: /:collection/:name
+  manual:
+    title: Operation Manual
+    output: true
+    permalink: /manual/
