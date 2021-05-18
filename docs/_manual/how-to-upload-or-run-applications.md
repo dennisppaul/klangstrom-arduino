@@ -36,7 +36,7 @@ if the LEDs did not flash in a pattern or the programming fails, it is likely th
 
 the `SWD` mode allows the board to be programmed via an external ST-LINK programmer ( e.g [STLINK-V3MINI](https://www.st.com/content/st_com/en/products/development-tools/hardware-development-tools/hardware-development-tools-for-stm32/stlink-v3mini.html) ). the programmer can be connected to the board via the connector labeled `SWD`.
 
-the main benefit of this option is that it does not required to press a button prior to uploading an application.
+the main benefit of this option is that it does not required to press a button prior to uploading an application. this option also becomes particularly useful when wanting to use the USB port for other applications ( e.g USB HID or USB MIDI ).
 
 ## `DESKTOP`
 
