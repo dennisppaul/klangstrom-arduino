@@ -52,7 +52,7 @@ namespace klang {
         void update(CHANNEL_ID pChannel, SIGNAL_TYPE* pAudioBlock) {
             if (is_not_updated()) {
                 if (mConnection_CH_IN_SIGNAL != nullptr) {
-                    mBlock_IN_SIGNAL = AudioBlockPool::instance().request();
+                    AUDIO_BLOCK_ID mBlock_IN_SIGNAL = AudioBlockPool::instance().request();
                     mConnection_CH_IN_SIGNAL->update(mBlock_IN_SIGNAL);
                     /* process and store output blocks */
                     SIGNAL_TYPE* mBlockData_IN_SIGNAL       = AudioBlockPool::instance().data(mBlock_IN_SIGNAL);
@@ -70,15 +70,19 @@ namespace klang {
                             mBlockData_OUT_SIGNAL_R[i] = mono_chorus_compute(&delR, &lfoR, mBlockData_IN_SIGNAL[i]);
                         }
                     }
+                    AudioBlockPool::instance().release(mBlock_IN_SIGNAL);
                 }
                 flag_updated();
             }
             if (pChannel == CH_OUT_SIGNAL_LEFT && mBlock_OUT_SIGNAL_L != AudioBlockPool::NO_ID) {
                 SIGNAL_TYPE* mBlockData_OUT_SIGNAL_L = AudioBlockPool::instance().data(mBlock_OUT_SIGNAL_L);
-                // @TODO(should probably use `std::copy` here
                 for (uint16_t i=0; i < KLANG_SAMPLES_PER_AUDIO_BLOCK; i++) {
                     pAudioBlock[i] = mBlockData_OUT_SIGNAL_L[i];
                 }
+                // @TODO(should probably use `std::copy` here
+                // memcpy( mBlockData_OUT_SIGNAL_L,
+                //         pAudioBlock,
+                //         sizeof(SIGNAL_TYPE) * KLANG_SAMPLES_PER_AUDIO_BLOCK);
             } else if (pChannel == CH_OUT_SIGNAL_RIGHT && mStereoOutput && mBlock_OUT_SIGNAL_R != AudioBlockPool::NO_ID) {
                 SIGNAL_TYPE* mBlockData_OUT_SIGNAL_R = AudioBlockPool::instance().data(mBlock_OUT_SIGNAL_R);
                 for (uint16_t i=0; i < KLANG_SAMPLES_PER_AUDIO_BLOCK; i++) {
@@ -144,7 +148,6 @@ namespace klang {
         }
         
     private:
-        AUDIO_BLOCK_ID mBlock_IN_SIGNAL     = AudioBlockPool::NO_ID;
         AUDIO_BLOCK_ID mBlock_OUT_SIGNAL_L  = AudioBlockPool::NO_ID;
         AUDIO_BLOCK_ID mBlock_OUT_SIGNAL_R  = AudioBlockPool::NO_ID;
         

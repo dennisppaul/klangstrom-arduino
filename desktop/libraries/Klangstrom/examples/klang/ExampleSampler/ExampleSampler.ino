@@ -11,17 +11,18 @@ NodeDAC         mDAC;
 NodeSampler     mSampler;
 NodeADSR        mADSR;
 
-float mSamplerBuffer[KLANG_SAMPLES_PER_AUDIO_BLOCK];
+const uint16_t SAMPLER_BUFFER_SIZE = 2048;
+float mSamplerBuffer[SAMPLER_BUFFER_SIZE];
 
 void setup()  {
     Klang::connect(mSampler,    Node::CH_OUT_SIGNAL,  mADSR,   Node::CH_IN_SIGNAL);
     Klang::connect(mADSR,       Node::CH_OUT_SIGNAL,  mDAC,    NodeDAC::CH_IN_SIGNAL_LEFT);
 
     mSampler.set_buffer(mSamplerBuffer);
-    mSampler.set_buffer_size(KLANG_SAMPLES_PER_AUDIO_BLOCK);
+    mSampler.set_buffer_size(SAMPLER_BUFFER_SIZE);
     mSampler.loop(true);
-    for (uint16_t i = 0; i < KLANG_SAMPLES_PER_AUDIO_BLOCK; i++) {
-        const float r = (float)i / KLANG_SAMPLES_PER_AUDIO_BLOCK * TWO_PI * 4.0;
+    for (uint16_t i = 0; i < SAMPLER_BUFFER_SIZE; i++) {
+        const float r = (float)i / SAMPLER_BUFFER_SIZE * TWO_PI * 4.0;
         mSamplerBuffer[i] = sin(r) + sin(r * TWO_PI) * 0.1;
     }
 }
@@ -36,9 +37,11 @@ void event_receive(const EVENT_TYPE event, const float* data)  {
             mSampler.set_speed(1.0 + data[X] * 3.0);
             break;
         case EVENT_KEY_PRESSED:
+        case EVENT_ENCODER_BUTTON_00:
             mADSR.start();
             break;
         case EVENT_KEY_RELEASED:
+        case EVENT_ENCODER_BUTTON_01:
             mADSR.stop();
             break;
     }

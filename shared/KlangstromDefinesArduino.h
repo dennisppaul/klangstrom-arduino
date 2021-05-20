@@ -43,5 +43,6 @@ typedef float       SIGNAL_TYPE;
 #define KLST_OPTION_SERIAL_PORTS        0x05
 #define KLST_OPTION_BEAT                0x06
 #define KLST_OPTION_PROGRAMMER_BUTTON   0x07
+#define KLST_OPTION_ENABLE_AUDIO_INPUT  0x08
 
 #endif /* KlangstromDefinesArduino_h */

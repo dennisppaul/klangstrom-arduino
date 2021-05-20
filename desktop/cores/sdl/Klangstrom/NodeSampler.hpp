@@ -26,19 +26,19 @@ namespace klang {
         static const CHANNEL_ID NUM_CH_OUT      = 1;
         
         NodeSampler() {
-            mCounter = 0;
             mLoop = true;
             mSpeed = 1.0;
             mBuffer = nullptr;
             mLength = 0;
+            mCounter = 0;
         }
         
-        NodeSampler(float* pBuffer, uint32_t pLength) {
-            mCounter = 0;
+        NodeSampler(const float* pBuffer, uint32_t pLength) {
             mLoop = true;
             mSpeed = 1.0;
             mBuffer = pBuffer;
             mLength = pLength;
+            mCounter = mLength;
         }
         
         bool connect(Connection* pConnection, CHANNEL_ID pInChannel) { return false; }
@@ -53,7 +53,7 @@ namespace klang {
             }
         }
                 
-        void reset() {
+        void trigger() {
             mCounter = 0;
         }
         
@@ -65,11 +65,11 @@ namespace klang {
             return mCounter;
         }
         
-        void set_buffer(float* pBuffer) {
+        void set_buffer(const float* pBuffer) {
             mBuffer = pBuffer;
         }
         
-        float* get_buffer() {
+        const float* get_buffer() {
             return mBuffer;
         }
         
@@ -83,6 +83,7 @@ namespace klang {
         
         void set_buffer_size(uint32_t pLength) {
             mLength = pLength;
+            mCounter = mLength;
         }
         
         uint32_t get_buffer_size() {
@@ -103,9 +104,9 @@ namespace klang {
                 
     private:
         bool mLoop;
-        float* mBuffer;
+        const float* mBuffer;
         uint32_t mLength;
-        uint32_t mCounter;
+        float mCounter;
         float mSpeed;
         
         inline SIGNAL_TYPE next_sample() {
@@ -117,9 +118,9 @@ namespace klang {
                         return 0.0;
                     }
                 }
-                SIGNAL_TYPE s = mBuffer[mCounter];
+                const uint32_t mIndex = (uint32_t)mCounter;
                 mCounter += mSpeed;
-                return s;
+                return mBuffer[mIndex];
             } else {
                 return 0.0;
             }

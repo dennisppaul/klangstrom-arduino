@@ -16,7 +16,7 @@
  *       |                     |
  *       +---------------------+
  */
-// @TODO(implement `PAN`, `MIX`)
+// @TODO(implement `PAN`, `MIX` as INPUTs)
 
 #ifndef NodeMixer4Stereo_hpp
 #define NodeMixer4Stereo_hpp
@@ -55,51 +55,61 @@ namespace klang {
         
         void update(CHANNEL_ID pChannel, SIGNAL_TYPE* pAudioBlock) {
             if (is_not_updated()) {
-                AUDIO_BLOCK_ID mBlock_SIGNAL[4] = { AudioBlockPool::NO_ID, AudioBlockPool::NO_ID, AudioBlockPool::NO_ID, AudioBlockPool::NO_ID };
-                SIGNAL_TYPE* mBlockData_SIGNAL[4];
+                AUDIO_BLOCK_ID mBlock_SIGNAL[NUM_SIGNAL_INPUT_CHANNELS] = { AudioBlockPool::NO_ID, AudioBlockPool::NO_ID, AudioBlockPool::NO_ID, AudioBlockPool::NO_ID };
+                SIGNAL_TYPE* mBlockData_SIGNAL[NUM_SIGNAL_INPUT_CHANNELS];
                 uint8_t mSignalInputCounter = 0;
-                for (uint8_t i=0; i < 4; i++) {
+                for (uint8_t i=0; i < NUM_SIGNAL_INPUT_CHANNELS; ++i) {
                     if (mConnection_CH_IN_SIGNAL[i] != nullptr) {
                         mBlock_SIGNAL[i] = AudioBlockPool::instance().request();
                         mConnection_CH_IN_SIGNAL[i]->update(mBlock_SIGNAL[i]);
+                        mBlockData_SIGNAL[i] = AudioBlockPool::instance().data(mBlock_SIGNAL[i]);
+                        mSignalInputCounter++;
                     }
-                    mBlockData_SIGNAL[i] = AudioBlockPool::instance().data(mBlock_SIGNAL[i]);
-                    mSignalInputCounter += mBlockData_SIGNAL[i]==nullptr ? 0 : 1;
                 }
-                const float mRatio = 1.0 / mSignalInputCounter;
-                
+
                 mBlock_CH_OUT_SIGNAL_LEFT = AudioBlockPool::instance().request();
                 mBlock_CH_OUT_SIGNAL_RIGHT = AudioBlockPool::instance().request();
                 SIGNAL_TYPE* mBlockData_CH_OUT_SIGNAL_LEFT = AudioBlockPool::instance().data(mBlock_CH_OUT_SIGNAL_LEFT);
                 SIGNAL_TYPE* mBlockData_CH_OUT_SIGNAL_RIGHT = AudioBlockPool::instance().data(mBlock_CH_OUT_SIGNAL_RIGHT);
-                for (uint16_t k=0; k < KLANG_SAMPLES_PER_AUDIO_BLOCK; k++) {
-                    float sL = 0.0;
-                    float sR = 0.0;
-                    for (uint8_t i=0; i < 4; i++) {
-                        const float s = (mBlockData_SIGNAL[i]!=nullptr) ? (mBlockData_SIGNAL[i][k] * mMix[i]) : 0.0;
-                        sL += s * mPan[i];
-                        sR += s * (1.0 - mPan[i]);
+
+                if (mSignalInputCounter == 0) {
+                    memset(mBlockData_CH_OUT_SIGNAL_LEFT, 0.0, KLANG_SAMPLES_PER_AUDIO_BLOCK);
+                    memset(mBlockData_CH_OUT_SIGNAL_RIGHT, 0.0, KLANG_SAMPLES_PER_AUDIO_BLOCK);
+                } else {
+                    const float mRatio = 1.0 / mSignalInputCounter;
+                    for (uint16_t i=0; i < KLANG_SAMPLES_PER_AUDIO_BLOCK; ++i) {
+                        mBlockData_CH_OUT_SIGNAL_LEFT[i] = 0.0;
+                        mBlockData_CH_OUT_SIGNAL_RIGHT[i] = 0.0;
+                        for (uint8_t k=0; k < NUM_SIGNAL_INPUT_CHANNELS; ++k) {
+                            const float s = mBlockData_SIGNAL[k][i] * mMix[k];
+                            const float sL = s * mPan[k];
+                            const float mPanInv = 1.0 - mPan[k];
+                            const float sR = s * mPanInv;
+                            mBlockData_CH_OUT_SIGNAL_LEFT[i] += sL;
+                            mBlockData_CH_OUT_SIGNAL_RIGHT[i] += sR;
+                        }
+                        mBlockData_CH_OUT_SIGNAL_LEFT[i] *= mRatio;
+                        mBlockData_CH_OUT_SIGNAL_RIGHT[i] *= mRatio;
                     }
-                    mBlockData_CH_OUT_SIGNAL_LEFT[k] = sL * mRatio;
-                    mBlockData_CH_OUT_SIGNAL_RIGHT[k] = sR * mRatio;
                 }
-                for (uint8_t i=0; i < 4; i++) {
-                    if (mConnection_CH_IN_SIGNAL[i] != nullptr) {
+                for (uint8_t i=0; i < NUM_SIGNAL_INPUT_CHANNELS; ++i) {
+                    if (mBlock_SIGNAL[i] != AudioBlockPool::NO_ID) {
                         AudioBlockPool::instance().release(mBlock_SIGNAL[i]);
                     }
                 }
+
                 flag_updated();
             }
             if (pChannel == CH_OUT_SIGNAL_LEFT) {
                 SIGNAL_TYPE* mBlockData_CH_OUT_SIGNAL_LEFT = AudioBlockPool::instance().data(mBlock_CH_OUT_SIGNAL_LEFT);
-                for (uint16_t i=0; i < KLANG_SAMPLES_PER_AUDIO_BLOCK; i++) {
-                    pAudioBlock[i] = mBlockData_CH_OUT_SIGNAL_LEFT[i];
-                }
+                memcpy( pAudioBlock,
+                        mBlockData_CH_OUT_SIGNAL_LEFT,
+                        sizeof(SIGNAL_TYPE) * KLANG_SAMPLES_PER_AUDIO_BLOCK);
             } else if (pChannel == CH_OUT_SIGNAL_RIGHT) {
                 SIGNAL_TYPE* mBlockData_CH_OUT_SIGNAL_RIGHT = AudioBlockPool::instance().data(mBlock_CH_OUT_SIGNAL_RIGHT);
-                for (uint16_t i=0; i < KLANG_SAMPLES_PER_AUDIO_BLOCK; i++) {
-                    pAudioBlock[i] = mBlockData_CH_OUT_SIGNAL_RIGHT[i];
-                }
+                memcpy( pAudioBlock,
+                        mBlockData_CH_OUT_SIGNAL_RIGHT,
+                        sizeof(SIGNAL_TYPE) * KLANG_SAMPLES_PER_AUDIO_BLOCK);
             }
         }
         
@@ -126,10 +136,11 @@ namespace klang {
         AUDIO_BLOCK_ID mBlock_CH_OUT_SIGNAL_LEFT    = AudioBlockPool::NO_ID;
         AUDIO_BLOCK_ID mBlock_CH_OUT_SIGNAL_RIGHT   = AudioBlockPool::NO_ID;
         
-        Connection* mConnection_CH_IN_SIGNAL[4] = {nullptr, nullptr, nullptr, nullptr};
+        static const uint8_t NUM_SIGNAL_INPUT_CHANNELS = 4;
+        Connection* mConnection_CH_IN_SIGNAL[NUM_SIGNAL_INPUT_CHANNELS] = {nullptr, nullptr, nullptr, nullptr};
         
-        SIGNAL_TYPE mMix[4] = {1.0, 1.0, 1.0, 1.0};
-        SIGNAL_TYPE mPan[4] = {0.5, 0.5, 0.5, 0.5};
+        SIGNAL_TYPE mMix[NUM_SIGNAL_INPUT_CHANNELS] = {1.0, 1.0, 1.0, 1.0};
+        SIGNAL_TYPE mPan[NUM_SIGNAL_INPUT_CHANNELS] = {0.5, 0.5, 0.5, 0.5};
     };
 }
 

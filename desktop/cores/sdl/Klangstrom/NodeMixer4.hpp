@@ -16,7 +16,7 @@
  *       |                     |
  *       +---------------------+
  */
-// @TODO(implement `MIX`)
+// @TODO(implement `MIX` as INPUT)
 
 #ifndef NodeMixer4_hpp
 #define NodeMixer4_hpp
@@ -33,7 +33,7 @@ namespace klang {
         static const CHANNEL_ID NUM_CH_IN           = 4;
         static const CHANNEL_ID NUM_CH_OUT          = 1;
         
-        enum SIGNAL_CHANNEL { SIGNAL_0, SIGNAL_1, SIGNAL_2, SIGNAL_3 };
+        enum SIGNAL_CHANNEL { SIGNAL_0 = 0, SIGNAL_1, SIGNAL_2, SIGNAL_3 };
         
         bool connect(Connection* pConnection, CHANNEL_ID pInChannel) {
             if (pInChannel == CH_IN_SIGNAL_0) {
@@ -77,48 +77,62 @@ namespace klang {
         }
         
         void update(CHANNEL_ID pChannel, SIGNAL_TYPE* pAudioBlock) {
-            AUDIO_BLOCK_ID mBlock_SIGNAL_A  = AudioBlockPool::NO_ID;
-            AUDIO_BLOCK_ID mBlock_SIGNAL_B  = AudioBlockPool::NO_ID;
-            AUDIO_BLOCK_ID mBlock_SIGNAL_C  = AudioBlockPool::NO_ID;
-            AUDIO_BLOCK_ID mBlock_SIGNAL_D  = AudioBlockPool::NO_ID;
-            if (is_not_updated()) {
+            if (is_not_updated()
+                && pChannel == CH_OUT_SIGNAL
+                &&(mConnection_CH_IN_SIGNAL_0!=nullptr 
+                    && mConnection_CH_IN_SIGNAL_1!=nullptr
+                    && mConnection_CH_IN_SIGNAL_2!=nullptr
+                    && mConnection_CH_IN_SIGNAL_3!=nullptr)) {
+                AUDIO_BLOCK_ID mBlock_SIGNAL_0  = AudioBlockPool::NO_ID;
+                AUDIO_BLOCK_ID mBlock_SIGNAL_1  = AudioBlockPool::NO_ID;
+                AUDIO_BLOCK_ID mBlock_SIGNAL_2  = AudioBlockPool::NO_ID;
+                AUDIO_BLOCK_ID mBlock_SIGNAL_3  = AudioBlockPool::NO_ID;
+                SIGNAL_TYPE* mBlockData_SIGNAL_0 = nullptr;
+                SIGNAL_TYPE* mBlockData_SIGNAL_1 = nullptr;
+                SIGNAL_TYPE* mBlockData_SIGNAL_2 = nullptr;
+                SIGNAL_TYPE* mBlockData_SIGNAL_3 = nullptr;
+                
                 if (mConnection_CH_IN_SIGNAL_0 != nullptr) {
-                    mBlock_SIGNAL_A = AudioBlockPool::instance().request();
-                    mConnection_CH_IN_SIGNAL_0->update(mBlock_SIGNAL_A);
+                    mBlock_SIGNAL_0 = AudioBlockPool::instance().request();
+                    mBlockData_SIGNAL_0 = AudioBlockPool::instance().data(mBlock_SIGNAL_0);
+                    mConnection_CH_IN_SIGNAL_0->update(mBlock_SIGNAL_0);
                 }
                 if (mConnection_CH_IN_SIGNAL_1 != nullptr) {
-                    mBlock_SIGNAL_B = AudioBlockPool::instance().request();
-                    mConnection_CH_IN_SIGNAL_1->update(mBlock_SIGNAL_B);
+                    mBlock_SIGNAL_1 = AudioBlockPool::instance().request();
+                    mBlockData_SIGNAL_1 = AudioBlockPool::instance().data(mBlock_SIGNAL_1);
+                    mConnection_CH_IN_SIGNAL_1->update(mBlock_SIGNAL_1);
                 }
                 if (mConnection_CH_IN_SIGNAL_2 != nullptr) {
-                    mBlock_SIGNAL_C = AudioBlockPool::instance().request();
-                    mConnection_CH_IN_SIGNAL_2->update(mBlock_SIGNAL_C);
+                    mBlock_SIGNAL_2 = AudioBlockPool::instance().request();
+                    mBlockData_SIGNAL_2 = AudioBlockPool::instance().data(mBlock_SIGNAL_2);
+                    mConnection_CH_IN_SIGNAL_2->update(mBlock_SIGNAL_2);
                 }
                 if (mConnection_CH_IN_SIGNAL_3 != nullptr) {
-                    mBlock_SIGNAL_D = AudioBlockPool::instance().request();
-                    mConnection_CH_IN_SIGNAL_3->update(mBlock_SIGNAL_D);
+                    mBlock_SIGNAL_3 = AudioBlockPool::instance().request();
+                    mBlockData_SIGNAL_3 = AudioBlockPool::instance().data(mBlock_SIGNAL_3);
+                    mConnection_CH_IN_SIGNAL_3->update(mBlock_SIGNAL_3);
                 }
+
+                const float mSignalInputCounter =
+                ((mBlockData_SIGNAL_0==nullptr) ? 0 : 1) +
+                ((mBlockData_SIGNAL_1==nullptr) ? 0 : 1) +
+                ((mBlockData_SIGNAL_2==nullptr) ? 0 : 1) +
+                ((mBlockData_SIGNAL_3==nullptr) ? 0 : 1);
+                for (uint16_t i=0; i < KLANG_SAMPLES_PER_AUDIO_BLOCK; ++i) {
+                    const float s0 = (mBlockData_SIGNAL_0!=nullptr) ? (mBlockData_SIGNAL_0[i] * mMix[SIGNAL_CHANNEL::SIGNAL_0]) : 0.0;
+                    const float s1 = (mBlockData_SIGNAL_1!=nullptr) ? (mBlockData_SIGNAL_1[i] * mMix[SIGNAL_CHANNEL::SIGNAL_1]) : 0.0;
+                    const float s2 = (mBlockData_SIGNAL_2!=nullptr) ? (mBlockData_SIGNAL_2[i] * mMix[SIGNAL_CHANNEL::SIGNAL_2]) : 0.0;
+                    const float s3 = (mBlockData_SIGNAL_3!=nullptr) ? (mBlockData_SIGNAL_3[i] * mMix[SIGNAL_CHANNEL::SIGNAL_3]) : 0.0;
+                    pAudioBlock[i] = ( s0 + s1 + s2 + s3 ) / mSignalInputCounter;
+                }
+                AudioBlockPool::instance().release(mBlock_SIGNAL_0);
+                AudioBlockPool::instance().release(mBlock_SIGNAL_1);
+                AudioBlockPool::instance().release(mBlock_SIGNAL_2);
+                AudioBlockPool::instance().release(mBlock_SIGNAL_3);
+
                 flag_updated();
-            }
-            if (pChannel == CH_OUT_SIGNAL) {
-                SIGNAL_TYPE* mBlockData_SIGNAL_A = AudioBlockPool::instance().data(mBlock_SIGNAL_A);
-                SIGNAL_TYPE* mBlockData_SIGNAL_B = AudioBlockPool::instance().data(mBlock_SIGNAL_B);
-                SIGNAL_TYPE* mBlockData_SIGNAL_C = AudioBlockPool::instance().data(mBlock_SIGNAL_C);
-                SIGNAL_TYPE* mBlockData_SIGNAL_D = AudioBlockPool::instance().data(mBlock_SIGNAL_D);
-                const uint8_t mSignalInputCounter =
-                (mBlockData_SIGNAL_A==nullptr ? 0 : 1) +
-                (mBlockData_SIGNAL_B==nullptr ? 0 : 1) +
-                (mBlockData_SIGNAL_C==nullptr ? 0 : 1) +
-                (mBlockData_SIGNAL_D==nullptr ? 0 : 1);
-                const float mRatio = 1.0 / mSignalInputCounter;
-                for (uint16_t i=0; i < KLANG_SAMPLES_PER_AUDIO_BLOCK; i++) {
-                    pAudioBlock[i] =
-                    ((mBlockData_SIGNAL_A!=nullptr ? mBlockData_SIGNAL_A[i] : 0.0) * mMix[SIGNAL_CHANNEL::SIGNAL_0] +
-                     (mBlockData_SIGNAL_B!=nullptr ? mBlockData_SIGNAL_B[i] : 0.0) * mMix[SIGNAL_CHANNEL::SIGNAL_1] +
-                     (mBlockData_SIGNAL_C!=nullptr ? mBlockData_SIGNAL_C[i] : 0.0) * mMix[SIGNAL_CHANNEL::SIGNAL_2] +
-                     (mBlockData_SIGNAL_D!=nullptr ? mBlockData_SIGNAL_D[i] : 0.0) * mMix[SIGNAL_CHANNEL::SIGNAL_3]
-                     ) * mRatio;
-                }
+            } else {
+                memset(pAudioBlock, 0.0, KLANG_SAMPLES_PER_AUDIO_BLOCK);
             }
         }
         
@@ -140,7 +154,7 @@ namespace klang {
         Connection* mConnection_CH_IN_SIGNAL_2  = nullptr;
         Connection* mConnection_CH_IN_SIGNAL_3  = nullptr;
         
-        float mMix[4] = {0.5, 0.5, 0.5, 0.5};
+        float mMix[4] = {1,1,1,1};
     };
 }
 

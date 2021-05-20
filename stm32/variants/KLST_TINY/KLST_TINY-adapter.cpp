@@ -23,6 +23,7 @@ bool mKLSTOptionEnableBeat = true;
 bool mKLSTOptionEnableEncoders = true;
 bool mKLSTOptionEnableSerialPorts = true;
 bool mKLSTOptionEnableProgrammerButton = true;
+bool mKLSTOptionEnableAudioInput = true;
 bool mKLSTOptionEnableUSBSerialDebug = false;
 uint8_t mKLSTAudioLine = KLST_MIC;
 
@@ -90,10 +91,12 @@ void KLST_start_audio_codec() {
 	if(HAL_OK != HAL_SAI_Transmit_DMA(&hsai_BlockB1, (uint8_t*) dma_TX_buffer, I2S_BUFFER_SIZE << 1)) {
 // 		KLST_LOG("### ERROR initializing SAI TX");
 	}
-	if(HAL_OK != HAL_SAI_Receive_DMA(&hsai_BlockA1, (uint8_t*) dma_RX_buffer, I2S_BUFFER_SIZE << 1)) {
-// 		KLST_LOG("### ERROR initializing SAI RX");
+	if (mKLSTOptionEnableAudioInput) {
+    if(HAL_OK != HAL_SAI_Receive_DMA(&hsai_BlockA1, (uint8_t*) dma_RX_buffer, I2S_BUFFER_SIZE << 1)) {
+  // 		KLST_LOG("### ERROR initializing SAI RX");
+    }
+    mCurrentRXBuffer = &(dma_RX_buffer[0]);
 	}
-	mCurrentRXBuffer = &(dma_RX_buffer[0]);
 }
 
 #define SANITY_TEST             0
@@ -339,6 +342,10 @@ void KLST_post_setup() {
 	}
 }
 
+bool KLST_audio_input_enabled() {
+  return mKLSTOptionEnableAudioInput;
+}
+
 uint32_t KLST_boot_address() {
   return 0x1FFF0000; // boot address for KLST_TINY
 //   return 0x1FF09800; // boot address for KLST_CORE
@@ -502,6 +509,9 @@ void klangstrom::option(uint8_t pOption, uint8_t pValue) {
 			break;
 		case KLST_OPTION_PROGRAMMER_BUTTON:
 			mKLSTOptionEnableProgrammerButton = pValue;
+			break;
+		case KLST_OPTION_ENABLE_AUDIO_INPUT:
+			mKLSTOptionEnableAudioInput = pValue;
 			break;
 	}
 }

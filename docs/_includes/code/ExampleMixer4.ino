@@ -32,7 +32,7 @@ void setup()  {
     mOscC.set_frequency(DEFAULT_FREQUENCY * (1.0 + mOffset));
     mOscC.set_waveform(NodeVCOWavetable::WAVEFORM::SINE);
 
-    mOscD.set_frequency(DEFAULT_FREQUENCY * (0.5 + mOffset));
+    mOscD.set_frequency(DEFAULT_FREQUENCY * (8.0 + mOffset));
     mOscD.set_waveform(NodeVCOWavetable::WAVEFORM::SINE);
 }
 

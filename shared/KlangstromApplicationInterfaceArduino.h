@@ -35,6 +35,7 @@ void KLST_fill_buffer(uint32_t *pTXBuffer, uint32_t *pRXBuffer, uint16_t pBuffer
 void KLST_start_audio_codec();
 void KLST_jump_to_bootloader();
 uint32_t KLST_boot_address();
+bool KLST_audio_input_enabled();
 void KLST_shutdown();
 
 #ifdef __cplusplus

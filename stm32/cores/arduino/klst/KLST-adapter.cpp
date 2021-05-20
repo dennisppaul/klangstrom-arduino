@@ -26,18 +26,15 @@ SIGNAL_TYPE mRightTX[KLANG_SAMPLES_PER_AUDIO_BLOCK];
 SIGNAL_TYPE mLeftRX[KLANG_SAMPLES_PER_AUDIO_BLOCK];
 SIGNAL_TYPE mRightRX[KLANG_SAMPLES_PER_AUDIO_BLOCK];
 WEAK void KLST_fill_buffer(uint32_t *pTXBuffer, uint32_t *pRXBuffer, uint16_t pBufferLength) {
-  /* @todo (check if it is more smart to not instantiate the arrays every time) */
-//   auto *mLeftTX = new SIGNAL_TYPE[KLANG_SAMPLES_PER_AUDIO_BLOCK];
-//   auto *mRightTX = new SIGNAL_TYPE[KLANG_SAMPLES_PER_AUDIO_BLOCK];
-//   auto *mLeftRX = new SIGNAL_TYPE[KLANG_SAMPLES_PER_AUDIO_BLOCK];
-//   auto *mRightRX = new SIGNAL_TYPE[KLANG_SAMPLES_PER_AUDIO_BLOCK];
   /* unpack receive buffer to sample */
-  for (int i = 0; i < KLANG_SAMPLES_PER_AUDIO_BLOCK; i++) {
-    const uint32_t p = pRXBuffer[i];
-    const int16_t mLeftInt  = (p & M_MASK_LEFT);
-    const int16_t mRightInt = (p & M_MASK_RIGHT) >> M_NUM_OF_BITS;
-    mLeftRX[i] = mLeftInt / M_INT_SCALE;
-    mRightRX[i] = mRightInt / M_INT_SCALE;
+  if (KLST_audio_input_enabled()) {
+    for (int i = 0; i < KLANG_SAMPLES_PER_AUDIO_BLOCK; i++) {
+      const uint32_t p = pRXBuffer[i];
+      const int16_t mLeftInt  = (p & M_MASK_LEFT);
+      const int16_t mRightInt = (p & M_MASK_RIGHT) >> M_NUM_OF_BITS;
+      mLeftRX[i] = mLeftInt / M_INT_SCALE;
+      mRightRX[i] = mRightInt / M_INT_SCALE;
+    }
   }
   /* calculate next audio block */
   audioblock(mLeftTX, mRightTX, mLeftRX, mRightRX);
@@ -52,10 +49,6 @@ WEAK void KLST_fill_buffer(uint32_t *pTXBuffer, uint32_t *pRXBuffer, uint16_t pB
       // int16_t mR = (int16_t) (mRightTX[i] * 32767.0f);
       // pTXBuffer[i] = ((uint32_t) (uint16_t) mL) << 0 | ((uint32_t) (uint16_t) mR) << 16;
   }
-//   delete[] mLeftTX;
-//   delete[] mRightTX;
-//   delete[] mLeftRX;
-//   delete[] mRightRX;
 }
 
 /*
