@@ -25,8 +25,10 @@ void setup()  {
     const float mOffset = 0.04;
     mOscA.set_frequency(DEFAULT_FREQUENCY * (4.0 + mOffset));
     mOscA.set_waveform(NodeVCOWavetable::WAVEFORM::SINE);
+    mOscA.set_amplitude(0.2);
     mOscB.set_frequency(DEFAULT_FREQUENCY * (2.0 + mOffset));
     mOscB.set_waveform(NodeVCOWavetable::WAVEFORM::SINE);
+    mOscB.set_amplitude(0.4);
     mOscC.set_frequency(DEFAULT_FREQUENCY * (1.0 + mOffset));
     mOscC.set_waveform(NodeVCOWavetable::WAVEFORM::SINE);
     mOscD.set_frequency(DEFAULT_FREQUENCY * (0.5 + mOffset));
@@ -36,6 +38,13 @@ void setup()  {
     mMixer.set_mix(NodeMixer4Stereo::SIGNAL_CHANNEL::SIGNAL_1, 0.55);
     mMixer.set_mix(NodeMixer4Stereo::SIGNAL_CHANNEL::SIGNAL_2, 0.8);
     mMixer.set_mix(NodeMixer4Stereo::SIGNAL_CHANNEL::SIGNAL_3, 1.0);
+
+    mMixer.set_pan(NodeMixer4Stereo::SIGNAL_CHANNEL::SIGNAL_0, -1.0);
+    mMixer.set_pan(NodeMixer4Stereo::SIGNAL_CHANNEL::SIGNAL_1, -0.5);
+    mMixer.set_pan(NodeMixer4Stereo::SIGNAL_CHANNEL::SIGNAL_2, 0.5);
+    mMixer.set_pan(NodeMixer4Stereo::SIGNAL_CHANNEL::SIGNAL_3, 1.0);
+
+    mDAC.set_stereo(true);
 }
 
 void event_receive(const EVENT_TYPE event, const float* data)  {

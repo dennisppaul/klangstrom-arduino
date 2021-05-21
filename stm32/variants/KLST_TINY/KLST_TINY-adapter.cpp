@@ -80,7 +80,7 @@ void MX_TIM8_Init();
  * SAI callback implementation
  */
 
-#define	I2S_BUFFER_SIZE		(KLANG_SAMPLES_PER_AUDIO_BLOCK*2)
+#define	I2S_BUFFER_SIZE  (KLANG_SAMPLES_PER_AUDIO_BLOCK*2)
 uint32_t __attribute__((section (".dmadata"))) dma_TX_buffer[I2S_BUFFER_SIZE];
 uint32_t __attribute__((section (".dmadata"))) dma_RX_buffer[I2S_BUFFER_SIZE];
 uint32_t *mCurrentRXBuffer;
@@ -103,24 +103,31 @@ void KLST_start_audio_codec() {
 #define SANITY_TEST_PASSTHROUGH 0
 
 #if SANITY_TEST
-float osc_phi = 0;
-float osc_phi_inc = 220.0f / (float)KLANG_AUDIO_RATE); // generating 440Hz
+
+float left_osc_phi = 0;
+float left_osc_phi_inc = 220.0f / (float)KLANG_AUDIO_RATE;  // generating 220Hz
+float right_osc_phi = 0;
+float right_osc_phi_inc = 110.0f / (float)KLANG_AUDIO_RATE; // generating 110Hz
 
 void FillBuffer(uint32_t *mTXBuffer, uint32_t *mRXBuffer, uint16_t len) {
 	for (uint16_t i = 0; i < len; i++) {
 #if SANITY_TEST_PASSTHROUGH
 		mTXBuffer[i] = mRXBuffer[i];
 #else
-		float a;
-		int16_t y;
-		a = (float) sin(osc_phi * 6.2832f) * 0.20f;
-		osc_phi += osc_phi_inc;
-		osc_phi -= (float) ((uint16_t) osc_phi);
+    const float mAmplitude = 0.1f;
 
-		y = (int16_t) (a * 32767.0f);
+		float mLeftf = (float) sin(left_osc_phi * 6.2832f) * mAmplitude;
+		left_osc_phi += left_osc_phi_inc;
+		left_osc_phi -= (float) ((uint16_t) left_osc_phi);
+		int16_t mLefti = (int16_t) (mLeftf * 32767.0f);
+
+		float mRightf = (float) sin(right_osc_phi * 6.2832f) * mAmplitude;
+		right_osc_phi += right_osc_phi_inc;
+		right_osc_phi -= (float) ((uint16_t) right_osc_phi);
+		int16_t mRighti = (int16_t) (mRightf * 32767.0f);
 
 		// both channels
-		mTXBuffer[i] = ((uint32_t) (uint16_t) y) << 0 | ((uint32_t) (uint16_t) y) << 16;
+		mTXBuffer[i] = ((uint32_t) (uint16_t) mLefti) << 0 | ((uint32_t) (uint16_t) mRighti) << 16;
 #endif
 	}
 }
@@ -349,6 +356,22 @@ bool KLST_audio_input_enabled() {
 uint32_t KLST_boot_address() {
   return 0x1FFF0000; // boot address for KLST_TINY
 //   return 0x1FF09800; // boot address for KLST_CORE
+}
+
+uint32_t KLST_U_ID_address() {
+  //    RM0433 Reference manual STM32H742, STM32H743/753 and STM32H750, p3271ff
+  //
+  //    - Base address   : 0x1FF1E800
+  //    - address offset : 0x00 U_ID(31:00)
+  //    - address offset : 0x04 U_ID(63:32)
+  //    - address offset : 0x08 U_ID(95:64)
+
+  //    RM0390 Reference manual STM32F446, p1316ff
+  //    - Base address   : 0x1FFF7A10
+  //    - address offset : 0x00 U_ID(31: 00)
+  //    - address offset : 0x04 U_ID(63: 32)
+  //    - address offset : 0x08 U_ID(95: 64)
+  return 0x1FFF7A10;
 }
 
 void KLST_shutdown_toggle_leds(const uint16_t pDelay) {

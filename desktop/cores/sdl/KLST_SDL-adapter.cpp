@@ -46,6 +46,8 @@ void klangstrom::event_transmit(const uint8_t pEvent, float* pPayload) { klangst
 
 void klangstrom::data_transmit(const uint8_t pSender, uint8_t* pData, uint8_t pDataLength) { klangstrom_arduino_data_transmit(pSender, pData, pDataLength); }
 
+int16_t klangstrom::ID() { return KLST_NO_ID; }
+
 /* ----------------------------------------------------------------------------------------------------- */
 
 int digitalRead(uint32_t pPin) {  
