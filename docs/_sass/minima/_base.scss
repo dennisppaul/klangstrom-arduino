@@ -25,7 +25,7 @@ body {
      -moz-font-feature-settings: "kern" 1;
        -o-font-feature-settings: "kern" 1;
           font-feature-settings: "kern" 1;
-  font-kerning: normal;
+//   font-kerning: normal;
   display: flex;
   min-height: 100vh;
   flex-direction: column;
@@ -40,7 +40,7 @@ h1, h2, h3, h4, h5, h6,
 p, blockquote, pre,
 ul, ol, dl, figure,
 %vertical-rhythm {
-  margin-bottom: $spacing-unit / 2;
+  margin-bottom: $spacing-unit;
 }
 
 
@@ -135,7 +135,7 @@ a {
 blockquote {
   color: $grey-color;
   border-left: 4px solid $grey-color-light;
-  padding-left: $spacing-unit / 2;
+  padding-left: $spacing-unit;
   @include relative-font-size(1);
 //   letter-spacing: -1px;
   font-style: italic;

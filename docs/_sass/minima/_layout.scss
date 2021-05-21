@@ -29,6 +29,7 @@ a:active {
 h1, h2, h3, h4 {
   @include relative-font-size(1);
   line-height: 1;
+  letter-spacing: -1px;
 
   @include media-query($on-laptop) {
     @include relative-font-size(1);
@@ -40,6 +41,21 @@ h1, h2 {
   font-weight: 700;
 //   text-transform: uppercase;
 //   font-size: $base-font-size * 1.5;
+}
+
+strong {
+  letter-spacing: -1px;
+}
+
+hr {
+    margin-bottom: 1em;
+    height: 0;
+    color: #FFF;
+    background-color: #FFF;
+    border-style: inset;
+    border-top: 1px dashed #000;
+    border-width: 1px;
+    display: block;
 }
 
 /**

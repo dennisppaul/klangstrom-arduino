@@ -2,9 +2,10 @@
 
 ## 0.0.1
 
-- added application to examples
+- boards have now unique identifiers `ID()` ( based on their hardware serial number )
+- added application to examples ( drum machine + sequencer )
 - added documentation ( e.g node library )
-- fixed mixer nodes ( there are still some performance issues with `NodeMixer4Stereo` likely because of nested loops )
+- fixed mixer nodes ( `NodeMixer4Stereo` is still not perfect )
 - fixed DFU mode ( USB peripherals had to be deinitialized before reset )
 - added desktop simulator (SDL)
 - added extensions ( i.e reverb, vocoder + TTS )
@@ -12,4 +13,3 @@
 ## 0.0.0
 
 - initial release
-
