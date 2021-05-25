@@ -39,8 +39,8 @@ uint8_t mTrackID = 0;
 void setup() {
     Klang::lock();
 
-    Klang::connect(mOscLeft,  Node::CH_OUT_SIGNAL, mMixer,    NodeMixer2::CH_IN_SIGNAL_LEFT);
-    Klang::connect(mOscRight, Node::CH_OUT_SIGNAL, mMixer,    NodeMixer2::CH_IN_SIGNAL_RIGHT);
+    Klang::connect(mOscLeft,  Node::CH_OUT_SIGNAL, mMixer,    NodeMixer2::CH_IN_SIGNAL_0);
+    Klang::connect(mOscRight, Node::CH_OUT_SIGNAL, mMixer,    NodeMixer2::CH_IN_SIGNAL_1);
     Klang::connect(mMixer,    Node::CH_OUT_SIGNAL, mFilter,   Node::CH_IN_SIGNAL);
     Klang::connect(mFilter,   Node::CH_OUT_SIGNAL, mVCA,      Node::CH_IN_SIGNAL);
     Klang::connect(mVCA,      Node::CH_OUT_SIGNAL, mADSR,     Node::CH_IN_SIGNAL);

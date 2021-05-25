@@ -32,12 +32,12 @@ uint8_t mHihatPattern = 0;
 void setup() {
     Klang::lock();
 
-    Klang::connect(mSampleSnare,   Node::CH_OUT_SIGNAL, mMixer1,      NodeMixer2::CH_IN_SIGNAL_LEFT);
-    Klang::connect(mZero,          Node::CH_OUT_SIGNAL, mMixer1,      NodeMixer2::CH_IN_SIGNAL_RIGHT);
-    Klang::connect(mSampleHihat,   Node::CH_OUT_SIGNAL, mMixer2,      NodeMixer2::CH_IN_SIGNAL_LEFT);
-    Klang::connect(mSampleBass,    Node::CH_OUT_SIGNAL, mMixer2,      NodeMixer2::CH_IN_SIGNAL_RIGHT);
-    Klang::connect(mMixer1,        Node::CH_OUT_SIGNAL, mMixerMaster, NodeMixer2::CH_IN_SIGNAL_LEFT);
-    Klang::connect(mMixer2,        Node::CH_OUT_SIGNAL, mMixerMaster, NodeMixer2::CH_IN_SIGNAL_RIGHT);
+    Klang::connect(mSampleSnare,   Node::CH_OUT_SIGNAL, mMixer1,      NodeMixer2::CH_IN_SIGNAL_0);
+    Klang::connect(mZero,          Node::CH_OUT_SIGNAL, mMixer1,      NodeMixer2::CH_IN_SIGNAL_1);
+    Klang::connect(mSampleHihat,   Node::CH_OUT_SIGNAL, mMixer2,      NodeMixer2::CH_IN_SIGNAL_0);
+    Klang::connect(mSampleBass,    Node::CH_OUT_SIGNAL, mMixer2,      NodeMixer2::CH_IN_SIGNAL_1);
+    Klang::connect(mMixer1,        Node::CH_OUT_SIGNAL, mMixerMaster, NodeMixer2::CH_IN_SIGNAL_0);
+    Klang::connect(mMixer2,        Node::CH_OUT_SIGNAL, mMixerMaster, NodeMixer2::CH_IN_SIGNAL_1);
     Klang::connect(mMixerMaster,   Node::CH_OUT_SIGNAL, mVCA,         Node::CH_IN_SIGNAL);
     Klang::connect(mVCA,           Node::CH_OUT_SIGNAL, mDAC,         NodeDAC::CH_IN_SIGNAL_LEFT);
 
