@@ -85,7 +85,8 @@ namespace klang {
         
         void set_cutoff_Hz(const float pCutoffHz) {
             /* cutoff frequency in Hz [0, sampling_rate/2] */
-            mCutoff = pCutoffHz / ( KLANG_AUDIO_RATE_UINT16 * 0.5 );
+            const float a = KLANG_AUDIO_RATE_UINT16 * 0.5;
+            mCutoff = pCutoffHz / a;
             mCutoff = mCutoff > 1.0f ? 1.0f : (mCutoff < 0.0f ? 0.0f : mCutoff);
         }
         
@@ -98,7 +99,8 @@ namespace klang {
         }
         
         float get_cutoff_Hz() {
-            return mCutoff * ( KLANG_AUDIO_RATE_UINT16 * 0.5 );
+            const float a = KLANG_AUDIO_RATE_UINT16 * 0.5;
+            return mCutoff * a;
         }
         
         float get_cutoff() {

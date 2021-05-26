@@ -5,6 +5,8 @@
 //
 //
 
+#include <chrono>
+
 #include "Arduino.h"
 #include "KlangstromDefinesArduino.h"
 #include "KlangstromApplicationArduino.h"
@@ -63,10 +65,21 @@ void pinMode(uint32_t pPin, uint32_t pMode) {
     KLST_LOG_AP("<pinMode(%i << %i)> " << pPin << ", " << pMode);
 }
 
+void interrupts() {}
 
+void noInterrupts() {}
 
+auto mAppStartTime = std::chrono::steady_clock::now();
 
+uint32_t micros() {
+    const auto mCurrentTime = std::chrono::steady_clock::now();
+    const auto mDelta = mCurrentTime - mAppStartTime;
+    return std::chrono::duration_cast<std::chrono::microseconds>(mDelta).count();
+}
 
+uint32_t millis() {
+    return micros() / 1000;
+}
 
 // /* ----------------------------------------------------------------------------------------------------------------- */
 // 

@@ -171,7 +171,7 @@ namespace klang {
     private:
         SIGNAL_TYPE mFrequency      = 0.0;
         float mStepSize             = 0.0;
-        double mPhase                = 0.0; // @NOTE("single precision introduces drift")
+        double mPhase               = 0.0; // @NOTE("single precision introduces drift")
         SIGNAL_TYPE mAmplitude      = SIGNAL_MAX;
         SIGNAL_TYPE mOffset         = 0.0;
         WAVEFORM mWaveform          = WAVEFORM::SINE;
@@ -195,13 +195,17 @@ namespace klang {
             mPhase = KlangMath::mod(mPhase, KLANG_AUDIO_RATE);
             const float mPhaseShifted = mPhase - (KLANG_AUDIO_RATE/2);
             const float mPhaseShiftedAbs = mPhaseShifted > 0 ? mPhaseShifted : -mPhaseShifted;
-            pAudioBlock[i] = (mPhaseShiftedAbs - (KLANG_AUDIO_RATE/4)) / (KLANG_AUDIO_RATE/4);
+            const float a = KLANG_AUDIO_RATE/4;
+            const float b = mPhaseShiftedAbs - a;
+            pAudioBlock[i] = b / a;
         }
         
         void process_sawtooth(uint16_t i, SIGNAL_TYPE *pAudioBlock) {
             mPhase += mFrequency;
             mPhase = KlangMath::mod(mPhase, KLANG_AUDIO_RATE);
-            pAudioBlock[i] = ( mPhase / (KLANG_AUDIO_RATE/2) ) + SIGNAL_MIN;
+            const float a = KLANG_AUDIO_RATE/2;
+            const float b = mPhase / a;
+            pAudioBlock[i] = b + SIGNAL_MIN;
         }
         
         void process_square(uint16_t i, SIGNAL_TYPE *pAudioBlock) {

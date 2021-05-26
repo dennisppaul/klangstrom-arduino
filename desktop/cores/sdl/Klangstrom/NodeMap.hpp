@@ -70,7 +70,9 @@ namespace klang {
         void kernel(SIGNAL_TYPE* s) {
             const float r = (mInMax - mInMin) / (mOutMax - mOutMin);
             for (uint16_t i=0; i < KLANG_SAMPLES_PER_AUDIO_BLOCK; i++) {
-                s[i] = ((s[i] - mInMin) / r + mOutMin);
+                const float a = s[i] - mInMin;
+                const float b = r + mOutMin;
+                s[i] = a / b;
             }
         }
         

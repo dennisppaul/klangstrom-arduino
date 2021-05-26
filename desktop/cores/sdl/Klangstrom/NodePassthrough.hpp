@@ -25,15 +25,6 @@ namespace klang {
         static const CHANNEL_ID NUM_CH_IN         = 1;
         static const CHANNEL_ID NUM_CH_OUT        = 1;
         
-        /*
-         // @TODO(update to 2 channels)
-         static const CHANNEL_TYPE CH_IN_SIGNAL_A = 0;
-         static const CHANNEL_TYPE CH_IN_SIGNAL_B = 1;
-         
-         static const CHANNEL_TYPE CH_OUT_SIGNAL_A = 0;
-         static const CHANNEL_TYPE CH_OUT_SIGNAL_B = 1;
-         */
-        
         bool connect(Connection* pConnection, CHANNEL_ID pInChannel) {
             if (pInChannel == CH_IN_SIGNAL) {
                 mConnection_CH_IN_SIGNAL = pConnection;
@@ -58,9 +49,9 @@ namespace klang {
                 flag_updated();
             }
             if (pChannel == CH_OUT_SIGNAL) {
-//                for (uint16_t i=0; i < KLANG_SAMPLES_PER_AUDIO_BLOCK; i++) {
-//                    pAudioBlock[i] = pAudioBlock[i];
-//                }
+               for (uint16_t i=0; i < KLANG_SAMPLES_PER_AUDIO_BLOCK; i++) {
+                   pAudioBlock[i] = pAudioBlock[i];
+               }
             }
         }
         

@@ -54,5 +54,9 @@ void delay(uint32_t pMS);
 int digitalRead(uint32_t pPin);
 void digitalWrite(uint32_t pPin, uint32_t pValue);
 void pinMode(uint32_t pPin, uint32_t pMode);
+void interrupts();
+void noInterrupts();
+uint32_t micros();
+uint32_t millis();
 
 #endif /* _VARIANT_KLST_SDL_ */

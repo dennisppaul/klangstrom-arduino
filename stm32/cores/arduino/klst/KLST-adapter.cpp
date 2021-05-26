@@ -5,6 +5,7 @@
 #include "KlangstromApplicationArduino.h"
 #include "KlangstromApplicationInterfaceArduino.h"
 
+#define KLST_DISABLE_INTERRUPTS_IN_AUDIOBLOCK
 extern void audioblock(SIGNAL_TYPE* pOutputLeft, SIGNAL_TYPE* pOutputRight, SIGNAL_TYPE* pInputLeftRX, SIGNAL_TYPE* pInputRight);
 
 #ifdef __cplusplus
@@ -26,6 +27,9 @@ SIGNAL_TYPE mRightTX[KLANG_SAMPLES_PER_AUDIO_BLOCK];
 SIGNAL_TYPE mLeftRX[KLANG_SAMPLES_PER_AUDIO_BLOCK];
 SIGNAL_TYPE mRightRX[KLANG_SAMPLES_PER_AUDIO_BLOCK];
 WEAK void KLST_fill_buffer(uint32_t *pTXBuffer, uint32_t *pRXBuffer, uint16_t pBufferLength) {
+#ifdef KLST_DISABLE_INTERRUPTS_IN_AUDIOBLOCK
+  noInterrupts();
+#endif
   /* unpack receive buffer to sample */
   if (KLST_audio_input_enabled()) {
     for (int i = 0; i < KLANG_SAMPLES_PER_AUDIO_BLOCK; i++) {
@@ -48,6 +52,9 @@ WEAK void KLST_fill_buffer(uint32_t *pTXBuffer, uint32_t *pRXBuffer, uint16_t pB
       // int16_t mR = (int16_t) (mRightTX[i] * 32767.0f);
       // pTXBuffer[i] = ((uint32_t) (uint16_t) mL) << 0 | ((uint32_t) (uint16_t) mR) << 16;
   }
+#ifdef KLST_DISABLE_INTERRUPTS_IN_AUDIOBLOCK
+  interrupts();
+#endif
 }
 
 /*

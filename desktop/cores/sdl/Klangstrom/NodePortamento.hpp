@@ -111,7 +111,8 @@ namespace klang {
                     if (mDirty) {
                         const float mDiff = mValueDesired - mValueCurrent;
                         if (abs(mDiff) > EPSILON) {
-                            mValueCurrent += mDiff * mSpeed;
+                            const float a = mDiff * mSpeed;
+                            mValueCurrent += a;
                         } else {
                             mValueCurrent = mValueDesired;
                             mDirty = false;

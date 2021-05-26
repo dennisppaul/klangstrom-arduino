@@ -209,6 +209,10 @@ namespace klang {
         SIGNAL_TYPE * wavetable_ptr() {
             return mWavetable;
         }
+
+        // void set_interpolate_samples(bool pInterpolateSamples) {
+        //     mInterpolateSamples = pInterpolateSamples;
+        // }
         
 #if (KLANG_SIGNAL_TYPE==SIGNAL_TYPE_INT16)
         /* +++++++++++++++++++++++++++++++++++++++++++++++++++ */
@@ -248,7 +252,8 @@ namespace klang {
         void set_frequency(SIGNAL_TYPE pFrequency) {
             if (mFrequency != pFrequency) {
                 mFrequency = pFrequency;
-                mStepSize = mFrequency * ((float)M_BUFFER_LENGTH / (float)KLANG_AUDIO_RATE_UINT16); // @TODO maybe move this to constructor to do it only once
+                const float a = (float)M_BUFFER_LENGTH / (float)KLANG_AUDIO_RATE_UINT16;
+                mStepSize = mFrequency * a; // @TODO maybe move this to constructor to do it only once
             }
         }
         
@@ -274,10 +279,13 @@ namespace klang {
                 if (mBlock_FREQ != AudioBlockPool::NO_ID) {
                     mBlockData_FREQ = AudioBlockPool::instance().data(mBlock_FREQ);
                 }
-                SIGNAL_TYPE* mBlockData_AMP = nullptr;
+                const bool mHasFreqBuffer = (mBlockData_FREQ != nullptr);
+
+                const SIGNAL_TYPE* mBlockData_AMP = nullptr;
                 if (mBlock_AMP != AudioBlockPool::NO_ID) {
                     mBlockData_AMP = AudioBlockPool::instance().data(mBlock_AMP);
                 }
+                const bool mHasAmpBuffer = (mBlockData_AMP != nullptr);
                 
                 for (uint16_t i=0; i < KLANG_SAMPLES_PER_AUDIO_BLOCK; i++) {
 #if (KLANG_SIGNAL_TYPE==SIGNAL_TYPE_INT16)
@@ -292,31 +300,33 @@ namespace klang {
                     const uint16_t mIndex = ((phase_fractional >> OSCIL_F_BITS) & (M_BUFFER_LENGTH - 1));
                     mBlock[i] = FADD(FMUL(mWavetable[mIndex], mAmpTmp), mOffset);
 #elif (KLANG_SIGNAL_TYPE==SIGNAL_TYPE_FLOAT)
-                    /* frequency */
-                    if (mBlock_FREQ != AudioBlockPool::NO_ID) {
+                    // /* frequency */
+                    if (mHasFreqBuffer) {
                         set_frequency(mBlockData_FREQ[i]);
                     }
                     /* wavetable */
-                    //                    mArrayPtr += mStepSize;
-                    //                    wrap_array_ptr();
-                    //                    const uint16_t mIndex = (uint16_t)mArrayPtr;
-                    //                    // @TODO(check if this is faster `Util::wrap_float_index(mArrayPtr + mStepSize, M_BUFFER_LENGTH);`)
                     mArrayPtr += mStepSize;
                     const uint16_t mInt = (uint16_t)mArrayPtr;
                     const float mFrac = mArrayPtr - mInt;
                     const uint16_t mIndex = mInt & (M_BUFFER_LENGTH - 1);
                     mArrayPtr = mIndex + mFrac;
-#define INTERPOLATE_WAVETABLE_SAMPLES 1
-#if INTERPOLATE_WAVETABLE_SAMPLES
-                    //                    const float mFrac = mArrayPtr - mIndex;
-                    //                    const uint16_t mIndexNext = (mIndex + 1) % M_BUFFER_LENGTH;
-                    // @TODO(check if this is faster `(mIndex + 1) & (M_BUFFER_LENGTH - 1);`)
-                    const uint16_t mIndexNext = (mIndex + 1) & (M_BUFFER_LENGTH - 1);
-                    pAudioBlock[i] = mWavetable[mIndex] * (1.0 - mFrac) + mWavetable[mIndexNext] * mFrac;
+                    // #define KLST_WAVETABLE_INTERPOLATE_SAMPLES 1
+
+#if KLST_WAVETABLE_INTERPOLATE_SAMPLES==1
+                    // if (mInterpolateSamples) {
+                        const uint16_t mIndexNext = (mIndex + 1) & (M_BUFFER_LENGTH - 1);
+                        // const uint16_t mIndexNext = (mIndex + 1) % M_BUFFER_LENGTH; // slower ( STM32F446 == +3µs )
+                        const float r = (1.0 - mFrac);
+                        const float a = mWavetable[mIndex] * r;
+                        const float b = mWavetable[mIndexNext] * mFrac;
+                        pAudioBlock[i] = a + b;
+                        // pAudioBlock[i] = mWavetable[mIndex] * (1.0 - mFrac) + mWavetable[mIndexNext] * mFrac; // slower ( STM32F446 == +540µs ) (!!!)
+                    // } else {
 #else
-                    pAudioBlock[i] = mWavetable[mIndex];
+                        pAudioBlock[i] = mWavetable[mIndex];
+                    // }
 #endif
-                    pAudioBlock[i] *= (mBlock_AMP != AudioBlockPool::NO_ID) ? mBlockData_AMP[i] : mAmplitude;
+                    pAudioBlock[i] *= mHasAmpBuffer ? mBlockData_AMP[i] : mAmplitude;
                     pAudioBlock[i] += mOffset;
 #endif
                 }
@@ -372,8 +382,9 @@ namespace klang {
         Connection* mConnection_CH_IN_FREQ  = nullptr;
         Connection* mConnection_CH_IN_AMP   = nullptr;
         
-        SIGNAL_TYPE mAmplitude      = SIGNAL_MAX;
-        SIGNAL_TYPE mOffset         = 0.0;
+        SIGNAL_TYPE mAmplitude              = SIGNAL_MAX;
+        SIGNAL_TYPE mOffset                 = 0.0;
+        // bool mInterpolateSamples            = true;
     };
 }
 

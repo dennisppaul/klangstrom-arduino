@@ -56,11 +56,19 @@ namespace klang {
             const float q = mResonance;
             const float f = mCutoff;
             // set feedback amount given f and q between 0 and 1
-            float fb = q + q/(1.0 - f);
+            const float a = 1.0 - f;
+            const float b = q / a;
+            const float fb = q + b;
             
             // for each sample...
-            buf0 = buf0 + f * (input - buf0 + fb * (buf0 - buf1));
-            buf1 = buf1 + f * (buf0 - buf1);
+            const float c = buf0 - buf1;
+            const float d = fb * c;
+            const float e = input - buf0 + d;
+            const float g = f * e;
+            buf0 = buf0 + g;
+            const float h = buf0 - buf1;
+            const float i = f * h;
+            buf1 = buf1 + i;
             if (buf1 != buf1) {
                 buf0 = 0;
                 buf1 = 0;
