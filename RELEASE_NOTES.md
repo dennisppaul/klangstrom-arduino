@@ -2,6 +2,7 @@
 
 ## 0.0.1
 
+- added tool to generate sample files 
 - improved `NodeWavetable` speed by 4.5× 
 - boards have now unique identifiers `ID()` ( based on their hardware serial number )
 - added application to examples ( drum machine + sequencer )
