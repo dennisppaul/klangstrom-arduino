@@ -32,10 +32,10 @@ once the example runs a window appears with also `LED_00` blinking and a single 
 
 ## Where to go from here?
 
-the project is structured into different sections:
+the project is structured into three different sections:
 
-- Klangstrom ( Application )
-- Klang ( Sound + Digital Signal Processing )
-- Strom ( Composition + Methods + Structure ) @todo(currently not distributed)
+- [Klangstrom]({{ site.baseurl }}{% link _libdoc/klangstrom.md %}) ( Application )
+- [Klang]({{ site.baseurl }}{% link _libdoc/klang.md %}) ( Sound + Digital Audio Signal Processing )
+- [Strom]({{ site.baseurl }}{% link _libdoc/strom.md %}) ( Composition + Methods + Structure )
 
-browsing, running and modifying examples is most playful way to learn about *Klangstrom*. a more structured approach is to browse through the *Library Documentation* and the *Operation Manual*.
+browsing, running and modifying examples is most playful way to learn about *Klangstrom*. a more structured approach is to browse through topics in the *Operation Manual*.

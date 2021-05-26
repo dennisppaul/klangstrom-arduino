@@ -67,6 +67,14 @@ collections:
     title: Library Documentation
     output: true
     permalink: /:collection/:name
+  klangstrom:
+    title: Klangstrom
+    output: true
+    permalink: /:collection/:name
+  klang:
+    title: Klang
+    output: true
+    permalink: /:collection/:name
   manual:
     title: Operation Manual
     output: true

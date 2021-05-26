@@ -2,6 +2,31 @@
  * general
  */
 
+// ul {
+//   margin-left: 0;
+//   list-style-type: none;
+// }
+// 
+// ul > li {
+// //     margin-left: 15px;
+// }
+// 
+// ul > li:before {
+//   content: "- ";
+//   text-indent: -5px;
+// }
+
+ul {
+    margin-left: 15px;
+    list-style-type: none;
+}
+
+ul li:before {
+  content: "-";
+  position: absolute;
+  margin-left: -15px;
+}
+
 /* unvisited link */
 a:link {
   color: $brand-color;
@@ -26,25 +51,56 @@ a:active {
   text-decoration: none;
 }
 
-h1, h2, h3, h4 {
+h1, h2, h3, h4, h5 {
   @include relative-font-size(1);
   line-height: 1;
-  letter-spacing: -1px;
+  letter-spacing: 0px;
 
   @include media-query($on-laptop) {
     @include relative-font-size(1);
   }
+}
+
+h1, h2, h3, h4, h5 {
   font-weight: 700;
 }
 
-h1, h2 {
-  font-weight: 700;
+// h1 {
 //   text-transform: uppercase;
-//   font-size: $base-font-size * 1.5;
+// }
+// 
+// h3, h4, h5 {
+//   letter-spacing: 0px;
+//   font-style: italic;
+// }
+
+h1:before {
+  content: "# ";
+  margin-left: -1.3em;
+}
+
+h2:before {
+  content: "## ";
+  margin-left: -2.0em;
+}
+
+h3:before {
+  content: "### ";
+  margin-left: -2.7em;
+}
+
+h4:before {
+  content: "#### ";
+  margin-left: -3.4em;
+}
+
+h5:before {
+  content: "##### ";
+  margin-left: -4.1em;
 }
 
 strong {
-  letter-spacing: -1px;
+  letter-spacing: 0px;
 }
 
 hr {
@@ -56,6 +112,12 @@ hr {
     border-top: 1px dashed #000;
     border-width: 1px;
     display: block;
+}
+
+.dash-separator {
+    max-width: 100%;
+    overflow: hidden;
+    white-space: nowrap;
 }
 
 /**

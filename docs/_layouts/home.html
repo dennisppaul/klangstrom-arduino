@@ -10,33 +10,35 @@ layout: default
     <div class="home-abstract">
         {{ content }}
     </div>
-    <p>--------------------------------------------------------------------------------</p>
-    <div class="manual-list">
-        <h2>Operation Manual</h2>
-        <p>
-            {% assign items = site.manual | sort: 'index' %}
-            {% for page in items %}
-                -&nbsp;<a href="{{ page.url | relative_url }}">{{ page.title }}</a></br>
-            {% endfor %}
-        </p>
-    </div>
-    <p>--------------------------------------------------------------------------------</p>
+    <p class="dash-separator">------------------------------------------------------------------------------------------------------------------------</p>
     <div class="libdoc-list">
         <h2>Library Documentation</h2>
-        <p>
+        <ul class="post-list">
             {% assign items = site.libdoc | sort: 'index' %}
             {% for page in items %}
-                -&nbsp;<a href="{{ page.url | relative_url }}">{{ page.title }}</a></br>
+            <li>
+                <a href="{{ page.url | relative_url }}">{{ page.title }}</a></br>
+            </li>
             {% endfor %}
-        </p>
+        </ul>
     </div>
-    <p>--------------------------------------------------------------------------------</p>
+    <div class="manual-list">
+        <h2>Operation Manual</h2>
+        <ul class="post-list">
+            {% assign items = site.manual | sort: 'index' %}
+            {% for page in items %}
+            <li>
+                <a href="{{ page.url | relative_url }}">{{ page.title }}</a></br>
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
     {%- if site.posts.size > 0 -%}
-        <h2>Releases</h2>
+    <div class="libdoc-list">
+        <h2>Release Notes</h2>
         <ul class="post-list">
             {%- for post in site.posts -%}
             <li>
-                -&nbsp;
                 <a class="post-link" href="{{ post.url | relative_url }}">
                         {{ post.title | escape }}
                         {%- assign date_format = site.minima.date_format | default: "%b %-d, %Y" -%}
@@ -47,6 +49,7 @@ layout: default
                 {%- endif -%}
             </li>
             {%- endfor -%}
-        </uk>
+        </ul>
+    </div>
     {%- endif -%}
 </div>
