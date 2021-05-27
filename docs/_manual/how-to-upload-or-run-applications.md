@@ -43,5 +43,7 @@ the main benefit of this option is that it does not required to press a button p
 
 the `DESKTOP` platform allows to run *Klangstrom* applications in a desktop computer simulator. it can be selected under `Tools > Board > Klangstrom (DESKTOP) > Klangstrom (SDL)`.
 
+---
+
 [^1]: there is a third platform `VCV Rack` which runs applications as a module in the VCV Rack environment. this platform will be released in the future.
 [^2]: the `KLST_CORE` board has already been produced and will be released in the near future.

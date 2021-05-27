@@ -1,11 +1,11 @@
 ---
 layout: page
 title: Working with Nodes in Klang
-permalink: /klang--working-with-nodes/
+permalink: /working-with-nodes-in-klang/
 index: 30
 ---
 
-simply put *Klang* uses processing units, with *inputs* and *ouputs*, called *nodes* connected through *connections* to form signal networks called *patches*.
+*Klang* uses processing units, with *inputs* and *ouputs*, called *nodes* connected through *connections* to form signal networks called *patches*.
 
 ## The Patch-Node-Connection Model
 

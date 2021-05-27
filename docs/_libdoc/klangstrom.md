@@ -35,7 +35,7 @@ the following functions allow to configure and query application and hardware st
 
 ## Blink: An Example Application
 
-in this examples a tone is played and changed periodically while an LED is turned on and off. in the `setup()` function two nodes are connected and the `beat` function is configured to be called once a second. the `loop()` function is implemented but does not contain any *real* functionality. in the `beat()` function LED and tone are changed every odd beat to one state and every even beat to another. in `audioblock` the left and right output buffers are populated by the DAC node.
+in this examples a tone is played and changed periodically while an LED is turned on and off. in the `setup()` function two nodes are connected and the `beat` function is configured to be called once a second. the `loop()` function is implemented but does not contain any *real* functionality. in the `beat()` function LED and tone are changed every odd beat to one state and every even beat to another. in `audioblock()` the left and right output buffers are populated by the DAC node.
 
 ```c
 #include "Nodes.hpp"
