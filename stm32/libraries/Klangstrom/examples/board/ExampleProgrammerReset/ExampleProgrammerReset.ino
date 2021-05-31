@@ -1,5 +1,5 @@
 //
-//  KLST--ProgrammerReset
+// ExampleProgrammerReset
 //
 
 using namespace klangstrom;
@@ -17,7 +17,7 @@ void setup() {
 
 void loop() {
     /*  the programmer button is evaluated manually. a system reset
-        is triggered with `KLST_jump_to_bootloader` */
+        can be triggered with `KLST_jump_to_bootloader` */
     if (button_state(KLST_BUTTON_PROGRAMMER)) {
         Serial.println("### jumping to bootloader manually");
         KLST_jump_to_bootloader();

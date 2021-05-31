@@ -1,5 +1,5 @@
 //
-//  KLST--Blink
+// ExampleBlink
 //
 
 #include "Nodes.hpp"
@@ -28,7 +28,7 @@ void loop() {
     delay(1000);                // wait for a second
 }
 
-void audioblock(SIGNAL_TYPE* pOutputLeft, SIGNAL_TYPE* pOutputRight, SIGNAL_TYPE* pInputLeft, SIGNAL_TYPE* pInputRight) {
-    /* process next audio block */
+void audioblock(SIGNAL_TYPE* pOutputLeft, SIGNAL_TYPE* pOutputRight, 
+                SIGNAL_TYPE* pInputLeft, SIGNAL_TYPE* pInputRight) {
     mDAC.process_frame(pOutputLeft, pOutputRight);
 }

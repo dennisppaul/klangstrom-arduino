@@ -38,9 +38,9 @@ uint32_t mKLSTBeatIntervalDuration = 1000000/2;
 static int16_t mKLSTENCODER_00TickCount = 0;
 static int16_t mKLSTENCODER_01TickCount = 0;
 static int16_t mKLSTENCODER_02TickCount = 0;
-static bool mKLSTENCODER_00ButtonState = false;
-static bool mKLSTENCODER_01ButtonState = false;
-static bool mKLSTENCODER_02ButtonState = false;
+static bool mKLSTENCODER_00ButtonState = true;
+static bool mKLSTENCODER_01ButtonState = true;
+static bool mKLSTENCODER_02ButtonState = true;
 static const float mKLST_PRESSED[1] = {1.0f};
 static const float mKLST_RELEASED[1] = {0.0f};
 
@@ -280,8 +280,8 @@ void KLST_pre_setup() {
 		uint32_t mIterationGuard = 0;
 		while (!Serial && mIterationGuard < 1000000) {
 			// wait for serial port to connect. needed for native USB …
-      // but only for a limited number of iterations.
-      mIterationGuard++;
+      		// but only for a limited number of iterations.
+      		mIterationGuard++;
 		}
 		#endif
 	}
@@ -328,13 +328,17 @@ void KLST_post_setup() {
 		MX_TIM8_Init();
 
 		pinMode(ENCODER_00_BUTTON, INPUT);
-  	pinMode(ENCODER_01_BUTTON, INPUT);
-  	pinMode(ENCODER_02_BUTTON, INPUT);
+  		pinMode(ENCODER_01_BUTTON, INPUT);
+  		pinMode(ENCODER_02_BUTTON, INPUT);
 
 		HAL_TIM_Encoder_Start(&htim3, TIM_CHANNEL_ALL);
 		HAL_TIM_Encoder_Start(&htim8, TIM_CHANNEL_ALL);
 		HAL_TIM_Encoder_Start(&htim2, TIM_CHANNEL_ALL);
 		// @note(`HAL_TIM_Encoder_Stop(&htim3, TIM_CHANNEL_ALL);`)
+
+		mKLSTENCODER_00TickCount = (int16_t)ENCODER_00_TIMER->CNT;
+		mKLSTENCODER_01TickCount = (int16_t)ENCODER_01_TIMER->CNT;
+		mKLSTENCODER_02TickCount = (int16_t)ENCODER_02_TIMER->CNT;
 	}
 
 	/* beat */
@@ -342,11 +346,11 @@ void KLST_post_setup() {
 		mKLSTBeatTimer->resume();
 	}
 
-  /* programmer button */
-  if (mKLSTOptionEnableProgrammerButton) {
-    pinMode(BUTTON_PROGRAMMER, INPUT);
-    attachInterrupt(BUTTON_PROGRAMMER, KLST_jump_to_bootloader, RISING);
-	}
+  	/* programmer button */
+  	if (mKLSTOptionEnableProgrammerButton) {
+    	pinMode(BUTTON_PROGRAMMER, INPUT);
+    	attachInterrupt(BUTTON_PROGRAMMER, KLST_jump_to_bootloader, RISING);
+  	}
 }
 
 bool KLST_audio_input_enabled() {

@@ -62,7 +62,7 @@ namespace klangstrom {
     bool button_state(uint8_t pButton);
     bool pin_state(uint8_t pButton);
     void event_transmit(EVENT_TYPE pEvent, float* pPayload);
-    void data_transmit(const uint8_t pSender, uint8_t* pData, uint8_t pDataLength);
+    void data_transmit(const uint8_t pTransmitter, uint8_t* pData, uint8_t pDataLength);
     int16_t ID();
 };
 

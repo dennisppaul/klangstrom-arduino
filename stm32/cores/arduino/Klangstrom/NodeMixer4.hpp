@@ -77,12 +77,14 @@ namespace klang {
         }
         
         void update(CHANNEL_ID pChannel, SIGNAL_TYPE* pAudioBlock) {
+            const bool m_has_SIGNAL_0 = (mConnection_CH_IN_SIGNAL_0!=nullptr);
+            const bool m_has_SIGNAL_1 = (mConnection_CH_IN_SIGNAL_1!=nullptr);
+            const bool m_has_SIGNAL_2 = (mConnection_CH_IN_SIGNAL_2!=nullptr);
+            const bool m_has_SIGNAL_3 = (mConnection_CH_IN_SIGNAL_3!=nullptr);
+            const uint8_t mSignalInputCounter = m_has_SIGNAL_0 + m_has_SIGNAL_1 + m_has_SIGNAL_2 + m_has_SIGNAL_3;
             if (is_not_updated()
                 && pChannel == CH_OUT_SIGNAL
-                &&(mConnection_CH_IN_SIGNAL_0!=nullptr 
-                    && mConnection_CH_IN_SIGNAL_1!=nullptr
-                    && mConnection_CH_IN_SIGNAL_2!=nullptr
-                    && mConnection_CH_IN_SIGNAL_3!=nullptr)) {
+                && mSignalInputCounter > 0) {
                 AUDIO_BLOCK_ID mBlock_SIGNAL_0  = AudioBlockPool::NO_ID;
                 AUDIO_BLOCK_ID mBlock_SIGNAL_1  = AudioBlockPool::NO_ID;
                 AUDIO_BLOCK_ID mBlock_SIGNAL_2  = AudioBlockPool::NO_ID;
@@ -113,18 +115,14 @@ namespace klang {
                     mConnection_CH_IN_SIGNAL_3->update(mBlock_SIGNAL_3);
                 }
 
-                const float mSignalInputCounter =
-                ((mBlockData_SIGNAL_0==nullptr) ? 0 : 1) +
-                ((mBlockData_SIGNAL_1==nullptr) ? 0 : 1) +
-                ((mBlockData_SIGNAL_2==nullptr) ? 0 : 1) +
-                ((mBlockData_SIGNAL_3==nullptr) ? 0 : 1);
+                const float mInverseSigCounter = 1.0 / mSignalInputCounter;
                 for (uint16_t i=0; i < KLANG_SAMPLES_PER_AUDIO_BLOCK; ++i) {
-                    const float s0 = (mBlockData_SIGNAL_0!=nullptr) ? (mBlockData_SIGNAL_0[i] * mMix[SIGNAL_CHANNEL::SIGNAL_0]) : 0.0;
-                    const float s1 = (mBlockData_SIGNAL_1!=nullptr) ? (mBlockData_SIGNAL_1[i] * mMix[SIGNAL_CHANNEL::SIGNAL_1]) : 0.0;
-                    const float s2 = (mBlockData_SIGNAL_2!=nullptr) ? (mBlockData_SIGNAL_2[i] * mMix[SIGNAL_CHANNEL::SIGNAL_2]) : 0.0;
-                    const float s3 = (mBlockData_SIGNAL_3!=nullptr) ? (mBlockData_SIGNAL_3[i] * mMix[SIGNAL_CHANNEL::SIGNAL_3]) : 0.0;
+                    const float s0 = m_has_SIGNAL_0 ? (mBlockData_SIGNAL_0[i] * mMix[SIGNAL_CHANNEL::SIGNAL_0]) : 0.0;
+                    const float s1 = m_has_SIGNAL_1 ? (mBlockData_SIGNAL_1[i] * mMix[SIGNAL_CHANNEL::SIGNAL_1]) : 0.0;
+                    const float s2 = m_has_SIGNAL_2 ? (mBlockData_SIGNAL_2[i] * mMix[SIGNAL_CHANNEL::SIGNAL_2]) : 0.0;
+                    const float s3 = m_has_SIGNAL_3 ? (mBlockData_SIGNAL_3[i] * mMix[SIGNAL_CHANNEL::SIGNAL_3]) : 0.0;
                     const float sum = s0 + s1 + s2 + s3; 
-                    pAudioBlock[i] = sum / mSignalInputCounter;
+                    pAudioBlock[i] = sum * mInverseSigCounter;
                 }
                 AudioBlockPool::instance().release(mBlock_SIGNAL_0);
                 AudioBlockPool::instance().release(mBlock_SIGNAL_1);
