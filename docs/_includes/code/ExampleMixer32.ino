@@ -2,28 +2,17 @@
 //  ExampleMixer32
 //
 
-// NodeMixer32
-// duration of audioblock (μs) ........... : 2026.7 ( with -Os ) (20210602 22:38)
-// duration of audioblock (μs) ........... : 2004.8 ( with -Os ) (20210601 10:00)
-// duration of audioblock (μs) ........... : 1930.3 ( with -O3 ) (20210601 10:01)
-
-// NodeMixer16
-// duration of audioblock (μs) ........... : 1019.7 ( with -Os ) (20210602 23:02)
-// duration of audioblock (μs) ........... :  930.6 ( with -O3 ) (20210602 23:01)
-// ... 12 OSCs
-// duration of audioblock (μs) ........... :  821.4
-
 #include "CycleCounter.h"
 #include "Nodes.hpp"
 
 using namespace klang;
 using namespace klangstrom;
 
-static const uint8_t  NUM_OF_OSC = NodeMixer32::NUM_CH_IN;
+static const uint8_t  NUM_OF_OSC = 4;//NodeMixer32::NUM_CH_IN;
 
 NodeDAC             mDAC;
 NodeVCOWavetable    mOSC[NUM_OF_OSC];
-NodeMixer32         mMixer;
+NodeMixer4          mMixer;
 
 float mAudioblockDuration = 0;
 uint8_t mBlocksUsed       = 0;

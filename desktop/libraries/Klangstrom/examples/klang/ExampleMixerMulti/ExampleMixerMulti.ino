@@ -2,23 +2,13 @@
 //  ExampleMixerMulti
 //
 
-// 32 channels + VCOs
-// duration of audioblock (μs) ........... : 2106.1 ( with -Os ) (20210602 22:52)
-// duration of audioblock (μs) ........... : 2052.3 ( with -O3 ) (20210602 22:53)
-
-// 16 channels + VCOs
-// duration of audioblock (μs) ........... : 1061.6 ( with -Os ) (20210602 22:52)
-// duration of audioblock (μs) ........... : 1035.0 ( with -O3 ) (20210602 22:53)
-// ... 12 OSCs
-// duration of audioblock (μs) ........... : 806.83
-
 #include "CycleCounter.h"
 #include "Nodes.hpp"
 
 using namespace klang;
 using namespace klangstrom;
 
-static const uint8_t  NUM_OF_OSC = 32;
+static const uint8_t  NUM_OF_OSC = 4;
 
 NodeDAC             mDAC;
 NodeVCOWavetable    mOSC[NUM_OF_OSC];
@@ -60,6 +50,4 @@ void audioblock(SIGNAL_TYPE* pOutputLeft, SIGNAL_TYPE* pOutputRight,
     const uint32_t delta = klst_get_cycles() - start;
     mAudioblockDuration = klst_cyclesToMicros(delta);
     mBlocksUsed = AudioBlockPool::instance().blocks_used_max();
-    //    memset(pOutputLeft, 0.0, KLANG_SAMPLES_PER_AUDIO_BLOCK * sizeof(SIGNAL_TYPE));
-    //    memset(pOutputRight, 0.0, KLANG_SAMPLES_PER_AUDIO_BLOCK * sizeof(SIGNAL_TYPE));
 }
