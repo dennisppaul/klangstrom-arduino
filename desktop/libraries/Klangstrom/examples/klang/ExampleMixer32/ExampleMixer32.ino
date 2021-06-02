@@ -12,7 +12,7 @@ static const uint8_t  NUM_OF_OSC = NodeMixer32::NUM_CH_IN;
 
 NodeDAC             mDAC;
 NodeVCOWavetable    mOSC[NUM_OF_OSC];
-NodeMixer4          mMixer;
+NodeMixer32         mMixer;
 
 float mAudioblockDuration = 0;
 uint8_t mBlocksUsed       = 0;
