@@ -66,7 +66,7 @@ namespace klang {
         void process_frame(SIGNAL_TYPE* mLeftBlock, SIGNAL_TYPE* mRightBlock) {
             //@TODO("move mono/stereo switch to method (+set_value)")
             Klang::instance().frame_begin();
-            if (!Klang::instance().islocked()) {
+            if (!Klang::instance().islocked() || (mConnection_CH_IN_LEFT == nullptr && mConnection_CH_IN_RIGHT == nullptr)) {
                 if (mConnection_CH_IN_LEFT != nullptr) {
                     mConnection_CH_IN_LEFT->update(mLeftBlock);
                 }
@@ -78,10 +78,8 @@ namespace klang {
                     std::copy(mLeftBlock, mLeftBlock+KLANG_SAMPLES_PER_AUDIO_BLOCK, mRightBlock);
                 }
             } else {
-                for (uint16_t i=0; i < KLANG_SAMPLES_PER_AUDIO_BLOCK; i++) {
-                    mRightBlock[i] = 0.0;
-                    mLeftBlock[i] = 0.0;
-                }
+                memset(mLeftBlock,  0.0, KLANG_SAMPLES_PER_AUDIO_BLOCK * sizeof(SIGNAL_TYPE));
+                memset(mRightBlock, 0.0, KLANG_SAMPLES_PER_AUDIO_BLOCK * sizeof(SIGNAL_TYPE));
 #ifdef DEBUG_DAC
                 KLANG_LOG("@NodeDAC synthesizer is locked");
 #endif

@@ -101,7 +101,7 @@ namespace klang {
                 (mBlockData_SIGNAL_0==nullptr ? 0 : 1) +
                 (mBlockData_SIGNAL_1==nullptr ? 0 : 1);
                 if (mSignalInputCounter == 0) {
-                    memset(pAudioBlock, 0.0, KLANG_SAMPLES_PER_AUDIO_BLOCK);
+                    memset(pAudioBlock, 0.0, KLANG_SAMPLES_PER_AUDIO_BLOCK * sizeof(SIGNAL_TYPE));
                 } else {
                     for (uint16_t i=0; i < KLANG_SAMPLES_PER_AUDIO_BLOCK; ++i) {
                         const float m0  = (mBlockData_MIX!=nullptr) ? (mBlockData_MIX[i]) : mMix;
@@ -118,7 +118,7 @@ namespace klang {
 
                 flag_updated();
             } else {
-                memset(pAudioBlock, 0.0, KLANG_SAMPLES_PER_AUDIO_BLOCK);
+                memset(pAudioBlock, 0.0, KLANG_SAMPLES_PER_AUDIO_BLOCK * sizeof(SIGNAL_TYPE));
             }
         }
         

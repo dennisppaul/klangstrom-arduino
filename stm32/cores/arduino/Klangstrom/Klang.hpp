@@ -49,9 +49,9 @@
 #endif
 
 #ifndef KLANG_AUDIO_BLOCKS
-#define KLANG_AUDIO_BLOCKS                16
+#define KLANG_AUDIO_BLOCKS                32
 #ifdef DEBUG_SHOW_DEFAULT_WARNINGS
-#warning setting KLANG_AUDIO_BLOCKS to default value: 16
+#warning setting KLANG_AUDIO_BLOCKS to default value: 32
 #endif
 #endif
 

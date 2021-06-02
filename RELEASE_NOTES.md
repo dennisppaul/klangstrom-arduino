@@ -2,6 +2,7 @@
 
 ## 0.0.1
 
+- improved + fixed mixer nodes ( there are now static mixers for 4–32 channels and one node with multiple channels )
 - added mechanism to measure performance of code blocks ( in clock cycles or μs )
 - cleaned up and improved examples
 - fixed intial encoder button states
@@ -11,7 +12,6 @@
 - boards have now unique identifiers `ID()` ( based on their hardware serial number )
 - added application to examples ( drum machine + sequencer )
 - added documentation ( e.g node library )
-- imporved + fixed mixer nodes ( `NodeMixer4Stereo` is still not perfect )
 - fixed DFU mode ( USB peripherals had to be deinitialized before reset )
 - added desktop simulator (SDL)
 - added extensions ( i.e reverb, vocoder + TTS )

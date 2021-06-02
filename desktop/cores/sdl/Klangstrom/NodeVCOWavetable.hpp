@@ -66,6 +66,7 @@ namespace klang {
         
         NodeVCOWavetable(uint16_t pBufferLength = 256) : M_BUFFER_LENGTH(pBufferLength) {
             mWavetable = new SIGNAL_TYPE[M_BUFFER_LENGTH]; // @TODO(consider reusing wavetable where possible)
+            nDeleteArray = true;
             if (!isPowerOfTwo(pBufferLength)) {
                 KLANG_LOG_ERR("### warning wavetable length needs to be *power of two*");
             }
@@ -73,8 +74,16 @@ namespace klang {
             set_amplitude(OSC_DEFAULT_AMPLITUDE);
         }
         
+        NodeVCOWavetable(SIGNAL_TYPE* pWavetable, uint16_t pBufferLength) : mWavetable(pWavetable), M_BUFFER_LENGTH(pBufferLength) {
+            nDeleteArray = false;
+            set_frequency(OSC_DEFAULT_FREQUENCY);
+            set_amplitude(OSC_DEFAULT_AMPLITUDE);
+        }
+        
         ~NodeVCOWavetable() {
-            delete[] mWavetable;
+            if (nDeleteArray) {
+                delete[] mWavetable;
+            }
         }
         
         bool connect(Connection* pConnection, CHANNEL_ID pInChannel) {
@@ -368,7 +377,8 @@ namespace klang {
         
         SIGNAL_TYPE* mWavetable;
         const uint16_t M_BUFFER_LENGTH;
-        
+        bool nDeleteArray;
+
         bool isPowerOfTwo(uint16_t x) {
             while (((x % 2) == 0) && x > 1) {
                 x /= 2;

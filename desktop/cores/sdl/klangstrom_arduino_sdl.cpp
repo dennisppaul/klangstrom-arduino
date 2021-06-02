@@ -162,6 +162,7 @@ void loop_thread() {
 void loop_main() {
     setup();
     mLoopThread = thread(loop_thread);
+    klangstrom_arduino_beats_per_minute(120);
     while (!mQuitFlag) {
         loop_event();
         loop_renderer();

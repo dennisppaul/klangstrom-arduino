@@ -94,22 +94,22 @@ namespace klang {
                 SIGNAL_TYPE* mBlockData_SIGNAL_2 = nullptr;
                 SIGNAL_TYPE* mBlockData_SIGNAL_3 = nullptr;
                 
-                if (mConnection_CH_IN_SIGNAL_0 != nullptr) {
+                if (m_has_SIGNAL_0) {
                     mBlock_SIGNAL_0 = AudioBlockPool::instance().request();
                     mBlockData_SIGNAL_0 = AudioBlockPool::instance().data(mBlock_SIGNAL_0);
                     mConnection_CH_IN_SIGNAL_0->update(mBlock_SIGNAL_0);
                 }
-                if (mConnection_CH_IN_SIGNAL_1 != nullptr) {
+                if (m_has_SIGNAL_1) {
                     mBlock_SIGNAL_1 = AudioBlockPool::instance().request();
                     mBlockData_SIGNAL_1 = AudioBlockPool::instance().data(mBlock_SIGNAL_1);
                     mConnection_CH_IN_SIGNAL_1->update(mBlock_SIGNAL_1);
                 }
-                if (mConnection_CH_IN_SIGNAL_2 != nullptr) {
+                if (m_has_SIGNAL_2) {
                     mBlock_SIGNAL_2 = AudioBlockPool::instance().request();
                     mBlockData_SIGNAL_2 = AudioBlockPool::instance().data(mBlock_SIGNAL_2);
                     mConnection_CH_IN_SIGNAL_2->update(mBlock_SIGNAL_2);
                 }
-                if (mConnection_CH_IN_SIGNAL_3 != nullptr) {
+                if (m_has_SIGNAL_3) {
                     mBlock_SIGNAL_3 = AudioBlockPool::instance().request();
                     mBlockData_SIGNAL_3 = AudioBlockPool::instance().data(mBlock_SIGNAL_3);
                     mConnection_CH_IN_SIGNAL_3->update(mBlock_SIGNAL_3);
@@ -131,7 +131,7 @@ namespace klang {
 
                 flag_updated();
             } else {
-                memset(pAudioBlock, 0.0, KLANG_SAMPLES_PER_AUDIO_BLOCK);
+                memset(pAudioBlock, 0.0, KLANG_SAMPLES_PER_AUDIO_BLOCK * sizeof(SIGNAL_TYPE));
             }
         }
         

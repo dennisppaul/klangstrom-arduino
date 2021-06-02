@@ -36,8 +36,8 @@ namespace klang {
             mFrame = Klang::instance().frame_index();
         }
 
-//        virtual CHANNEL_ID max_out_channels() = 0;
-//        virtual CHANNEL_ID max_in_channels() = 0;
+        // virtual CHANNEL_ID get_num_input_channels() = 0;
+        // virtual CHANNEL_ID get_num_output_channels() = 0;
         virtual void update(CHANNEL_ID pChannel, SIGNAL_TYPE* pAudioBlock) = 0;
         virtual bool connect(Connection* pConnection, CHANNEL_ID pInChannel) = 0;
         virtual bool disconnect(CHANNEL_ID pInChannel) = 0;

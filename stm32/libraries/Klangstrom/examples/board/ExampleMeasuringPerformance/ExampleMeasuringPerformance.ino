@@ -7,6 +7,7 @@
 
 // 65.50–65.54μs    :: VCO
 // 167.35–167.47μs  :: VCO+VCF
+// @todo(add VCO+VCO+VCF)
 
 using namespace klang;
 using namespace klangstrom;
@@ -16,6 +17,7 @@ NodeVCOWavetable    mVCO;
 NodeVCFMoogLP       mVCF;
 
 float mAudioblockDuration = 0;
+uint8_t mBlocksUsed       = 0;
 
 void setup()  {
     Serial.begin(115200);
@@ -36,13 +38,14 @@ void setup()  {
     klst_enable_cycle_counter();
 }
 
-void loop() {
+void beat(uint32_t pBeat) {
     klangstrom::led_toggle(LED_00);
     mVCO.set_frequency(55 * random(1, 8));
 
     Serial.print("duration of audioblock (μs) ........... : ");
     Serial.println(mAudioblockDuration);
-    delay(1000);
+    Serial.print("number of audioblock used ............. : ");
+    Serial.println(mBlocksUsed);
 }
 
 void audioblock(SIGNAL_TYPE* pOutputLeft, SIGNAL_TYPE* pOutputRight, 
@@ -51,4 +54,5 @@ void audioblock(SIGNAL_TYPE* pOutputLeft, SIGNAL_TYPE* pOutputRight,
     mDAC.process_frame(pOutputLeft, pOutputRight);
     const uint32_t delta = klst_get_cycles() - start;
     mAudioblockDuration = klst_cyclesToMicros(delta);
+    mBlocksUsed = AudioBlockPool::instance().blocks_used_max();
 }

@@ -44,10 +44,10 @@ most *nodes* receive an input signal through their *input*, do some calculations
 
 a common type of generator node is the oscillator (VCO)[^1] which generates a periodic signal at a specific frequency and amplitude.
 
-another special type of node is the output node that has just one or more inputs and no outputs:
+another special type of node is the input node that has just one or more inputs and no outputs:
 
 ```
-      [ NODE_OUTPUT      ]       
+      [ NODE_INPUT       ]       
       +------------------+       
       |                  |       
 IN00--| SIGNAL           |
