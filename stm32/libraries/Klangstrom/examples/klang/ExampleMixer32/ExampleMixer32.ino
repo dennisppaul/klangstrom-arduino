@@ -8,7 +8,7 @@
 using namespace klang;
 using namespace klangstrom;
 
-static const uint8_t  NUM_OF_OSC = 4;//NodeMixer32::NUM_CH_IN;
+static const uint8_t  NUM_OF_OSC = NodeMixer32::NUM_CH_IN;
 
 NodeDAC             mDAC;
 NodeVCOWavetable    mOSC[NUM_OF_OSC];
