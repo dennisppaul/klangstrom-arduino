@@ -309,7 +309,16 @@ namespace klang {
                     const uint16_t mIndex = ((phase_fractional >> OSCIL_F_BITS) & (M_BUFFER_LENGTH - 1));
                     mBlock[i] = FADD(FMUL(mWavetable[mIndex], mAmpTmp), mOffset);
 #elif (KLANG_SIGNAL_TYPE==SIGNAL_TYPE_FLOAT)
-                    // /* frequency */
+                    // if (mInterpolateSamples) {
+                    //     update_audioblock_f_interpolation(pAudioBlock, 
+                    //                                       mBlockData_FREQ, mHasFreqBuffer,
+                    //                                       mBlockData_AMP,  mHasAmpBuffer);
+                    // } else {
+                    //     update_audioblock_f_no_interpolation(pAudioBlock, 
+                    //                                          mBlockData_FREQ, mHasFreqBuffer,
+                    //                                          mBlockData_AMP,  mHasAmpBuffer);
+                    // }
+                    /* frequency */
                     if (mHasFreqBuffer) {
                         set_frequency(mBlockData_FREQ[i]);
                     }
@@ -319,7 +328,7 @@ namespace klang {
                     const float mFrac = mArrayPtr - mInt;
                     const uint16_t mIndex = mInt & (M_BUFFER_LENGTH - 1);
                     mArrayPtr = mIndex + mFrac;
-                    // #define KLST_WAVETABLE_INTERPOLATE_SAMPLES 1
+                    #define KLST_WAVETABLE_INTERPOLATE_SAMPLES 1
 
 #if KLST_WAVETABLE_INTERPOLATE_SAMPLES==1
                     // if (mInterpolateSamples) {
@@ -395,6 +404,52 @@ namespace klang {
         SIGNAL_TYPE mAmplitude              = SIGNAL_MAX;
         SIGNAL_TYPE mOffset                 = 0.0;
         // bool mInterpolateSamples            = true;
+
+        // inline void update_audioblock_f_interpolation(SIGNAL_TYPE* pAudioBlock, 
+        //                                        const SIGNAL_TYPE* pBlockData_FREQ, const bool pHasFreqBuffer,
+        //                                        const SIGNAL_TYPE* pBlockData_AMP,  const bool pHasAmpBuffer) {
+        //     for (uint16_t i=0; i < KLANG_SAMPLES_PER_AUDIO_BLOCK; i++) {
+        //         /* frequency */
+        //         if (pHasFreqBuffer) {
+        //             set_frequency(pBlockData_FREQ[i]);
+        //         }
+        //         /* wavetable */
+        //         mArrayPtr += mStepSize;
+        //         const uint16_t mInt = (uint16_t)mArrayPtr;
+        //         const float mFrac = mArrayPtr - mInt;
+        //         const uint16_t mIndex = mInt & (M_BUFFER_LENGTH - 1);
+        //         mArrayPtr = mIndex + mFrac;
+        //         const uint16_t mIndexNext = (mIndex + 1) & (M_BUFFER_LENGTH - 1);
+        //         // const uint16_t mIndexNext = (mIndex + 1) % M_BUFFER_LENGTH; // slower ( STM32F446 == +3µs )
+        //         const float r = (1.0 - mFrac);
+        //         const float a = mWavetable[mIndex] * r;
+        //         const float b = mWavetable[mIndexNext] * mFrac;
+        //         pAudioBlock[i] = a + b;
+        //         // pAudioBlock[i] = mWavetable[mIndex] * (1.0 - mFrac) + mWavetable[mIndexNext] * mFrac; // slower ( STM32F446 == +540µs ) (!!!)
+        //         pAudioBlock[i] *= pHasAmpBuffer ? pBlockData_AMP[i] : mAmplitude;
+        //         pAudioBlock[i] += mOffset;
+        //     }
+        // }
+
+        // inline void update_audioblock_f_no_interpolation(SIGNAL_TYPE* pAudioBlock, 
+        //                                           const SIGNAL_TYPE* pBlockData_FREQ, const bool pHasFreqBuffer,
+        //                                           const SIGNAL_TYPE* pBlockData_AMP,  const bool pHasAmpBuffer) {
+        //     for (uint16_t i=0; i < KLANG_SAMPLES_PER_AUDIO_BLOCK; i++) {
+        //         /* frequency */
+        //         if (pHasFreqBuffer) {
+        //             set_frequency(pBlockData_FREQ[i]);
+        //         }
+        //         /* wavetable */
+        //         mArrayPtr += mStepSize;
+        //         const uint16_t mInt = (uint16_t)mArrayPtr;
+        //         const float mFrac = mArrayPtr - mInt;
+        //         const uint16_t mIndex = mInt & (M_BUFFER_LENGTH - 1);
+        //         mArrayPtr = mIndex + mFrac;
+        //         pAudioBlock[i] = mWavetable[mIndex];
+        //         pAudioBlock[i] *= pHasAmpBuffer ? pBlockData_AMP[i] : mAmplitude;
+        //         pAudioBlock[i] += mOffset;
+        //     }
+        // }
     };
 }
 

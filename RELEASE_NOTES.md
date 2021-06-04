@@ -2,7 +2,8 @@
 
 ## 0.0.1
 
-- improved + fixed mixer nodes ( there are now static mixers for 4–32 channels and one node with multiple channels )
+- added `NodeRamp` for linear value interpolation
+- improved + fixed mixer nodes ( there are now static mixers for 4–32 channels and one node with multiple channels plus 2 stereo versions )
 - added mechanism to measure performance of code blocks ( in clock cycles or μs )
 - cleaned up and improved examples
 - fixed intial encoder button states

@@ -137,10 +137,6 @@ namespace klang {
             }
             
             if (pChannel == CH_OUT_SIGNAL) {
-                if (pAudioBlock == nullptr) {
-                    KLANG_LOG_ERR("+++ @NodeADSR audio block not valid");
-                    return;
-                }
                 for (uint16_t i=0; i < KLANG_SAMPLES_PER_AUDIO_BLOCK; i++) {
 #if (KLANG_SIGNAL_TYPE==SIGNAL_TYPE_INT16)
                     pAudioBlock[i] = pAudioBlock[i];

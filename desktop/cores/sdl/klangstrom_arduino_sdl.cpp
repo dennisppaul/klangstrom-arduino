@@ -104,6 +104,7 @@ SDL_TimerID mTimerID = 0;
 SDL_Window *mWindow = nullptr;
 SDL_Renderer *gRenderer = nullptr;
 bool mQuitFlag = false;
+bool mMouseButtonPressed = false;
 
 const static int8_t AUDIO_DEFAULT_DEVICE = -1;
 int8_t mAudioInputDeviceID = AUDIO_DEFAULT_DEVICE;
@@ -185,25 +186,27 @@ void loop_event() {
             SDL_GetMouseState(&x, &y);
             float data[3] = {(float) x / SCREEN_WIDTH, (float) y / SCREEN_HEIGHT,
                              (float) LEFT};
-             event_receive(EVENT_MOUSE_PRESSED, data);
+            mMouseButtonPressed = true;
+            event_receive(EVENT_MOUSE_PRESSED, data);
         }
         if (e.type == SDL_MOUSEBUTTONUP) {
             int x, y;
             SDL_GetMouseState(&x, &y);
             float data[3] = {(float) x / SCREEN_WIDTH, (float) y / SCREEN_HEIGHT,
                              (float) LEFT};
-             event_receive(EVENT_MOUSE_RELEASED, data);
+            mMouseButtonPressed = false;
+            event_receive(EVENT_MOUSE_RELEASED, data);
         }
         if (e.type == SDL_MOUSEMOTION) {
             int x, y;
             SDL_GetMouseState(&x, &y);
-            if (e.type == SDL_MOUSEBUTTONDOWN) {
+            if (mMouseButtonPressed) {
                 float data[3] = {(float) x / SCREEN_WIDTH, (float) y / SCREEN_HEIGHT,
                                  (float) LEFT};
                  event_receive(EVENT_MOUSE_DRAGGED, data);
             } else {
                 float data[2] = {(float) x / SCREEN_WIDTH, (float) y / SCREEN_HEIGHT};
-                 event_receive(EVENT_MOUSE_MOVED, data);
+                event_receive(EVENT_MOUSE_MOVED, data);
             }
         }
         if (e.type == SDL_KEYDOWN) {

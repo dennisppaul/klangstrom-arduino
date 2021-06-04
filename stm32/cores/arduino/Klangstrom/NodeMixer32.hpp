@@ -103,6 +103,10 @@ namespace klang {
             mMix[pChannel] = pValue;
         }
         
+        SIGNAL_TYPE get_mix(uint8_t pChannel) {
+            return mMix[pChannel];
+        }
+        
         void set_command(KLANG_CMD_TYPE pCommand, KLANG_CMD_TYPE* pPayLoad) {
             switch (pCommand) {
                 case KLANG_SET_MIX_F32:

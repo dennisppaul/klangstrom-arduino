@@ -28,11 +28,12 @@
 namespace klang {
     class NodePortamento : public Node {
     public:
-        static const CHANNEL_ID CH_IN_VALUE  = 0;
-        static const CHANNEL_ID CH_IN_SPEED = 1;
-        static const CHANNEL_ID NUM_CH_IN   = 2;
-        static const CHANNEL_ID CH_OUT_VALUE = 0;
-        static const CHANNEL_ID NUM_CH_OUT  = 1;
+        static const CHANNEL_ID CH_IN_VALUE     = 0;
+        static const CHANNEL_ID CH_IN_SPEED     = 1;
+        static const CHANNEL_ID NUM_CH_IN       = 2;
+
+        static const CHANNEL_ID CH_OUT_VALUE    = 0;
+        static const CHANNEL_ID NUM_CH_OUT      = 1;
         
         NodePortamento() {
             set_speed(10);

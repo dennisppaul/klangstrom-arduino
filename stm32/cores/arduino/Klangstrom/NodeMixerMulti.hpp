@@ -27,8 +27,11 @@ using namespace std;
 namespace klang {
     class NodeMixerMulti : public Node {
     public:
-        static const CHANNEL_ID NUM_CH_OUT          = 1;
         
+        static const CHANNEL_ID NUM_CH_IN           = 4;
+        static const CHANNEL_ID CH_OUT_SIGNAL_RIGHT = 1;
+        static const CHANNEL_ID NUM_CH_OUT          = 2;
+
         bool connect(Connection* pConnection, CHANNEL_ID pInChannel) {
             add_channel(pInChannel, pConnection);
             return true;
@@ -97,6 +100,10 @@ namespace klang {
             mConnection_CH_IN_SIGNAL_and_mix[pChannel].mix = pValue;
         }
         
+        SIGNAL_TYPE get_mix(uint8_t pChannel) {
+            return mConnection_CH_IN_SIGNAL_and_mix[pChannel].mix;
+        }
+
         void set_command(KLANG_CMD_TYPE pCommand, KLANG_CMD_TYPE* pPayLoad) {
             switch (pCommand) {
                 case KLANG_SET_MIX_F32:
