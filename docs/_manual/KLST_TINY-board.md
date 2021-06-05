@@ -13,7 +13,7 @@ KLST_TINY (v0.1) is a pocket-calculator-sized development board with 3 push-butt
 - 02 :: audio output, line-out ( 3.5mm ) :: line level output for audio signals ( e.g connection to HiFi systems )
 - 03 :: 3× programmable LEDs ( `LED_00` + `LED_01` + `LED_02` ) :: user programmable LEDs
 - 04 :: 3× rotary encoders with push buttons
-- 05 :: 3.3/5V power pins :: power in-+output pins. can either used to power the board or to power peripherals if board is powered via USB
+- 05 :: 3.3/5V power pins :: power in-+output pins. can either be used to power the board or to power peripherals if board is powered via USB
 - 06 :: 8× GPIO pins :: programmable GPIO pins, note that the pins are only 3.3V tolerant
 - 07 :: 2× ADCs + 2× DACs ( 12BIT ) :: additional ADCs + DACs with lower 12BIT resolution
 - 08 :: 3.3/5V power pins :: see 05
@@ -36,7 +36,24 @@ KLST_TINY (v0.1) is a pocket-calculator-sized development board with 3 push-butt
 - 25 :: programmer button :: sends board into DFU mode ( LEDs flash in blinking pattern )
 - 26 :: USB-B micro :: USB port for connecting board as *USB host* to e.g computer mouse or keyboard
 
-## feature summary
+### Pin Map
+
+![KLST_TINY--schematics--pin-map]({{ site.baseurl }}{% link assets/KLST_TINY--schematics--pin-map.png %})
+
+|     |     | DOMAIN                 | |                 DOMAIN |      |      |
+|----:|:----|:-----------------------|-|-----------------------:|-----:|:-----|
+| 5V  | GND | **PWR**                | |             **SERIAL** | RX00 | RX01 |
+| 3V3 | GND |                        | |                        | GND  | GND  |
+| 00  | 01  | **GPIO**               | |                        | TX00 | TX01 |
+| 02  | 03  |                        | |                **I2C** | SCL  | SDA  |
+| 04  | 05  |                        | |                        | GND  | 3V3  |
+| 06  | 07  |                        | |                **SPI** | MISO | MOSI |
+| 00  | 01  | **ADC**                | |                        | GND  | SCK  |
+| 00  | 01  | **DAC**                | |                        | GND  | 3V3  |
+| 5V  | GND | **PWR**                | |              **INPUT** | L    | R    |
+| 3V3 | GND |                        | |             **OUTPUT** | L    | R    |
+
+## Feature Summary
 
 - STM32F446 MCU with 180MHz, 128KB RAM, 512KB Flash
 - WM8731 audio codec with 2× audio DAC + 2× audio ADC ( 16/24BIT )
