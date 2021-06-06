@@ -45,7 +45,7 @@ unsigned char phonemeLengthOutput[60]; //tab47416
 // contains the final soundbuffer
 int bufferpos=0;
 //char *buffer = nullptr; // TODO see `Init()`
-char *buffer = new char[22050*10];
+extern char *buffer;
 
 
 void SetInput(char *_input)

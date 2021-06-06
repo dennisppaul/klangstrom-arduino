@@ -36,6 +36,7 @@ void event_receive(const EVENT_TYPE event, const float* data) {
     switch (event) {
         case EVENT_MOUSE_PRESSED:
         case EVENT_KEY_PRESSED:
+        case EVENT_ENCODER_BUTTON_00:
             mADSR.start();
             if (data[KEY] == '1') {
                 mVCO.set_waveform(NodeVCOFunction::WAVEFORM::TRIANGLE);
@@ -52,6 +53,7 @@ void event_receive(const EVENT_TYPE event, const float* data) {
             break;
         case EVENT_MOUSE_RELEASED:
         case EVENT_KEY_RELEASED:
+        case EVENT_ENCODER_BUTTON_01:
             mADSR.stop();
             break;
         case EVENT_MOUSE_MOVED:

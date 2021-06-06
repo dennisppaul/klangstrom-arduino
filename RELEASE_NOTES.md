@@ -2,10 +2,11 @@
 
 ## 0.0.1
 
+- `NodeTextToSpeechSAM` now has a customizable buffer size
+- `NodeVCOWavetable` can now share wavetables
 - added `NodeRamp` for linear value interpolation
 - improved + fixed mixer nodes ( there are now static mixers for 4–32 channels and one node with multiple channels plus 2 stereo versions )
 - added mechanism to measure performance of code blocks ( in clock cycles or μs )
-- cleaned up and improved examples
 - fixed intial encoder button states
 - set MCU speed to 180MHz ( from 90MHz )
 - added tool to generate sample files 
@@ -16,6 +17,7 @@
 - fixed DFU mode ( USB peripherals had to be deinitialized before reset )
 - added desktop simulator (SDL)
 - added extensions ( i.e reverb, vocoder + TTS )
+- cleaned up and improved examples
 
 ## 0.0.0
 

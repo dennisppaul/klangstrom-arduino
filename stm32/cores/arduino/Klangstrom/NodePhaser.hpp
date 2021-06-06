@@ -24,7 +24,6 @@
 #define NodePhaser_hpp
 
 #include "Node.hpp"
-#include "NodeVCOWavetable.hpp"
 #include "LUTSine.hpp"
 
 namespace klang {

@@ -25,14 +25,8 @@ namespace klang {
         static const CHANNEL_ID NUM_CH_IN       = 0;
         static const CHANNEL_ID NUM_CH_OUT      = 1;
         
-        NodeSampler() {
-            mLoop = true;
-            mSpeed = 1.0;
-            mBuffer = nullptr;
-            mLength = 0;
-            mCounter = 0;
-        }
-        
+        NodeSampler() : NodeSampler (nullptr, 0){}
+
         NodeSampler(const float* pBuffer, uint32_t pLength) {
             mLoop = true;
             mSpeed = 1.0;

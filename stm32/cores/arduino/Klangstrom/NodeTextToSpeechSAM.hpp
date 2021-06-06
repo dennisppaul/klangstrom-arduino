@@ -11,9 +11,6 @@
  *       |                     |
  *       |              SIGNAL |--OUT00
  *       |                     |
- *       |                     |
- *       |                     |
- *       |                     |
  *       +---------------------+
  */
 
@@ -28,19 +25,28 @@
 
 using namespace std;
 
+char *buffer;
+
 namespace klang {
     class NodeTextToSpeechSAM : public Node {
     public:
         static const CHANNEL_ID NUM_CH_IN       = 0;
         static const CHANNEL_ID NUM_CH_OUT      = 1;
-        
-        NodeTextToSpeechSAM() {
+
+        NodeTextToSpeechSAM() : NodeTextToSpeechSAM(65536) {}
+
+        NodeTextToSpeechSAM(uint32_t pBufferLength) {
+            buffer = new char[pBufferLength];
             set_pitch(64);
             set_throat(128);
             set_speed(72);
             set_mouth(128);
         }
-        
+
+        ~NodeTextToSpeechSAM() {
+            delete[] buffer;
+        }
+
         bool connect(Connection* pConnection, CHANNEL_ID pInChannel) { return false; }
         
         bool disconnect(CHANNEL_ID pInChannel) { return false; }
@@ -84,7 +90,7 @@ namespace klang {
                 strncat(input, mText, 255);
                 strncat(input, "[", 255);
                 TextToPhonemes(input);
-                //                cout << "TextToPhonemes: " << input << endl;
+                //    std::cout << "TextToPhonemes: " << input << std::endl;
             }
             SetInput(input);
             SAMMain();
@@ -98,6 +104,10 @@ namespace klang {
             string s;
             ss>>s;
             speak(s);
+        }
+
+        uint32_t get_used_buffer_length() {
+            return GetBufferLength()/50;
         }
         
         void update(CHANNEL_ID pChannel, SIGNAL_TYPE* pAudioBlock) {

@@ -37,8 +37,6 @@
 #include "NodeVCA.hpp"
 #include "NodeMute.hpp"
 #include "NodeNoise.hpp"
-#include "NodeVCO.hpp"
-#include "NodeVCOFunction.hpp"
 #include "NodePassthrough.hpp"
 #include "NodePatch.hpp"
 #include "NodePatch16.hpp"
@@ -48,6 +46,7 @@
 #include "NodeSampler.hpp"
 #include "NodeSplitter.hpp"
 #include "NodeValue.hpp"
+#include "NodeVCOFunction.hpp"
 #include "NodeVCOWavetable.hpp"
 
 #ifdef KLANG_EXT_NODE_REVERB

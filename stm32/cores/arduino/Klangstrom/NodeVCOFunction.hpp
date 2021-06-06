@@ -21,14 +21,15 @@
 #ifndef NodeVCOFunction_hpp
 #define NodeVCOFunction_hpp
 
-#include "NodeVCO.hpp"
 #include "KlangMath.hpp"
 
 namespace klang {
-    class NodeVCOFunction : public NodeVCO {
+    class NodeVCOFunction : public Node {
     public:
-        static const CHANNEL_ID NUM_CH_IN       = 2;
-        static const CHANNEL_ID NUM_CH_OUT      = 1;
+        static const CHANNEL_ID CH_IN_FREQ  = 0;
+        static const CHANNEL_ID CH_IN_AMP   = 1;
+        static const CHANNEL_ID NUM_CH_IN   = 2;
+        static const CHANNEL_ID NUM_CH_OUT  = 1;
             
         enum WAVEFORM {
             SINE = 0,
@@ -90,7 +91,7 @@ namespace klang {
             mAmplitude = pAmplitude;
         }
         
-        SIGNAL_TYPE get_amplitude() {
+        const SIGNAL_TYPE get_amplitude() {
             return mAmplitude;
         }
         
@@ -98,7 +99,7 @@ namespace klang {
             mOffset = pOffset;
         }
         
-        SIGNAL_TYPE get_offset() {
+        const SIGNAL_TYPE get_offset() {
             return mOffset;
         }
         
@@ -109,7 +110,7 @@ namespace klang {
             }
         }
         
-        SIGNAL_TYPE get_frequency() { return mFrequency; }
+        const SIGNAL_TYPE get_frequency() { return mFrequency; }
         
         void update(CHANNEL_ID pChannel, SIGNAL_TYPE* pAudioBlock) {
             if (is_not_updated()) {

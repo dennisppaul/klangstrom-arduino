@@ -150,8 +150,6 @@ namespace klang {
         }
         
         float compute_delta_fraction(const float pDelta, const float pDuration) {
-            // @todo(optimze!)
-            // @todo(consider working with milli or micro seconds instead of seconds)
             const float c = pDelta * M_TIME_SCALE;
             const float a = c / KLANG_AUDIO_RATE_UINT16;
             const float b = a / pDuration;
