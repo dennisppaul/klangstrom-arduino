@@ -46,7 +46,7 @@ void setup() {
     mSampleSnare.loop(false);
 
     set_defaults();
-    
+
     Klang::unlock();
 }
 
@@ -71,38 +71,48 @@ void set_defaults() {
 
 void event_receive(const uint8_t event, const float* data) {
     switch (event) {
-        case EVENT_ENCODER_BUTTON_00:
-            if (data[BUTTON_STATE]) {
-                set_defaults();
-            }
+        case EVENT_ENCODER_BUTTON_PRESSED:
+            handleEncoderButton(data[INDEX]);
             break;
-        case EVENT_ENCODER_BUTTON_01:
-            if (data[BUTTON_STATE]) {
-                mButton01Shift = !mButton01Shift;
-            }
+        case EVENT_ENCODER_ROTATE:
+            handleEncoderRotate(data[INDEX], data[TICK], data[PREVIOUS_TICK]);
+            break;
+    }
+}
+
+void handleEncoderButton(uint8_t pIndex) {
+    switch (pIndex) {
+        case ENCODER_00:
+            set_defaults();
+            break;
+        case ENCODER_01:
+            mButton01Shift = !mButton01Shift;
             led(LED_01, mButton01Shift);
             break;
-        case EVENT_ENCODER_BUTTON_02:
-            if (data[BUTTON_STATE]) {
-                mButton02Shift = !mButton02Shift;
-            }
+        case ENCODER_02:
+            mButton02Shift = !mButton02Shift;
             led(LED_02, mButton02Shift);
             break;
-        case EVENT_ENCODER_ROTATE_00:
-                mBassPattern = map_tick(data[TICK]);
+    }
+}
+
+void handleEncoderRotate(uint8_t pIndex, int pTick, int pPrevTick) {
+    switch (pIndex) {
+        case ENCODER_00:
+            mBassPattern = map_tick(pTick);
             break;
-        case EVENT_ENCODER_ROTATE_01:
+        case ENCODER_01:
             if (mButton01Shift) {
-                handle_change_amp(data[TICK] - data[PREVIOUS_TICK]);
+                handle_change_amp(pTick - pPrevTick);
             } else {
-                mSnarePattern = map_tick(data[TICK]);
+                mSnarePattern = map_tick(pTick);
             }
             break;
-        case EVENT_ENCODER_ROTATE_02:
+        case ENCODER_02:
             if (mButton02Shift) {
-                handle_change_bpm(data[TICK] - data[PREVIOUS_TICK]);
+                handle_change_bpm(pTick - pPrevTick);
             } else {
-                mHihatPattern = map_tick(data[TICK]);
+                mHihatPattern = map_tick(pTick);
             }
             break;
     }
@@ -110,7 +120,7 @@ void event_receive(const uint8_t event, const float* data) {
 
 uint8_t map_tick(const float pTick) {
     const uint16_t mTick = (int16_t)pTick;
-   return ( mTick / 4) % 256;
+    return ( mTick / 4) % 256;
 }
 
 void handle_change_bpm(float mEncoderChange) {
@@ -133,13 +143,13 @@ void beat(uint32_t pBeat) {
     mPatternID++;
     mPatternID %= 8;
     if (trigger(mPatternID, mBassPattern)) {
-        mSampleBass.trigger();
+        mSampleBass.start();
     }
     if (trigger(mPatternID, mSnarePattern)) {
-        mSampleSnare.trigger();
+        mSampleSnare.start();
     }
     if (trigger(mPatternID, mHihatPattern)) {
-        mSampleHihat.trigger();
+        mSampleHihat.start();
     }
 }
 

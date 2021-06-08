@@ -95,33 +95,45 @@ void set_defaults() {
 
 void event_receive(const uint8_t event, const float* data) {
     switch (event) {
-        case EVENT_ENCODER_BUTTON_00:
-            if (data[BUTTON_STATE]) {
-                shuffle_track();
-            }
+        case EVENT_ENCODER_BUTTON_PRESSED:
+            handleEncoderButton(data[INDEX]);
             break;
-        case EVENT_ENCODER_BUTTON_01:
-            if (data[BUTTON_STATE]) {
-                set_defaults();
-            }
+        case EVENT_ENCODER_ROTATE:
+            handleEncoderRotate(data[INDEX], data[TICK], data[PREVIOUS_TICK]);
             break;
-        case EVENT_ENCODER_BUTTON_02:
-            if (data[BUTTON_STATE]) {
-                mFilterToggle = !mFilterToggle;
-                led(LED_02, mFilterToggle);
-            }
+    }
+}
+
+
+void handleEncoderButton(uint8_t pIndex) {
+    switch (pIndex) {
+        case ENCODER_00:
+            shuffle_track();
             break;
-        case EVENT_ENCODER_ROTATE_00:
-            handle_change_freq_offset(data[TICK] - data[PREVIOUS_TICK]);
+        case ENCODER_01:
+            set_defaults();
             break;
-        case EVENT_ENCODER_ROTATE_01:
-            handle_change_bpm(data[TICK] - data[PREVIOUS_TICK]);
+        case ENCODER_02:
+            mFilterToggle = !mFilterToggle;
+            led(LED_02, mFilterToggle);
             break;
-        case EVENT_ENCODER_ROTATE_02:
+    }
+}
+
+
+void handleEncoderRotate(uint8_t pIndex, int pTick, int pPrevTick) {
+    switch (pIndex) {
+        case ENCODER_00:
+            handle_change_freq_offset(pTick - pPrevTick);
+            break;
+        case ENCODER_01:
+            handle_change_bpm(pTick - pPrevTick);
+            break;
+        case ENCODER_02:
             if (mFilterToggle) {
-                handle_change_filter_cutoff(data[TICK] - data[PREVIOUS_TICK]);
+                handle_change_filter_cutoff(pTick - pPrevTick);
             } else {
-                handle_change_filter_resonance(data[TICK] - data[PREVIOUS_TICK]);
+                handle_change_filter_resonance(pTick - pPrevTick);
             }
             break;
     }

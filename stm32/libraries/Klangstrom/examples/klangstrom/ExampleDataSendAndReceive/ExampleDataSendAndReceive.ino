@@ -1,17 +1,19 @@
 /**
- * ExampleRotaryEncoder
- *
- * this example demonstrates how to transmit and receive data via the built in
- * serial ports. the examples implements a simple protocol that transmits 
- * enocder events on serial port 00 and receives events on serial port 01.
- * 
- * pressing any encoder button triggers a sound. rotating the encoders changes
- * the frequency.
- * 
- * note that this examles allows to control on board with another board. in 
- * order to do so a special IDC cable is required to connect the two boards.
- * 
+    ExampleRotaryEncoder
+
+    this example demonstrates how to transmit and receive data via the built in
+    serial ports. the examples implements a simple protocol that transmits
+    enocder events on serial port 00 and receives events on serial port 01.
+
+    pressing any encoder button triggers a sound. rotating the encoders changes
+    the frequency.
+
+    note that this examles allows to control on board with another board. in
+    order to do so a special IDC cable is required to connect the two boards.
+
 */
+
+// @todo(not tested in desktop simulator)
 
 #include "Nodes.hpp"
 
@@ -91,19 +93,15 @@ void update_frequency() {
 
 void event_receive(const uint8_t event, const float* data) {
     switch (event) {
-        case EVENT_ENCODER_BUTTON_00:
-        case EVENT_ENCODER_BUTTON_01:
-        case EVENT_ENCODER_BUTTON_02:
-            if (data[BUTTON_STATE]) {
-                transmit_command(M_ADSR_START);
-            } else {
-                transmit_command(M_ADSR_STOP);
-            }
+        case EVENT_MOUSE_PRESSED:
+        case EVENT_ENCODER_BUTTON_PRESSED:
+            transmit_command(M_ADSR_START);
+        case EVENT_MOUSE_RELEASED:
+        case EVENT_ENCODER_BUTTON_RELEASED:
+            transmit_command(M_ADSR_STOP);
             led_toggle(LED_00);
             break;
-        case EVENT_ENCODER_ROTATE_00:
-        case EVENT_ENCODER_ROTATE_01:
-        case EVENT_ENCODER_ROTATE_02:
+        case EVENT_ENCODER_ROTATE:
             parse_encoder(data[TICK] - data[PREVIOUS_TICK]);
             led_toggle(LED_02);
             break;

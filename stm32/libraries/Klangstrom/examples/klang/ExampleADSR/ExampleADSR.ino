@@ -49,11 +49,11 @@ void event_receive(const EVENT_TYPE event, const float* data) {
             }
             break;
         case EVENT_MOUSE_PRESSED:
-        case EVENT_ENCODER_BUTTON_00_PRESSED:
+        case EVENT_ENCODER_BUTTON_PRESSED:
             mADSR.start();
             break;
         case EVENT_MOUSE_RELEASED:
-        case EVENT_ENCODER_BUTTON_00_RELEASED:
+        case EVENT_ENCODER_BUTTON_RELEASED:
             mADSR.stop();
             break;
         case EVENT_MOUSE_MOVED:

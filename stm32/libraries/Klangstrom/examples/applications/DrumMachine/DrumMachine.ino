@@ -109,28 +109,36 @@ void shuffle_patterns() {
 
 void event_receive(const uint8_t event, const float* data) {
     switch (event) {
-        case EVENT_ENCODER_BUTTON_00:
-            if (data[BUTTON_STATE]) {
-                set_defaults();
-            }
+        case EVENT_ENCODER_BUTTON_PRESSED:
+            handleEncoderButton(data[INDEX]);
             break;
-        case EVENT_ENCODER_BUTTON_01:
-            if (data[BUTTON_STATE]) {
-                shuffle_patterns();
-            }
+        case EVENT_ENCODER_ROTATE:
+            handleEncoderRotate(data[INDEX], data[TICK], data[PREVIOUS_TICK]);
             break;
-        case EVENT_ENCODER_BUTTON_02:
-            if (data[BUTTON_STATE]) {
-            }
+    }
+}
+
+void handleEncoderButton(uint8_t pIndex) {
+    switch (pIndex) {
+        case ENCODER_00:
+            set_defaults();
             break;
-        case EVENT_ENCODER_ROTATE_00:
-            handle_change_distortion(data[TICK] - data[PREVIOUS_TICK]);
+        case ENCODER_01:
+            shuffle_patterns();
             break;
-        case EVENT_ENCODER_ROTATE_01:
-            handle_change_amplification(data[TICK] - data[PREVIOUS_TICK]);
+    }
+}
+
+void handleEncoderRotate(uint8_t pIndex, int pTick, int pPrevTick) {
+    switch (pIndex) {
+        case ENCODER_00:
+            handle_change_distortion(pTick - pPrevTick);
             break;
-        case EVENT_ENCODER_ROTATE_02:
-            handle_change_bpm(data[TICK] - data[PREVIOUS_TICK]);
+        case ENCODER_01:
+            handle_change_amplification(pTick - pPrevTick);
+            break;
+        case ENCODER_02:
+            handle_change_bpm(pTick - pPrevTick);
             break;
     }
 }
@@ -163,16 +171,16 @@ void beat(uint32_t pBeat) {
 
     led(LED_00, mTrackBass[mTrackID]);
     if (mTrackBass[mTrackID]) {
-        mSampleBass.trigger();
+        mSampleBass.start();
     }
 
     led(LED_01, mTrackSnare[mTrackID]);
     if (mTrackSnare[mTrackID]) {
-        mSampleSnare.trigger();
+        mSampleSnare.start();
     }
 
     led(LED_02, mTrackHihat[mTrackID]);
     if (mTrackHihat[mTrackID]) {
-        mSampleHihat.trigger();
+        mSampleHihat.start();
     }
 }
