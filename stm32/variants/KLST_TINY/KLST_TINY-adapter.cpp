@@ -24,7 +24,8 @@ bool mKLSTOptionEnableEncoders = true;
 bool mKLSTOptionEnableSerialPorts = true;
 bool mKLSTOptionEnableProgrammerButton = true;
 bool mKLSTOptionEnableAudioInput = true;
-bool mKLSTOptionEnableUSBSerialDebug = false;
+float mKLSTOptionSerial00BaudRate = KLST_UART_BAUD;
+float mKLSTOptionSerial01BaudRate = KLST_UART_BAUD;
 uint8_t mKLSTAudioLine = KLST_MIC;
 
 /* beat */
@@ -41,8 +42,8 @@ static int16_t mKLSTENCODER_02TickCount = 0;
 static bool mKLSTENCODER_00ButtonState = true;
 static bool mKLSTENCODER_01ButtonState = true;
 static bool mKLSTENCODER_02ButtonState = true;
-static const float mKLST_PRESSED[1] = {1.0f};
-static const float mKLST_RELEASED[1] = {0.0f};
+// static const float mKLST_PRESSED[1] = {1.0f};
+// static const float mKLST_RELEASED[1] = {0.0f};
 
 #ifdef __cplusplus
 extern "C" {
@@ -86,17 +87,17 @@ uint32_t __attribute__((section (".dmadata"))) dma_RX_buffer[I2S_BUFFER_SIZE];
 uint32_t *mCurrentRXBuffer;
 
 void KLST_start_audio_codec() {
-	memset(dma_TX_buffer, 0, sizeof(dma_TX_buffer));
-	memset(dma_RX_buffer, 0, sizeof(dma_RX_buffer));
-	if(HAL_OK != HAL_SAI_Transmit_DMA(&hsai_BlockB1, (uint8_t*) dma_TX_buffer, I2S_BUFFER_SIZE << 1)) {
+    memset(dma_TX_buffer, 0, sizeof(dma_TX_buffer));
+    memset(dma_RX_buffer, 0, sizeof(dma_RX_buffer));
+    if(HAL_OK != HAL_SAI_Transmit_DMA(&hsai_BlockB1, (uint8_t*) dma_TX_buffer, I2S_BUFFER_SIZE << 1)) {
 // 		KLST_LOG("### ERROR initializing SAI TX");
-	}
-	if (mKLSTOptionEnableAudioInput) {
+    }
+    if (mKLSTOptionEnableAudioInput) {
     if(HAL_OK != HAL_SAI_Receive_DMA(&hsai_BlockA1, (uint8_t*) dma_RX_buffer, I2S_BUFFER_SIZE << 1)) {
-  // 		KLST_LOG("### ERROR initializing SAI RX");
+// 		KLST_LOG("### ERROR initializing SAI RX");
     }
     mCurrentRXBuffer = &(dma_RX_buffer[0]);
-	}
+    }
 }
 
 #define SANITY_TEST             0
@@ -110,64 +111,64 @@ float right_osc_phi = 0;
 float right_osc_phi_inc = 110.0f / (float)KLANG_AUDIO_RATE; // generating 110Hz
 
 void FillBuffer(uint32_t *mTXBuffer, uint32_t *mRXBuffer, uint16_t len) {
-	for (uint16_t i = 0; i < len; i++) {
+    for (uint16_t i = 0; i < len; i++) {
 #if SANITY_TEST_PASSTHROUGH
-		mTXBuffer[i] = mRXBuffer[i];
+        mTXBuffer[i] = mRXBuffer[i];
 #else
     const float mAmplitude = 0.1f;
 
-		float mLeftf = (float) sin(left_osc_phi * 6.2832f) * mAmplitude;
-		left_osc_phi += left_osc_phi_inc;
-		left_osc_phi -= (float) ((uint16_t) left_osc_phi);
-		int16_t mLefti = (int16_t) (mLeftf * 32767.0f);
+        float mLeftf = (float) sin(left_osc_phi * 6.2832f) * mAmplitude;
+        left_osc_phi += left_osc_phi_inc;
+        left_osc_phi -= (float) ((uint16_t) left_osc_phi);
+        int16_t mLefti = (int16_t) (mLeftf * 32767.0f);
 
-		float mRightf = (float) sin(right_osc_phi * 6.2832f) * mAmplitude;
-		right_osc_phi += right_osc_phi_inc;
-		right_osc_phi -= (float) ((uint16_t) right_osc_phi);
-		int16_t mRighti = (int16_t) (mRightf * 32767.0f);
+        float mRightf = (float) sin(right_osc_phi * 6.2832f) * mAmplitude;
+        right_osc_phi += right_osc_phi_inc;
+        right_osc_phi -= (float) ((uint16_t) right_osc_phi);
+        int16_t mRighti = (int16_t) (mRightf * 32767.0f);
 
-		// both channels
-		mTXBuffer[i] = ((uint32_t) (uint16_t) mLefti) << 0 | ((uint32_t) (uint16_t) mRighti) << 16;
+        // both channels
+        mTXBuffer[i] = ((uint32_t) (uint16_t) mLefti) << 0 | ((uint32_t) (uint16_t) mRighti) << 16;
 #endif
-	}
+    }
 }
 #endif
 
 void HAL_SAI_TxCpltCallback(SAI_HandleTypeDef *hsai) {
 #if SANITY_TEST
-	FillBuffer(&(dma_TX_buffer[I2S_BUFFER_SIZE >> 1]), mCurrentRXBuffer, I2S_BUFFER_SIZE >> 1);
+    FillBuffer(&(dma_TX_buffer[I2S_BUFFER_SIZE >> 1]), mCurrentRXBuffer, I2S_BUFFER_SIZE >> 1);
 #else
-	KLST_fill_buffer(&(dma_TX_buffer[I2S_BUFFER_SIZE >> 1]), mCurrentRXBuffer, I2S_BUFFER_SIZE >> 1);
+    KLST_fill_buffer(&(dma_TX_buffer[I2S_BUFFER_SIZE >> 1]), mCurrentRXBuffer, I2S_BUFFER_SIZE >> 1);
 #endif
 }
 
 void HAL_SAI_TxHalfCpltCallback(SAI_HandleTypeDef *hsai) {
 #if SANITY_TEST
-	FillBuffer(&(dma_TX_buffer[0]), mCurrentRXBuffer, I2S_BUFFER_SIZE >> 1);
+    FillBuffer(&(dma_TX_buffer[0]), mCurrentRXBuffer, I2S_BUFFER_SIZE >> 1);
 #else
-	KLST_fill_buffer(&(dma_TX_buffer[0]), mCurrentRXBuffer, I2S_BUFFER_SIZE >> 1);
+    KLST_fill_buffer(&(dma_TX_buffer[0]), mCurrentRXBuffer, I2S_BUFFER_SIZE >> 1);
 #endif
 }
 
 void HAL_SAI_RxCpltCallback(SAI_HandleTypeDef *hsai) {
-	mCurrentRXBuffer = &(dma_RX_buffer[I2S_BUFFER_SIZE >> 1]);
+    mCurrentRXBuffer = &(dma_RX_buffer[I2S_BUFFER_SIZE >> 1]);
 }
 
 void HAL_SAI_RxHalfCpltCallback(SAI_HandleTypeDef *hsai) {
-	mCurrentRXBuffer = &(dma_RX_buffer[0]);
+    mCurrentRXBuffer = &(dma_RX_buffer[0]);
 }
 
 /**
  * WM8731 I2C implementation
  */
 bool WM8731_I2C_write(uint8_t device_address, uint8_t *data, uint8_t length) {
-	HAL_StatusTypeDef mResult = HAL_I2C_Master_Transmit(&hi2c3, device_address, data, length, 10);
-	if (mResult != HAL_OK) {
+    HAL_StatusTypeDef mResult = HAL_I2C_Master_Transmit(&hi2c3, device_address, data, length, 10);
+    if (mResult != HAL_OK) {
 // 		KLST_LOG("--- ERROR @ I2C_TX_write: %i", mResult);
     digitalWrite(LED_00, HIGH);
-		return false;
-	}
-	return true;
+        return false;
+    }
+    return true;
 }
 
 /**
@@ -206,7 +207,7 @@ void WM8731_delay(uint32_t pDelay) {
 /* ----------------------------------------------------------------------------------------------------------------- */
 
 void KLST_IT_beat_callback() {
-	beat(mKLSTBeatCounter++);
+    beat(mKLSTBeatCounter++);
 }
 
 /* ----------------------------------------------------------------------------------------------------------------- */
@@ -218,139 +219,125 @@ void KLST_IT_beat_callback() {
  * @note(make sure to remove static from functions!)
  */
 void KLST_pre_setup() {
-	/*
-	+  MX_GPIO_Init();
-	+  MX_DMA_Init();
-	MX_ADC1_Init();
-	MX_DAC_Init();
-	MX_I2C1_Init();
-	+  MX_SAI1_Init();
-	MX_SPI2_Init();
-	+  MX_TIM2_Init();
-	MX_TIM6_Init();
-	MX_TIM7_Init();
-	MX_TIM10_Init();
-	MX_TIM11_Init();
-	+  MX_TIM3_Init();
-	+  MX_TIM8_Init();
-	MX_USB_DEVICE_Init();
-	+  MX_I2C3_Init();
-	MX_TIM13_Init();
-	MX_TIM14_Init();
-	MX_TIM1_Init();
-	MX_TIM4_Init();
-	MX_TIM5_Init();
-	MX_TIM9_Init();
-	MX_TIM12_Init();
-	*/
-	MX_GPIO_Init();
-	MX_DMA_Init();
-	MX_I2C3_Init(); // @todo(check if we could use the built-in libs for this?)
-	MX_SAI1_Init();
+    /*
+    +  MX_GPIO_Init();
+    +  MX_DMA_Init();
+    MX_ADC1_Init();
+    MX_DAC_Init();
+    MX_I2C1_Init();
+    +  MX_SAI1_Init();
+    MX_SPI2_Init();
+    +  MX_TIM2_Init();
+    MX_TIM6_Init();
+    MX_TIM7_Init();
+    MX_TIM10_Init();
+    MX_TIM11_Init();
+    +  MX_TIM3_Init();
+    +  MX_TIM8_Init();
+    MX_USB_DEVICE_Init();
+    +  MX_I2C3_Init();
+    MX_TIM13_Init();
+    MX_TIM14_Init();
+    MX_TIM1_Init();
+    MX_TIM4_Init();
+    MX_TIM5_Init();
+    MX_TIM9_Init();
+    MX_TIM12_Init();
+    */
+    MX_GPIO_Init();
+    MX_DMA_Init();
+    MX_I2C3_Init(); // @todo(check if we could use the built-in libs for this?)
+    MX_SAI1_Init();
 
-	/* LEDs */
-	pinMode(LED_00, OUTPUT);
-	pinMode(LED_01, OUTPUT);
-	pinMode(LED_02, OUTPUT);
+    /* LEDs */
+    pinMode(LED_00, OUTPUT);
+    pinMode(LED_01, OUTPUT);
+    pinMode(LED_02, OUTPUT);
 
-	/* start UART interrupts */
-	// HAL_UART_Receive_IT(SERIAL_00_Handle, mSERIAL_00_BUFFER, KLST_SERIAL_BUFFER_SIZE);
-	// HAL_UART_Receive_IT(SERIAL_01_Handle, mSERIAL_01_BUFFER, KLST_SERIAL_BUFFER_SIZE);
-	if (mKLSTOptionEnableSerialPorts) {
+    /* start UART interrupts */
+    // HAL_UART_Receive_IT(SERIAL_00_Handle, mSERIAL_00_BUFFER, KLST_SERIAL_BUFFER_SIZE);
+    // HAL_UART_Receive_IT(SERIAL_01_Handle, mSERIAL_01_BUFFER, KLST_SERIAL_BUFFER_SIZE);
+    if (mKLSTOptionEnableSerialPorts) {
 #ifdef HAL_UART_MODULE_ENABLED
-		KLST_SERIAL_00.begin(KLST_UART_BAUD);
-		KLST_SERIAL_01.begin(KLST_UART_BAUD);
+        KLST_SERIAL_00.begin(mKLSTOptionSerial00BaudRate);
+        KLST_SERIAL_01.begin(mKLSTOptionSerial01BaudRate);
 #else
 #warning @Klangstrom :: serial ports are not enabled in board options. ignore this warning if this was intended.
 #endif
-	}
+    }
 
-  	/* beat */
-	if (mKLSTOptionEnableBeat) {
-		mKLSTBeatTimer = new HardwareTimer(TIM5);
-		klangstrom::beats_per_minute(120);
-		mKLSTBeatTimer->attachInterrupt(KLST_IT_beat_callback);
-	}
-
-	/* debug serial via USB */
-	// @todo(does it make sense to evaluate it here? or rather in `KLST_post_setup`)
-	if (mKLSTOptionEnableUSBSerialDebug) {
-    #if defined (USBCON) && defined(USBD_USE_CDC)
-		Serial.begin(KLST_UART_BAUD);
-		uint32_t mIterationGuard = 0;
-		while (!Serial && mIterationGuard < 1000000) {
-			// wait for serial port to connect. needed for native USB …
-      		// but only for a limited number of iterations.
-      		mIterationGuard++;
-		}
-		#endif
-	}
+      /* beat */
+    if (mKLSTOptionEnableBeat) {
+        mKLSTBeatTimer = new HardwareTimer(TIM5);
+        klangstrom::beats_per_minute(120);
+        mKLSTBeatTimer->attachInterrupt(KLST_IT_beat_callback);
+    }
 }
 
 /**
  * called after setup
  */
 void KLST_post_setup() {
-	/*
-	* POWER UP SEQUENCE
-	* - Switch on power supplies. By default the WM8731 is in Standby Mode, the DAC is digitally muted and the Audio Interface and Outputs are all OFF.
-	* - Set all required bits in the Power Down reg          ister (0Ch) to ‘0’; EXCEPT the OUTPD bit, this should be set to ‘1’ (Default).
-	* - Set required values in all other registers except 12h (Active).
-	* - Set the ‘Active’ bit in register 12h.
-	* - The last write of the sequence should be setting OUTPD to ‘0’ (active) in register 0Ch, enabling the DAC signal path, free of any significant power-up noise.
-	*/
-	//	WM8731_write(WM8731_RESET_REGISTER, 0b00000000);
-	WM8731_write(WM8731_POWER_DOWN_CONTROL, 0b00010000);
-	WM8731_write(WM8731_ANALOG_AUDIO_PATH_CONTROL, 0b00000000);
-	WM8731_write(WM8731_LINE_IN_LEFT,  0b000011111); // disable simultaneous load, disable mute, (+12db)
-	WM8731_write(WM8731_LINE_IN_RIGHT, 0b000011111);
-	WM8731_write(WM8731_HEADPHONE_OUT_LEFT,  0b001111001);
-	WM8731_write(WM8731_HEADPHONE_OUT_RIGHT, 0b001111001);
-	if (mKLSTAudioLine == KLST_MIC) {
-		WM8731_write(WM8731_ANALOG_AUDIO_PATH_CONTROL, 0b00010100); // MIC
-	} else if (mKLSTAudioLine == KLST_LINE_IN) {
-		WM8731_write(WM8731_ANALOG_AUDIO_PATH_CONTROL, 0b00010010); // LINE_IN
-	}
-	WM8731_inputLevel(0x1F);
-	WM8731_write(WM8731_DIGITAL_AUDIO_PATH_CONTROL, 0b00111);
-	WM8731_write(WM8731_DIGITAL_AUDIO_INTERFACE_FORMAT, 0b00000010);
-	WM8731_write(WM8731_SAMPLING_CONTROL, 0b000000010);
-	WM8731_write(WM8731_ACTIVE_CONTROL, 0b1);
+    /*
+    * POWER UP SEQUENCE
+    * - Switch on power supplies. By default the WM8731 is in Standby Mode, the DAC is digitally muted and the Audio Interface and Outputs are all OFF.
+    * - Set all required bits in the Power Down reg          ister (0Ch) to ‘0’; EXCEPT the OUTPD bit, this should be set to ‘1’ (Default).
+    * - Set required values in all other registers except 12h (Active).
+    * - Set the ‘Active’ bit in register 12h.
+    * - The last write of the sequence should be setting OUTPD to ‘0’ (active) in register 0Ch, enabling the DAC signal path, free of any significant power-up noise.
+    */
+    //	WM8731_write(WM8731_RESET_REGISTER, 0b00000000);
+    WM8731_write(WM8731_POWER_DOWN_CONTROL, 0b00010000);
+    WM8731_write(WM8731_ANALOG_AUDIO_PATH_CONTROL, 0b00000000);
+    WM8731_write(WM8731_LINE_IN_LEFT,  0b000011111); // disable simultaneous load, disable mute, (+12db)
+    WM8731_write(WM8731_LINE_IN_RIGHT, 0b000011111);
+    WM8731_write(WM8731_HEADPHONE_OUT_LEFT,  0b001111001);
+    WM8731_write(WM8731_HEADPHONE_OUT_RIGHT, 0b001111001);
+    if (mKLSTAudioLine == KLST_MIC) {
+        WM8731_write(WM8731_ANALOG_AUDIO_PATH_CONTROL, 0b00010100); // MIC
+    } else if (mKLSTAudioLine == KLST_LINE_IN) {
+        WM8731_write(WM8731_ANALOG_AUDIO_PATH_CONTROL, 0b00010010); // LINE_IN
+    }
+    WM8731_inputLevel(0x1F);
+    WM8731_write(WM8731_DIGITAL_AUDIO_PATH_CONTROL, 0b00111);
+    WM8731_write(WM8731_DIGITAL_AUDIO_INTERFACE_FORMAT, 0b00000010);
+    WM8731_write(WM8731_SAMPLING_CONTROL, 0b000000010);
+    WM8731_write(WM8731_ACTIVE_CONTROL, 0b1);
 
-	WM8731_write(WM8731_POWER_DOWN_CONTROL, 0b00000000);
+    WM8731_write(WM8731_POWER_DOWN_CONTROL, 0b00000000);
 
-	KLST_start_audio_codec();
+    KLST_start_audio_codec();
 
-	/* start encoder */
-	if (mKLSTOptionEnableEncoders) {
-		MX_TIM2_Init();
-		MX_TIM3_Init();
-		MX_TIM8_Init();
+    /* start encoder */
+    if (mKLSTOptionEnableEncoders) {
+        MX_TIM2_Init();
+        MX_TIM3_Init();
+        MX_TIM8_Init();
 
-		pinMode(ENCODER_00_BUTTON, INPUT);
-  		pinMode(ENCODER_01_BUTTON, INPUT);
-  		pinMode(ENCODER_02_BUTTON, INPUT);
+        pinMode(ENCODER_00_BUTTON, INPUT);
+        pinMode(ENCODER_01_BUTTON, INPUT);
+        pinMode(ENCODER_02_BUTTON, INPUT);
 
-		HAL_TIM_Encoder_Start(&htim3, TIM_CHANNEL_ALL);
-		HAL_TIM_Encoder_Start(&htim8, TIM_CHANNEL_ALL);
-		HAL_TIM_Encoder_Start(&htim2, TIM_CHANNEL_ALL);
-		// @note(`HAL_TIM_Encoder_Stop(&htim3, TIM_CHANNEL_ALL);`)
+        HAL_TIM_Encoder_Start(&htim3, TIM_CHANNEL_ALL);
+        HAL_TIM_Encoder_Start(&htim8, TIM_CHANNEL_ALL);
+        HAL_TIM_Encoder_Start(&htim2, TIM_CHANNEL_ALL);
+        // @note(`HAL_TIM_Encoder_Stop(&htim3, TIM_CHANNEL_ALL);`)
 
-		mKLSTENCODER_00TickCount = (int16_t)ENCODER_00_TIMER->CNT;
-		mKLSTENCODER_01TickCount = (int16_t)ENCODER_01_TIMER->CNT;
-		mKLSTENCODER_02TickCount = (int16_t)ENCODER_02_TIMER->CNT;
-	}
+        mKLSTENCODER_00TickCount = (int16_t)ENCODER_00_TIMER->CNT;
+        mKLSTENCODER_01TickCount = (int16_t)ENCODER_01_TIMER->CNT;
+        mKLSTENCODER_02TickCount = (int16_t)ENCODER_02_TIMER->CNT;
+    }
 
-	/* beat */
-	if (mKLSTOptionEnableBeat) {
-		mKLSTBeatTimer->resume();
-	}
+    /* beat */
+    if (mKLSTOptionEnableBeat) {
+        mKLSTBeatTimer->resume();
+    }
 
-  	/* programmer button */
-  	if (mKLSTOptionEnableProgrammerButton) {
-    	pinMode(BUTTON_PROGRAMMER, INPUT);
-    	attachInterrupt(BUTTON_PROGRAMMER, KLST_jump_to_bootloader, RISING);
-  	}
+      /* programmer button */
+      if (mKLSTOptionEnableProgrammerButton) {
+        pinMode(BUTTON_PROGRAMMER, INPUT);
+        attachInterrupt(BUTTON_PROGRAMMER, KLST_jump_to_bootloader, RISING);
+      }
 }
 
 bool KLST_audio_input_enabled() {
@@ -409,83 +396,86 @@ void KLST_shutdown() {
 }
 
 void KLST_handle_encoders() {
-	/* rotation */
-	const int16_t mEncoder_00TickCount = (int16_t)ENCODER_00_TIMER->CNT;
-	if (mKLSTENCODER_00TickCount != mEncoder_00TickCount) {
-		const float f[2] = {(float)mEncoder_00TickCount, (float)mKLSTENCODER_00TickCount};
-		event_receive(EVENT_ENCODER_ROTATE_00, f);
-		mKLSTENCODER_00TickCount = mEncoder_00TickCount;
-	}
-	const int16_t mEncoder_01TickCount = (int16_t)ENCODER_01_TIMER->CNT;
-	if (mKLSTENCODER_01TickCount != mEncoder_01TickCount) {
-		const float f[2] = {(float)mEncoder_01TickCount, (float)mKLSTENCODER_01TickCount};
-		event_receive(EVENT_ENCODER_ROTATE_01, f);
-		mKLSTENCODER_01TickCount = mEncoder_01TickCount;
-	}
-	const int16_t mEncoder_02TickCount = (int16_t)ENCODER_02_TIMER->CNT;
-	if (mKLSTENCODER_02TickCount != mEncoder_02TickCount) {
-		const float f[2] = {(float)mEncoder_02TickCount, (float)mKLSTENCODER_02TickCount};
-		event_receive(EVENT_ENCODER_ROTATE_02, f);
-		mKLSTENCODER_02TickCount = mEncoder_02TickCount;
-	}
-	/* buttons */
-	bool mENCODER_00ButtonState = digitalRead(ENCODER_00_BUTTON);
-	if (mKLSTENCODER_00ButtonState != mENCODER_00ButtonState) {
-		if (mENCODER_00ButtonState) {
-			event_receive(EVENT_ENCODER_BUTTON_00, mKLST_RELEASED);
-		} else {
-			event_receive(EVENT_ENCODER_BUTTON_00, mKLST_PRESSED);
-		}
-		mKLSTENCODER_00ButtonState = mENCODER_00ButtonState;
-	}
-	bool mENCODER_01ButtonState = digitalRead(ENCODER_01_BUTTON);
-	if (mKLSTENCODER_01ButtonState != mENCODER_01ButtonState) {
-		if (mENCODER_01ButtonState) {
-			event_receive(EVENT_ENCODER_BUTTON_01, mKLST_RELEASED);
-		} else {
-			event_receive(EVENT_ENCODER_BUTTON_01, mKLST_PRESSED);
-		}
-		mKLSTENCODER_01ButtonState = mENCODER_01ButtonState;
-	}
-	bool mENCODER_02ButtonState = digitalRead(ENCODER_02_BUTTON);
-	if (mKLSTENCODER_02ButtonState != mENCODER_02ButtonState) {
-		if (mENCODER_02ButtonState) {
-			event_receive(EVENT_ENCODER_BUTTON_02, mKLST_RELEASED);
-		} else {
-			event_receive(EVENT_ENCODER_BUTTON_02, mKLST_PRESSED);
-		}
-		mKLSTENCODER_02ButtonState = mENCODER_02ButtonState;
-	}
+    /* rotation */
+    const int16_t mEncoder_00TickCount = (int16_t)ENCODER_00_TIMER->CNT;
+    if (mKLSTENCODER_00TickCount != mEncoder_00TickCount) {
+        const float f[3] = {ENCODER_00, (float)mEncoder_00TickCount, (float)mKLSTENCODER_00TickCount};
+        event_receive(EVENT_ENCODER_ROTATE, f);
+        mKLSTENCODER_00TickCount = mEncoder_00TickCount;
+    }
+    const int16_t mEncoder_01TickCount = (int16_t)ENCODER_01_TIMER->CNT;
+    if (mKLSTENCODER_01TickCount != mEncoder_01TickCount) {
+        const float f[3] = {ENCODER_01, (float)mEncoder_01TickCount, (float)mKLSTENCODER_01TickCount};
+        event_receive(EVENT_ENCODER_ROTATE, f);
+        mKLSTENCODER_01TickCount = mEncoder_01TickCount;
+    }
+    const int16_t mEncoder_02TickCount = (int16_t)ENCODER_02_TIMER->CNT;
+    if (mKLSTENCODER_02TickCount != mEncoder_02TickCount) {
+        const float f[3] = {ENCODER_02, (float)mEncoder_02TickCount, (float)mKLSTENCODER_02TickCount};
+        event_receive(EVENT_ENCODER_ROTATE, f);
+        mKLSTENCODER_02TickCount = mEncoder_02TickCount;
+    }
+    /* buttons */
+    bool mENCODER_00ButtonState = digitalRead(ENCODER_00_BUTTON);
+    if (mKLSTENCODER_00ButtonState != mENCODER_00ButtonState) {
+        const float f[1] = {ENCODER_00};
+        if (mENCODER_00ButtonState) {
+            event_receive(EVENT_ENCODER_BUTTON_RELEASED, f);
+        } else {
+            event_receive(EVENT_ENCODER_BUTTON_PRESSED, f);
+        }
+        mKLSTENCODER_00ButtonState = mENCODER_00ButtonState;
+    }
+    bool mENCODER_01ButtonState = digitalRead(ENCODER_01_BUTTON);
+    if (mKLSTENCODER_01ButtonState != mENCODER_01ButtonState) {
+        const float f[1] = {ENCODER_01};
+        if (mENCODER_01ButtonState) {
+            event_receive(EVENT_ENCODER_BUTTON_RELEASED, f);
+        } else {
+            event_receive(EVENT_ENCODER_BUTTON_PRESSED, f);
+        }
+        mKLSTENCODER_01ButtonState = mENCODER_01ButtonState;
+    }
+    bool mENCODER_02ButtonState = digitalRead(ENCODER_02_BUTTON);
+    if (mKLSTENCODER_02ButtonState != mENCODER_02ButtonState) {
+        const float f[1] = {ENCODER_02};
+        if (mENCODER_02ButtonState) {
+            event_receive(EVENT_ENCODER_BUTTON_RELEASED, f);
+        } else {
+            event_receive(EVENT_ENCODER_BUTTON_PRESSED, f);
+        }
+        mKLSTENCODER_02ButtonState = mENCODER_02ButtonState;
+    }
 }
 
 void KLST_handleSerialPorts() {
 #ifdef HAL_UART_MODULE_ENABLED
-	{
-		const uint8_t mLength = KLST_SERIAL_00.available();
-		if (mLength > 0) {
-			uint8_t mData[mLength];
-			KLST_SERIAL_00.readBytes(mData, mLength);
-			data_receive(SERIAL_00, mData, mLength);
-		}
-	}
-	{
-		const uint8_t mLength = KLST_SERIAL_01.available();
-		if (mLength > 0) {
-			uint8_t mData[mLength];
-			KLST_SERIAL_01.readBytes(mData, mLength);
-			data_receive(SERIAL_01, mData, mLength);
-		}
-	}
+    {
+        const uint8_t mLength = KLST_SERIAL_00.available();
+        if (mLength > 0) {
+            uint8_t mData[mLength];
+            KLST_SERIAL_00.readBytes(mData, mLength);
+            data_receive(SERIAL_00, mData, mLength);
+        }
+    }
+    {
+        const uint8_t mLength = KLST_SERIAL_01.available();
+        if (mLength > 0) {
+            uint8_t mData[mLength];
+            KLST_SERIAL_01.readBytes(mData, mLength);
+            data_receive(SERIAL_01, mData, mLength);
+        }
+    }
 #endif
 }
 
 void KLST_loop() {
-	if (mKLSTOptionEnableEncoders) {
-		KLST_handle_encoders();
-	}
-	if (mKLSTOptionEnableSerialPorts) {
-		KLST_handleSerialPorts();
-	}
+    if (mKLSTOptionEnableEncoders) {
+        KLST_handle_encoders();
+    }
+    if (mKLSTOptionEnableSerialPorts) {
+        KLST_handleSerialPorts();
+    }
 }
 
 #ifdef __cplusplus
@@ -520,85 +510,107 @@ void KLST_loop() {
 //     }
 // }
 
-void klangstrom::option(uint8_t pOption, uint8_t pValue) {
-	switch (pOption) {
-		case KLST_OPTION_AUDIO_INPUT:
-			mKLSTAudioLine = pValue;
-			break;
-		case KLST_OPTION_ENCODERS:
-			mKLSTOptionEnableEncoders = pValue;
-			break;
-		case KLST_OPTION_SERIAL_PORTS:
-			mKLSTOptionEnableSerialPorts = pValue;
-			break;
-		case KLST_OPTION_BEAT:
-			mKLSTOptionEnableBeat = pValue;
-			break;
-		case KLST_OPTION_PROGRAMMER_BUTTON:
-			mKLSTOptionEnableProgrammerButton = pValue;
-			break;
-		case KLST_OPTION_ENABLE_AUDIO_INPUT:
-			mKLSTOptionEnableAudioInput = pValue;
-			break;
-	}
+void klangstrom::begin_serial_debug(bool pWaitForSerial, uint32_t pBaudRate) {
+#if defined (USBCON) && defined(USBD_USE_CDC)
+        Serial.begin(pBaudRate);
+        if (pWaitForSerial) {
+            static const uint32_t M_ITERATION_GUARD = 180000000;
+            uint32_t mIterationGuard = 0;
+            while (!Serial && mIterationGuard < M_ITERATION_GUARD) {
+                // wait for serial port to connect. needed for native USB …
+                // but only for a limited number of iterations.
+                mIterationGuard++;
+            }
+        }
+#endif
+}
+
+
+void klangstrom::option(uint8_t pOption, uint32_t pValue) {
+    switch (pOption) {
+        case KLST_OPTION_AUDIO_INPUT:
+            mKLSTAudioLine = pValue;
+            break;
+        case KLST_OPTION_ENCODERS:
+            mKLSTOptionEnableEncoders = pValue;
+            break;
+        case KLST_OPTION_SERIAL_PORTS:
+            mKLSTOptionEnableSerialPorts = pValue;
+            break;
+        case KLST_OPTION_BEAT:
+            mKLSTOptionEnableBeat = pValue;
+            break;
+        case KLST_OPTION_PROGRAMMER_BUTTON:
+            mKLSTOptionEnableProgrammerButton = pValue;
+            break;
+        case KLST_OPTION_ENABLE_AUDIO_INPUT:
+            mKLSTOptionEnableAudioInput = pValue;
+            break;
+        case KLST_OPTION_SERIAL_00_BAUD_RATE:
+            mKLSTOptionSerial00BaudRate = pValue;
+            break;
+        case KLST_OPTION_SERIAL_01_BAUD_RATE:
+            mKLSTOptionSerial01BaudRate = pValue;
+            break;
+    }
 }
 
 void klangstrom::led(uint8_t pLED, bool pState) {
-	// @todo(maybe replace with `KLST_LED_00`)
-	switch (pLED) {
-		case LED_00:
-			digitalWrite(LED_00, pState ? HIGH : LOW);
-			break;
-		case LED_01:
-			digitalWrite(LED_01, pState ? HIGH : LOW);
-			break;
-		case LED_02:
-			digitalWrite(LED_02, pState ? HIGH : LOW);
-			break;
-	}
+    // @todo(maybe replace with `KLST_LED_00`)
+    switch (pLED) {
+        case LED_00:
+            digitalWrite(LED_00, pState ? HIGH : LOW);
+            break;
+        case LED_01:
+            digitalWrite(LED_01, pState ? HIGH : LOW);
+            break;
+        case LED_02:
+            digitalWrite(LED_02, pState ? HIGH : LOW);
+            break;
+    }
 }
 
 void klangstrom::led_toggle(uint8_t pLED) {
-	// @todo(maybe replace with `KLST_LED_00`)
-	switch (pLED) {
-		case LED_00:
-			digitalWrite(LED_00, !digitalRead(LED_00));
-			break;
-		case LED_01:
-			digitalWrite(LED_01, !digitalRead(LED_01));
-			break;
-		case LED_02:
-			digitalWrite(LED_02, !digitalRead(LED_02));
-			break;
-	}
+    // @todo(maybe replace with `KLST_LED_00`)
+    switch (pLED) {
+        case LED_00:
+            digitalWrite(LED_00, !digitalRead(LED_00));
+            break;
+        case LED_01:
+            digitalWrite(LED_01, !digitalRead(LED_01));
+            break;
+        case LED_02:
+            digitalWrite(LED_02, !digitalRead(LED_02));
+            break;
+    }
 }
 
 void klangstrom::beats_per_minute(float pBPM) {
-	if (pBPM == 0) { return; }
-	klangstrom::beats_per_minute_ms((uint32_t)((60.0 / pBPM) * 1000000));
+    if (pBPM == 0) { return; }
+    klangstrom::beats_per_minute_ms((uint32_t)((60.0 / pBPM) * 1000000));
 }
 
 void klangstrom::beats_per_minute_ms(uint32_t pMicroSeconds) {
-	mKLSTBeatIntervalDuration = pMicroSeconds;
-	mKLSTBeatTimer->setOverflow(mKLSTBeatIntervalDuration, MICROSEC_FORMAT);
+    mKLSTBeatIntervalDuration = pMicroSeconds;
+    mKLSTBeatTimer->setOverflow(mKLSTBeatIntervalDuration, MICROSEC_FORMAT);
 }
 
 bool klangstrom::button_state(uint8_t pButton) {
-	switch (pButton) {
-		case KLST_BUTTON_ENCODER_00:
-			return !mKLSTENCODER_00ButtonState;
-		case KLST_BUTTON_ENCODER_01:
-			return !mKLSTENCODER_01ButtonState;
-		case KLST_BUTTON_ENCODER_02:
-			return !mKLSTENCODER_02ButtonState;
-		case KLST_BUTTON_PROGRAMMER:
-			return !digitalRead(BUTTON_PROGRAMMER);
-	}
-	return false;
+    switch (pButton) {
+        case KLST_BUTTON_ENCODER_00:
+            return !mKLSTENCODER_00ButtonState;
+        case KLST_BUTTON_ENCODER_01:
+            return !mKLSTENCODER_01ButtonState;
+        case KLST_BUTTON_ENCODER_02:
+            return !mKLSTENCODER_02ButtonState;
+        case KLST_BUTTON_PROGRAMMER:
+            return !digitalRead(BUTTON_PROGRAMMER);
+    }
+    return false;
 }
 
 bool klangstrom::pin_state(uint8_t pButton) {
-	return !digitalRead(pButton);
+    return !digitalRead(pButton);
 }
 
 void klangstrom::data_transmit(const uint8_t pSender, uint8_t* pData, uint8_t pDataLength) {

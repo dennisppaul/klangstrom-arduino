@@ -26,7 +26,9 @@ KLST_Simulator mSimulator;
 
 /* ----------------------------------------------------------------------------------------------------- */
 
-void klangstrom::option(uint8_t pOption, uint8_t pValue) {}
+void klangstrom::begin_serial_debug(bool pWaitForSerial, uint32_t pBaudRate) {}
+
+void klangstrom::option(uint8_t pOption, uint32_t pValue) {}
 
 void klangstrom::beats_per_minute(float pBPM) { klangstrom_arduino_beats_per_minute(pBPM); }
 

@@ -22,7 +22,7 @@ NodeVCOWavetable        mOSC[NUM_OF_OSC];
 NodeMixerMulti          mMixer;
 
 void setup()  {
-    Serial.begin(115200);
+    begin_serial_debug(true);
 
     NodeVCOWavetable::fill_wavetable(NodeVCOWavetable::WAVEFORM::SINE, mWavetable, WAVETABLE_SIZE);
     for (uint8_t i = 0; i < NUM_OF_OSC; ++i) {

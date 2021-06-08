@@ -95,46 +95,25 @@ public:
                         digitalWrite((uint32_t) mData[0], (int8_t)mData[1]);
                     }
                     break;
-                case EVENT_ENCODER_ROTATE_00:
-                    if (mLength == 2 && str_equals(msg.TypeTags(), "iff")) {
-                        event_receive(EVENT_ENCODER_ROTATE_00, mData);
+                case EVENT_ENCODER_ROTATE:
+                    if (mLength == 3 && str_equals(msg.TypeTags(), "ifff")) {
+                        event_receive(EVENT_ENCODER_ROTATE, mData);
                     } else {
-                        emit_message_error("EVENT_ENCODER_ROTATE_00", "iff", msg);
+                        emit_message_error("EVENT_ENCODER_ROTATE", "ifff", msg);
                     }
                     break;
-                case EVENT_ENCODER_ROTATE_01:
-                    if (mLength == 2 && str_equals(msg.TypeTags(), "iff")) {
-                        event_receive(EVENT_ENCODER_ROTATE_01, mData);
-                    } else {
-                        emit_message_error("EVENT_ENCODER_ROTATE_01", "iff", msg);
-                    }
-                    break;
-                case EVENT_ENCODER_ROTATE_02:
-                    if (mLength == 2 && str_equals(msg.TypeTags(), "iff")) {
-                        event_receive(EVENT_ENCODER_ROTATE_02, mData);
-                    } else {
-                        emit_message_error("EVENT_ENCODER_ROTATE_02", "iff", msg);
-                    }
-                    break;
-                case EVENT_ENCODER_BUTTON_00:
+                case EVENT_ENCODER_BUTTON_PRESSED:
                     if (mLength == 1 && str_equals(msg.TypeTags(), "if")) {
-                        event_receive(EVENT_ENCODER_BUTTON_00, mData);
+                        event_receive(EVENT_ENCODER_BUTTON_PRESSED, mData);
                     } else {
-                        emit_message_error("EVENT_ENCODER_BUTTON_00", "if", msg);
+                        emit_message_error("EVENT_ENCODER_BUTTON_PRESSED", "if", msg);
                     }
                     break;
-                case EVENT_ENCODER_BUTTON_01:
+                case EVENT_ENCODER_BUTTON_RELEASED:
                     if (mLength == 1 && str_equals(msg.TypeTags(), "if")) {
-                        event_receive(EVENT_ENCODER_BUTTON_01, mData);
+                        event_receive(EVENT_ENCODER_BUTTON_RELEASED, mData);
                     } else {
-                        emit_message_error("EVENT_ENCODER_BUTTON_01", "if", msg);
-                    }
-                    break;
-                case EVENT_ENCODER_BUTTON_02:
-                    if (mLength == 1 && str_equals(msg.TypeTags(), "if")) {
-                        event_receive(EVENT_ENCODER_BUTTON_02, mData);
-                    } else {
-                        emit_message_error("EVENT_ENCODER_BUTTON_02", "if", msg);
+                        emit_message_error("EVENT_ENCODER_BUTTON_RELEASED", "if", msg);
                     }
                     break;
                 default:

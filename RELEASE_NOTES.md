@@ -2,15 +2,17 @@
 
 ## 0.0.1
 
+- `NodeSampler` now works with different data types ( `float`, `uint8_t` and `uint16_t` )
+- speed of serial port ( `SERIAL_00` + `SERIAL_01` ) is now an option
 - `NodeTextToSpeechSAM` now has a customizable buffer size
-- `NodeVCOWavetable` can now share wavetables
+- `NodeVCOWavetable` can now share wavetable data
 - added `NodeRamp` for linear value interpolation
 - improved + fixed mixer nodes ( there are now static mixers for 4–32 channels and one node with multiple channels plus 2 stereo versions )
 - added mechanism to measure performance of code blocks ( in clock cycles or μs )
 - fixed intial encoder button states
 - set MCU speed to 180MHz ( from 90MHz )
-- added tool to generate sample files 
-- improved `NodeWavetable` speed by 4.5× 
+- added tool to generate sample files
+- improved `NodeWavetable` speed by 4.5×
 - boards have now unique identifiers `ID()` ( based on their hardware serial number )
 - added application to examples ( drum machine + sequencer )
 - added documentation ( e.g node library )

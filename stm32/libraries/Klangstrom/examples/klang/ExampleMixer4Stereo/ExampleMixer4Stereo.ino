@@ -19,10 +19,7 @@ float mAudioblockDuration = 0;
 uint8_t mBlocksUsed       = 0;
 
 void setup()  {
-    Serial.begin(115200);
-#if KLST_BOARD_TYPE==KLST_TINY
-    while (!Serial);
-#endif
+    begin_serial_debug(true);
     klst_enable_cycle_counter();
 
 

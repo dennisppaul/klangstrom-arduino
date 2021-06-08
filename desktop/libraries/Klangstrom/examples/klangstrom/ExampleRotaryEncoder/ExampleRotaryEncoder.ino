@@ -1,11 +1,11 @@
 /**
- * ExampleRotaryEncoder
- * 
- * this examples demonstrates how the use the rotary encoders and the events 
- * they produce. the example connects 3 oscillators to a mixer, which is 
- * connected to an ADSR. pressing the buttons triggers the ADSR, rotating the 
- * encoders changes the frequency of each oscillator.
- */
+    ExampleRotaryEncoder
+
+    this examples demonstrates how the use the rotary encoders and the events
+    they produce. the example connects 3 oscillators to a mixer, which is
+    connected to an ADSR. pressing the buttons triggers the ADSR, rotating the
+    encoders changes the frequency of each oscillator.
+*/
 
 #include "Nodes.hpp"
 
@@ -23,7 +23,7 @@ float mOSCFreq[NUM_OF_OSC];
 float mBaseFreq = 220;
 
 void setup() {
-    Serial.begin(115200);
+    begin_serial_debug(true);
 
     Klang::lock();
 
@@ -63,26 +63,21 @@ void beat(uint32_t pBeat) {
 void event_receive(const uint8_t event, const float* data) {
     print_encoder_state(event, data);
 
-    /* encoders change the frequency when rotated and change the amplitude when pressed */
     switch (event) {
-        case EVENT_ENCODER_BUTTON_00:
-        case EVENT_ENCODER_BUTTON_01:
-        case EVENT_ENCODER_BUTTON_02:
-            if (data[BUTTON_STATE]) {
-                mADSR.start();
-            } else {
-                mADSR.stop();
-
+        case EVENT_ENCODER_BUTTON_PRESSED:
+            mADSR.start();
+            break;
+        case EVENT_ENCODER_BUTTON_RELEASED:
+            mADSR.stop();
+            break;
+        case EVENT_ENCODER_ROTATE:
+            if (data[INDEX] == ENCODER_00) {
+                change_freq(0, data[TICK] - data[PREVIOUS_TICK]);
+            } else if (data[INDEX] == ENCODER_01) {
+                change_freq(1, data[TICK] - data[PREVIOUS_TICK]);
+            } else if (data[INDEX] == ENCODER_02) {
+                change_freq(2, data[TICK] - data[PREVIOUS_TICK]);
             }
-            break;
-        case EVENT_ENCODER_ROTATE_00:
-            change_freq(0, data[TICK] - data[PREVIOUS_TICK]);
-            break;
-        case EVENT_ENCODER_ROTATE_01:
-            change_freq(1, data[TICK] - data[PREVIOUS_TICK]);
-            break;
-        case EVENT_ENCODER_ROTATE_02:
-            change_freq(2, data[TICK] - data[PREVIOUS_TICK]);
             break;
     }
 }
@@ -94,44 +89,54 @@ void change_freq(uint8_t i, float mFreqChange) {
 
 void print_encoder_state(const uint8_t event, const float* data) {
     /* print encoder states + toggle LEDs */
-    if (event == EVENT_ENCODER_ROTATE_00) {
-        Serial.print("ENCODER_00 ROTATION: ");
-        Serial.print(data[TICK]);
-        Serial.print(", ");
-        Serial.print(data[TICK] - data[PREVIOUS_TICK]);
-        Serial.println();
-        led_toggle(LED_00);
+    if (event == EVENT_ENCODER_ROTATE) {
+        if (data[INDEX] == ENCODER_00) {
+            Serial.print("ENCODER_00 ROTATION               : ");
+            Serial.print(data[TICK]);
+            Serial.print(", ");
+            Serial.print(data[TICK] - data[PREVIOUS_TICK]);
+            Serial.println();
+            led_toggle(LED_00);
+        } else if (data[INDEX] == ENCODER_01) {
+            Serial.print("ENCODER_01 ROTATION               : ");
+            Serial.print(data[TICK]);
+            Serial.print(", ");
+            Serial.print(data[TICK] - data[PREVIOUS_TICK]);
+            Serial.println();
+            led_toggle(LED_01);
+        } else if (data[INDEX] == ENCODER_02) {
+            Serial.print("ENCODER_02 ROTATION               : ");
+            Serial.print(data[TICK]);
+            Serial.print(", ");
+            Serial.print(data[TICK] - data[PREVIOUS_TICK]);
+            Serial.println();
+            led_toggle(LED_02);
+        }
     }
-    if (event == EVENT_ENCODER_ROTATE_01) {
-        Serial.print("ENCODER_01 ROTATION: ");
-        Serial.print(data[TICK]);
-        Serial.print(", ");
-        Serial.print(data[TICK] - data[PREVIOUS_TICK]);
-        Serial.println();
-        led_toggle(LED_01);
+
+    if (event == EVENT_ENCODER_BUTTON_PRESSED) {
+        if (data[INDEX] == ENCODER_00) {
+            Serial.println("EVENT_ENCODER_BUTTON_00_PRESSED");
+            led(LED_00, true);
+        } else if (data[INDEX] == ENCODER_01) {
+            Serial.println("EVENT_ENCODER_BUTTON_01_PRESSED");
+            led(LED_01, true);
+        } else if (data[INDEX] == ENCODER_02) {
+            Serial.println("EVENT_ENCODER_BUTTON_02_PRESSED");
+            led(LED_02, true);
+        }
     }
-    if (event == EVENT_ENCODER_ROTATE_02) {
-        Serial.print("ENCODER_02 ROTATION: ");
-        Serial.print(data[TICK]);
-        Serial.print(", ");
-        Serial.print(data[TICK] - data[PREVIOUS_TICK]);
-        Serial.println();
-        led_toggle(LED_02);
-    }
-    if (event == EVENT_ENCODER_BUTTON_00) {
-        Serial.print("ENCODER_00 BUTTON  : ");
-        Serial.println((int)data[BUTTON_STATE]);
-        led(LED_00, data[BUTTON_STATE] > 0);
-    }
-    if (event == EVENT_ENCODER_BUTTON_01) {
-        Serial.print("ENCODER_01 BUTTON  : ");
-        Serial.println((int)data[BUTTON_STATE]);
-        led(LED_01, data[BUTTON_STATE] > 0);
-    }
-    if (event == EVENT_ENCODER_BUTTON_02) {
-        Serial.print("ENCODER_02 BUTTON  : ");
-        Serial.println((int)data[BUTTON_STATE]);
-        led(LED_02, data[BUTTON_STATE] > 0);
+    if (event == EVENT_ENCODER_BUTTON_RELEASED) {
+        if (data[INDEX] == ENCODER_00) {
+            Serial.println("EVENT_ENCODER_BUTTON_00_RELEASED");
+            led(LED_00, false);
+        } else if (data[INDEX] == ENCODER_01) {
+            Serial.println("EVENT_ENCODER_BUTTON_01_RELEASED");
+            led(LED_01, false);
+        } else if (data[INDEX] == ENCODER_02) {
+            Serial.println("EVENT_ENCODER_BUTTON_02_RELEASED");
+            led(LED_02, false);
+        }
     }
 }
 

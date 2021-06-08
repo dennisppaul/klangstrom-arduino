@@ -9,8 +9,9 @@
  *       [ NODE_RAMP           ]
  *       +---------------------+
  *       |                     |
- *       |              SIGNAL |--OUT00
+ * IN00--| TRIGGER      SIGNAL |--OUT00
  *       |             TRIGGER |--OUT01
+ *       |                     |
  *       +---------------------+
  * 
  *       @description(
@@ -35,7 +36,8 @@
 namespace klang {
     class NodeRamp : public Node {
     public:
-        static const CHANNEL_ID NUM_CH_IN       = 0;
+        static const CHANNEL_ID CH_IN_TRIGGER   = 0;
+        static const CHANNEL_ID NUM_CH_IN       = 1;
 
         static const CHANNEL_ID CH_OUT_SIGNAL   = 0;
         static const CHANNEL_ID CH_OUT_TRIGGER  = 1;

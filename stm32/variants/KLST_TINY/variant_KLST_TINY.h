@@ -188,7 +188,7 @@ extern "C" {
 
 #define BUTTON_PROGRAMMER         PC5
 #define LED_BUILTIN               LED_00
-#define KLST_UART_BAUD		         115200
+#define KLST_UART_BAUD            115200
 
 #define ENCODER_00_TIMER          TIM3
 #define ENCODER_01_TIMER          TIM8

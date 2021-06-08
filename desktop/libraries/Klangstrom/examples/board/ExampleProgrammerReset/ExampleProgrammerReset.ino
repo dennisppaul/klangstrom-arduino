@@ -5,7 +5,7 @@
 using namespace klangstrom;
 
 void setup() {
-    Serial.begin(115200);
+    begin_serial_debug(true);
     led(LED_00, true);
     led(LED_01, false);
     led(LED_02, true);

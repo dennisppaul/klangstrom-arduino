@@ -1,13 +1,10 @@
 //
 // ExampleMeasuringPerformance
 //
+// @note(this example only works for MCUs)
 
 #include "CycleCounter.h"
 #include "Nodes.hpp"
-
-// 65.50–65.54μs    :: VCO
-// 167.35–167.47μs  :: VCO+VCF
-// @todo(add VCO+VCO+VCF)
 
 using namespace klang;
 using namespace klangstrom;
@@ -20,13 +17,14 @@ float mAudioblockDuration = 0;
 uint8_t mBlocksUsed       = 0;
 
 void setup()  {
-    Serial.begin(115200);
-    while (!Serial);
+    begin_serial_debug(true);
+#if (KLST_ARCH==KLST_ARCH_MCU)
     Serial.print("MCU clock speed (MHz) ................. : ");
     Serial.println(SystemCoreClock);
     Serial.print("maximum duration of audioblock (μs) ... : ");
     Serial.println(1000000 / (KLANG_AUDIO_RATE / KLANG_SAMPLES_PER_AUDIO_BLOCK));
     Serial.println("---");
+#endif
 
     Klang::connect(mVCO, Node::CH_OUT_SIGNAL, mVCF, NodeDAC::CH_IN_SIGNAL);
     Klang::connect(mVCF, Node::CH_OUT_SIGNAL, mDAC, NodeDAC::CH_IN_SIGNAL);

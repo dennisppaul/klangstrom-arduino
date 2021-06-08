@@ -8,11 +8,11 @@ using namespace klang;
 using namespace klangstrom;
 
 NodeDAC         mDAC;
-NodeSampler     mSampler;
+NodeSamplerUI16 mSampler;
 NodeADSR        mADSR;
 
-const uint16_t SAMPLER_BUFFER_SIZE = 512;
-float mSamplerBuffer[SAMPLER_BUFFER_SIZE];
+const uint16_t SAMPLER_BUFFER_SIZE = 2048;
+uint16_t mSamplerBuffer[SAMPLER_BUFFER_SIZE];
 
 void setup()  {
     Klang::connect(mSampler,    Node::CH_OUT_SIGNAL,  mADSR,   Node::CH_IN_SIGNAL);
@@ -23,12 +23,13 @@ void setup()  {
     mSampler.loop(true);
     for (uint16_t i = 0; i < SAMPLER_BUFFER_SIZE; i++) {
         const float r = (float)i / SAMPLER_BUFFER_SIZE * TWO_PI * 4.0;
-        mSamplerBuffer[i] = ( sin(r) * 0.5 + sin(r * TWO_PI) * 0.1 ) * 0.5;
+        const float s = sin(r) * 0.1;// + sin(r * TWO_PI) * 0.1;
+        const uint16_t sUI8 = (uint16_t)(( s * 0.5 + 0.5 ) * 65535 );
+        mSamplerBuffer[i] = sUI8;
     }
 }
 
-void audioblock(SIGNAL_TYPE* pOutputLeft, SIGNAL_TYPE* pOutputRight, 
-                SIGNAL_TYPE* pInputLeft, SIGNAL_TYPE* pInputRight)  {
+void audioblock(SIGNAL_TYPE* pOutputLeft, SIGNAL_TYPE* pOutputRight, SIGNAL_TYPE* pInputLeft, SIGNAL_TYPE* pInputRight)  {
     mDAC.process_frame(pOutputLeft, pOutputRight);
 }
 
@@ -42,6 +43,7 @@ void event_receive(const EVENT_TYPE event, const float* data)  {
         case EVENT_MOUSE_PRESSED:
         case EVENT_ENCODER_BUTTON_00_PRESSED:
             mADSR.start();
+            mSampler.start();
             break;
         case EVENT_KEY_RELEASED:
         case EVENT_MOUSE_RELEASED:

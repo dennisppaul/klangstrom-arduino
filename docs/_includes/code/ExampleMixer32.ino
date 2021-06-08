@@ -18,10 +18,7 @@ float mAudioblockDuration = 0;
 uint8_t mBlocksUsed       = 0;
 
 void setup()  {
-    Serial.begin(115200);
-#if KLST_BOARD_TYPE==KLST_TINY
-    while (!Serial);
-#endif
+    begin_serial_debug(true);
 
     for (uint8_t i = 0; i < NUM_OF_OSC; ++i) {
         Klang::connect(mOSC[i], Node::CH_OUT_SIGNAL, mMixer, i);

@@ -54,7 +54,7 @@ void KLST_shutdown();
 #ifdef __cplusplus
 
 namespace klangstrom {
-    void option(uint8_t pOption, uint8_t pValue);
+    void option(uint8_t pOption, uint32_t pValue);
     void beats_per_minute(float pBPM);
     void beats_per_minute_ms(uint32_t pMicroSeconds);
     void led(uint8_t pLED, bool pState);
@@ -63,6 +63,7 @@ namespace klangstrom {
     bool pin_state(uint8_t pButton);
     void event_transmit(EVENT_TYPE pEvent, float* pPayload);
     void data_transmit(const uint8_t pTransmitter, uint8_t* pData, uint8_t pDataLength);
+    void begin_serial_debug(bool pWaitForSerial=false, uint32_t pBaudRate=115200);
     int16_t ID();
 };
 

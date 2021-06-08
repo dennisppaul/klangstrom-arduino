@@ -73,58 +73,62 @@ namespace klangstrom {
 
     // @todo(add payload description as comment. see `EVENT_ENCODER_ROTATE_XX`)
     
-    static const EVENT_TYPE EVENT_RESERVED_01               = 0x00;
-    static const EVENT_TYPE EVENT_RESERVED_02               = 0x01;
-    static const EVENT_TYPE EVENT_RAW_DATA                  = 0x02;
-    static const EVENT_TYPE EVENT_MOUSE_PRESSED             = 0x03;
-    static const EVENT_TYPE EVENT_MOUSE_RELEASED            = 0x04;
-    static const EVENT_TYPE EVENT_MOUSE_MOVED               = 0x05;
-    static const EVENT_TYPE EVENT_MOUSE_DRAGGED             = 0x06;
-    static const EVENT_TYPE EVENT_KEY_PRESSED               = 0x07;
-    static const EVENT_TYPE EVENT_KEY_RELEASED              = 0x08;
+    //                      EVENT TYPE                                  // PAYLOAD
+
+    static const EVENT_TYPE EVENT_RESERVED_01                   = 0x00;
+    static const EVENT_TYPE EVENT_RESERVED_02                   = 0x01;
+    static const EVENT_TYPE EVENT_RAW_DATA                      = 0x02;
+    static const EVENT_TYPE EVENT_MOUSE_PRESSED                 = 0x03; // [X,Y]
+    static const EVENT_TYPE EVENT_MOUSE_RELEASED                = 0x04; // [X,Y]
+    static const EVENT_TYPE EVENT_MOUSE_MOVED                   = 0x05; // [X,Y]
+    static const EVENT_TYPE EVENT_MOUSE_DRAGGED                 = 0x06; // [X,Y]
+    static const EVENT_TYPE EVENT_KEY_PRESSED                   = 0x07; // [X,Y]
+    static const EVENT_TYPE EVENT_KEY_RELEASED                  = 0x08; // [X,Y]
     
     /* --- EVENT_TYPE (PERIPHERALS) --- */
 
-    static const EVENT_TYPE EVENT_ENCODER_ROTATE_00         = 0x09; // [TICK,PREVIOUS_TICK]
-    static const EVENT_TYPE EVENT_ENCODER_ROTATE_01         = 0x0A;
-    static const EVENT_TYPE EVENT_ENCODER_ROTATE_02         = 0x0B;
-    static const EVENT_TYPE EVENT_ENCODER_BUTTON_00         = 0x0C; // [BUTTON_STATE]
-    static const EVENT_TYPE EVENT_ENCODER_BUTTON_01         = 0x0D;
-    static const EVENT_TYPE EVENT_ENCODER_BUTTON_02         = 0x0E;
+    static const EVENT_TYPE EVENT_ENCODER_ROTATE                = 0x09; // [INDEX,TICK,PREVIOUS_TICK]
+    static const EVENT_TYPE EVENT_ENCODER_BUTTON_PRESSED        = 0x0A; // [INDEX]
+    static const EVENT_TYPE EVENT_ENCODER_BUTTON_RELEASED       = 0x0B; // [INDEX]
 
-    static const EVENT_DATA TICK                            = 0x00;
-    static const EVENT_DATA PREVIOUS_TICK                   = 0x01;
-    static const EVENT_DATA BUTTON_STATE                    = 0x00;
+    /* --- EVENT_DATA LOCATIONS + VALUES (PERIPHERALS) --- */
 
-    /* --- EVENT_DATA LOCATIONS (HID) --- */
+    static const EVENT_DATA INDEX                               = 0x00;
+    static const EVENT_DATA TICK                                = 0x01;
+    static const EVENT_DATA PREVIOUS_TICK                       = 0x02;
+    static const EVENT_DATA ENCODER_00                          = 0x00;
+    static const EVENT_DATA ENCODER_01                          = 0x01;
+    static const EVENT_DATA ENCODER_02                          = 0x02;
 
-    static const EVENT_DATA X                               = 0x00;
-    static const EVENT_DATA Y                               = 0x01;
-    static const EVENT_DATA BUTTON                          = 0x02;
-    static const EVENT_DATA LEFT                            = 0x00;
-    static const EVENT_DATA MIDDLE                          = 0x01;
-    static const EVENT_DATA RIGHT                           = 0x02;
-    static const EVENT_DATA KEY                             = 0x00;
+    /* --- EVENT_DATA LOCATIONS + VALUES (HID) --- */
+
+    static const EVENT_DATA X                                   = 0x00;
+    static const EVENT_DATA Y                                   = 0x01;
+    static const EVENT_DATA BUTTON                              = 0x02;
+    static const EVENT_DATA LEFT                                = 0x00;
+    static const EVENT_DATA MIDDLE                              = 0x01;
+    static const EVENT_DATA RIGHT                               = 0x02;
+    static const EVENT_DATA KEY                                 = 0x00;
 
     /* --- EVENT_TYPE (MIDI) --- */
 
     // @REF([Summary of MIDI Messages](https://www.midi.org/specifications/item/table-1-summary-of-midi-message))
 
-    static const EVENT_TYPE EVENT_MIDI_IN_NOTE_ON           = 0x09; // [???]
-    static const EVENT_TYPE EVENT_MIDI_IN_NOTE_OFF          = 0x0A;
-    static const EVENT_TYPE EVENT_MIDI_IN_CC                = 0x0B;
-    static const EVENT_TYPE EVENT_MIDI_IN_PROGRAM_CHANGE    = 0x0C;
-    static const EVENT_TYPE EVENT_MIDI_IN_SYSEX             = 0x0D;
+    static const EVENT_TYPE EVENT_MIDI_IN_NOTE_ON               = 0x09; // [???]
+    static const EVENT_TYPE EVENT_MIDI_IN_NOTE_OFF              = 0x0A;
+    static const EVENT_TYPE EVENT_MIDI_IN_CC                    = 0x0B;
+    static const EVENT_TYPE EVENT_MIDI_IN_PROGRAM_CHANGE        = 0x0C;
+    static const EVENT_TYPE EVENT_MIDI_IN_SYSEX                 = 0x0D;
     // @TODO("implement other message types like *System Real-Time Messages* ( aka *Midi Clock* )")
 
     /* --- EVENT_DATA LOCATIONS (MIDI) --- */
 
-    static const EVENT_DATA CHANNEL                         = 0x00;
-    static const EVENT_DATA NOTE                            = 0x01;
-    static const EVENT_DATA VELOCITY                        = 0x02;
-    static const EVENT_DATA NUMBER                          = 0x01;
-    static const EVENT_DATA VALUE                           = 0x02;
-    static const EVENT_DATA PROG_NUM                        = 0x01;
+    static const EVENT_DATA CHANNEL                             = 0x00;
+    static const EVENT_DATA NOTE                                = 0x01;
+    static const EVENT_DATA VELOCITY                            = 0x02;
+    static const EVENT_DATA NUMBER                              = 0x01;
+    static const EVENT_DATA VALUE                               = 0x02;
+    static const EVENT_DATA PROG_NUM                            = 0x01;
 }
 
 /**
@@ -144,11 +148,11 @@ namespace klangstrom {
  * this block defines constants for OSC communications
  */
 namespace klangstrom {
-    static const char  KLANG_OSC_CMD[]                              = "/klang/command";
-    static const char  KLANG_OSC_DATA[]                             = "/klang/data";
-    static const char  KLANG_OSC_MIDI_IN[]                          = "/klang/midi_in";
-    static const char  KLANG_OSC_MIDI_OUT[]                         = "/klang/midi_out";
-    static const char  KLANG_OSC_SIM[]                              = "/klang/sim";
+    static const char  KLANG_OSC_CMD[]                          = "/klang/command";
+    static const char  KLANG_OSC_DATA[]                         = "/klang/data";
+    static const char  KLANG_OSC_MIDI_IN[]                      = "/klang/midi_in";
+    static const char  KLANG_OSC_MIDI_OUT[]                     = "/klang/midi_out";
+    static const char  KLANG_OSC_SIM[]                          = "/klang/sim";
 };
 
 #ifndef KLANG_OSC_TRANSMIT_ADDRESS

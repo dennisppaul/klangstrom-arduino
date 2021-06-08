@@ -62,18 +62,14 @@ namespace klang {
             }
             return false;
         }
-        
-        void trigger(SIGNAL_TYPE pTrigger) {
-            mTrigger = pTrigger;
-        }
-        
+              
         void start() {
-            trigger(1);
+            mTriggerFlag = true;
             trigger_attack();
         }
         
         void stop() {
-            trigger(0);
+            mTriggerFlag = false;
             trigger_release();
         }
         
@@ -210,7 +206,7 @@ namespace klang {
     private:
         Connection* mConnection_CH_IN_SIGNAL   = nullptr;
         
-        SIGNAL_TYPE mTrigger        = 0.0f;
+        bool        mTriggerFlag    = false;
         SIGNAL_TYPE mAttack         = 0.01f;
         SIGNAL_TYPE mDecay          = 0.05f;
         SIGNAL_TYPE mSustain        = 0.5f;
@@ -228,9 +224,9 @@ namespace klang {
         float compute_delta_fraction(float pDelta, float pDuration) {
             return pDuration > 0 ? (pDelta / KLANG_AUDIO_RATE_UINT16) / pDuration : pDelta;
         }
-        
+       
         void trigger_attack() {
-            if (mTrigger > 0.0f) {
+            if (mTriggerFlag) {
                 mDelta = compute_delta_fraction(1.0 - mAmp, mAttack);//(1.0f / (float) KLANG_AUDIO_RATE_UINT16) / mAttack;
                 if (mAmp > 0.0f) {
                     mState = ENVELOPE_STATE::FADE_TO_ZERO;
@@ -241,7 +237,7 @@ namespace klang {
         }
         
         void trigger_release() {
-            if (mTrigger <= 0.0f) {
+            if (!mTriggerFlag) {
                 mDelta = compute_delta_fraction(-mAmp, mRelease);//-(mAmp / (float) KLANG_AUDIO_RATE_UINT16) / mRelease;
                 mState = ENVELOPE_STATE::RELEASE;
             }

@@ -34,10 +34,7 @@ void audioblock(SIGNAL_TYPE* pOutputLeft, SIGNAL_TYPE* pOutputRight, SIGNAL_TYPE
 
 void event_receive(const EVENT_TYPE event, const float* data) {
     switch (event) {
-        case EVENT_MOUSE_PRESSED:
         case EVENT_KEY_PRESSED:
-        case EVENT_ENCODER_BUTTON_00:
-            mADSR.start();
             if (data[KEY] == '1') {
                 mVCO.set_waveform(NodeVCOFunction::WAVEFORM::TRIANGLE);
             }
@@ -51,9 +48,12 @@ void event_receive(const EVENT_TYPE event, const float* data) {
                 mVCO.set_waveform(NodeVCOFunction::WAVEFORM::SQUARE);
             }
             break;
+        case EVENT_MOUSE_PRESSED:
+        case EVENT_ENCODER_BUTTON_00_PRESSED:
+            mADSR.start();
+            break;
         case EVENT_MOUSE_RELEASED:
-        case EVENT_KEY_RELEASED:
-        case EVENT_ENCODER_BUTTON_01:
+        case EVENT_ENCODER_BUTTON_00_RELEASED:
             mADSR.stop();
             break;
         case EVENT_MOUSE_MOVED:

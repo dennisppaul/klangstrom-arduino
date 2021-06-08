@@ -31,17 +31,17 @@ void event_receive(const EVENT_TYPE event, const float* data) {
             handle_key_pressed(data[KEY]);
             break;
         case EVENT_MOUSE_PRESSED:
-        case EVENT_ENCODER_BUTTON_00:
+        case EVENT_ENCODER_BUTTON_00_PRESSED:
             mTTS.set_speed(100);
             mTTS.set_pitch(96);
             mTTS.speak("KLAH5NXSHDROW5M \x9b\x9b\0", true);
             break;
-        case EVENT_ENCODER_BUTTON_01:
+        case EVENT_ENCODER_BUTTON_01_PRESSED:
             mTTS.set_speed(72);
             mTTS.set_pitch(64);
             mTTS.speak("hello my name is");
             break;
-        case EVENT_ENCODER_BUTTON_02:
+        case EVENT_ENCODER_BUTTON_02_PRESSED:
             mTTS.set_speed(100);
             mTTS.set_pitch(96);
             mTTS.speak("klangstrom");

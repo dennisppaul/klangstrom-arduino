@@ -20,14 +20,15 @@
 #include "Node.hpp"
 
 namespace klang {
-    class NodeSampler : public Node {
+    template <class BUFFER_TYPE>
+    class NodeSamplerT : public Node {
     public:
         static const CHANNEL_ID NUM_CH_IN       = 0;
         static const CHANNEL_ID NUM_CH_OUT      = 1;
         
-        NodeSampler() : NodeSampler (nullptr, 0){}
+        NodeSamplerT() : NodeSamplerT (nullptr, 0) {}
 
-        NodeSampler(const float* pBuffer, uint32_t pLength) {
+        NodeSamplerT(const BUFFER_TYPE* pBuffer, uint32_t pLength) {
             mLoop = true;
             mSpeed = 1.0;
             mBuffer = pBuffer;
@@ -47,7 +48,7 @@ namespace klang {
             }
         }
                 
-        void trigger() {
+        void start() {
             mCounter = 0;
         }
         
@@ -59,11 +60,11 @@ namespace klang {
             return mCounter;
         }
         
-        void set_buffer(const float* pBuffer) {
+        void set_buffer(const BUFFER_TYPE* pBuffer) {
             mBuffer = pBuffer;
         }
         
-        const float* get_buffer() {
+        const BUFFER_TYPE* get_buffer() {
             return mBuffer;
         }
         
@@ -98,7 +99,7 @@ namespace klang {
                 
     private:
         bool mLoop;
-        const float* mBuffer;
+        const BUFFER_TYPE* mBuffer;
         uint32_t mLength;
         float mCounter;
         float mSpeed;
@@ -107,19 +108,41 @@ namespace klang {
             if (mBuffer != nullptr) {
                 if (mCounter >= mLength) {
                     if (mLoop) {
-                        mCounter = 0;
+                        while (mCounter >= mLength) {
+                            mCounter -= mLength;
+                        }
                     } else {
                         return 0.0;
                     }
                 }
                 const uint32_t mIndex = (uint32_t)mCounter;
                 mCounter += mSpeed;
-                return mBuffer[mIndex];
+                if (std::is_same<BUFFER_TYPE, float>::value) {
+                    return mBuffer[mIndex];
+                } else if (std::is_same<BUFFER_TYPE, uint8_t>::value) {
+                    // const float s = mBuffer[mIndex];
+                    // const float mScale = 1.0 / ((1 << 7) - 1.0);
+                    // const float a = s * mScale - 1.0;
+                    // return a;
+                    return ( mBuffer[mIndex] / 255.0 ) * 2.0 - 1.0;
+                } else if (std::is_same<BUFFER_TYPE, uint16_t>::value) {
+                    const float s = mBuffer[mIndex];
+                    const float mScale = 1.0 / ((1 << 15) - 1.0);
+                    const float a = s * mScale - 1.0;
+                    return a;
+                } else {
+                    return 0.0;
+                }
             } else {
                 return 0.0;
             }
         }
     };
+
+    using NodeSampler       = NodeSamplerT<SIGNAL_TYPE>;
+    using NodeSamplerF32    = NodeSamplerT<float>;
+    using NodeSamplerUI8    = NodeSamplerT<uint8_t>;
+    using NodeSamplerUI16   = NodeSamplerT<uint16_t>;
 }
 
 #endif /* NodeSampler_hpp */
