@@ -2,6 +2,8 @@
 
 ## 0.0.1
 
+- `NodeADSR`+ `NodeRamp` + `NodeEnvelope` can now be triggered by an input channel signal
+- `NodeADSR`+ `NodeRamp` + `NodeEnvelope` now also accept microsecond values ( and use them internally as well )
 - `NodeSampler` now works with different data types ( `float`, `uint8_t` and `uint16_t` )
 - speed of serial port ( `SERIAL_00` + `SERIAL_01` ) is now an option
 - `NodeTextToSpeechSAM` now has a customizable buffer size

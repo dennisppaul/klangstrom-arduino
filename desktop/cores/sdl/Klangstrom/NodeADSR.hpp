@@ -10,6 +10,7 @@
  *       +---------------------+
  *       |                     |
  * IN00--| SIGNAL       SIGNAL |--OUT00
+ * IN01--| TRIGGER     TRIGGER |--OUT01
  *       |                     |
  *       +---------------------+
  *
@@ -44,12 +45,19 @@
 namespace klang {
     class NodeADSR : public Node {
     public:
-        static const CHANNEL_ID NUM_CH_IN         = 1;
-        static const CHANNEL_ID NUM_CH_OUT        = 1;
+        static const CHANNEL_ID CH_IN_TRIGGER   = 1;
+        static const CHANNEL_ID NUM_CH_IN       = 2;
+
+        static const CHANNEL_ID CH_OUT_TRIGGER  = 1;
+        static const CHANNEL_ID NUM_CH_OUT      = 2;
         
         bool connect(Connection* pConnection, CHANNEL_ID pInChannel) {
             if (pInChannel == CH_IN_SIGNAL) {
                 mConnection_CH_IN_SIGNAL = pConnection;
+                return true;
+            }
+            else if (pInChannel == CH_IN_TRIGGER) {
+                mConnection_CH_IN_TRIGGER = pConnection;
                 return true;
             }
             return false;
@@ -60,27 +68,34 @@ namespace klang {
                 mConnection_CH_IN_SIGNAL = nullptr;
                 return true;
             }
+            else if (pInChannel == CH_IN_TRIGGER) {
+                mConnection_CH_IN_TRIGGER = nullptr;
+                return true;
+            }
             return false;
         }
               
         void start() {
-            mTriggerFlag = true;
-            trigger_attack();
+            check_scheduled_attack_state();
         }
         
         void stop() {
-            mTriggerFlag = false;
-            trigger_release();
+            check_scheduled_release_state();
         }
         
-        void set_attack(float pAttack) { mAttack = pAttack; }
-        void set_decay(float pDecay) { mDecay = pDecay; }
+        void set_attack(float pAttack) { mAttack = pAttack * M_TIME_SCALE; }
+        void set_decay(float pDecay) { mDecay = pDecay * M_TIME_SCALE; }
         void set_sustain(float pSustain) { mSustain = pSustain; }
-        void set_release(float pRelease) { mRelease = pRelease; }
-        float get_attack() { return mAttack; }
-        float get_decay() { return mDecay; }
+        void set_release(float pRelease) { mRelease = pRelease * M_TIME_SCALE; }
+
+        void set_attack_ms(float pAttack) { mAttack = pAttack; }
+        void set_decay_ms(float pDecay) { mDecay = pDecay; }
+        void set_release_ms(float pRelease) { mRelease = pRelease ; }
+
+        float get_attack() { return mAttack / M_TIME_SCALE; }
+        float get_decay() { return mDecay / M_TIME_SCALE; }
         float get_sustain() { return mSustain; }
-        float get_release() { return mRelease; }
+        float get_release() { return mRelease / M_TIME_SCALE; }
         
         void set_command(KLANG_CMD_TYPE pCommand, KLANG_CMD_TYPE* pPayLoad) {
             switch (pCommand) {
@@ -129,91 +144,71 @@ namespace klang {
                 } else {
                     mNoInputSignal = true;
                 }
+                mBlock_TRIGGER = AudioBlockPool::NO_ID;
+                if (mConnection_CH_IN_TRIGGER != nullptr) {
+                    mBlock_TRIGGER = AudioBlockPool::instance().request();
+                    mConnection_CH_IN_TRIGGER->update(mBlock_TRIGGER);
+                    SIGNAL_TYPE* mBlockData_TRIGGER = AudioBlockPool::instance().data(mBlock_TRIGGER);
+                    for (uint16_t i = 0; i < KLANG_SAMPLES_PER_AUDIO_BLOCK; i++) {
+                        const float mCurrentSample = mBlockData_TRIGGER[i];
+                        mBlockData_TRIGGER[i] = evaluateEdge(mPreviousSample, mCurrentSample);
+                        mPreviousSample = mCurrentSample;
+                    }
+                }
                 flag_updated();
             }
             
             if (pChannel == CH_OUT_SIGNAL) {
+                const bool mHasTriggerSignal = ( mBlock_TRIGGER != AudioBlockPool::NO_ID);
+                SIGNAL_TYPE* mBlockData_TRIGGER = nullptr;
+                if (mHasTriggerSignal) {
+                    mBlockData_TRIGGER = AudioBlockPool::instance().data(mBlock_TRIGGER);
+                }
                 for (uint16_t i=0; i < KLANG_SAMPLES_PER_AUDIO_BLOCK; i++) {
-#if (KLANG_SIGNAL_TYPE==SIGNAL_TYPE_INT16)
-                    pAudioBlock[i] = pAudioBlock[i];
-                    //@TODO("multiply with amplitude")
-#elif (KLANG_SIGNAL_TYPE==SIGNAL_TYPE_FLOAT)
-                    step_float();
+                    if (mHasTriggerSignal) {
+                        const SIGNAL_TYPE mTriggerState = mBlockData_TRIGGER[i];
+                        if (mTriggerState == RAMP_RISING_EDGE) {
+                            start();
+                        } else if (mTriggerState == RAMP_FALLING_EDGE) {
+                            stop();
+                        }
+                    }
+                    kernel();
                     pAudioBlock[i] = mNoInputSignal ? mAmp : pAudioBlock[i] * mAmp;
-#else
-#error KLANG_SIGNAL_TYPE not defined
-#endif
+                }
+            }
+            else if (pChannel == CH_OUT_TRIGGER) {
+                const bool mHasTriggerSignal = ( mBlock_TRIGGER != AudioBlockPool::NO_ID);
+                if (mHasTriggerSignal) {
+                    SIGNAL_TYPE* mBlockData_TRIGGER = AudioBlockPool::instance().data(mBlock_TRIGGER);
+                    KLANG_COPY_AUDIO_BUFFER(pAudioBlock, mBlockData_TRIGGER);
+                } else {
+                    KLANG_FILL_AUDIO_BUFFER(pAudioBlock, 0.0);
                 }
             }
         }
         
-        void step_float() {
-            switch (mState) {
-                case ENVELOPE_STATE::IDLE:
-                    trigger_attack();
-                    break;
-                case ENVELOPE_STATE::ATTACK:
-                    trigger_release();
-                    // increase amp to sustain_level in ATTACK sec
-                    mAmp += mDelta;
-                    if (mAmp >= 1.0f) {
-                        mAmp = 1.0f;
-                        mDelta = compute_delta_fraction(-(mAmp - mSustain), mDecay);
-                        //-((mAmp - mSustain) / (float) KLANG_AUDIO_RATE_UINT16) / mDecay;
-                        mState = ENVELOPE_STATE::DECAY;
-#ifdef DEBUG_ADSR
-                        KLANG_LOG("### @NodeADSR(%i) DECAY\n", ID());
-#endif
-                    }
-                    break;
-                case ENVELOPE_STATE::DECAY:
-                    trigger_release();
-                    // decrease amp to sustain_level in DECAY sec
-                    mAmp += mDelta;
-                    if (mAmp <= mSustain) {
-                        mAmp = mSustain;
-                        mState = ENVELOPE_STATE::SUSTAIN;
-#ifdef DEBUG_ADSR
-                        KLANG_LOG("### @NodeADSR(%i) SUSTAIN\n", ID());
-#endif
-                    }
-                    break;
-                case ENVELOPE_STATE::SUSTAIN:
-                    trigger_release();
-                    break;
-                case ENVELOPE_STATE::RELEASE:
-                    trigger_attack();
-                    // decrease amp to 0.0 in RELEASE sec
-                    mAmp += mDelta;
-                    if (mAmp <= 0.0f) {
-                        mAmp = 0.0f;
-                        mState = ENVELOPE_STATE::IDLE;
-#ifdef DEBUG_ADSR
-                        KLANG_LOG("### @NodeADSR(%i) IDLE\n", ID());
-#endif
-                    }
-                    break;
-                case ENVELOPE_STATE::FADE_TO_ZERO:
-#define FADE_TO_ZERO_RATE_SEC 0.1
-                    mAmp -= 1.0 / (KLANG_AUDIO_RATE_UINT16 * FADE_TO_ZERO_RATE_SEC);
-                    if (mAmp <= 0.0) {
-                        mState = ENVELOPE_STATE::ATTACK;
-                    }
-                    break;
-            }
-        }
-        
     private:
-        Connection* mConnection_CH_IN_SIGNAL   = nullptr;
-        
-        bool        mTriggerFlag    = false;
+        Connection* mConnection_CH_IN_SIGNAL    = nullptr;
+        Connection* mConnection_CH_IN_TRIGGER   = nullptr;
+
+        AUDIO_BLOCK_ID mBlock_TRIGGER           = AudioBlockPool::NO_ID;
+
+        static constexpr SIGNAL_TYPE RAMP_NO_EDGE      =  0.0;
+        static constexpr SIGNAL_TYPE RAMP_RISING_EDGE  =  1.0;
+        static constexpr SIGNAL_TYPE RAMP_FALLING_EDGE = -1.0;
+        static constexpr float       mThreshold        =  0.0; // @todo(could be made configurable)
+        static constexpr float       M_TIME_SCALE      = 1000;
+        static constexpr float       KLANG_AUDIO_RATE_UINT16_INV = 1.0 / KLANG_AUDIO_RATE_UINT16;
+
         SIGNAL_TYPE mAttack         = 0.01f;
         SIGNAL_TYPE mDecay          = 0.05f;
         SIGNAL_TYPE mSustain        = 0.5f;
         SIGNAL_TYPE mRelease        = 0.25f;
-        
+        SIGNAL_TYPE mPreviousSample = mThreshold;
+
         enum class ENVELOPE_STATE {
-            IDLE, ATTACK, DECAY, SUSTAIN, RELEASE, FADE_TO_ZERO
+            IDLE, ATTACK, DECAY, SUSTAIN, RELEASE, PRE_ATTACK_FADE_TO_ZERO
         };
         ENVELOPE_STATE mState = ENVELOPE_STATE::IDLE;
         
@@ -221,25 +216,80 @@ namespace klang {
         float mDelta = 0.0f;
         bool mNoInputSignal = true;
         
-        float compute_delta_fraction(float pDelta, float pDuration) {
-            return pDuration > 0 ? (pDelta / KLANG_AUDIO_RATE_UINT16) / pDuration : pDelta;
-        }
-       
-        void trigger_attack() {
-            if (mTriggerFlag) {
-                mDelta = compute_delta_fraction(1.0 - mAmp, mAttack);//(1.0f / (float) KLANG_AUDIO_RATE_UINT16) / mAttack;
-                if (mAmp > 0.0f) {
-                    mState = ENVELOPE_STATE::FADE_TO_ZERO;
-                } else {
-                    mState = ENVELOPE_STATE::ATTACK;
-                }
+        const SIGNAL_TYPE evaluateEdge(const SIGNAL_TYPE pPreviousSample, const SIGNAL_TYPE pCurrentSample) {
+            if ((pPreviousSample < mThreshold) && (pCurrentSample > mThreshold)) {
+                return RAMP_RISING_EDGE;
+            } else if ((pPreviousSample > mThreshold) && (pCurrentSample < mThreshold)) {
+                return RAMP_FALLING_EDGE;
+            } else {
+                return RAMP_NO_EDGE;
             }
         }
-        
-        void trigger_release() {
-            if (!mTriggerFlag) {
-                mDelta = compute_delta_fraction(-mAmp, mRelease);//-(mAmp / (float) KLANG_AUDIO_RATE_UINT16) / mRelease;
-                mState = ENVELOPE_STATE::RELEASE;
+
+        float compute_delta_fraction(const float pDelta, const float pDuration) {
+            if (pDuration > 0) {
+                const float c = pDelta * M_TIME_SCALE;
+                const float a = c * KLANG_AUDIO_RATE_UINT16_INV;
+                return a / pDuration;
+            } else {
+                return pDelta;
+            }
+        }
+
+        inline void setState(ENVELOPE_STATE pState) {
+            mState = pState;
+        }
+
+        void check_scheduled_attack_state() {
+            mDelta = compute_delta_fraction(1.0f, mAttack);
+            setState(ENVELOPE_STATE::ATTACK);
+        }
+
+        void check_scheduled_release_state() {
+            if (mState != ENVELOPE_STATE::RELEASE) {
+                mDelta = compute_delta_fraction(-mAmp, mRelease);
+                setState(ENVELOPE_STATE::RELEASE);
+            }
+        }
+
+        inline void kernel() {
+            switch (mState) {
+                case ENVELOPE_STATE::IDLE:
+                case ENVELOPE_STATE::SUSTAIN:
+                    break;
+                case ENVELOPE_STATE::ATTACK:
+                    // increase amp to sustain_level in ATTACK sec
+                    mAmp += mDelta;
+                    if (mAmp >= 1.0f) {
+                        mAmp = 1.0f;
+                        mDelta = compute_delta_fraction(-(1.0f - mSustain), mDecay);
+                        setState(ENVELOPE_STATE::DECAY);
+                    }
+                    break;
+                case ENVELOPE_STATE::DECAY:
+                    // decrease amp to sustain_level in DECAY sec
+                    mAmp += mDelta;
+                    if (mAmp <= mSustain) {
+                        mAmp = mSustain;
+                        setState(ENVELOPE_STATE::SUSTAIN);
+                    }
+                    break;
+                case ENVELOPE_STATE::RELEASE:
+                    // decrease amp to 0.0 in RELEASE sec
+                    mAmp += mDelta;
+                    if (mAmp <= 0.0f) {
+                        mAmp = 0.0f;
+                        setState(ENVELOPE_STATE::IDLE);
+                    }
+                    break;
+                case ENVELOPE_STATE::PRE_ATTACK_FADE_TO_ZERO:
+                    mAmp += mDelta;
+                    if (mAmp <= 0.0f) {
+                        mAmp = 0.0f;
+                        mDelta = compute_delta_fraction(1.0f, mAttack);
+                        setState(ENVELOPE_STATE::ATTACK);
+                    }
+                    break;
             }
         }
     };

@@ -24,8 +24,7 @@
  *
  */
 
-//@todo(consider a trigger via input signal)
-//@todo(look into semantics `trigger` vs `start/stop` also look at `NodeADSR`)
+//@todo(make edge behavior configurable. curerntly `RISING`==`start()` + `FALLING`==`stop()` )
 
 #ifndef NodeRamp_hpp
 #define NodeRamp_hpp
@@ -39,22 +38,34 @@ namespace klang {
         static const CHANNEL_ID CH_IN_TRIGGER   = 0;
         static const CHANNEL_ID NUM_CH_IN       = 1;
 
-        static const CHANNEL_ID CH_OUT_SIGNAL   = 0;
         static const CHANNEL_ID CH_OUT_TRIGGER  = 1;
-        static const CHANNEL_ID NUM_CH_OUT      = 2;
+        static const CHANNEL_ID NUM_CH_OUT      = 1;
         
         bool connect(Connection* pConnection, CHANNEL_ID pInChannel) {
+            if (pInChannel == CH_IN_TRIGGER) {
+                mConnection_CH_IN_TRIGGER = pConnection;
+                return true;
+            }
             return false;
         }
         
         bool disconnect(CHANNEL_ID pInChannel) {
+            if (pInChannel == CH_IN_TRIGGER) {
+                mConnection_CH_IN_TRIGGER = nullptr;
+                return true;
+            }
             return false;
         }
         
         void start() {
+            mCurrentValue = mStart; 
             mState = ENVELOPE_STATE::RAMPING;
         }
-        
+
+        void resume() {
+            mState = ENVELOPE_STATE::RAMPING;
+        }
+
         void stop() {
             mState = ENVELOPE_STATE::IDLE;
         }
@@ -65,14 +76,22 @@ namespace klang {
         }
 
         void set_ramp(float pDuration, float pStart, float pDestination) { 
-            mDuration = pDuration * M_TIME_SCALE;
+            set_ramp_ms(pDuration * M_TIME_SCALE, pStart, pDestination);
+        }
+
+        void set_ramp_ms(float pDuration, float pStart, float pDestination) { 
+            mDuration = pDuration;
             mStart = pStart; 
             mDestination = pDestination;
             recompute_delta();
         }
 
         void set_duration(float pDuration) { 
-            mDuration = pDuration * M_TIME_SCALE;
+            set_duration_ms(pDuration * M_TIME_SCALE);
+        }
+        
+        void set_duration_ms(float pDuration) { 
+            mDuration = pDuration;
             recompute_delta();
         }
 
@@ -86,7 +105,7 @@ namespace klang {
             recompute_delta();
         }
 
-        float get_duration() { return mDuration * M_TIME_SCALE; }
+        float get_duration() { return mDuration / M_TIME_SCALE; }
         float get_start() { return mCurrentValue; }
         float get_destination() { return mDestination; }
         
@@ -95,49 +114,79 @@ namespace klang {
                 case KLANG_SET_START:
                     start();
                     break;
-                    // @todo(add set start + desitination)
+                case KLANG_SET_STOP:
+                    stop();
+                    break;
+                    // @todo(add set start + desitination + set_ramp)
             }
         }
         
         void update(CHANNEL_ID pChannel, SIGNAL_TYPE* pAudioBlock) {
             if (is_not_updated()) {
-                mStateSwitchID     = KLANG_SAMPLES_PER_AUDIO_BLOCK;
+                mBlock_TRIGGER = AudioBlockPool::NO_ID;
+                if (mConnection_CH_IN_TRIGGER != nullptr) {
+                    mBlock_TRIGGER = AudioBlockPool::instance().request();
+                    mConnection_CH_IN_TRIGGER->update(mBlock_TRIGGER);
+                    SIGNAL_TYPE* mBlockData_TRIGGER = AudioBlockPool::instance().data(mBlock_TRIGGER);
+                    for (uint16_t i = 0; i < KLANG_SAMPLES_PER_AUDIO_BLOCK; i++) {
+                        const float mCurrentSample = mBlockData_TRIGGER[i];
+                        mBlockData_TRIGGER[i] = evaluateEdge(mPreviousSample, mCurrentSample);
+                        mPreviousSample = mCurrentSample;
+                    }
+                }
                 flag_updated();
             }
             
             if (pChannel == CH_OUT_SIGNAL) {
+                const bool mHasTriggerSignal = ( mBlock_TRIGGER != AudioBlockPool::NO_ID);
+                SIGNAL_TYPE* mBlockData_TRIGGER = nullptr;
+                if (mHasTriggerSignal) {
+                    mBlockData_TRIGGER = AudioBlockPool::instance().data(mBlock_TRIGGER);
+                }
                 for (uint16_t i=0; i < KLANG_SAMPLES_PER_AUDIO_BLOCK; i++) {
-                    const bool mSwitchedState = step_float();
-                    if (mSwitchedState) {
-                        mStateSwitchID = i;
+                    if (mHasTriggerSignal) {
+                        const SIGNAL_TYPE mTriggerState = mBlockData_TRIGGER[i];
+                        if (mTriggerState == RAMP_RISING_EDGE) {
+                            start();
+                        } else if (mTriggerState == RAMP_FALLING_EDGE) {
+                            stop();
+                        }
                     }
+                    kernel();
                     pAudioBlock[i] = mCurrentValue;
                 }
             } else if (pChannel == CH_OUT_TRIGGER) {
-                // @todo(use remembered `i` state switch) to populate buffer.
-                //       problem: what happens if trigger channels is querried before signal channel?!?!)
-                for (uint16_t i=0; i < KLANG_SAMPLES_PER_AUDIO_BLOCK; i++) {
-                    pAudioBlock[i] = (i > mStateSwitchID) ? 0 : 1;
+                const bool mHasTriggerSignal = ( mBlock_TRIGGER != AudioBlockPool::NO_ID);
+                if (mHasTriggerSignal) {
+                    SIGNAL_TYPE* mBlockData_TRIGGER = AudioBlockPool::instance().data(mBlock_TRIGGER);
+                    KLANG_COPY_AUDIO_BUFFER(pAudioBlock, mBlockData_TRIGGER);
+                } else {
+                    KLANG_FILL_AUDIO_BUFFER(pAudioBlock, 0.0);
                 }
             }
         }
-        
+
     private:
-        
-        const float M_TIME_SCALE = 1000000;
+        Connection* mConnection_CH_IN_TRIGGER   = nullptr;
+
+        AUDIO_BLOCK_ID mBlock_TRIGGER           = AudioBlockPool::NO_ID;
+
+        static constexpr float M_TIME_SCALE = 1;
+        static constexpr float KLANG_AUDIO_RATE_UINT16_INV = 1.0 / KLANG_AUDIO_RATE_UINT16;
         enum class ENVELOPE_STATE {
             IDLE, RAMPING
         };
         ENVELOPE_STATE mState = ENVELOPE_STATE::IDLE;
         
-        SIGNAL_TYPE mCurrentValue   = 0.0f;
-        SIGNAL_TYPE mDeltaFraction  = 0.0f;
-        SIGNAL_TYPE mStart          = 0.0f;
-        SIGNAL_TYPE mDestination    = 0.0f;
-        SIGNAL_TYPE mDuration       = 0.0f;
-        uint16_t    mStateSwitchID  = KLANG_SAMPLES_PER_AUDIO_BLOCK;
+        SIGNAL_TYPE mCurrentValue   = 0.0;
+        SIGNAL_TYPE mDeltaFraction  = 0.0;
+        SIGNAL_TYPE mStart          = 0.0;
+        SIGNAL_TYPE mDestination    = 0.0;
+        SIGNAL_TYPE mDuration       = 0.0;
+        static constexpr float mThreshold = 0.0; // @todo(could be made configurable)
+        SIGNAL_TYPE mPreviousSample = mThreshold;
 
-        bool step_float() {
+        void kernel() {
             if (mState == ENVELOPE_STATE::RAMPING) {
                 mCurrentValue += mDeltaFraction;
                 const bool mDirection = mDeltaFraction > 0;
@@ -145,17 +194,18 @@ namespace klang {
                 if (mEvalCondition) {
                         mCurrentValue = mDestination;
                         mState = ENVELOPE_STATE::IDLE;
-                        return true;
                 }
             }
-            return false;
         }
         
         float compute_delta_fraction(const float pDelta, const float pDuration) {
-            const float c = pDelta * M_TIME_SCALE;
-            const float a = c / KLANG_AUDIO_RATE_UINT16;
-            const float b = a / pDuration;
-            return (pDuration > 0) ? b : pDelta;
+            if (pDuration > 0) {
+                const float c = pDelta * M_TIME_SCALE;
+                const float a = c * KLANG_AUDIO_RATE_UINT16_INV;
+                return a / pDuration;
+            } else {
+                return pDelta;
+            }
         }
         
         void recompute_delta() {
@@ -164,6 +214,20 @@ namespace klang {
             const float mDurationFraction = mDuration * (mDelta / mDeltaTotal);
             mDeltaFraction = compute_delta_fraction(mDelta, mDurationFraction);
         }
+
+        static constexpr SIGNAL_TYPE RAMP_NO_EDGE      =  0.0;
+        static constexpr SIGNAL_TYPE RAMP_RISING_EDGE  =  1.0;
+        static constexpr SIGNAL_TYPE RAMP_FALLING_EDGE = -1.0;
+
+        const SIGNAL_TYPE evaluateEdge(const SIGNAL_TYPE pPreviousSample, const SIGNAL_TYPE pCurrentSample) {
+            if ((pPreviousSample < mThreshold) && (pCurrentSample > mThreshold)) {
+                return RAMP_RISING_EDGE;
+            } else if ((pPreviousSample > mThreshold) && (pCurrentSample < mThreshold)) {
+                return RAMP_FALLING_EDGE;
+            } else {
+                return RAMP_NO_EDGE;
+            }
+         }
     };
 }
 

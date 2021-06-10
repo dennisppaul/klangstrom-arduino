@@ -101,7 +101,7 @@ namespace klang {
                 mConnection_CH_IN_FREQ = pConnection;
                 return true;
             }
-            if (pInChannel == CH_IN_AMP) {
+            else if (pInChannel == CH_IN_AMP) {
                 mConnection_CH_IN_AMP = pConnection;
                 return true;
             }
@@ -113,7 +113,7 @@ namespace klang {
                 mConnection_CH_IN_FREQ = nullptr;
                 return true;
             }
-            if (pInChannel == CH_IN_AMP) {
+            else if (pInChannel == CH_IN_AMP) {
                 mConnection_CH_IN_AMP = nullptr;
                 return true;
             }

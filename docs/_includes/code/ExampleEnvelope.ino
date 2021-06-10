@@ -17,27 +17,27 @@ NodeVCA             mMultiply;
 
 void setup()  {
     Klang::connect(mEnvelopeFreq,     Node::CH_OUT_SIGNAL,    mMultiply,  Node::CH_IN_SIGNAL);
-    Klang::connect(mMultiply,         Node::CH_OUT_SIGNAL,    mOsc,       NodeVCO::CH_IN_FREQ);
-    Klang::connect(mEnvelopeAmp,      Node::CH_OUT_SIGNAL,    mOsc,       NodeVCO::CH_IN_AMP);
+    Klang::connect(mMultiply,         Node::CH_OUT_SIGNAL,    mOsc,       NodeVCOWavetable::CH_IN_FREQ);
+    Klang::connect(mEnvelopeAmp,      Node::CH_OUT_SIGNAL,    mOsc,       NodeVCOWavetable::CH_IN_AMP);
     Klang::connect(mEnvelopeCutoff,   Node::CH_OUT_SIGNAL,    mFilter,    NodeVCF::CH_IN_CUTOFF);
     Klang::connect(mOsc,                                      mFilter);
     Klang::connect(mFilter,           Node::CH_OUT_SIGNAL,    mDAC,       NodeDAC::CH_IN_SIGNAL_LEFT);
 
-    mEnvelopeFreq.add_stage(4.0, 0.1);
-    mEnvelopeFreq.add_stage(0.5, 0.2);
-    mEnvelopeFreq.add_stage(1.0, 0.01);
-    mEnvelopeFreq.add_stage(2.0, 0.1);
+    mEnvelopeFreq.add_stage(0.1, 4.0);
+    mEnvelopeFreq.add_stage(0.2, 0.5);
+    mEnvelopeFreq.add_stage(0.01, 1.0);
+    mEnvelopeFreq.add_stage(0.1, 2.0);
     mEnvelopeFreq.add_stage(1.0);
 
-    mEnvelopeCutoff.add_stage(0.5, 0.05);
-    mEnvelopeCutoff.add_stage(0.1, 0.15);
-    mEnvelopeCutoff.add_stage(0.2, 0.1);
-    mEnvelopeCutoff.add_stage(0.7, 0.1);
+    mEnvelopeCutoff.add_stage(0.05, 0.5);
+    mEnvelopeCutoff.add_stage(0.15, 0.1);
+    mEnvelopeCutoff.add_stage(0.1, 0.2);
+    mEnvelopeCutoff.add_stage(0.1, 0.7);
     mEnvelopeCutoff.add_stage(0.0);
 
-    mEnvelopeAmp.stages().push_back(EnvelopeStage(0.0, 0.1));
-    mEnvelopeAmp.stages().push_back(EnvelopeStage(0.5, 0.3));
-    mEnvelopeAmp.stages().push_back(EnvelopeStage(0.5, 0.1));
+    mEnvelopeAmp.stages().push_back(EnvelopeStage(0.1, 0.0));
+    mEnvelopeAmp.stages().push_back(EnvelopeStage(0.3, 0.5));
+    mEnvelopeAmp.stages().push_back(EnvelopeStage(0.1, 0.5));
     mEnvelopeAmp.stages().push_back(EnvelopeStage(0.0));
 
     mOsc.set_waveform(NodeVCOWavetable::WAVEFORM::SAWTOOTH);

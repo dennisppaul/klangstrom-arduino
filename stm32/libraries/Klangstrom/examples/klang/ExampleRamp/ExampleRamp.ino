@@ -54,21 +54,37 @@ void event_receive(const EVENT_TYPE event, const float* data) {
             stopRamp();
             break;
         case EVENT_ENCODER_BUTTON_PRESSED:
-            handleEncoderButtons(data[INDEX]);
+            handleEncoderButtonsPressed(data[INDEX]);
+            break;
+        case EVENT_ENCODER_BUTTON_RELEASED:
+            handleEncoderButtonsReleased(data[INDEX]);
             break;
     }
 }
 
-void handleEncoderButtons(uint8_t pIndex) {
+void handleEncoderButtonsPressed(uint8_t pIndex) {
     switch (pIndex) {
         case ENCODER_00:
             toggleDirection();
+            startRamp();
             break;
         case ENCODER_01:
             startRamp();
             break;
         case ENCODER_02:
+            toggleDirection();
+            break;
+    }
+}
+
+void handleEncoderButtonsReleased(uint8_t pIndex) {
+    switch (pIndex) {
+        case ENCODER_00:
+            break;
+        case ENCODER_01:
             stopRamp();
+            break;
+        case ENCODER_02:
             break;
     }
 }
