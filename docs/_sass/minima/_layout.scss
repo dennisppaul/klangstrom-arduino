@@ -114,6 +114,29 @@ hr {
     display: block;
 }
 
+sup {
+    margin: 0;
+    padding: 0;
+    line-height: 0px;
+    color: #FFF;
+    a:link {
+        background-color: #000;
+        color: #FFF;
+        font-size: $base-font-size * 0.75;
+        text-decoration: none;
+        margin: 0;
+        padding: 0;
+    }
+    a:visited {
+        background-color: #000;
+        color: #FFF;
+        font-size: $base-font-size * 0.75;
+        text-decoration: none;
+        margin: 0;
+        padding: 0;
+    }
+}
+
 .dash-separator {
     max-width: 100%;
     overflow: hidden;

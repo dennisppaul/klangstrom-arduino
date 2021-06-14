@@ -22,6 +22,6 @@ index: 666
 - `HEADPHONE+MIC` ( TRRS audio jack ) requires adapter OMTP to CTIA/AHJ
 - `SERIAL_00` + `SERIAL_01` required dedicated *twisted* cable
 
-### KLST_CORE v0.01
+### KLST_CORE v0.1
 
 - power supply switch is not working
