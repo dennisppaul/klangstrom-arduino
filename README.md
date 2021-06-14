@@ -8,6 +8,6 @@ note, that this repository is only used for arduino hardware library ( *board* i
 
 find instructions on how to install the library in the documentations. please use the [issues tracking system](https://github.com/dennisppaul/klangstrom-arduino/issues) to submit bugs + feature requests.
 
-see [Klangstrom for Arduino Documentation](https://dennisppaul.github.io/klangstrom-arduino/) for detailed information on how to get started.
+see [Klangstrom for Arduino Documentation](http://klangstrom-for-arduino.dennisppaul.de) for detailed information on how to get started.
 
 see [Klangstrom Hardware](https://github.com/dennisppaul/klangstrom-hardware) for detailed information on hardware design.
