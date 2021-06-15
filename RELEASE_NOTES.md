@@ -1,6 +1,8 @@
 # Klangstrom for Arduino / Release Notes
 
-## 0.0.1
+## 0.0.2
+
+## 0.0.1 (20210614)
 
 - `NodeADSR`+ `NodeRamp` + `NodeEnvelope` can now be triggered by an input channel signal
 - `NodeADSR`+ `NodeRamp` + `NodeEnvelope` now also accept microsecond values ( and use them internally as well )
@@ -11,7 +13,7 @@
 - added `NodeRamp` for linear value interpolation
 - improved + fixed mixer nodes ( there are now static mixers for 4–32 channels and one node with multiple channels plus 2 stereo versions )
 - added mechanism to measure performance of code blocks ( in clock cycles or μs )
-- fixed intial encoder button states
+- fixed initial encoder button states
 - set MCU speed to 180MHz ( from 90MHz )
 - added tool to generate sample files
 - improved `NodeWavetable` speed by 4.5×
@@ -23,6 +25,6 @@
 - added extensions ( i.e reverb, vocoder + TTS )
 - cleaned up and improved examples
 
-## 0.0.0
+## 0.0.0 (20210501)
 
 - initial release
