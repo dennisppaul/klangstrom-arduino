@@ -157,8 +157,6 @@ extern "C" {
 #define GPIO_05	                  PA2
 #define GPIO_06	                  PA3
 #define GPIO_07	                  PC5
-#define GPIO_08	                  PB2
-#define GPIO_09	                  PB10
 
 #define ADC_00	                  PB0
 #define ADC_01	                  PB1
@@ -213,5 +211,13 @@ extern "C" {
 #define ENABLE_HWSERIAL4
 #define PIN_SERIAL4_RX            UART_01_RX
 #define PIN_SERIAL4_TX            UART_01_TX
+
+/* SPI */
+
+// @todo(this definition is for KLST_TINYv0.1! future versions have different pin mappings)
+#define PIN_SPI_MOSI              SPI_00_MOSI
+#define PIN_SPI_MISO              SPI_00_MISO
+#define PIN_SPI_SCK               SPI_00_SCK
+// #define PIN_SPI_SS   // @note(there is no CS/SS pin available in KLST_TINYv0.1)
 
 #endif /* _VARIANT_ARDUINO_STM32_ */

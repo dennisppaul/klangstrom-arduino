@@ -2,6 +2,8 @@
 
 ## 0.0.2
 
+- added support and example for SD Cards
+
 ## 0.0.1 (20210614)
 
 - `NodeADSR`+ `NodeRamp` + `NodeEnvelope` can now be triggered by an input channel signal

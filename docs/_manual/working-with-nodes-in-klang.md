@@ -63,7 +63,7 @@ a minimal *patch* that would be capable of emitting a sound would be a VCO conne
       [ NODE_VCO         ]                     [ NODE_DAC         ]       
       +------------------+                     +------------------+       
       |                  |                     |                  |       
-      | SIGNAL    SIGNAL |--OUT00 -----> IN00--| SIGNAL    SIGNAL |
+      |           SIGNAL |--OUT00 -----> IN00--| SIGNAL           |
       |                  |                     |                  |       
       +------------------+                     +------------------+       
 ```
