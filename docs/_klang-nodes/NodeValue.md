@@ -2,7 +2,7 @@
 layout: libdoc
 title: NodeValue
 permalink: /NodeValue/
-index: 58
+index: 64
 ---
 
           [ NODE_VALUE      ]       

@@ -2,7 +2,7 @@
 layout: libdoc
 title: NodeVCOFunction
 permalink: /NodeVCOFunction/
-index: 63
+index: 69
 ---
 
           [ NODE_VCO_FUNC      ]       
