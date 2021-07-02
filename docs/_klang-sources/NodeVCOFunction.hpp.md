@@ -1,12 +1,20 @@
+---
+layout: libdoc
+title: NodeVCOFunction.hpp
+permalink: /NodeVCOFunction.hpp/
+index: 77
+---
+
+```c
 //
-//  NodeOscillatorFunction.hpp
+//  NodeVCOFunction.hpp
 //  Klang – a node+text-based synthesizer library
 //
 //
 //
 
 /**
- *       [ NODE_OSC_FUNC       ]
+ *       [ NODE_VCO_FUNC       ]
  *       +---------------------+
  *       |                     |
  * IN00--| FREQ         SIGNAL |--OUT00
@@ -18,25 +26,26 @@
  *       )
  */
 
-#ifndef NodeOscillatorFunction_hpp
-#define NodeOscillatorFunction_hpp
+#ifndef NodeVCOFunction_hpp
+#define NodeVCOFunction_hpp
 
-#include "NodeOscillatorInterface.hpp"
 #include "KlangMath.hpp"
 
 namespace klang {
-    class NodeVCOFunction : public NodeOscillatorInterface {
+    class NodeVCOFunction : public Node {
     public:
-        
+        static const CHANNEL_ID CH_IN_FREQ  = 0;
+        static const CHANNEL_ID CH_IN_AMP   = 1;
+        static const CHANNEL_ID NUM_CH_IN   = 2;
+        static const CHANNEL_ID NUM_CH_OUT  = 1;
+            
         enum WAVEFORM {
             SINE = 0,
             TRIANGLE,
             SAWTOOTH,
             SQUARE
+            // @TODO("add `EXPONENT`")
         };
-        
-        static const CHANNEL_ID NUM_CH_IN       = 2; // defined in `NodeOscillator`
-        static const CHANNEL_ID NUM_CH_OUT      = 1;
         
         NodeVCOFunction() {
             set_frequency(OSC_DEFAULT_FREQUENCY);
@@ -69,19 +78,19 @@ namespace klang {
             return false;
         }
         
-        void set_value(const KLANG_CMD_TYPE pCommand, KLANG_CMD_TYPE* pPayload) {
+        void set_command(const KLANG_CMD_TYPE pCommand, KLANG_CMD_TYPE* pPayLoad) {
             switch (pCommand) {
                 case KLANG_SET_FREQUENCY_F32:
-                {
-                    const float mData = KlangMath::FLOAT_32(pPayload);
-                    set_frequency(mData);
-                }
+                    set_frequency(KlangMath::FLOAT_32(pPayLoad));
                     break;
                 case KLANG_SET_AMPLITUDE_F32:
-                {
-                    const float mData = KlangMath::FLOAT_32(pPayload);
-                    set_amplitude(mData);
-                }
+                    set_amplitude(KlangMath::FLOAT_32(pPayLoad));
+                    break;
+                case KLANG_SET_OFFSET_F32:
+                    set_offset(KlangMath::FLOAT_32(pPayLoad));
+                    break;
+                case KLANG_SET_WAVEFORM_I8:
+                    set_waveform(static_cast<WAVEFORM>(pPayLoad[0]));
                     break;
             }
         }
@@ -90,7 +99,7 @@ namespace klang {
             mAmplitude = pAmplitude;
         }
         
-        SIGNAL_TYPE get_amplitude() {
+        const SIGNAL_TYPE get_amplitude() {
             return mAmplitude;
         }
         
@@ -98,7 +107,7 @@ namespace klang {
             mOffset = pOffset;
         }
         
-        SIGNAL_TYPE get_offset() {
+        const SIGNAL_TYPE get_offset() {
             return mOffset;
         }
         
@@ -109,7 +118,7 @@ namespace klang {
             }
         }
         
-        SIGNAL_TYPE get_frequency() { return mFrequency; }
+        const SIGNAL_TYPE get_frequency() { return mFrequency; }
         
         void update(CHANNEL_ID pChannel, SIGNAL_TYPE* pAudioBlock) {
             if (is_not_updated()) {
@@ -140,6 +149,7 @@ namespace klang {
                         set_frequency(mBlockData_FREQ[i]);
                     }
                     switch(mWaveform) {
+                            // @TODO("align phase offset with `NodeVCOWavetable`")
                         case SINE:
                             process_sine(i, pAudioBlock);
                             break;
@@ -171,7 +181,7 @@ namespace klang {
     private:
         SIGNAL_TYPE mFrequency      = 0.0;
         float mStepSize             = 0.0;
-        double mPhase               = 0.0; // @NOTE("single precision introduces drift")
+        double mPhase                = 0.0; // @NOTE("single precision introduces drift")
         SIGNAL_TYPE mAmplitude      = SIGNAL_MAX;
         SIGNAL_TYPE mOffset         = 0.0;
         WAVEFORM mWaveform          = WAVEFORM::SINE;
@@ -195,17 +205,13 @@ namespace klang {
             mPhase = KlangMath::mod(mPhase, KLANG_AUDIO_RATE);
             const float mPhaseShifted = mPhase - (KLANG_AUDIO_RATE/2);
             const float mPhaseShiftedAbs = mPhaseShifted > 0 ? mPhaseShifted : -mPhaseShifted;
-            const float a = KLANG_AUDIO_RATE/4;
-            const float b = mPhaseShiftedAbs - a;
-            pAudioBlock[i] = b / a;
+            pAudioBlock[i] = (mPhaseShiftedAbs - (KLANG_AUDIO_RATE/4)) / (KLANG_AUDIO_RATE/4);
         }
         
         void process_sawtooth(uint16_t i, SIGNAL_TYPE *pAudioBlock) {
             mPhase += mFrequency;
             mPhase = KlangMath::mod(mPhase, KLANG_AUDIO_RATE);
-            const float a = KLANG_AUDIO_RATE/2;
-            const float b = mPhase / a;
-            pAudioBlock[i] = b + SIGNAL_MIN;
+            pAudioBlock[i] = ( mPhase / (KLANG_AUDIO_RATE/2) ) + SIGNAL_MIN;
         }
         
         void process_square(uint16_t i, SIGNAL_TYPE *pAudioBlock) {
@@ -216,4 +222,6 @@ namespace klang {
     };
 }
 
-#endif /* NodeOscillatorFunction_hpp */
+#endif /* NodeVCOFunction_hpp */
+
+```

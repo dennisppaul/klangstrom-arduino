@@ -5,7 +5,7 @@ permalink: /working-with-samples-in-klang/
 index: 32
 ---
 
-samples are chunks of audio data that can be played back at varying speed and volume. *Klang* provides a convenient way to work with samples via a node called [`NodeSampler`]({{ site.baseurl }}{% link _klang/NodeSampler.md %}). it handles the playback by turning the data into an audio signal. the sample data for the node is stored in a float array e.g:
+samples are chunks of audio data that can be played back at varying speed and volume. *Klang* provides a convenient way to work with samples via a node called [`NodeSampler`]({{ site.baseurl }}{% link _klang-nodes/NodeSampler.md %}). it handles the playback by turning the data into an audio signal. the sample data for the node is stored in a float array e.g:
 
 ```c
 float mSampleData[4] = {0.0, 1.0, 0.0, -1.0};

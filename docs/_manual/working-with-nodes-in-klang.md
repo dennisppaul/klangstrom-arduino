@@ -107,7 +107,7 @@ likewise the output channel of one node should not be connected to multiple inpu
 
 ## Anatomy of a Node
 
-nodes have a series of common functions as well as properties and follow certain conventions. let us take a look at [`NodeVCOWavetable`]({{ site.baseurl }}{% link _klang/NodeVCOWavetable.md %}):
+nodes have a series of common functions as well as properties and follow certain conventions. let us take a look at [`NodeVCOWavetable`]({{ site.baseurl }}{% link _klang-nodes/NodeVCOWavetable.md %}):
 
 ```
       [ NODE_VCO_WAVETABLE      ]       
@@ -223,7 +223,7 @@ note, that the oscillators and the filter are not configured in a meaningful way
 
 ## Writing Custom Nodes
 
-the easiest way to create custom nodes is by extending the class [`NodeKernel`]({{ site.baseurl }}{% link _klang/NodeKernel.md %}).
+the easiest way to create custom nodes is by extending the class [`NodeKernel`]({{ site.baseurl }}{% link _klang-nodes/NodeKernel.md %}).
 
 ### Extending `NodeKernel`
 

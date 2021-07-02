@@ -2,6 +2,7 @@
 
 ## 0.0.2
 
+- added klang source code to documentation
 - added support and example for SD Cards
 
 ## 0.0.1 (20210614)

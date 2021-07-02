@@ -71,8 +71,12 @@ collections:
     title: Klangstrom
     output: true
     permalink: /:collection/:name
-  klang:
-    title: Klang
+  klang-nodes:
+    title: Klang Nodes
+    output: true
+    permalink: /:collection/:name
+  klang-sources:
+    title: Klang Sources
     output: true
     permalink: /:collection/:name
   manual:

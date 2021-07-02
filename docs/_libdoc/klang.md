@@ -13,8 +13,21 @@ see [Working with Nodes in Klang]({{ site.baseurl }}{% link _manual/working-with
 
 ## Available Nodes
 
+list of available nodes including example applications:
+
 <ul>
-{% assign items = site.klang | sort: 'index' %}
+{% assign items = site.klang-nodes | sort: 'index' %}
+{% for page in items %}
+<li><code><a href="{{ page.url | relative_url }}">{{ page.title }}</a></code></li>
+{% endfor %}
+</ul>
+
+## Source Code
+
+list of all *Klang* source files:
+
+<ul>
+{% assign items = site.klang-sources | sort: 'index' %}
 {% for page in items %}
 <li><code><a href="{{ page.url | relative_url }}">{{ page.title }}</a></code></li>
 {% endfor %}
