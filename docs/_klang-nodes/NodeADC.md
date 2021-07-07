@@ -20,3 +20,7 @@ the ADC ( (A)nalog (D)igital (C)onverter ) node represents a connection to the u
 {% include code/ExampleADCtoDAC.ino %}
 ```
 
+### Source Code
+
+[NodeADC.hpp]({{ site.baseurl }}{% link _klang-sources/NodeADC.hpp.md %})
+

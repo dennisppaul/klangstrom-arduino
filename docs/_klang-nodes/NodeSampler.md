@@ -23,3 +23,7 @@ this node can store and repoduce a sample of arbitrary length. @note(this node i
 {% include code/ExampleSampler.ino %}
 ```
 
+### Source Code
+
+[NodeSampler.hpp]({{ site.baseurl }}{% link _klang-sources/NodeSampler.hpp.md %})
+

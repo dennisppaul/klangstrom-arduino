@@ -19,3 +19,7 @@ this node emits a constant value as a signal.
 - VALUE_F32
 
 
+### Source Code
+
+[NodeValue.hpp]({{ site.baseurl }}{% link _klang-sources/NodeValue.hpp.md %})
+

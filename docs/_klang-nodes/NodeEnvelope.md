@@ -27,3 +27,7 @@ this node allows the variation of a value over time.
 {% include code/ExampleEnvelope.ino %}
 ```
 
+### Source Code
+
+[NodeEnvelope.hpp]({{ site.baseurl }}{% link _klang-sources/NodeEnvelope.hpp.md %})
+

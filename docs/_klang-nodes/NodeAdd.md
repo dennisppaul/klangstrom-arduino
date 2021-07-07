@@ -19,3 +19,7 @@ this node adds a value to a signal.
 - VALUE_F32
 
 
+### Source Code
+
+[NodeAdd.hpp]({{ site.baseurl }}{% link _klang-sources/NodeAdd.hpp.md %})
+

@@ -34,3 +34,7 @@ a patch is a collection of one or more nodes. this node facilitates a structure 
 {% include code/ExamplePatch16.ino %}
 ```
 
+### Source Code
+
+[NodePatch16.hpp]({{ site.baseurl }}{% link _klang-sources/NodePatch16.hpp.md %})
+

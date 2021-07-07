@@ -30,3 +30,7 @@ index: 50
 this nodes mixes 16incoming signal into 1. it also allows to define the mix value for each incoming signal.
 
 
+### Source Code
+
+[NodeMixer16.hpp]({{ site.baseurl }}{% link _klang-sources/NodeMixer16.hpp.md %})
+

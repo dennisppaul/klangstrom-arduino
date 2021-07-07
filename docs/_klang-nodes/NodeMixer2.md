@@ -25,3 +25,7 @@ this nodes mixes 2 incoming signal into 1. it also allows to define the mix rati
 {% include code/ExampleMixer2.ino %}
 ```
 
+### Source Code
+
+[NodeMixer2.hpp]({{ site.baseurl }}{% link _klang-sources/NodeMixer2.hpp.md %})
+

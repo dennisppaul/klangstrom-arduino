@@ -24,3 +24,7 @@ this node produces a noise signal. if `SIMPLEX` is selected a stride can be spec
 {% include code/ExampleNoise.ino %}
 ```
 
+### Source Code
+
+[NodeNoise.hpp]({{ site.baseurl }}{% link _klang-sources/NodeNoise.hpp.md %})
+

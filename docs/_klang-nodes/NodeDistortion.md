@@ -25,3 +25,7 @@ this node applies distortion to the incoming signal. the clipping type can be `C
 {% include code/ExampleDistortion.ino %}
 ```
 
+### Source Code
+
+[NodeDistortion.hpp]({{ site.baseurl }}{% link _klang-sources/NodeDistortion.hpp.md %})
+

@@ -26,3 +26,7 @@ this nodes mixes 4 incoming signal into 1. it also allows to define the mix valu
 {% include code/ExampleMixer4.ino %}
 ```
 
+### Source Code
+
+[NodeMixer4.hpp]({{ site.baseurl }}{% link _klang-sources/NodeMixer4.hpp.md %})
+

@@ -23,3 +23,7 @@ this node allows to mute an entire branch of nodes connected to this its input. 
 {% include code/ExampleMute.ino %}
 ```
 
+### Source Code
+
+[NodeMute.hpp]({{ site.baseurl }}{% link _klang-sources/NodeMute.hpp.md %})
+

@@ -15,3 +15,7 @@ index: 44
 this node facilitate a simple mechanism to write a *kernel* to process the incoming audio signal per audio block. @note(this node is only usable in text-based programming. the abstract method `kernel` needs to be implemented.)
 
 
+### Source Code
+
+[NodeKernelBlock.hpp]({{ site.baseurl }}{% link _klang-sources/NodeKernelBlock.hpp.md %})
+

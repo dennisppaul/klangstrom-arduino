@@ -19,3 +19,7 @@ this node stores an incoming signal block in a buffer for later use. it is one o
 {% include code/ExampleSplitter.ino %}
 ```
 
+### Source Code
+
+[NodeSplitter.hpp]({{ site.baseurl }}{% link _klang-sources/NodeSplitter.hpp.md %})
+

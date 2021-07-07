@@ -19,3 +19,7 @@ this node facilitate a simple mechanism to write a *kernel* to process the incom
 {% include code/ExampleKernel.ino %}
 ```
 
+### Source Code
+
+[NodeKernel.hpp]({{ site.baseurl }}{% link _klang-sources/NodeKernel.hpp.md %})
+

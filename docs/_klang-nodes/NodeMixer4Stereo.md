@@ -27,3 +27,7 @@ this nodes mixes 4 incoming signal into 2. it also allows to define the mix valu
 {% include code/ExampleMixer4Stereo.ino %}
 ```
 
+### Source Code
+
+[NodeMixer4Stereo.hpp]({{ site.baseurl }}{% link _klang-sources/NodeMixer4Stereo.hpp.md %})
+

@@ -27,3 +27,7 @@ the oscillator node produces a periodic signal from a selectable function. the f
 {% include code/ExampleOscillators.ino %}
 ```
 
+### Source Code
+
+[NodeVCOFunction.hpp]({{ site.baseurl }}{% link _klang-sources/NodeVCOFunction.hpp.md %})
+

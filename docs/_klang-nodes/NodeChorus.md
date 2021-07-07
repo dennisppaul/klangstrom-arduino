@@ -28,3 +28,7 @@ this node applies a chorus effect to the incoming signal. author/source: [Xavier
 {% include code/ExampleChorus.ino %}
 ```
 
+### Source Code
+
+[NodeChorus.hpp]({{ site.baseurl }}{% link _klang-sources/NodeChorus.hpp.md %})
+

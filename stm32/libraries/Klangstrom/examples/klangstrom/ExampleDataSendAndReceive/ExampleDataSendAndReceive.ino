@@ -1,5 +1,5 @@
 /**
-    ExampleRotaryEncoder
+    ExampleDataSendAndReceive
 
     this example demonstrates how to transmit and receive data via the built in
     serial ports. the examples implements a simple protocol that transmits

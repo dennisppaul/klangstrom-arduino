@@ -20,3 +20,7 @@ the DAC ( (D)igital (A)nalog (C)onverter ) node represents a connection to the u
 - STEREO_I8
 
 
+### Source Code
+
+[NodeDAC.hpp]({{ site.baseurl }}{% link _klang-sources/NodeDAC.hpp.md %})
+

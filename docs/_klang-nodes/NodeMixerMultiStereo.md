@@ -20,3 +20,7 @@ this nodes mixes incoming signals into 2 channels.
 {% include code/ExampleMixerMultiStereo.ino %}
 ```
 
+### Source Code
+
+[NodeMixerMultiStereo.hpp]({{ site.baseurl }}{% link _klang-sources/NodeMixerMultiStereo.hpp.md %})
+

@@ -26,3 +26,7 @@ this filter node is a low filter with resonance. all inputs are *patchable* i.e 
 {% include code/ExampleFilters.ino %}
 ```
 
+### Source Code
+
+[NodeVCFMoogLP.hpp]({{ site.baseurl }}{% link _klang-sources/NodeVCFMoogLP.hpp.md %})
+

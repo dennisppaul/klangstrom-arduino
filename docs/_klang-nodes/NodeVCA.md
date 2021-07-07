@@ -19,3 +19,7 @@ this node amplifies an incoming signal by a value ( (V)oltage-(C)ontrolled (A)mp
 - AMPLIFICATION_F32
 
 
+### Source Code
+
+[NodeVCA.hpp]({{ site.baseurl }}{% link _klang-sources/NodeVCA.hpp.md %})
+

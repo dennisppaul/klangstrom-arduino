@@ -22,3 +22,7 @@ index: 49
 this nodes mixes 8 incoming signal into 1. it also allows to define the mix value for each incoming signal.
 
 
+### Source Code
+
+[NodeMixer8.hpp]({{ site.baseurl }}{% link _klang-sources/NodeMixer8.hpp.md %})
+

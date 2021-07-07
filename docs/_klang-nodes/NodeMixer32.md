@@ -50,3 +50,7 @@ this nodes mixes 32 incoming signal into 1. it also allows to define the mix val
 {% include code/ExampleMixer32.ino %}
 ```
 
+### Source Code
+
+[NodeMixer32.hpp]({{ site.baseurl }}{% link _klang-sources/NodeMixer32.hpp.md %})
+

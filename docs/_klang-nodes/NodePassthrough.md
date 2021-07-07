@@ -15,3 +15,7 @@ index: 56
 this node passesthrough the signal.
 
 
+### Source Code
+
+[NodePassthrough.hpp]({{ site.baseurl }}{% link _klang-sources/NodePassthrough.hpp.md %})
+

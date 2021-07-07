@@ -27,3 +27,7 @@ this node applies a phaser effect to the incoming signal. author/source: [Xavier
 {% include code/ExamplePhaser.ino %}
 ```
 
+### Source Code
+
+[NodePhaser.hpp]({{ site.baseurl }}{% link _klang-sources/NodePhaser.hpp.md %})
+

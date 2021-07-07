@@ -28,3 +28,7 @@ this node provides a envelope with four different stages: (A)ttack (D)ecay (S)us
 {% include code/ExampleADSR.ino %}
 ```
 
+### Source Code
+
+[NodeADSR.hpp]({{ site.baseurl }}{% link _klang-sources/NodeADSR.hpp.md %})
+

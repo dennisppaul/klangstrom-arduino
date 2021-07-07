@@ -19,3 +19,7 @@ this nodes mixes incoming signals into 1 channels.
 {% include code/ExampleMixerMulti.ino %}
 ```
 
+### Source Code
+
+[NodeMixerMulti.hpp]({{ site.baseurl }}{% link _klang-sources/NodeMixerMulti.hpp.md %})
+

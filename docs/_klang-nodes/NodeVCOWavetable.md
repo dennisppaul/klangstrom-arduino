@@ -27,3 +27,7 @@ the wavetable node produces a periodic signal from a chunk of memory ( wavetable
 {% include code/ExampleOscillators.ino %}
 ```
 
+### Source Code
+
+[NodeVCOWavetable.hpp]({{ site.baseurl }}{% link _klang-sources/NodeVCOWavetable.hpp.md %})
+

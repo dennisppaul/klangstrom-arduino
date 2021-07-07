@@ -27,3 +27,7 @@ this filter node is a high, low, and bandpass filter with resonance. all inputs 
 {% include code/ExampleFilters.ino %}
 ```
 
+### Source Code
+
+[NodeVCFMoogLHBP.hpp]({{ site.baseurl }}{% link _klang-sources/NodeVCFMoogLHBP.hpp.md %})
+

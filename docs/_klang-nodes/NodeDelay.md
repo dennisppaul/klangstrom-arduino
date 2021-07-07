@@ -26,3 +26,7 @@ this node applies a delay ( + filter ) effect to the incoming signal.
 {% include code/ExampleDelay.ino %}
 ```
 
+### Source Code
+
+[NodeDelay.hpp]({{ site.baseurl }}{% link _klang-sources/NodeDelay.hpp.md %})
+

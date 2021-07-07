@@ -21,3 +21,7 @@ this node applies a wahwah-like effect to the incoming signal. author/source: [N
 - DELAY_F32
 
 
+### Source Code
+
+[NodeAlienWah.hpp]({{ site.baseurl }}{% link _klang-sources/NodeAlienWah.hpp.md %})
+

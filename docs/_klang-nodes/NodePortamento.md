@@ -25,3 +25,7 @@ this node interpolates from one a current value to a desired value over time.
 {% include code/ExamplePortamento.ino %}
 ```
 
+### Source Code
+
+[NodePortamento.hpp]({{ site.baseurl }}{% link _klang-sources/NodePortamento.hpp.md %})
+

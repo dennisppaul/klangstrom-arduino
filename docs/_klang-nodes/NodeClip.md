@@ -20,3 +20,7 @@ this node clips an incoming signal to a value.
 - MAX_F32
 
 
+### Source Code
+
+[NodeClip.hpp]({{ site.baseurl }}{% link _klang-sources/NodeClip.hpp.md %})
+
