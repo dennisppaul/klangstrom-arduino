@@ -17,7 +17,6 @@ copyPlatfrom() {
     cp -r $SRC_DIR $MY_PATH
 }
 
-echo 
 echo "###"
 echo "### copying platform package from development repository to arduino library distribution repository"
 echo "###"
@@ -28,7 +27,6 @@ copyPlatfrom desktop
 #copyModul vcvrack
 
 echo "###"
-echo 
 
 # copy examples to doc
 find $PATH_TO_MODULES/libraries/Klangstrom/examples/klang -name '*.ino' -exec cp {} ./docs/_includes/code/ \;

@@ -11,6 +11,8 @@ NodeDAC mDAC;
 NodeADC mADC;
 
 void setup() {
+    option(KLST_OPTION_AUDIO_INPUT, KLST_LINE_IN);
+    
     Klang::lock();
 
     Klang::connect(mADC,    NodeADC::CH_OUT_SIGNAL_LEFT, mDAC,  NodeDAC::CH_IN_SIGNAL_LEFT);
