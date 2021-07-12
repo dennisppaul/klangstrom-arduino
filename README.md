@@ -6,7 +6,7 @@
 
 note, that this repository is only used for arduino hardware library ( *board* in arduino terms ) releases. the development of the klangstrom project happens ( incl other platform and hardware ) in a dedicated repository at [klangstrom](https://github.com/interaktion-und-raum/klangstrom/) ( currently a private repository ). however, the development process can be followed in the [developer diary](https://klangstrom.dennisppaul.de).
 
-find instructions on how to install the library in the documentations. please use the [issues tracking system](https://github.com/dennisppaul/klangstrom-arduino/issues) to submit bugs + feature requests.
+find instructions on how to install the library in the [documentations](https://klangstrom-for-arduino.dennisppaul.de). please use the [issues tracking system](https://github.com/dennisppaul/klangstrom-arduino/issues) to submit bugs + feature requests and also consult the [FAQ](https://klangstrom-for-arduino.dennisppaul.de/faq/) if experiencing issues.
 
 see [Klangstrom for Arduino Documentation](http://klangstrom-for-arduino.dennisppaul.de) for detailed information on how to get started.
 
