@@ -15,8 +15,12 @@
  * IN03--| DURATION            |
  *       |                     |
  *       +---------------------+
+ * 
+ * use `#define NODE_DELAY_BUFFER_SIZE` to globally define maximum 
+ * delay ( line ) length in samples.
+ * 
  */
-// @TODO(implement `FEEDBACK` + `WET` + `DURATION`)
+// @TODO(implement `FEEDBACK` + `WET` + `DURATION` as inputs)
 
 #ifndef NodeDelay_hpp
 #define NodeDelay_hpp
@@ -123,7 +127,11 @@ namespace klang {
         //        Connection* mConnection_WET;
         //        Connection* mConnection_DURATION;
         
-        static const uint16_t DELAYLINE_LEN = KLANG_AUDIO_RATE_UINT16; // max delay in samples
+    #ifdef NODE_DELAY_BUFFER_SIZE
+        static const uint16_t DELAYLINE_LEN = NODE_DELAY_BUFFER_SIZE;
+    #else
+        static const uint16_t DELAYLINE_LEN = KLANG_AUDIO_RATE_UINT16 / 2; // max delay in samples
+    #endif
         static const uint16_t INIT_DELAY    = DELAYLINE_LEN / 4;
         static const uint16_t MIN_DELAY     = 250;
         

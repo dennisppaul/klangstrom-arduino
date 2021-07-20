@@ -2,7 +2,14 @@
 //  ExampleDelay
 //
 
-//@todo(out of memory on KLST_TINY)
+/*
+* maximum delay line size can be defined with:
+*
+*    #define NODE_DELAY_BUFFER_SIZE 1024
+*
+* note that the value is defined in samples 
+* e.g 1 sec requires 48000 samples if audio rate is 48KHz
+*/
 
 #include "Nodes.hpp"
 

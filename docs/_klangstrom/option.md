@@ -12,8 +12,6 @@ configure application and peripherals specific properties and behaviors.
 void option(uint8_t pOption, uint8_t pValue);
 ```
 
-the `option` function must be called in `setup()`.
-
 the following options are available:
 
 - `KLST_OPTION_AUDIO_INPUT` :: select audio input ( `KLST_MIC` or `KLST_LINE_IN` ) ( default: `KLST_MIC` )
@@ -27,9 +25,11 @@ the following options are available:
 
 note, that options might interpreted differently in different contexts.
 
+the `option` function must be called in `setup()`.
+
 ## example
 
-```
+```c
 void setup() {
     // switch audio input from `MIC` to `INPUT`
     option(KLST_OPTION_AUDIO_INPUT, KLST_LINE_IN);

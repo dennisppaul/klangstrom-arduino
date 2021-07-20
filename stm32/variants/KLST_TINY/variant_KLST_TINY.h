@@ -19,6 +19,28 @@
 #ifndef _VARIANT_ARDUINO_STM32_
 #define _VARIANT_ARDUINO_STM32_
 
+
+#ifdef USE_TINYUSB
+/*******************************************************/
+/* TinyUSB */
+#define HAL_MODULE_ENABLED
+#define HAL_I2C_MODULE_ENABLED
+#define HAL_SAI_MODULE_ENABLED
+#define HAL_TIM_MODULE_ENABLED
+#define HAL_GPIO_MODULE_ENABLED
+#define HAL_EXTI_MODULE_ENABLED
+#define HAL_DMA_MODULE_ENABLED
+#define HAL_RCC_MODULE_ENABLED
+#define HAL_FLASH_MODULE_ENABLED
+#define HAL_PWR_MODULE_ENABLED
+#define HAL_CORTEX_MODULE_ENABLED
+#define HSE_STARTUP_TIMEOUT   100U
+#define HSI_VALUE             ((uint32_t)16000000U)
+#define LSI_VALUE             32000U
+#define LSE_STARTUP_TIMEOUT   5000U
+/*******************************************************/
+#endif // USE_TINYUSB
+
 #define HAL_SAI_MODULE_ENABLED
 #define KLST_BOARD_TYPE KLST_TINY
 
@@ -111,7 +133,7 @@ extern "C" {
 /* Extra HAL modules */
 #define HAL_DAC_MODULE_ENABLED
 
-#define HSE_VALUE 16000000
+#define HSE_VALUE             16000000
 
 #ifdef __cplusplus
 } // extern "C"

@@ -71,8 +71,10 @@ Klangstrom.menu.usb.CDCgen=CDC (generic 'Serial' supersede U(S)ART)
 Klangstrom.menu.usb.CDCgen.build.enable_usb={build.usb_flags} -DUSBD_USE_CDC
 Klangstrom.menu.usb.CDC=CDC (no generic 'Serial')
 Klangstrom.menu.usb.CDC.build.enable_usb={build.usb_flags} -DUSBD_USE_CDC -DDISABLE_GENERIC_SERIALUSB
+Klangstrom.menu.usb.MIDI=MIDI Device
+Klangstrom.menu.usb.MIDI.build.enable_usb=-DCFG_TUSB_MCU=OPT_MCU_STM32F4 -DUSE_TINYUSB -DHAL_PCD_MODULE_ENABLED
 Klangstrom.menu.usb.HID=HID (keyboard and mouse)
-Klangstrom.menu.usb.HID.build.enable_usb={build.usb_flags} -DUSBD_USE_HID_COMPOSITE
+Klangstrom.menu.usb.HID.build.enable_usb={build.usb_flags}
 Klangstrom.menu.usb.none=None
 Klangstrom.menu.xusb.FS=Low/Full Speed
 Klangstrom.menu.xusb.HS=High Speed
