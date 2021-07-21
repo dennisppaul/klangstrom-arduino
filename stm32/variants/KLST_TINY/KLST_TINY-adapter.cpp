@@ -216,44 +216,42 @@ void KLST_IT_beat_callback() {
 
 #ifdef USE_TINYUSB
 void KLST_setup_TinyUSB() {
-  /* TinyUSB */
-  #define __USE_TINYUSB__
-  #ifdef __USE_TINYUSB__
-  __HAL_RCC_GPIOA_CLK_ENABLE();
+    /* Configure USB FS GPIOs */
+    __HAL_RCC_GPIOA_CLK_ENABLE();
 
-  GPIO_InitTypeDef GPIO_InitStruct = {0};
+    GPIO_InitTypeDef GPIO_InitStruct = {0};
 
-  /* Configure USB D+ D- Pins */
-  GPIO_InitStruct.Pin = GPIO_PIN_11 | GPIO_PIN_12;
-  GPIO_InitStruct.Speed = GPIO_SPEED_HIGH;
-  GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
-  GPIO_InitStruct.Alternate = GPIO_AF10_OTG_FS;
-  HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+    /* Configure USB D+ D- Pins */
+    GPIO_InitStruct.Pin = GPIO_PIN_11 | GPIO_PIN_12;
+    GPIO_InitStruct.Speed = GPIO_SPEED_HIGH;
+    GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
+    GPIO_InitStruct.Pull = GPIO_NOPULL;
+    GPIO_InitStruct.Alternate = GPIO_AF10_OTG_FS;
+    HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
-  /* Configure VBUS Pin */
-  GPIO_InitStruct.Pin = GPIO_PIN_9;
-  GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
-  HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+    /* Configure VBUS Pin */
+    //   GPIO_InitStruct.Pin = GPIO_PIN_9;
+    //   GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
+    //   GPIO_InitStruct.Pull = GPIO_NOPULL;
+    //   HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
-  /* ID Pin */
-  GPIO_InitStruct.Pin = GPIO_PIN_10;
-  GPIO_InitStruct.Mode = GPIO_MODE_AF_OD;
-  GPIO_InitStruct.Pull = GPIO_PULLUP;
-  GPIO_InitStruct.Speed = GPIO_SPEED_HIGH;
-  GPIO_InitStruct.Alternate = GPIO_AF10_OTG_FS;
-  HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+    /* ID Pin */
+    GPIO_InitStruct.Pin = GPIO_PIN_10;
+    GPIO_InitStruct.Mode = GPIO_MODE_AF_OD;
+    GPIO_InitStruct.Pull = GPIO_PULLUP;
+    GPIO_InitStruct.Speed = GPIO_SPEED_HIGH;
+    GPIO_InitStruct.Alternate = GPIO_AF10_OTG_FS;
+    HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
-  __HAL_RCC_USB_OTG_FS_CLK_ENABLE();
+    // Enable USB OTG clock
+    __HAL_RCC_USB_OTG_FS_CLK_ENABLE();
 
-  /* Deactivate VBUS Sensing B */
-  USB_OTG_FS->GCCFG &= ~USB_OTG_GCCFG_VBDEN;
+    /* Deactivate VBUS Sensing B */
+    USB_OTG_FS->GCCFG &= ~USB_OTG_GCCFG_VBDEN;
 
-  /* B-peripheral session valid override enable */
-  USB_OTG_FS->GOTGCTL |= USB_OTG_GOTGCTL_BVALOEN;
-  USB_OTG_FS->GOTGCTL |= USB_OTG_GOTGCTL_BVALOVAL;
-  #endif
+    /* B-peripheral session valid override enable */
+    USB_OTG_FS->GOTGCTL |= USB_OTG_GOTGCTL_BVALOEN;
+    USB_OTG_FS->GOTGCTL |= USB_OTG_GOTGCTL_BVALOVAL;
 }
 #endif // USE_TINYUSB
 
@@ -297,10 +295,6 @@ void KLST_pre_setup() {
     pinMode(LED_01, OUTPUT);
     pinMode(LED_02, OUTPUT);
 
-#ifdef USE_TINYUSB
-    KLST_setup_TinyUSB();
-#endif
-
     /* start UART interrupts */
     // HAL_UART_Receive_IT(SERIAL_00_Handle, mSERIAL_00_BUFFER, KLST_SERIAL_BUFFER_SIZE);
     // HAL_UART_Receive_IT(SERIAL_01_Handle, mSERIAL_01_BUFFER, KLST_SERIAL_BUFFER_SIZE);
@@ -319,6 +313,10 @@ void KLST_pre_setup() {
         klangstrom::beats_per_minute(120);
         mKLSTBeatTimer->attachInterrupt(KLST_IT_beat_callback);
     }
+
+#ifdef USE_TINYUSB
+    KLST_setup_TinyUSB();
+#endif
 }
 
 /**
@@ -380,11 +378,11 @@ void KLST_post_setup() {
         mKLSTBeatTimer->resume();
     }
 
-      /* programmer button */
-      if (mKLSTOptionEnableProgrammerButton) {
-        pinMode(BUTTON_PROGRAMMER, INPUT);
-        attachInterrupt(BUTTON_PROGRAMMER, KLST_jump_to_bootloader, RISING);
-      }
+    /* programmer button */
+    if (mKLSTOptionEnableProgrammerButton) {
+      pinMode(BUTTON_PROGRAMMER, INPUT);
+      attachInterrupt(BUTTON_PROGRAMMER, KLST_jump_to_bootloader, RISING);
+    }
 }
 
 bool KLST_audio_input_enabled() {

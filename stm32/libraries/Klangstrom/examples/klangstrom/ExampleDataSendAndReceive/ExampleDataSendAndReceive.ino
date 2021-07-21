@@ -96,6 +96,7 @@ void event_receive(const uint8_t event, const float* data) {
         case EVENT_MOUSE_PRESSED:
         case EVENT_ENCODER_BUTTON_PRESSED:
             transmit_command(M_ADSR_START);
+            break;
         case EVENT_MOUSE_RELEASED:
         case EVENT_ENCODER_BUTTON_RELEASED:
             transmit_command(M_ADSR_STOP);
