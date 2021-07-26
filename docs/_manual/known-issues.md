@@ -18,10 +18,12 @@ index: 666
 
 ### KLST_TINY v0.1
 
-- SD Card reader is not working ( shorted CS pin )
+- *SD Card reader* is not working. `CS` is not connected properly.
 - `HEADPHONE+MIC` ( TRRS audio jack ) requires adapter OMTP to CTIA/AHJ
-- `SERIAL_00` + `SERIAL_01` required dedicated *twisted* cable
+- `SERIAL_00` + `SERIAL_01` require dedicated *twisted* cable
+- `GPIO_07` is also used by the programmer button 
 
 ### KLST_CORE v0.1
 
-- power supply switch is not working
+- `5/12V` power switch does not work. jumper `PATCH_5V` needs to used to power the board.
+- USB connectors ( `HOST` + `DEVICE+PWR` ) are switched. in *Arduino IDE* this can be rectified by selecting `High Speed in Full Speed mode` ti use `DEVICE+PWR` connector and `Low/Full Speed` to use `HOST`. however, for `DFU` upload to work a custom USB-A-to-USB-A cable must be used on `HOST` connector. 

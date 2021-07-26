@@ -49,16 +49,16 @@ int main(void)
 {
 
   initVariant();
-  KLST_pre_setup();
+  KLST_ISH_pre_setup();
   setup();
-  KLST_post_setup();
+  KLST_ISH_post_setup();
 
   for (;;) {
 #if defined(CORE_CALLBACK)
     CoreCallback();
 #endif
     loop();
-    KLST_loop();
+    KLST_ISH_loop();
     serialEventRun();
   }
 

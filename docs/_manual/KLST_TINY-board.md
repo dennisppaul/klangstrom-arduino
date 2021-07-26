@@ -55,7 +55,7 @@ KLST_TINY (v0.1) is a pocket-calculator-sized development board with 3 push-butt
 
 ## Feature Summary
 
-- STM32F446 MCU with 180MHz, 128KB RAM, 512KB Flash
+- STM32F446RE MCU with 180MHz, 128KB RAM, 512KB Flash
 - WM8731 audio codec with 2× audio DAC + 2× audio ADC ( 16/24BIT )
 - 2× ADC ( 12BIT, opt 6 extra channels )
 - 2× DAC ( 12BIT )
@@ -64,10 +64,14 @@ KLST_TINY (v0.1) is a pocket-calculator-sized development board with 3 push-butt
 - 1× USB ( device or host )
 - 1× I2C 
 - 1× SPI 
-- 3× rotary encoders with push buttons ( TIM2, TIM3, TIM8 )
+- 3× rotary encoders with push buttons
 - 3× programmable LEDs + 1× power LED
 - 11× timers
 - 1× SD card reader
 - 1× JTAG/SWD interface ( 10-pin )
 - programmer + reset + boot flash buttons
 - 4× Mounting Holes
+
+## Errata
+
+see [Known Issues]({{ site.baseurl }}{% link _manual/known-issues.md %}) ( Application )

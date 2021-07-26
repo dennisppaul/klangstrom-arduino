@@ -19,31 +19,6 @@
 #ifndef _VARIANT_ARDUINO_STM32_
 #define _VARIANT_ARDUINO_STM32_
 
-
-#ifdef USE_TINYUSB
-/*******************************************************/
-/* TinyUSB */
-#define HAL_MODULE_ENABLED
-#define HAL_I2C_MODULE_ENABLED
-#define HAL_SAI_MODULE_ENABLED
-#define HAL_TIM_MODULE_ENABLED
-#define HAL_GPIO_MODULE_ENABLED
-#define HAL_EXTI_MODULE_ENABLED
-#define HAL_DMA_MODULE_ENABLED
-#define HAL_RCC_MODULE_ENABLED
-#define HAL_FLASH_MODULE_ENABLED
-#define HAL_PWR_MODULE_ENABLED
-#define HAL_CORTEX_MODULE_ENABLED
-#define HSE_STARTUP_TIMEOUT   100U
-#define HSI_VALUE             ((uint32_t)16000000U)
-#define LSI_VALUE             32000U
-#define LSE_STARTUP_TIMEOUT   5000U
-/*******************************************************/
-#endif // USE_TINYUSB
-
-#define HAL_SAI_MODULE_ENABLED
-#define KLST_BOARD_TYPE KLST_TINY
-
 #ifdef __cplusplus
 extern "C" {
 #endif // __cplusplus
@@ -131,7 +106,7 @@ extern "C" {
 #define PIN_SERIAL_TX           1
 
 /* Extra HAL modules */
-#define HAL_DAC_MODULE_ENABLED
+// #define HAL_DAC_MODULE_ENABLED
 
 #define HSE_VALUE             16000000
 
@@ -165,6 +140,31 @@ extern "C" {
 /* --------------------------------------------------------------- */
 /* KLST                                                            */
 /* --------------------------------------------------------------- */
+
+#define HAL_SAI_MODULE_ENABLED
+#define KLST_BOARD_TYPE KLST_TINY
+
+#ifdef USE_TINYUSB // @todo(clean this up!!!)
+/*******************************************************/
+/* TinyUSB */
+#define HAL_MODULE_ENABLED
+#define HAL_I2C_MODULE_ENABLED
+#define HAL_SAI_MODULE_ENABLED
+#define HAL_TIM_MODULE_ENABLED
+#define HAL_GPIO_MODULE_ENABLED
+#define HAL_EXTI_MODULE_ENABLED
+#define HAL_DMA_MODULE_ENABLED
+#define HAL_RCC_MODULE_ENABLED
+#define HAL_FLASH_MODULE_ENABLED
+#define HAL_PWR_MODULE_ENABLED
+#define HAL_CORTEX_MODULE_ENABLED
+#define HSE_STARTUP_TIMEOUT   100U
+#define HSI_VALUE             ((uint32_t)16000000U)
+#define LSI_VALUE             32000U
+#define LSE_STARTUP_TIMEOUT   5000U
+/*******************************************************/
+#endif // USE_TINYUSB
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -191,6 +191,7 @@ extern "C" {
 
 #define I2C_00_SCL	              PB8
 #define I2C_00_SDA	              PB7
+
 #define SPI_00_MISO	              PB14
 #define SPI_00_MOSI	              PB15
 #define SPI_00_SCK	              PB13
@@ -213,6 +214,7 @@ extern "C" {
 #define ENCODER_00_TIMER          TIM3
 #define ENCODER_01_TIMER          TIM8
 #define ENCODER_02_TIMER          TIM2
+#define KLST_BEAT_TIMER           TIM5
 
 #ifdef __cplusplus
 }
@@ -225,7 +227,7 @@ extern "C" {
   #define KLST_LOG                Serial
 #endif
 
-/* serial */
+/* UART */
 
 // @todo(maybe add option to def out serial support)
 #define ENABLE_HWSERIAL1

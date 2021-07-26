@@ -58,12 +58,6 @@ void Error_Handler(void);
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
-#define GPIO_00_Pin GPIO_PIN_13
-#define GPIO_00_GPIO_Port GPIOC
-#define GPIO_01_Pin GPIO_PIN_14
-#define GPIO_01_GPIO_Port GPIOC
-#define GPIO_02_Pin GPIO_PIN_15
-#define GPIO_02_GPIO_Port GPIOC
 #define RCC_OSC_IN_Pin GPIO_PIN_0
 #define RCC_OSC_IN_GPIO_Port GPIOH
 #define RCC_OSC_OUT_Pin GPIO_PIN_1
@@ -72,18 +66,10 @@ void Error_Handler(void);
 #define AUDIOCODEC_SAI_MCLK_B_GPIO_Port GPIOC
 #define AUDIOCODEC_SAI_SD_A_Pin GPIO_PIN_1
 #define AUDIOCODEC_SAI_SD_A_GPIO_Port GPIOC
-#define GPIO_03_Pin GPIO_PIN_2
-#define GPIO_03_GPIO_Port GPIOC
-#define GPIO_04_Pin GPIO_PIN_3
-#define GPIO_04_GPIO_Port GPIOC
 #define ENCODER_02_A_Pin GPIO_PIN_0
 #define ENCODER_02_A_GPIO_Port GPIOA
 #define ENCODER_02_B_Pin GPIO_PIN_1
 #define ENCODER_02_B_GPIO_Port GPIOA
-#define GPIO_05_Pin GPIO_PIN_2
-#define GPIO_05_GPIO_Port GPIOA
-#define GPIO_06_Pin GPIO_PIN_3
-#define GPIO_06_GPIO_Port GPIOA
 #define DAC_00_Pin GPIO_PIN_4
 #define DAC_00_GPIO_Port GPIOA
 #define DAC_01_Pin GPIO_PIN_5
@@ -94,24 +80,20 @@ void Error_Handler(void);
 #define ENCODER_00_B_GPIO_Port GPIOA
 #define ENCODER_00_BUTTON_Pin GPIO_PIN_4
 #define ENCODER_00_BUTTON_GPIO_Port GPIOC
-#define GPIO_07_Pin GPIO_PIN_5
-#define GPIO_07_GPIO_Port GPIOC
+#define BUTTON_PROGRAMMER_Pin GPIO_PIN_5
+#define BUTTON_PROGRAMMER_GPIO_Port GPIOC
 #define ADC_00_Pin GPIO_PIN_0
 #define ADC_00_GPIO_Port GPIOB
 #define ADC_01_Pin GPIO_PIN_1
 #define ADC_01_GPIO_Port GPIOB
-#define GPIO_08_Pin GPIO_PIN_2
-#define GPIO_08_GPIO_Port GPIOB
-#define GPIO_09_Pin GPIO_PIN_10
-#define GPIO_09_GPIO_Port GPIOB
 #define AUDIOCODEC_SAI_SCK_B_Pin GPIO_PIN_12
 #define AUDIOCODEC_SAI_SCK_B_GPIO_Port GPIOB
-#define SPI_00_SCK_Pin GPIO_PIN_13
-#define SPI_00_SCK_GPIO_Port GPIOB
-#define SPI_00_MISO_Pin GPIO_PIN_14
-#define SPI_00_MISO_GPIO_Port GPIOB
-#define SPI_00_MOSI_Pin GPIO_PIN_15
-#define SPI_00_MOSI_GPIO_Port GPIOB
+#define SPI_SDCARD_SCK_Pin GPIO_PIN_13
+#define SPI_SDCARD_SCK_GPIO_Port GPIOB
+#define SPI_SDCARD_MISO_Pin GPIO_PIN_14
+#define SPI_SDCARD_MISO_GPIO_Port GPIOB
+#define SPI_SDCARD_MOSI_Pin GPIO_PIN_15
+#define SPI_SDCARD_MOSI_GPIO_Port GPIOB
 #define ENCODER_01_A_Pin GPIO_PIN_6
 #define ENCODER_01_A_GPIO_Port GPIOC
 #define ENCODER_01_B_Pin GPIO_PIN_7

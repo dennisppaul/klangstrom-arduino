@@ -140,6 +140,7 @@ namespace klangstrom {
     static const DATA_PERIPHERAL_TYPE ALL_PERIPHERALS           = 0x01;
     static const DATA_PERIPHERAL_TYPE SERIAL_00                 = 0x02;
     static const DATA_PERIPHERAL_TYPE SERIAL_01                 = 0x03;
+    static const DATA_PERIPHERAL_TYPE SERIAL_02                 = 0x04;
 };
 
 /* --- OSC_ADDRESS_PATTERNS --- */
