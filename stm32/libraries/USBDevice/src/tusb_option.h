@@ -27,12 +27,6 @@
 #ifndef _TUSB_OPTION_H_
 #define _TUSB_OPTION_H_
 
-//@todo(`CFG_TUSB_MCU` must be defined elsewhere)
-// #define CFG_TUSB_MCU OPT_MCU_STM32F0
-// #define TINYUSB_BOARD__STM32F072B_DISCO
-// #define CFG_TUSB_MCU OPT_MCU_STM32F4 // as compiler option
-#define TINYUSB_BOARD__KLST_TINY
-
 #define TUSB_VERSION_MAJOR     0
 #define TUSB_VERSION_MINOR     10
 #define TUSB_VERSION_REVISION  1

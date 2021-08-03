@@ -23,8 +23,8 @@
  *
  */
 
-#ifndef _TUSB_CONFIG_H_
-#define _TUSB_CONFIG_H_
+#ifndef _TUSB_CONFIG_MOUSE_KEYBOARD_DEVICE_H_
+#define _TUSB_CONFIG_MOUSE_KEYBOARD_DEVICE_H_
 
 #ifdef __cplusplus
  extern "C" {
@@ -95,18 +95,17 @@
 #endif
 
 //------------- CLASS -------------//
+#define CFG_TUD_HID               2
 #define CFG_TUD_CDC               0
 #define CFG_TUD_MSC               0
-#define CFG_TUD_HID               0
-#define CFG_TUD_MIDI              1
+#define CFG_TUD_MIDI              0
 #define CFG_TUD_VENDOR            0
 
-// MIDI FIFO size of TX and RX
-#define CFG_TUD_MIDI_RX_BUFSIZE   (TUD_OPT_HIGH_SPEED ? 512 : 64)
-#define CFG_TUD_MIDI_TX_BUFSIZE   (TUD_OPT_HIGH_SPEED ? 512 : 64)
+// HID buffer size Should be sufficient to hold ID (if any) + Data
+#define CFG_TUD_HID_EP_BUFSIZE    8
 
 #ifdef __cplusplus
  }
 #endif
 
-#endif /* _TUSB_CONFIG_H_ */
+#endif /* _TUSB_CONFIG_MOUSE_KEYBOARD_DEVICE_H_ */

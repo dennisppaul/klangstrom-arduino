@@ -23,6 +23,8 @@
  *
  */
 
+#ifdef TINYUSB_MIDI_DEVICE
+
 #include "tusb.h"
 
 /* A combination of interfaces must have a unique product id, since PC will save device driver after the first plug.
@@ -48,7 +50,7 @@ tusb_desc_device_t const desc_device =
     .bDeviceProtocol    = 0x00,
     .bMaxPacketSize0    = CFG_TUD_ENDPOINT0_SIZE,
 
-    .idVendor           = 0xCafe,
+    .idVendor           = USB_VENDOR_ID,
     .idProduct          = USB_PID,
     .bcdDevice          = 0x0100,
 
@@ -128,12 +130,13 @@ uint8_t const * tud_descriptor_configuration_cb(uint8_t index)
 //--------------------------------------------------------------------+
 
 // array of pointer to string descriptors
+extern char KLST_U_ID_SERIAL[];
 char const* string_desc_arr [] =
 {
   (const char[]) { 0x09, 0x04 }, // 0: is supported language is English (0x0409)
   "Klangstrom",                  // 1: Manufacturer
-  "KLST_TINY"                    // 2: Product
-  "123456",                      // 3: Serials, should use chip ID
+  "KLST MIDI Device",            // 2: Product
+  KLST_U_ID_SERIAL,              // 3: Serials, should use chip ID
 };
 
 static uint16_t _desc_str[32];
@@ -148,6 +151,7 @@ uint16_t const* tud_descriptor_string_cb(uint8_t index, uint16_t langid)
 
   if ( index == 0)
   {
+
     memcpy(&_desc_str[1], string_desc_arr[0], 2);
     chr_count = 1;
   }else
@@ -175,3 +179,5 @@ uint16_t const* tud_descriptor_string_cb(uint8_t index, uint16_t langid)
 
   return _desc_str;
 }
+
+#endif // TINYUSB_MIDI_DEVICE

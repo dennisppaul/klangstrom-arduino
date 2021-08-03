@@ -19,9 +19,9 @@ each variant folder contains the following 6 files adapted to the respective arc
 - `ldscript.ld` #STM32CubeIDE
 - `main.c` #STM32CubeIDE #modified
 - `main.h` #STM32CubeIDE
-- `PeripheralPins.c` 
+- `PeripheralPins.c`
 - `PinNamesVar.h`
-- `stm32**xx_hal_msp.c` #STM32CubeIDE 
+- `stm32**xx_hal_msp.c` #STM32CubeIDE
 - `stm32**xx_it.c` #STM32CubeIDE #modified
 - `stm32**xx_it.h` #STM32CubeIDE
 - `variant_KLST_*.cpp`
@@ -52,7 +52,7 @@ linker script can be copied from `STM32********_FLASH.ld`
 - remove `Error_Handler()` function
 - add call to `PeriphCommonClock_Config()` at the end of `SystemClock_Config()`
 - remove `static` from `MX_*_Init` functions
-- note, `SystemClock_Config()` is called from `hw_config_init()` ( in `$BOARD_DIR/libraries/SrcWrapper/src/stm32/hw_config.c` ), right after a call to `HAL_Init()`. 
+- note, `SystemClock_Config()` is called from `hw_config_init()` ( in `$BOARD_DIR/libraries/SrcWrapper/src/stm32/hw_config.c` ), right after a call to `HAL_Init()`.
 - note, USB peripherals are initialzed for CDC right after this call with `USBD_CDC_init();` if selected.
 
 for `KLST_TINY` if `USB_OTG_FS` is not selected the clock initialization does not happen. to manually intialize the USB clock the following lines must be added to `PeriphCommonClock_Config()`:
@@ -62,7 +62,7 @@ for `KLST_TINY` if `USB_OTG_FS` is not selected the clock initialization does no
 
 ### `main.h`
 
-### `PeripheralPins.c` 
+### `PeripheralPins.c`
 
 ### `PinNamesVar.h`
 
@@ -83,7 +83,7 @@ for `KLST_TINY` if `USB_OTG_FS` is not selected the clock initialization does no
 ### `variant_KLST_*.h`
 
 - check definitions in `stm32**xx_hal_conf.h` ( e.g `HSE_VALUE` or enabled modules ( e.g `HAL_SAI_MODULE_ENABLED` for `KLST_TINY` ) ) and if needed copy to `variant_KLST_****.h`.
-- define board type ( e.g `#define KLST_BOARD_TYPE KLST_TINY` )
+- define board type ( e.g `#define KLST_BOARD_KLST_TINY` )
 - define `LED_BUILTIN`
 - define peripherals
 - remove default/onboard defines

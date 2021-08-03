@@ -47,8 +47,9 @@ extern "C" {
 
 uint32_t KLST_BSP_boot_address();
 uint32_t KLST_BSP_U_ID_address();
-void KLST_BSP_configure_encoders();
 void KLST_BSP_configure_audio_codec();
+void KLST_BSP_init_encoders();
+void KLST_BSP_deinit_encoders();
 void KLST_BSP_start_audio_codec();
 void KLST_BSP_shutdown();
 void KLST_BSP_init_peripherals();
@@ -72,6 +73,7 @@ namespace klangstrom {
     void data_transmit(const uint8_t pTransmitter, uint8_t* pData, uint8_t pDataLength);
     void event_transmit(EVENT_TYPE pEvent, float* pPayload);
     int16_t ID();
+    char* U_ID();
     void led(uint8_t pLED, bool pState);
     void led_toggle(uint8_t pLED);
     void option(uint8_t pOption, uint32_t pValue);

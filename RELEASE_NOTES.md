@@ -2,9 +2,13 @@
 
 ## 0.0.2
 
-- added USBMIDI device support ( via TinyUSB library )
+- added USB Host support for Mouse + Keyboard + MIDI ( i.e boards can now host USB devices like e.g MIDI keyboards )
+- added USB Device support for Mouse + Keyboard + MIDI ( via TinyUSB ) ( i.e boards can now act as USB devices )
+- unique board ID is now represented as single string ( `klangstrom::U_ID()` )
+- added KLST_CORE board
+- added USB-MIDI device support ( via TinyUSB library )
 - `NodeDelay` maximum delay ( line ) length can now be globally configured ( `#define NODE_DELAY_BUFFER_SIZE BUFFER_SIZE_IN_SAMPLES` )
-- added klang source code to documentation
+- added *Klang* source code to documentation
 - added support and example for SD Cards
 
 ## 0.0.1 (20210614)

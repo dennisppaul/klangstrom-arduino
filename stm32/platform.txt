@@ -15,7 +15,7 @@ version=1.0.0
 
 # KLST complie variables
 # ----------------------
-compiler.klst_define=-DKLST_ARCH=1 -DKLANG_SAMPLES_PER_AUDIO_BLOCK=128 -DKLANG_AUDIO_RATE=48000 -DKLANG_DEBUG_LEVEL=2 -DKLANG_SIGNAL_TYPE=1 -DKLST_WAVETABLE_INTERPOLATE_SAMPLES=1 -DKLST_BOARD_TYPE={build.board}
+compiler.klst_define=-DKLST_ARCH=1 -DKLANG_SAMPLES_PER_AUDIO_BLOCK=128 -DKLANG_AUDIO_RATE=48000 -DKLANG_DEBUG_LEVEL=2 -DKLANG_SIGNAL_TYPE=1 -DKLST_WAVETABLE_INTERPOLATE_SAMPLES=1 -DKLST_BOARD_{build.board}
 
 compiler.klst_shared=../../../shared
 compiler.klst_lib=../../libraries/Klangstrom/src

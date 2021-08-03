@@ -6,8 +6,8 @@
 #include "KlangstromApplicationArduino.h"
 #include "KlangstromApplicationInterfaceArduino.h"
 
-#if !(defined(KLST_BOARD_TYPE) || (KLST_BOARD_TYPE))
-#warning("KLST_BOARD_TYPE not defined! options are KLST_CORE or KLST_TINY")
+#if (!defined(KLST_BOARD_KLST_TINY) && !defined(KLST_BOARD_KLST_CORE))
+#warning("@KLST board type not defined! options are KLST_BOARD_KLST_CORE or KLST_BOARD_KLST_TINY")
 #endif
 
 #define KLST_DISABLE_INTERRUPTS_IN_AUDIOBLOCK
@@ -22,6 +22,8 @@ using namespace klangstrom;
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+char KLST_U_ID_SERIAL[25] = "000000000000000000000000"; // 96-bit unique ID
 
 /* options */
 
@@ -70,11 +72,25 @@ void KLST_IT_beat_callback() {
     beat(mKLSTBeatCounter++);
 }
 
+unsigned long KLST_get_U_ID(uint8_t pOffset);
+
+void KLST_update_U_ID_serial() {
+    for (uint8_t j=0; j<3; j++) {
+        uint32_t pUID_0 = KLST_get_U_ID(j);
+        char mHexStr[9];
+        sprintf(mHexStr, "%08lX", pUID_0);
+        for (uint8_t i=0; i<8; i++) {
+            KLST_U_ID_SERIAL[i + j * 8] = mHexStr[i];
+        }
+    }
+}
+
 /**
  * called before setup
  * @note(make sure to remove static from functions!)
  */
 void KLST_ISH_pre_setup() {
+    KLST_update_U_ID_serial();
     KLST_BSP_init_peripherals();
 
     /* LEDs */
@@ -117,7 +133,7 @@ void KLST_ISH_post_setup() {
 
     /* start encoder */
     if (mKLSTOptionEnableEncoders) {
-        KLST_BSP_configure_encoders();
+        KLST_BSP_init_encoders();
         pinMode(ENCODER_00_BUTTON, INPUT);
         pinMode(ENCODER_01_BUTTON, INPUT);
         pinMode(ENCODER_02_BUTTON, INPUT);
@@ -280,40 +296,49 @@ WEAK void KLST_ISH_fill_buffer(uint32_t *pTXBuffer, uint32_t *pRXBuffer, uint16_
  * see https://github.com/MichaelTien8901/JmpBldrDemo
  */
 void KLST_ISH_jump_to_bootloader() {
-  KLST_ISH_shutdown();
+    // - [x] Disable all peripheral clocks
+    // - [ ] Disable used PLL
+    // - [ ] Disable interrupts
+    // - [ ] Clear pending interrupts
+    KLST_ISH_shutdown();
 
-	uint32_t i = 0;
-	void (*SysMemBootJump)(void);
+    uint32_t i = 0;
+    void (*SysMemBootJump)(void);
 
-	/* Set the address of the entry point to bootloader */
-  volatile uint32_t BootAddr = KLST_BSP_boot_address();
+    /* Set the address of the entry point to bootloader */
+    volatile uint32_t BootAddr = KLST_BSP_boot_address();
 
-	/* Disable all interrupts */
-	__disable_irq();
+    /* Disable all interrupts */
+    __disable_irq();
 
-	/* Disable Systick timer */
-	SysTick->CTRL = 0;
+    /* Disable Systick timer */
+    SysTick->CTRL = 0;
 
-	/* Set the clock to the default state */
-	HAL_RCC_DeInit();
+    /* Set the clock to the default state */
+    HAL_RCC_DeInit();
 
-	/* Clear Interrupt Enable Register & Interrupt Pending Register */
-	for (i = 0; i < 5; i++) {
-		NVIC->ICER[i] = 0xFFFFFFFF;
-		NVIC->ICPR[i] = 0xFFFFFFFF;
-	}
+    /* Clear Interrupt Enable Register & Interrupt Pending Register */
+    for (i = 0; i < 5; i++) {
+        NVIC->ICER[i] = 0xFFFFFFFF;
+        NVIC->ICPR[i] = 0xFFFFFFFF;
+    }
 
-	/* Re-enable all interrupts */
-	__enable_irq();
+    /* Re-enable all interrupts */
+    __enable_irq();
 
-	/* Set up the jump to booloader address + 4 */
-	SysMemBootJump = (void (*)(void)) (*((uint32_t*) ((BootAddr + 4))));
+    /* Set up the jump to booloader address + 4 */
+    SysMemBootJump = (void (*)(void)) (*((uint32_t*) ((BootAddr + 4))));
 
-	/* Set the main stack pointer to the bootloader stack */
-	__set_MSP(*(uint32_t*) BootAddr);
+    /* Set the main stack pointer to the bootloader stack */
+    __set_MSP(*(uint32_t*) BootAddr);
 
-	/* Call the function to jump to bootloader location */
-	SysMemBootJump();
+  /* turn on all LEDs */
+  digitalWrite(LED_00, HIGH);
+  digitalWrite(LED_01, HIGH);
+  digitalWrite(LED_02, HIGH);
+
+    /* Call the function to jump to bootloader location */
+    SysMemBootJump();
 }
 
 void KLST_shutdown_toggle_leds(const uint16_t pDelay) {
@@ -497,5 +522,10 @@ void klangstrom::data_transmit(const uint8_t pSender, uint8_t* pData, uint8_t pD
 #endif
   }
 }
+
+char* klangstrom::U_ID() {
+    return KLST_U_ID_SERIAL;
+}
+
 
 #endif // __cplusplus

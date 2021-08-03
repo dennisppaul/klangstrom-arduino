@@ -13,6 +13,10 @@
 #ifndef _VARIANT_ARDUINO_STM32_
 #define _VARIANT_ARDUINO_STM32_
 
+#ifndef KLST_BOARD_KLST_CORE
+#error "@KLST no or wrong board type defined. KLST_BOARD_KLST_CORE not defined!"
+#endif
+
 #ifdef __cplusplus
 extern "C" {
 #endif // __cplusplus
@@ -227,8 +231,6 @@ extern "C" {
 /* -------------------------------------------------------------------------- */
 /* --- KLST ----------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
-
-#define KLST_BOARD_TYPE KLST_CORE
 
 #define D_CACHE_DISABLED
 

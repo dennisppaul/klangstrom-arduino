@@ -53,44 +53,48 @@ void MX_TIM5_Init(void);
 /* ----------------------------------------------------------------------------------------------------------------- */
 /* USB                                                                                                 */
 /* ----------------------------------------------------------------------------------------------------------------- */
-
+extern void board_init(void);
 void KLST_BSP_configure_TinyUSB() {
-    // @todo(implement TinyUSB)
-
-    // /* Configure USB FS GPIOs */
-    // __HAL_RCC_GPIOA_CLK_ENABLE();
-
+    board_init();
     // GPIO_InitTypeDef GPIO_InitStruct = {0};
+    // RCC_PeriphCLKInitTypeDef PeriphClkInitStruct = {0};
+    
+    // PeriphClkInitStruct.PeriphClockSelection = RCC_PERIPHCLK_USB;
+    // PeriphClkInitStruct.UsbClockSelection = RCC_USBCLKSOURCE_HSI48;
+    // if (HAL_RCCEx_PeriphCLKConfig(&PeriphClkInitStruct) != HAL_OK)
+    // {
+    //   Error_Handler();
+    // }
 
-    // /* Configure USB D+ D- Pins */
+    // /** Enable USB Voltage detector */
+    // HAL_PWREx_EnableUSBVoltageDetector();
+
+    // __HAL_RCC_GPIOA_CLK_ENABLE();
+    // /* Configure DM DP Pins */
     // GPIO_InitStruct.Pin = GPIO_PIN_11 | GPIO_PIN_12;
-    // GPIO_InitStruct.Speed = GPIO_SPEED_HIGH;
+    // GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
     // GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
     // GPIO_InitStruct.Pull = GPIO_NOPULL;
-    // GPIO_InitStruct.Alternate = GPIO_AF10_OTG_FS;
+    // GPIO_InitStruct.Alternate = GPIO_AF10_OTG2_HS;
     // HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
-    // /* Configure VBUS Pin */
-    // //   GPIO_InitStruct.Pin = GPIO_PIN_9;
-    // //   GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
-    // //   GPIO_InitStruct.Pull = GPIO_NOPULL;
-    // //   HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
-
-    // /* ID Pin */
+    // /* This for ID line debug */
     // GPIO_InitStruct.Pin = GPIO_PIN_10;
     // GPIO_InitStruct.Mode = GPIO_MODE_AF_OD;
     // GPIO_InitStruct.Pull = GPIO_PULLUP;
-    // GPIO_InitStruct.Speed = GPIO_SPEED_HIGH;
-    // GPIO_InitStruct.Alternate = GPIO_AF10_OTG_FS;
+    // GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
+    // GPIO_InitStruct.Alternate = GPIO_AF10_OTG2_HS;
     // HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
-    // // Enable USB OTG clock
-    // __HAL_RCC_USB_OTG_FS_CLK_ENABLE();
+    // // https://community.st.com/s/question/0D50X00009XkYZLSA3/stm32h7-nucleo-usb-fs-cdc
+    // // TODO: Board init actually works fine without this line.
+    // HAL_PWREx_EnableUSBVoltageDetector();
+    // __HAL_RCC_USB2_OTG_FS_CLK_ENABLE();
 
-    // /* Deactivate VBUS Sensing B */
+    // // Disable VBUS sense (B device) via pin PA9
     // USB_OTG_FS->GCCFG &= ~USB_OTG_GCCFG_VBDEN;
 
-    // /* B-peripheral session valid override enable */
+    // // B-peripheral session valid override enable
     // USB_OTG_FS->GOTGCTL |= USB_OTG_GOTGCTL_BVALOEN;
     // USB_OTG_FS->GOTGCTL |= USB_OTG_GOTGCTL_BVALOVAL;
 }
@@ -104,7 +108,6 @@ void KLST_BSP_init_peripherals() {
     // MX_USB_OTG_FS_PCD_Init();
     // MX_USB_OTG_HS_HCD_Init();
 
-    // @todo(implement AUDIOCODEC)
     MX_DMA_Init();
     MX_I2S2_Init();
     MX_I2C3_Init();
@@ -113,7 +116,7 @@ void KLST_BSP_init_peripherals() {
     // MX_SPI4_Init();
 }
 
-void KLST_BSP_configure_encoders() {
+void KLST_BSP_init_encoders() {
     MX_TIM5_Init();
     MX_TIM1_Init();
     MX_TIM2_Init();
@@ -121,6 +124,20 @@ void KLST_BSP_configure_encoders() {
     HAL_TIM_Encoder_Start(&htim5, TIM_CHANNEL_ALL);
     HAL_TIM_Encoder_Start(&htim1, TIM_CHANNEL_ALL);
     HAL_TIM_Encoder_Start(&htim2, TIM_CHANNEL_ALL);
+}
+
+void KLST_BSP_deinit_encoders() {
+    HAL_TIM_Encoder_DeInit(&htim5);
+    HAL_TIM_Encoder_DeInit(&htim1);
+    HAL_TIM_Encoder_DeInit(&htim2);
+
+    HAL_TIM_Encoder_Stop(&htim5, TIM_CHANNEL_ALL);
+    HAL_TIM_Encoder_Stop(&htim1, TIM_CHANNEL_ALL);
+    HAL_TIM_Encoder_Stop(&htim2, TIM_CHANNEL_ALL);
+
+    HAL_TIM_Encoder_MspDeInit(&htim5);
+    HAL_TIM_Encoder_MspDeInit(&htim1);
+    HAL_TIM_Encoder_MspDeInit(&htim2);
 }
 
 /* ----------------------------------------------------------------------------------------------------------------- */
@@ -264,25 +281,32 @@ void WM8731_delay(uint32_t pDelay) {
 /* ----------------------------------------------------------------------------------------------------------------- */
 
 uint32_t KLST_BSP_boot_address() {
-  return 0x1FF09800; // boot address for KLST_CORE
+    //    AN2606 STM32 microcontroller system memory boot mode, p252
+    return 0x1FF09800; // boot address for KLST_CORE
 }
 
 uint32_t KLST_BSP_U_ID_address() {
-  //    RM0433 Reference manual STM32H742, STM32H743/753 and STM32H750, p3271ff
-  //    - Base address   : 0x1FF1E800
-  //    - address offset : 0x00 U_ID(31:00)
-  //    - address offset : 0x04 U_ID(63:32)
-  //    - address offset : 0x08 U_ID(95:64)
-  return 0x1FF1E800;
+    //    RM0433 Reference manual STM32H742, STM32H743/753 and STM32H750, p3271ff
+    //    - Base address   : 0x1FF1E800
+    //    - address offset : 0x00 U_ID(31:00)
+    //    - address offset : 0x04 U_ID(63:32)
+    //    - address offset : 0x08 U_ID(95:64)
+    return 0x1FF1E800;
 }
 
 void KLST_BSP_shutdown() {
-  /* stop timers */
-  HAL_TIM_Encoder_Stop(&htim5, TIM_CHANNEL_ALL);
-  HAL_TIM_Encoder_Stop(&htim1, TIM_CHANNEL_ALL);
-  HAL_TIM_Encoder_Stop(&htim2, TIM_CHANNEL_ALL);
-  /* stop audio */
-  HAL_I2S_DMAStop(&hi2s2);
+    /* stop encoders */
+    KLST_BSP_deinit_encoders();
+    /* stop audio */
+    HAL_I2S_DMAStop(&hi2s2);
+    HAL_I2S_DeInit(&hi2s2);
+    HAL_I2S_MspDeInit(&hi2s2);
+    /* stop I2C */
+    HAL_I2C_DeInit(&hi2c3);
+    HAL_I2C_MspDeInit(&hi2c3);
+    /* stop USB */
+    __HAL_RCC_USB_OTG_FS_CLK_DISABLE();
+    __HAL_RCC_USB_OTG_HS_CLK_DISABLE();
 }
 
 #ifdef __cplusplus

@@ -74,7 +74,8 @@ typedef enum {
   UART_NUM
 } uart_index_t;
 
-static UART_HandleTypeDef *uart_handlers[UART_NUM] = {NULL};
+// static
+UART_HandleTypeDef *uart_handlers[UART_NUM] = {NULL};
 
 static serial_t serial_debug = { .uart = NP, .index = UART_NUM };
 

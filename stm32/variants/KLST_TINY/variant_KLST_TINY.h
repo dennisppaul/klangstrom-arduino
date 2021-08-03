@@ -19,6 +19,10 @@
 #ifndef _VARIANT_ARDUINO_STM32_
 #define _VARIANT_ARDUINO_STM32_
 
+#ifndef KLST_BOARD_KLST_TINY
+#error "@KLST no or wrong board type defined. KLST_BOARD_KLST_TINY not defined!"
+#endif
+
 #ifdef __cplusplus
 extern "C" {
 #endif // __cplusplus
@@ -142,7 +146,6 @@ extern "C" {
 /* --------------------------------------------------------------- */
 
 #define HAL_SAI_MODULE_ENABLED
-#define KLST_BOARD_TYPE KLST_TINY
 
 #ifdef USE_TINYUSB // @todo(clean this up!!!)
 /*******************************************************/

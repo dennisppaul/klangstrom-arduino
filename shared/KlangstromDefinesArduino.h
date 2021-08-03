@@ -20,9 +20,6 @@ typedef float       SIGNAL_TYPE;
 #define KLST_ARCH_VCV       3
 #define KLST_ARCH_PLUGIN    3
 
-#define KLST_CORE           1
-#define KLST_TINY           2
-
 /* buttons */
 
 #define KLST_BUTTON_ENCODER_00          0x00
@@ -64,4 +61,10 @@ static const uint32_t KLST_U_ID[KLST_NUM_OF_U_ID][3] = {
     {0x0025003E, 0x0200C000, 0x445243EC},
     {0x0040001C, 0x0200C000, 0x445243EC}, // KLST_TINY_09
 };
+
+/* DEBUGGING */
+
+#define DEBUG_DEFINE(x) STR(x)
+#define STR(x) #x
+
 #endif /* KlangstromDefinesArduino_h */

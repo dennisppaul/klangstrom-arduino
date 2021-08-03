@@ -35,7 +35,7 @@ Klangstrom.menu.pnum.KLST_TINY.build.variant=KLST_TINY
 Klangstrom.menu.pnum.KLST_TINY.build.cmsis_lib_gcc=arm_cortexM4lf_math
 
 # KLST_CORE board
-Klangstrom.menu.pnum.KLST_CORE=KLST_CORE(STM32H743ZI)
+Klangstrom.menu.pnum.KLST_CORE=KLST_CORE(STM32H743II)
 Klangstrom.menu.pnum.KLST_CORE.node=KLST_CORE
 Klangstrom.menu.pnum.KLST_CORE.upload.maximum_size=2097152
 Klangstrom.menu.pnum.KLST_CORE.upload.maximum_data_size=524288
@@ -67,14 +67,16 @@ Klangstrom.menu.xserial.disabled=Disabled (No Serial support)
 Klangstrom.menu.xserial.disabled.build.xSerial=
 
 # USB connectivity
+Klangstrom.menu.usb.DEVICE_MouseKeyboard=USB Device Mouse+Keyboard
+Klangstrom.menu.usb.DEVICE_MouseKeyboard.build.enable_usb=-DUSE_TINYUSB -DTINYUSB_MOUSE_KEYBOARD_DEVICE -DHAL_PCD_MODULE_ENABLED
+Klangstrom.menu.usb.DEVICE_MIDI=USB Device MIDI
+Klangstrom.menu.usb.DEVICE_MIDI.build.enable_usb=-DUSE_TINYUSB -DTINYUSB_MIDI_DEVICE -DHAL_PCD_MODULE_ENABLED
+Klangstrom.menu.usb.HOST=USB Host Mouse+Keyboard+MIDI
+Klangstrom.menu.usb.HOST.build.enable_usb=-DUSE_USBHOST -DHAL_HCD_MODULE_ENABLED
 Klangstrom.menu.usb.CDCgen=CDC (generic 'Serial' supersede U(S)ART)
 Klangstrom.menu.usb.CDCgen.build.enable_usb={build.usb_flags} -DUSBD_USE_CDC
 Klangstrom.menu.usb.CDC=CDC (no generic 'Serial')
 Klangstrom.menu.usb.CDC.build.enable_usb={build.usb_flags} -DUSBD_USE_CDC -DDISABLE_GENERIC_SERIALUSB
-Klangstrom.menu.usb.MIDI=MIDI Device
-Klangstrom.menu.usb.MIDI.build.enable_usb=-DCFG_TUSB_MCU=OPT_MCU_STM32F4 -DUSE_TINYUSB -DHAL_PCD_MODULE_ENABLED
-Klangstrom.menu.usb.HID=HID (keyboard and mouse)
-Klangstrom.menu.usb.HID.build.enable_usb={build.usb_flags} -DUSBD_USE_HID_COMPOSITE
 Klangstrom.menu.usb.none=None
 Klangstrom.menu.xusb.FS=Low/Full Speed
 Klangstrom.menu.xusb.HS=High Speed
