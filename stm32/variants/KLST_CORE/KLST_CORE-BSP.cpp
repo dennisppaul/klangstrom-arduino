@@ -9,18 +9,18 @@
  * @todo(there is a reoccuring problem with HAL callback functions being used in e.g `libraries/SrcWrapper/stm32/uart.c` and `libraries/SrcWrapper/stm32/timer.c`(?) )
  */
 
-#include "pins_arduino.h"
 #include "Arduino.h"
-#include "KlangstromDefinesArduino.h"
 #include "KlangstromApplicationArduino.h"
 #include "KlangstromApplicationInterfaceArduino.h"
+#include "KlangstromDefinesArduino.h"
+#include "pins_arduino.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-#include "stm32h7xx_hal.h"
 #include "AudioCodecWM8731.h"
+#include "stm32h7xx_hal.h"
 
 extern I2C_HandleTypeDef hi2c3;
 
@@ -54,11 +54,11 @@ void MX_TIM5_Init(void);
 /* USB                                                                                                 */
 /* ----------------------------------------------------------------------------------------------------------------- */
 extern void board_init(void);
-void KLST_BSP_configure_TinyUSB() {
+void        KLST_BSP_configure_TinyUSB() {
     board_init();
     // GPIO_InitTypeDef GPIO_InitStruct = {0};
     // RCC_PeriphCLKInitTypeDef PeriphClkInitStruct = {0};
-    
+
     // PeriphClkInitStruct.PeriphClockSelection = RCC_PERIPHCLK_USB;
     // PeriphClkInitStruct.UsbClockSelection = RCC_USBCLKSOURCE_HSI48;
     // if (HAL_RCCEx_PeriphCLKConfig(&PeriphClkInitStruct) != HAL_OK)
@@ -145,7 +145,7 @@ void KLST_BSP_deinit_encoders() {
 /* ----------------------------------------------------------------------------------------------------------------- */
 
 void KLST_BSP_configure_audio_codec() {
-        /*
+    /*
     * POWER UP SEQUENCE
     * - Switch on power supplies. By default the WM8731 is in Standby Mode, the DAC is digitally muted and the Audio Interface and Outputs are all OFF.
     * - Set all required bits in the Power Down reg          ister (0Ch) to ‘0’; EXCEPT the OUTPD bit, this should be set to ‘1’ (Default).
@@ -156,14 +156,14 @@ void KLST_BSP_configure_audio_codec() {
     //	WM8731_write(WM8731_RESET_REGISTER, 0b00000000);
     WM8731_write(WM8731_POWER_DOWN_CONTROL, 0b00010000);
     WM8731_write(WM8731_ANALOG_AUDIO_PATH_CONTROL, 0b00000000);
-    WM8731_write(WM8731_LINE_IN_LEFT,  0b000011111); // disable simultaneous load, disable mute, (+12db)
+    WM8731_write(WM8731_LINE_IN_LEFT, 0b000011111);  // disable simultaneous load, disable mute, (+12db)
     WM8731_write(WM8731_LINE_IN_RIGHT, 0b000011111);
-    WM8731_write(WM8731_HEADPHONE_OUT_LEFT,  0b001111001);
+    WM8731_write(WM8731_HEADPHONE_OUT_LEFT, 0b001111001);
     WM8731_write(WM8731_HEADPHONE_OUT_RIGHT, 0b001111001);
     if (KLST_ISH_OPT_audio_line() == KLST_MIC) {
-        WM8731_write(WM8731_ANALOG_AUDIO_PATH_CONTROL, 0b00010100); // MIC
+        WM8731_write(WM8731_ANALOG_AUDIO_PATH_CONTROL, 0b00010100);  // MIC
     } else if (KLST_ISH_OPT_audio_line() == KLST_LINE_IN) {
-        WM8731_write(WM8731_ANALOG_AUDIO_PATH_CONTROL, 0b00010010); // LINE_IN
+        WM8731_write(WM8731_ANALOG_AUDIO_PATH_CONTROL, 0b00010010);  // LINE_IN
     }
     WM8731_inputLevel(0x1F);
     WM8731_write(WM8731_DIGITAL_AUDIO_PATH_CONTROL, 0b00111);
@@ -178,19 +178,19 @@ void KLST_BSP_configure_audio_codec() {
  * I2S callback implementation
  */
 
-#define	I2S_BUFFER_SIZE  (KLANG_SAMPLES_PER_AUDIO_BLOCK*2)
-uint32_t __attribute__((section (".dmadata"))) dma_TX_buffer[I2S_BUFFER_SIZE];
-uint32_t __attribute__((section (".dmadata"))) dma_RX_buffer[I2S_BUFFER_SIZE];
+#define I2S_BUFFER_SIZE (KLANG_SAMPLES_PER_AUDIO_BLOCK * 2)
+uint32_t __attribute__((section(".dmadata"))) dma_TX_buffer[I2S_BUFFER_SIZE];
+uint32_t __attribute__((section(".dmadata"))) dma_RX_buffer[I2S_BUFFER_SIZE];
 uint32_t *mCurrentRXBuffer;
 
 void KLST_BSP_start_audio_codec() {
     memset(dma_TX_buffer, 0, sizeof(dma_TX_buffer));
     memset(dma_RX_buffer, 0, sizeof(dma_RX_buffer));
-    if(HAL_OK != HAL_I2S_Transmit_DMA(&hi2s2, (uint16_t*) dma_TX_buffer, I2S_BUFFER_SIZE << 1)) {
+    if (HAL_OK != HAL_I2S_Transmit_DMA(&hi2s2, (uint16_t *)dma_TX_buffer, I2S_BUFFER_SIZE << 1)) {
     }
     if (KLST_ISH_OPT_audio_input_enabled()) {
-        hi2s2.State = HAL_I2S_STATE_READY; // @note(state flag needs to be cleared manually)
-        if(HAL_OK != HAL_I2S_Receive_DMA(&hi2s2, (uint16_t*) dma_RX_buffer, I2S_BUFFER_SIZE << 1)) {
+        hi2s2.State = HAL_I2S_STATE_READY;  // @note(state flag needs to be cleared manually)
+        if (HAL_OK != HAL_I2S_Receive_DMA(&hi2s2, (uint16_t *)dma_RX_buffer, I2S_BUFFER_SIZE << 1)) {
         }
         mCurrentRXBuffer = &(dma_RX_buffer[0]);
     }
@@ -201,30 +201,30 @@ void KLST_BSP_start_audio_codec() {
 
 #if SANITY_TEST
 
-float left_osc_phi = 0;
-float left_osc_phi_inc = 220.0f / (float)KLANG_AUDIO_RATE;  // generating 220Hz
-float right_osc_phi = 0;
-float right_osc_phi_inc = 110.0f / (float)KLANG_AUDIO_RATE; // generating 110Hz
+float left_osc_phi      = 0;
+float left_osc_phi_inc  = 220.0f / (float)KLANG_AUDIO_RATE;  // generating 220Hz
+float right_osc_phi     = 0;
+float right_osc_phi_inc = 110.0f / (float)KLANG_AUDIO_RATE;  // generating 110Hz
 
 void FillBuffer(uint32_t *mTXBuffer, uint32_t *mRXBuffer, uint16_t len) {
     for (uint16_t i = 0; i < len; i++) {
 #if SANITY_TEST_PASSTHROUGH
         mTXBuffer[i] = mRXBuffer[i];
 #else
-    const float mAmplitude = 0.1f;
+        const float mAmplitude = 0.1f;
 
-        float mLeftf = (float) sin(left_osc_phi * 6.2832f) * mAmplitude;
+        float mLeftf = (float)sin(left_osc_phi * 6.2832f) * mAmplitude;
         left_osc_phi += left_osc_phi_inc;
-        left_osc_phi -= (float) ((uint16_t) left_osc_phi);
-        int16_t mLefti = (int16_t) (mLeftf * 32767.0f);
+        left_osc_phi -= (float)((uint16_t)left_osc_phi);
+        int16_t mLefti = (int16_t)(mLeftf * 32767.0f);
 
-        float mRightf = (float) sin(right_osc_phi * 6.2832f) * mAmplitude;
+        float mRightf = (float)sin(right_osc_phi * 6.2832f) * mAmplitude;
         right_osc_phi += right_osc_phi_inc;
-        right_osc_phi -= (float) ((uint16_t) right_osc_phi);
-        int16_t mRighti = (int16_t) (mRightf * 32767.0f);
+        right_osc_phi -= (float)((uint16_t)right_osc_phi);
+        int16_t mRighti = (int16_t)(mRightf * 32767.0f);
 
         // both channels
-        mTXBuffer[i] = ((uint32_t) (uint16_t) mLefti) << 0 | ((uint32_t) (uint16_t) mRighti) << 16;
+        mTXBuffer[i] = ((uint32_t)(uint16_t)mLefti) << 0 | ((uint32_t)(uint16_t)mRighti) << 16;
 #endif
     }
 }
@@ -273,7 +273,7 @@ bool WM8731_I2C_write(uint8_t device_address, uint8_t *data, uint8_t length) {
  * WM8731 delay implementation
  */
 void WM8731_delay(uint32_t pDelay) {
-  delay(pDelay);
+    delay(pDelay);
 }
 
 /* ----------------------------------------------------------------------------------------------------------------- */
@@ -282,7 +282,7 @@ void WM8731_delay(uint32_t pDelay) {
 
 uint32_t KLST_BSP_boot_address() {
     //    AN2606 STM32 microcontroller system memory boot mode, p252
-    return 0x1FF09800; // boot address for KLST_CORE
+    return 0x1FF09800;  // boot address for KLST_CORE
 }
 
 uint32_t KLST_BSP_U_ID_address() {

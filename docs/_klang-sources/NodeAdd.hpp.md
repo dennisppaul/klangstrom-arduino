@@ -25,8 +25,8 @@ index: 41
 #ifndef NodeAdd_hpp
 #define NodeAdd_hpp
 
-#include "NodeKernel.hpp"
 #include "KlangMath.hpp"
+#include "NodeKernel.hpp"
 
 namespace klang {
     class NodeAdd : public NodeKernel {
@@ -34,11 +34,11 @@ namespace klang {
         void set_value(SIGNAL_TYPE pValue) {
             mValue = pValue;
         }
-        
+
         SIGNAL_TYPE get_value() {
             return mValue;
         }
-        
+
         void set_command(KLANG_CMD_TYPE pCommand, KLANG_CMD_TYPE* pPayLoad) {
             switch (pCommand) {
                 case KLANG_SET_VALUE_F32:
@@ -46,16 +46,16 @@ namespace klang {
                     break;
             }
         }
-        
+
     protected:
         SIGNAL_TYPE kernel(const SIGNAL_TYPE s) {
             return s + mValue;
         }
-        
+
     private:
         SIGNAL_TYPE mValue = 0.0;
     };
-}
+}  // namespace klang
 
 #endif /* NodeAdd_hpp */
 

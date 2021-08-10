@@ -12,11 +12,10 @@ using namespace strom;
 Cable::Cable(StromNode*       pOutNode,
              STROM_CHANNEL_ID pOutChannel,
              StromNode*       pInNode,
-             STROM_CHANNEL_ID pInChannel) :
-out_node(pOutNode),
-out_channel(pOutChannel),
-in_node(pInNode),
-in_channel(pInChannel) {}
+             STROM_CHANNEL_ID pInChannel) : out_node(pOutNode),
+                                            out_channel(pOutChannel),
+                                            in_node(pInNode),
+                                            in_channel(pInChannel) {}
 
 Cable::~Cable() {}
 

@@ -8,10 +8,10 @@
 #ifndef Controller_hpp
 #define Controller_hpp
 
-#include "KlangCommands.hpp"
-#include "Node.hpp"
 #include "Connection.hpp"
 #include "ConnectionPool.hpp"
+#include "KlangCommands.hpp"
+#include "Node.hpp"
 
 //#define ENABLE_RESET_CMD
 
@@ -19,9 +19,9 @@ namespace klang {
     class Controller {
     public:
         std::vector<Node*> nodes;
-        
+
         // @TODO("add a sequential reset sequence ( e.g 6× `0x00` )")
-        
+
         void command(KLANG_CMD_TYPE pData) {
             // @TODO (this might not necessary)
 #ifdef ENABLE_RESET_CMD
@@ -37,7 +37,7 @@ namespace klang {
             /* -- AUTO GENERATED CODE (BEGIN) -- */
             if (mCommandCollectorCounter == NO_CMD) {
                 mCommandPayloadID = 0;
-                switch(pData) {
+                switch (pData) {
                     case KLANG_CMD_SYNTH_START:
                     case KLANG_CMD_RESERVED_01:
                     case KLANG_CMD_RESET_CMD:
@@ -108,7 +108,7 @@ namespace klang {
             }
             /* -- AUTO GENERATED CODE (END) -- */
 
-//            KLANG_LOG("data: 0x%02X (payload_counter: %i)", pData, mCommandCollectorCounter);
+            //            KLANG_LOG("data: 0x%02X (payload_counter: %i)", pData, mCommandCollectorCounter);
             mCommandPayloadCollector[mCommandPayloadID++] = pData;
             if (mCommandCollectorCounter <= 0) {
                 //                KLANG_LOG("cmd_data");
@@ -118,13 +118,13 @@ namespace klang {
                 mCommandCollectorCounter--;
             }
         }
-        
+
         void commands(uint8_t* data, uint8_t length) {
-            for (uint8_t i=0; i < length; i++) {
+            for (uint8_t i = 0; i < length; i++) {
                 command(data[i]);
             }
         }
-        
+
         /**
          *
          * @deprecated("use serial cmd collector only")
@@ -134,12 +134,12 @@ namespace klang {
                 command(mDatum);
             }
         }
-        
+
         // @TODO("find a better way to parse the payload. maybe inscribe it in the constant name e.g `KLANG_SET_AMPLITUDE_1F32`, `KLANG_CMD_DELETE_NODE_1I8`, or `KLANG_CMD_CONNECT_NODES_4I8` ")
         void command_package(KLANG_CMD_TYPE* pData) {
             try {
                 const KLANG_CMD_TYPE mCommand = pData[CMD_LOCATION];
-                switch(mCommand) {
+                switch (mCommand) {
                     case KLANG_CMD_RESET_CMD:
                         reset_cmd_collection();
                         break;
@@ -232,96 +232,106 @@ namespace klang {
                     default:
                         KLANG_LOG_ERR("@Controller :: could not parse command (0x%02X)", pData[CMD_LOCATION]);
                 }
-            } catch (const std::exception &e) {
+            } catch (const std::exception& e) {
                 KLANG_LOG_ERR("@Controller :: command failed with exception: %s", e.what());
             }
         }
-        
+
         void process_frame_output(SIGNAL_TYPE* pLeft, SIGNAL_TYPE* pRight) {
             if (!Klang::islocked() && mOutputNode != nullptr) {
                 mOutputNode->process_frame(pLeft, pRight);
             } else {
-                for (uint16_t i=0; i < KLANG_SAMPLES_PER_AUDIO_BLOCK; i++) {
-                    pLeft[i] = 0.0;
+                for (uint16_t i = 0; i < KLANG_SAMPLES_PER_AUDIO_BLOCK; i++) {
+                    pLeft[i]  = 0.0;
                     pRight[i] = 0.0;
                 }
             }
         }
-        
+
         void process_frame_input(SIGNAL_TYPE* pLeft, SIGNAL_TYPE* pRight) {
-//            KLANG_LOG("Klang::islocked(): %i", Klang::islocked());
+            //            KLANG_LOG("Klang::islocked(): %i", Klang::islocked());
             if (!Klang::islocked() && mInputNode != nullptr) {
                 mInputNode->process_frame(pLeft, pRight);
             }
         }
-        
+
     private:
-        static const KLANG_CMD_TYPE   CMD_LOCATION                = 0x00;
-        static const KLANG_CMD_TYPE   CMD_CONNECT_DATA_LOCATION   = 0x01;
-        static const KLANG_CMD_TYPE   CMD_OUTPUT_NODE_LOCATION    = 0x01;
-        static const KLANG_CMD_TYPE   CMD_SET_NODE_ID_LOCATION    = 0x01;
-        static const KLANG_CMD_TYPE   CMD_SET_NODE_VALUE_LOCATION = 0x02;
-        static const KLANG_CMD_TYPE   CMD_NODE_TYPE_LOCATION      = 0x01;
-        
-        static const int8_t NO_CMD                  = -1;
-        int8_t mCommandCollectorCounter             = NO_CMD;
-        uint8_t mCommandPayloadID                   = 0;
-        uint8_t mCommandResetCounter                = 0;
-        static const uint8_t CMD_RESET_COUNTER      = 5;
-        static const uint8_t PAYLOAD_COLLECTOR_SIZE = 8;
-        KLANG_CMD_TYPE mCommandPayloadCollector[PAYLOAD_COLLECTOR_SIZE] = {0};
-        
-        uint8_t mOutputNodeID   = 255;
-        uint8_t mInputNodeID    = 255;
-        NodeDAC* mOutputNode    = nullptr;
-        NodeADC* mInputNode     = nullptr;
-        
+        static const KLANG_CMD_TYPE CMD_LOCATION                = 0x00;
+        static const KLANG_CMD_TYPE CMD_CONNECT_DATA_LOCATION   = 0x01;
+        static const KLANG_CMD_TYPE CMD_OUTPUT_NODE_LOCATION    = 0x01;
+        static const KLANG_CMD_TYPE CMD_SET_NODE_ID_LOCATION    = 0x01;
+        static const KLANG_CMD_TYPE CMD_SET_NODE_VALUE_LOCATION = 0x02;
+        static const KLANG_CMD_TYPE CMD_NODE_TYPE_LOCATION      = 0x01;
+
+        static const int8_t  NO_CMD                                           = -1;
+        int8_t               mCommandCollectorCounter                         = NO_CMD;
+        uint8_t              mCommandPayloadID                                = 0;
+        uint8_t              mCommandResetCounter                             = 0;
+        static const uint8_t CMD_RESET_COUNTER                                = 5;
+        static const uint8_t PAYLOAD_COLLECTOR_SIZE                           = 8;
+        KLANG_CMD_TYPE       mCommandPayloadCollector[PAYLOAD_COLLECTOR_SIZE] = {0};
+
+        uint8_t  mOutputNodeID = 255;
+        uint8_t  mInputNodeID  = 255;
+        NodeDAC* mOutputNode   = nullptr;
+        NodeADC* mInputNode    = nullptr;
+
         void reset_payload_collector() {
-            for (uint8_t i=0; i < PAYLOAD_COLLECTOR_SIZE; i++) {
+            for (uint8_t i = 0; i < PAYLOAD_COLLECTOR_SIZE; i++) {
                 mCommandPayloadCollector[i] = 0;
             }
         }
-        
+
         void reset_cmd_collection() {
-            mCommandPayloadID = 0;
-            mCommandResetCounter = 0;
+            mCommandPayloadID        = 0;
+            mCommandResetCounter     = 0;
             mCommandCollectorCounter = NO_CMD;
             reset_payload_collector();
         }
-        
+
         void cmd_set_value_i8(KLANG_CMD_TYPE* pData) {
             const uint8_t mID = pData[CMD_SET_NODE_ID_LOCATION];
-            if (mID >= nodes.size()) { return; }
+            if (mID >= nodes.size()) {
+                return;
+            }
             Node* mNode = nodes[mID];
-            if (mNode == nullptr) { return; }
+            if (mNode == nullptr) {
+                return;
+            }
             uint8_t pPayload[] = {
-                pData[CMD_SET_NODE_ID_LOCATION + 1]
-            };
+                pData[CMD_SET_NODE_ID_LOCATION + 1]};
             KLANG_LOG("@Controller :: NODE_%02i > set_value_i8 (0x%02X) > %i ", mID, pData[CMD_LOCATION], pPayload[0]);
             mNode->set_command(pData[CMD_LOCATION], pPayload);
         }
-        
+
         void cmd_set_value_f32(KLANG_CMD_TYPE* pData) {
             const uint8_t mID = pData[CMD_SET_NODE_ID_LOCATION];
-            if (mID >= nodes.size()) { return; }
+            if (mID >= nodes.size()) {
+                return;
+            }
             Node* mNode = nodes[mID];
-            if (mNode == nullptr) { return; }
+            if (mNode == nullptr) {
+                return;
+            }
             uint8_t pPayload[] = {
                 pData[CMD_SET_NODE_VALUE_LOCATION + 0],
                 pData[CMD_SET_NODE_VALUE_LOCATION + 1],
                 pData[CMD_SET_NODE_VALUE_LOCATION + 2],
-                pData[CMD_SET_NODE_VALUE_LOCATION + 3]
-            };
+                pData[CMD_SET_NODE_VALUE_LOCATION + 3]};
             KLANG_LOG("@Controller :: NODE_%02i > set_value_f32 (0x%02X) > %f ", mID, pData[CMD_LOCATION], KlangMath::FLOAT_32(pPayload));
             mNode->set_command(pData[CMD_LOCATION], pPayload);
         }
-        
+
         void cmd_set_value(KLANG_CMD_TYPE* pData) {
             // @TODO("`cmd_set_value` could be unified")
             const uint8_t mID = pData[CMD_SET_NODE_ID_LOCATION];
-            if (mID >= nodes.size()) { return; }
+            if (mID >= nodes.size()) {
+                return;
+            }
             Node* mNode = nodes[mID];
-            if (mNode == nullptr) { return; }
+            if (mNode == nullptr) {
+                return;
+            }
             uint8_t pPayload[] = {
                 pData[CMD_SET_NODE_VALUE_LOCATION + 0],
                 pData[CMD_SET_NODE_VALUE_LOCATION + 1],
@@ -330,26 +340,23 @@ namespace klang {
                 pData[CMD_SET_NODE_VALUE_LOCATION + 4],
                 pData[CMD_SET_NODE_VALUE_LOCATION + 5],
                 pData[CMD_SET_NODE_VALUE_LOCATION + 6],
-                pData[CMD_SET_NODE_VALUE_LOCATION + 7]
-            };
+                pData[CMD_SET_NODE_VALUE_LOCATION + 7]};
             KLANG_LOG("@Controller :: NODE_%02i > set_value_* (0x%02X)", mID, pData[CMD_LOCATION]);
             mNode->set_command(pData[CMD_LOCATION], pPayload);
         }
-        
+
         void cmd_connect_nodes(KLANG_CMD_TYPE* pData) {
             KLANG_LOG("@Controller :: connecting NODE_%02i(OUT%02i) with NODE_%02i(IN%02i)",
                       pData[CMD_CONNECT_DATA_LOCATION + 0],
                       pData[CMD_CONNECT_DATA_LOCATION + 1],
                       pData[CMD_CONNECT_DATA_LOCATION + 2],
-                      pData[CMD_CONNECT_DATA_LOCATION + 3]
-                      );
+                      pData[CMD_CONNECT_DATA_LOCATION + 3]);
             Klang::connect(*nodes[pData[CMD_CONNECT_DATA_LOCATION + 0]],
                            pData[CMD_CONNECT_DATA_LOCATION + 1],
                            *nodes[pData[CMD_CONNECT_DATA_LOCATION + 2]],
-                           pData[CMD_CONNECT_DATA_LOCATION + 3]
-                           );
+                           pData[CMD_CONNECT_DATA_LOCATION + 3]);
         }
-        
+
         void cmd_output_node(KLANG_CMD_TYPE* pData) {
             mOutputNodeID = pData[CMD_OUTPUT_NODE_LOCATION];
             KLANG_LOG("@Controller :: set NODE_%02i as output_node", mOutputNodeID);
@@ -361,7 +368,7 @@ namespace klang {
                 }
             }
         }
-        
+
         void cmd_input_node(KLANG_CMD_TYPE* pData) {
             mInputNodeID = pData[CMD_OUTPUT_NODE_LOCATION];
             KLANG_LOG("@Controller :: set NODE_%02i as input_node", mInputNodeID);
@@ -373,14 +380,14 @@ namespace klang {
                 }
             }
         }
-        
+
         void cmd_delete_node(const uint8_t pNodeID) {
             // @TODO("this corrupts all subsequent IDs")
             KLANG_LOG("@Controller :: delete NODE_%02lu", nodes.size());
             KLANG_LOG("@TODO(\"this corrupts all subsequent IDs\")");
             nodes.erase(nodes.begin() + pNodeID);
         }
-        
+
         void cmd_reset() {
             // @TODO("delete all nodes and connections, reset synth, reset controller")
             reset_cmd_collection();
@@ -388,20 +395,20 @@ namespace klang {
             ConnectionPool::instance().reset();
             reset();
         }
-        
+
         void reset() {
-            mInputNode = nullptr;
+            mInputNode  = nullptr;
             mOutputNode = nullptr;
-            for (uint16_t i=0; i < nodes.size(); i++) {
+            for (uint16_t i = 0; i < nodes.size(); i++) {
                 delete nodes[i];
             }
             nodes.clear();
             Node::reset();
         }
-        
+
         /* -- AUTO GENERATED CODE (BEGIN) -- */
         void cmd_create_node(const KLANG_CMD_TYPE pNodeType) {
-            switch(pNodeType) {
+            switch (pNodeType) {
                 case KLANG_NODE_ADC:
                     nodes.push_back(new NodeADC());
                     break;
@@ -499,7 +506,7 @@ namespace klang {
         }
         /* -- AUTO GENERATED CODE (END) -- */
     };
-}
+}  // namespace klang
 
 /*
  * a set of exemplary commands that create and connect a sinewave oscillator to a DAC:

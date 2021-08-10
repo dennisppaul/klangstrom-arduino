@@ -9,34 +9,33 @@
 #define Math_hpp
 
 #include <float.h>
+
 #include "Klang.hpp"
 
 #ifndef PI
-#define PI       3.14159265358979323846
+#define PI 3.14159265358979323846
 #endif
-
 #ifndef TWO_PI
-#define TWO_PI   6.28318530717958647693
+#define TWO_PI 6.28318530717958647693
 #endif
-
 #ifndef M_TWO_PI
-#define M_TWO_PI   6.28318530717958647693
+#define M_TWO_PI 6.28318530717958647693
 #endif
 
 #ifndef HALF_PI
-#define HALF_PI  1.57079632679489661923
+#define HALF_PI 1.57079632679489661923
 #endif
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-    float klang_math_sin(float r);
-    float klang_math_cos(float r);
-    float klang_math_tan(float r);
-    float klang_math_sinh(float x);
-    float klang_math_cosh(float x);
-    float klang_math_fast_sqrt(float x);
+float klang_math_sin(float r);
+float klang_math_cos(float r);
+float klang_math_tan(float r);
+float klang_math_sinh(float x);
+float klang_math_cosh(float x);
+float klang_math_fast_sqrt(float x);
 
 #ifdef __cplusplus
 }
@@ -98,8 +97,8 @@ namespace klang {
          * wraps an index to buffer length. buffer length is required to be *power of 2*
          */
         static inline float wrap_float_index(const float pFloatIndex, const uint16_t pBufferLength) {
-            const uint16_t mInt = (uint16_t)pFloatIndex;
-            const float mFrac = pFloatIndex - mInt;
+            const uint16_t mInt     = (uint16_t)pFloatIndex;
+            const float    mFrac    = pFloatIndex - mInt;
             const uint16_t mNextInt = mInt & (pBufferLength - 1);
             return mNextInt + mFrac;
         }
@@ -141,7 +140,7 @@ namespace klang {
             for (uint8_t i = 0; i < pShifts; i++) {
                 pValue *= 2;
             }
-            return (uint16_t) pValue;
+            return (uint16_t)pValue;
         }
 
         static SIGNAL_TYPE clamp(SIGNAL_TYPE pValue, SIGNAL_TYPE pMin, SIGNAL_TYPE pMax) {
@@ -179,7 +178,7 @@ namespace klang {
 #define USE_FMOD_WITH_WHILE TRUE
         static float mod(float a, float b) {
 #if USE_FMOD_WITH_WHILE
-            while(a >= b) {
+            while (a >= b) {
                 a -= b;
             }
             return a;
@@ -190,13 +189,13 @@ namespace klang {
         }
 
         static constexpr float MIDI_NOTE_CONVERSION_BASE_FREQUENCY = 440.0;
-        static const uint8_t NOTE_OFFSET = 69;
-        static float note_to_frequency(uint8_t pMidiNote) {
+        static const uint8_t   NOTE_OFFSET                         = 69;
+        static float           note_to_frequency(uint8_t pMidiNote) {
             return MIDI_NOTE_CONVERSION_BASE_FREQUENCY * pow(2, ((pMidiNote - NOTE_OFFSET) / 12.0));
         }
     };
 
-   /**
+    /**
     * @file    SimplexNoise.h
     * @brief   A Perlin Simplex Noise C++ Implementation (1D, 2D, 3D, 4D).
     *
@@ -206,19 +205,19 @@ namespace klang {
     * or copy at http://opensource.org/licenses/MIT)
     */
 
-   /**
+    /**
     * @brief A Perlin Simplex Noise C++ Implementation (1D, 2D, 3D, 4D).
     */
-   class SimplexNoise {
-   public:
-       // 1D Perlin simplex noise
-       static float noise(float x);
-       // 2D Perlin simplex noise
-       static float noise(float x, float y);
+    class SimplexNoise {
+    public:
+        // 1D Perlin simplex noise
+        static float noise(float x);
+        // 2D Perlin simplex noise
+        static float noise(float x, float y);
 
-       static float noise_normalized(float x) { return noise(x) * 0.5 + 0.5; }
-       static float noise_normalized(float x, float y) { return noise(x, y) * 0.5 + 0.5; }
-   };
-}
+        static float noise_normalized(float x) { return noise(x) * 0.5 + 0.5; }
+        static float noise_normalized(float x, float y) { return noise(x, y) * 0.5 + 0.5; }
+    };
+}  // namespace klang
 
 #endif /* Math_hpp */

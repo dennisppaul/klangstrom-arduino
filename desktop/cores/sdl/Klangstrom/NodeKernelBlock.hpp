@@ -27,9 +27,9 @@
 namespace klang {
     class NodeKernelBlock : public Node {
     public:
-        static const CHANNEL_ID NUM_CH_IN         = 1;
-        static const CHANNEL_ID NUM_CH_OUT        = 1;
-        
+        static const CHANNEL_ID NUM_CH_IN  = 1;
+        static const CHANNEL_ID NUM_CH_OUT = 1;
+
         bool connect(Connection* pConnection, CHANNEL_ID pInChannel) {
             if (pInChannel == CH_IN_SIGNAL) {
                 mConnection_CH_IN_SIGNAL = pConnection;
@@ -37,7 +37,7 @@ namespace klang {
             }
             return false;
         }
-        
+
         bool disconnect(CHANNEL_ID pInChannel) {
             if (pInChannel == CH_IN_SIGNAL) {
                 mConnection_CH_IN_SIGNAL = nullptr;
@@ -45,7 +45,7 @@ namespace klang {
             }
             return false;
         }
-        
+
         void update(CHANNEL_ID pChannel, SIGNAL_TYPE* pAudioBlock) {
             if (is_not_updated()) {
                 if (mConnection_CH_IN_SIGNAL != nullptr) {
@@ -57,16 +57,16 @@ namespace klang {
                 kernel(pAudioBlock);
             }
         }
-        
+
         virtual void set_command(KLANG_CMD_TYPE pCommand, KLANG_CMD_TYPE* pPayLoad) = 0;
-        
+
     protected:
         /* override kernel method to implement custom kernels. */
         virtual void kernel(SIGNAL_TYPE* s) = 0;
-        
+
     private:
-        Connection* mConnection_CH_IN_SIGNAL   = nullptr;
+        Connection* mConnection_CH_IN_SIGNAL = nullptr;
     };
-}
+}  // namespace klang
 
 #endif /* NodeKernelBlock_hpp */

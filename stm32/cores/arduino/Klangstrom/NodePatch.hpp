@@ -44,29 +44,29 @@
 namespace klang {
     class NodePatch : public Node {
     public:
-        static const CHANNEL_ID NUM_CH_IN         = 1;
-        static const CHANNEL_ID NUM_CH_OUT        = 1;
-        
+        static const CHANNEL_ID NUM_CH_IN  = 1;
+        static const CHANNEL_ID NUM_CH_OUT = 1;
+
         void setup() {
-             // @TODO("get rid of this method call … but constructor does not work … yet")
-            Klang::connect(input(), Node::CH_OUT_SIGNAL,    *this,      Node::CH_IN_SIGNAL);
-            Klang::connect(*this,   Node::CH_OUT_SIGNAL,    output(),    Node::CH_IN_SIGNAL);
+            // @TODO("get rid of this method call … but constructor does not work … yet")
+            Klang::connect(input(), Node::CH_OUT_SIGNAL, *this, Node::CH_IN_SIGNAL);
+            Klang::connect(*this, Node::CH_OUT_SIGNAL, output(), Node::CH_IN_SIGNAL);
         }
-        
+
         bool connect(Connection* pConnection, CHANNEL_ID pInChannel) {
             if (pInChannel == CH_IN_SIGNAL) {
                 return input().connect(pConnection, pInChannel);
             }
             return false;
         }
-        
+
         bool disconnect(CHANNEL_ID pInChannel) {
             if (pInChannel == CH_IN_SIGNAL) {
                 return input().disconnect(pInChannel);
             }
             return false;
         }
-        
+
         void update(CHANNEL_ID pChannel, SIGNAL_TYPE* pAudioBlock) {
             if (is_not_updated()) {
                 output().update(Node::CH_IN_SIGNAL, pAudioBlock);
@@ -75,21 +75,21 @@ namespace klang {
             if (pChannel == CH_OUT_SIGNAL) {
             }
         }
-        
+
         NodePassthrough& output() {
             return mOutput;
         }
-        
+
         NodePassthrough& input() {
             return mInput;
         }
-        
+
         void set_command(KLANG_CMD_TYPE pCommand, KLANG_CMD_TYPE* pPayLoad) {}
-        
+
     private:
-        NodePassthrough     mInput;
-        NodePassthrough     mOutput;
+        NodePassthrough mInput;
+        NodePassthrough mOutput;
     };
-}
+}  // namespace klang
 
 #endif /* NodePatch_hpp */

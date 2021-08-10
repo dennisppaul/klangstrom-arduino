@@ -36,7 +36,7 @@ namespace klang {
         static const uint8_t NOTE_C6 = 72;
         static const uint8_t NOTE_C7 = 84;
     };
-}
+}  // namespace klang
 
 #endif /* Notes_h */
 

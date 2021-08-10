@@ -24,11 +24,11 @@
 namespace klang {
     class NodeVCF : public Node {
     public:
-        static const CHANNEL_ID CH_IN_CUTOFF      = 1;
-        static const CHANNEL_ID CH_IN_RESONANCE   = 2;
-        static const CHANNEL_ID NUM_CH_IN         = 3;
-        static const CHANNEL_ID NUM_CH_OUT        = 1;
-        
+        static const CHANNEL_ID CH_IN_CUTOFF    = 1;
+        static const CHANNEL_ID CH_IN_RESONANCE = 2;
+        static const CHANNEL_ID NUM_CH_IN       = 3;
+        static const CHANNEL_ID NUM_CH_OUT      = 1;
+
         bool connect(Connection* pConnection, CHANNEL_ID pInChannel) {
             if (pInChannel == CH_IN_SIGNAL) {
                 mConnection_CH_IN_SIGNAL = pConnection;
@@ -44,7 +44,7 @@ namespace klang {
             }
             return false;
         }
-        
+
         bool disconnect(CHANNEL_ID pInChannel) {
             if (pInChannel == CH_IN_SIGNAL) {
                 mConnection_CH_IN_SIGNAL = nullptr;
@@ -52,7 +52,7 @@ namespace klang {
             }
             return false;
         }
-        
+
         void update(CHANNEL_ID pChannel, SIGNAL_TYPE* pAudioBlock) {
             if (is_not_updated()) {
                 if (mConnection_CH_IN_SIGNAL != nullptr) {
@@ -69,53 +69,53 @@ namespace klang {
                 }
                 flag_updated();
             }
-            
+
             if (pChannel == CH_OUT_SIGNAL) {
-                for (uint16_t i=0; i < KLANG_SAMPLES_PER_AUDIO_BLOCK; i++) {
+                for (uint16_t i = 0; i < KLANG_SAMPLES_PER_AUDIO_BLOCK; i++) {
                     if (mBlock_CUTOFF != AudioBlockPool::NO_ID) {
                         set_cutoff(AudioBlockPool::instance().data(mBlock_CUTOFF)[i]);
                     }
                     if (mBlock_RESONANCE != AudioBlockPool::NO_ID) {
                         set_resonance(AudioBlockPool::instance().data(mBlock_RESONANCE)[i]);
                     }
-                    pAudioBlock[i] = mCutoff > 0.0 ? process(pAudioBlock[i]) : 0.0; // @NOTE("returning 0.0 instead of `mSignal` yields more consistent results")
+                    pAudioBlock[i] = mCutoff > 0.0 ? process(pAudioBlock[i]) : 0.0;  // @NOTE("returning 0.0 instead of `mSignal` yields more consistent results")
                 }
             }
         }
-        
+
         void set_cutoff_Hz(const float pCutoffHz) {
             /* cutoff frequency in Hz [0, sampling_rate/2] */
             const float a = KLANG_AUDIO_RATE_UINT16 * 0.5;
-            mCutoff = pCutoffHz / a;
-            mCutoff = mCutoff > 1.0f ? 1.0f : (mCutoff < 0.0f ? 0.0f : mCutoff);
+            mCutoff       = pCutoffHz / a;
+            mCutoff       = mCutoff > 1.0f ? 1.0f : (mCutoff < 0.0f ? 0.0f : mCutoff);
         }
-        
+
         inline void set_cutoff(const float pCutoff) {
             mCutoff = pCutoff;
         }
-        
+
         inline void set_resonance(const float pResonance) {
             mResonance = pResonance;
         }
-        
+
         float get_cutoff_Hz() {
             const float a = KLANG_AUDIO_RATE_UINT16 * 0.5;
             return mCutoff * a;
         }
-        
+
         float get_cutoff() {
             return mCutoff;
         }
-        
+
         float get_resonance() {
             return mResonance;
         }
-        
+
     protected:
-        float mCutoff       = 0.5f;
-        float mResonance    = 0.5f;
+        float               mCutoff                    = 0.5f;
+        float               mResonance                 = 0.5f;
         virtual SIGNAL_TYPE process(SIGNAL_TYPE input) = 0;
-        
+
     private:
         AUDIO_BLOCK_ID mBlock_CUTOFF    = AudioBlockPool::NO_ID;
         AUDIO_BLOCK_ID mBlock_RESONANCE = AudioBlockPool::NO_ID;
@@ -124,6 +124,6 @@ namespace klang {
         Connection* mConnection_CH_IN_CUTOFF    = nullptr;
         Connection* mConnection_CH_IN_RESONANCE = nullptr;
     };
-}
+}  // namespace klang
 
 #endif /* NodeVCF_hpp */

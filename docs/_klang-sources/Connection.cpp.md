@@ -13,8 +13,9 @@ index: 24
 //
 //
 
-#include "Klang.hpp"
 #include "Connection.hpp"
+
+#include "Klang.hpp"
 
 using namespace klang;
 
@@ -22,12 +23,11 @@ CONNECTION_ID Connection::oID = 0;
 
 Connection::Connection(Node& pOutputNode, CHANNEL_ID pOutputChannel,
                        Node& pInputNode, CHANNEL_ID pInputChannel,
-                       bool& pStatus) :
-output_node(pOutputNode),
-output_channel_id(pOutputChannel),
-input_node(pInputNode),
-input_channel_id(pInputChannel),
-mID(oID++) {
+                       bool& pStatus) : output_node(pOutputNode),
+                                        output_channel_id(pOutputChannel),
+                                        input_node(pInputNode),
+                                        input_channel_id(pInputChannel),
+                                        mID(oID++) {
     pStatus = pInputNode.connect(this, pInputChannel);
 }
 
@@ -43,7 +43,7 @@ void Connection::update(AUDIO_BLOCK_ID pAudioBlockID) {
     output_node.update(output_channel_id, AudioBlockPool::instance().data(pAudioBlockID));
 }
 
-void  Connection::reset() {
+void Connection::reset() {
     oID = 0;
 }
 

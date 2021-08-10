@@ -11,11 +11,11 @@ bool WM8731_init() {
     WM8731_delay(5);
     WM8731_write(WM8731_REG_RESET, 0);
 
-    WM8731_write(WM8731_REG_INTERFACE, 0b00000010); // 0x02=0b00000010 // I2S, 16 bit, MCLK slave
-    WM8731_write(WM8731_REG_SAMPLING,  0b00100000); // 0x20=0b00100000  // 256*Fs, 44.1 kHz, MCLK/1
+    WM8731_write(WM8731_REG_INTERFACE, 0b00000010);  // 0x02=0b00000010 // I2S, 16 bit, MCLK slave
+    WM8731_write(WM8731_REG_SAMPLING, 0b00100000);   // 0x20=0b00100000  // 256*Fs, 44.1 kHz, MCLK/1
 
-    WM8731_write(WM8731_REG_DIGITAL, 0x08);   // DAC soft mute
-    WM8731_write(WM8731_REG_ANALOG, 0x00);    // disable all
+    WM8731_write(WM8731_REG_DIGITAL, 0x08);  // DAC soft mute
+    WM8731_write(WM8731_REG_ANALOG, 0x00);   // disable all
 
     WM8731_write(WM8731_REG_POWERDOWN, 0x00);
 
@@ -26,8 +26,8 @@ bool WM8731_init() {
     WM8731_write(WM8731_REG_ACTIVE, 1);
     WM8731_delay(5);
 
-    WM8731_write(WM8731_REG_DIGITAL, 0b00100);      // DAC unmuted
-    WM8731_write(WM8731_REG_ANALOG, 0b00010000);    // DAC selected
+    WM8731_write(WM8731_REG_DIGITAL, 0b00100);    // DAC unmuted
+    WM8731_write(WM8731_REG_ANALOG, 0b00010000);  // DAC selected
 
     WM8731_volume(0.5);
     return true;
@@ -51,7 +51,7 @@ bool WM8731_write(uint8_t reg, uint16_t val) {
      */
 
     const static uint8_t TRANSMIT_LENGTH = 2;
-    uint8_t data[TRANSMIT_LENGTH];
+    uint8_t              data[TRANSMIT_LENGTH];
 
     data[0] = (reg << 1) | ((val >> 8) & 1);
     data[1] = val & 0xFF;
@@ -74,7 +74,7 @@ bool WM8731_volumeInteger(unsigned int n) {
 bool WM8731_inputLevel(float n) {
     // range is 0x00 (min) - 0x1F (max)
 
-    int _level = (int) (n * 31.f);
+    int _level = (int)(n * 31.f);
 
     _level = _level > 0x1F ? 0x1F : _level;
     WM8731_write(WM8731_REG_LLINEIN, _level);

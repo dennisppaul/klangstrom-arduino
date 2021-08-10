@@ -24,11 +24,11 @@
 namespace klang {
     class NodeMixer8 : public Node {
     public:
-        static const CHANNEL_ID NUM_CH_IN           = 8;
-        static const CHANNEL_ID NUM_CH_OUT          = 1;
-        
+        static const CHANNEL_ID NUM_CH_IN  = 8;
+        static const CHANNEL_ID NUM_CH_OUT = 1;
+
         NodeMixer8() {
-            for (uint8_t i=0; i < NUM_CH_IN; ++i) {
+            for (uint8_t i = 0; i < NUM_CH_IN; ++i) {
                 mConnection_CH_IN_SIGNAL[i] = nullptr;
                 mMix[i]                     = 1.0;
             }
@@ -42,7 +42,7 @@ namespace klang {
                 return false;
             }
         }
-        
+
         bool disconnect(CHANNEL_ID pInChannel) {
             if (pInChannel < NUM_CH_IN) {
                 mConnection_CH_IN_SIGNAL[pInChannel] = nullptr;
@@ -51,22 +51,20 @@ namespace klang {
                 return false;
             }
         }
-        
+
         void update(CHANNEL_ID pChannel, SIGNAL_TYPE* pAudioBlock) {
-            bool m_has_SIGNAL[NUM_CH_IN];
+            bool    m_has_SIGNAL[NUM_CH_IN];
             uint8_t mSignalInputCounter = 0;
-            for (uint8_t i=0; i < NUM_CH_IN; ++i) {
+            for (uint8_t i = 0; i < NUM_CH_IN; ++i) {
                 const bool mHasSignal = (mConnection_CH_IN_SIGNAL[i] != nullptr);
-                m_has_SIGNAL[i] = mHasSignal;
+                m_has_SIGNAL[i]       = mHasSignal;
                 mSignalInputCounter += mHasSignal;
             }
-            if (is_not_updated()
-                && pChannel == CH_OUT_SIGNAL
-                && mSignalInputCounter > 0) {
+            if (is_not_updated() && pChannel == CH_OUT_SIGNAL && mSignalInputCounter > 0) {
                 AUDIO_BLOCK_ID mBlock_SIGNAL[NUM_CH_IN];
-                SIGNAL_TYPE* mBlockData_SIGNAL[NUM_CH_IN];
+                SIGNAL_TYPE*   mBlockData_SIGNAL[NUM_CH_IN];
 
-                for (uint8_t i=0; i < NUM_CH_IN; ++i) {
+                for (uint8_t i = 0; i < NUM_CH_IN; ++i) {
                     if (m_has_SIGNAL[i]) {
                         mBlock_SIGNAL[i] = AudioBlockPool::instance().request();
                         if (mBlock_SIGNAL[i] == AudioBlockPool::NO_ID) {
@@ -80,16 +78,16 @@ namespace klang {
                 }
 
                 const float mInverseSigCounter = 1.0 / mSignalInputCounter;
-                for (uint16_t i=0; i < KLANG_SAMPLES_PER_AUDIO_BLOCK; ++i) {
+                for (uint16_t i = 0; i < KLANG_SAMPLES_PER_AUDIO_BLOCK; ++i) {
                     float sum = 0.0;
-                    for (uint8_t j=0; j < NUM_CH_IN; ++j) {
+                    for (uint8_t j = 0; j < NUM_CH_IN; ++j) {
                         const float s = m_has_SIGNAL[j] ? (mBlockData_SIGNAL[j][i] * mMix[j]) : 0.0;
                         sum += s;
                     }
                     pAudioBlock[i] = sum * mInverseSigCounter;
                 }
 
-                for (uint8_t i=0; i < NUM_CH_IN; ++i) {
+                for (uint8_t i = 0; i < NUM_CH_IN; ++i) {
                     AudioBlockPool::instance().release(mBlock_SIGNAL[i]);
                 }
 
@@ -98,15 +96,15 @@ namespace klang {
                 memset(pAudioBlock, 0.0, KLANG_SAMPLES_PER_AUDIO_BLOCK * sizeof(SIGNAL_TYPE));
             }
         }
-        
+
         void set_mix(uint8_t pChannel, float pValue) {
             mMix[pChannel] = pValue;
         }
-        
+
         SIGNAL_TYPE get_mix(uint8_t pChannel) {
             return mMix[pChannel];
         }
-     
+
         void set_command(KLANG_CMD_TYPE pCommand, KLANG_CMD_TYPE* pPayLoad) {
             switch (pCommand) {
                 case KLANG_SET_MIX_F32:
@@ -117,8 +115,8 @@ namespace klang {
 
     private:
         Connection* mConnection_CH_IN_SIGNAL[NUM_CH_IN];
-        float mMix[NUM_CH_IN];
+        float       mMix[NUM_CH_IN];
     };
-}
+}  // namespace klang
 
 #endif /* NodeMixer8_hpp */

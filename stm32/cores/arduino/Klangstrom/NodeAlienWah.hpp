@@ -22,10 +22,10 @@
 #ifndef NodeAlienWah_hpp
 #define NodeAlienWah_hpp
 
-#include "Nodes.hpp"
-#include "NodeKernelBlock.hpp"
-
 #include <complex.h>
+
+#include "NodeKernelBlock.hpp"
+#include "Nodes.hpp"
 //#include <fcntl.h>
 //#include <stdio.h>
 //#include <math.h>
@@ -72,38 +72,38 @@
  */
 
 namespace klang {
-#define lfoskipsamples 25 // How many samples are processed before compute the lfo value again
-    
+#define lfoskipsamples 25  // How many samples are processed before compute the lfo value again
+
     class NodeAlienWah : public NodeKernelBlock {
     public:
         NodeAlienWah() {
-            init(0.6,0,0.5,20);  //effects parameters
+            init(0.6, 0, 0.5, 20);  //effects parameters
         }
-        
+
     protected:
         void kernel(SIGNAL_TYPE* s) {
-            float lfo,out;
+            float               lfo, out;
             std::complex<float> outc;
-            for (uint16_t i=0; i < KLANG_SAMPLES_PER_AUDIO_BLOCK; i++) {
-                if (awint.t++%lfoskipsamples==0) {
-                    lfo=(1+cos(awint.t*awint.lfoskip+awparams.startphase));
-                    awint.c=std::complex<float>(cos(lfo)*awparams.fb,sin(lfo)*awparams.fb);
+            for (uint16_t i = 0; i < KLANG_SAMPLES_PER_AUDIO_BLOCK; i++) {
+                if (awint.t++ % lfoskipsamples == 0) {
+                    lfo     = (1 + cos(awint.t * awint.lfoskip + awparams.startphase));
+                    awint.c = std::complex<float>(cos(lfo) * awparams.fb, sin(lfo) * awparams.fb);
                 };
-                outc=awint.c*awint.delaybuf[awint.k]+(1-awparams.fb)*s[i];
-                awint.delaybuf[awint.k]=outc;
-                if ((++awint.k)>=awparams.delay) {
-                    awint.k=0;
+                outc                    = awint.c * awint.delaybuf[awint.k] + (1 - awparams.fb) * s[i];
+                awint.delaybuf[awint.k] = outc;
+                if ((++awint.k) >= awparams.delay) {
+                    awint.k = 0;
                 }
-                out=real(outc)*3;  //take real part of outc
-                                   //                if (out<-32768) {
-                                   //                    out=-32768;
-                                   //                } else if (out>32767) {
-                                   //                    out=32767; //Prevents clipping
-                                   //                }
-                s[i]=out;
+                out = real(outc) * 3;  //take real part of outc
+                                       //                if (out<-32768) {
+                                       //                    out=-32768;
+                                       //                } else if (out>32767) {
+                                       //                    out=32767; //Prevents clipping
+                                       //                }
+                s[i] = out;
             }
         }
-        
+
         void set_command(KLANG_CMD_TYPE pCommand, KLANG_CMD_TYPE* pPayLoad) {
             switch (pCommand) {
                 case KLANG_SET_FREQUENCY_F32:
@@ -117,58 +117,56 @@ namespace klang {
                     break;
             }
         }
-        
+
         void set_frequency(float pFrequency) {
             awparams.freq = pFrequency;
             awint.lfoskip = pFrequency * 2 * 3.141592653589 / KLANG_AUDIO_RATE;
         }
-        
+
         void set_feedback(float pFeedback) {
             awparams.fb = pFeedback / 4 + 0.74;
         }
-        
+
         void set_delay(float pDelay) {
-            if (pDelay<1) {
-                pDelay=1;
+            if (pDelay < 1) {
+                pDelay = 1;
             }
-            awparams.delay = (int)( pDelay / 44100.0 * KLANG_AUDIO_RATE);
+            awparams.delay = (int)(pDelay / 44100.0 * KLANG_AUDIO_RATE);
             awint.delaybuf = new std::complex<float>[awparams.delay];
             for (int i = 0; i < pDelay; i++) {
-                awint.delaybuf[i] = std::complex<float>(0,0);
+                awint.delaybuf[i] = std::complex<float>(0, 0);
             }
             awint.t = 0;
         }
-        
+
     private:
         //alien wah internal parameters
-        struct params
-        {
+        struct params {
             float freq;
             float startphase;
             float fb;
-            int delay;
+            int   delay;
         } awparams;
-        
-        struct alienwahinternals
-        {
-            std::complex<float> *delaybuf;
-            float lfoskip;
-            long int t;
-            std::complex<float> c;
-            int k;
+
+        struct alienwahinternals {
+            std::complex<float>* delaybuf;
+            float                lfoskip;
+            long int             t;
+            std::complex<float>  c;
+            int                  k;
         } awint;
-        
+
         void set_start_phase(float pStartphase) {
             awparams.startphase = pStartphase;
         }
-        
-        void init(float freq, float startphase, float fb, int delay){
+
+        void init(float freq, float startphase, float fb, int delay) {
             set_frequency(freq);
             set_start_phase(startphase);
             set_feedback(fb);
             set_delay(delay);
         }
     };
-}
+}  // namespace klang
 
 #endif /* NodeAlienWah_hpp */

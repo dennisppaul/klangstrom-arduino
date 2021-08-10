@@ -22,8 +22,8 @@
 namespace klang {
     class NodeClip : public NodeKernel {
     public:
-        void set_min(float pClipMin) { mClipMin = pClipMin; }
-        void set_max(float pClipMax) { mClipMax = pClipMax; }
+        void  set_min(float pClipMin) { mClipMin = pClipMin; }
+        void  set_max(float pClipMax) { mClipMax = pClipMax; }
         float get_min() { return mClipMin; }
         float get_max() { return mClipMax; }
 
@@ -37,7 +37,7 @@ namespace klang {
                     break;
             }
         }
-        
+
     protected:
         SIGNAL_TYPE kernel(const SIGNAL_TYPE s) {
             return KlangMath::clamp(s, mClipMin, mClipMax);
@@ -47,6 +47,6 @@ namespace klang {
         float mClipMin = SIGNAL_MIN;
         float mClipMax = SIGNAL_MAX;
     };
-}
+}  // namespace klang
 
 #endif /* NodeClip_hpp */

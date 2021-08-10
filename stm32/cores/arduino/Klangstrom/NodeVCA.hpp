@@ -25,11 +25,11 @@ namespace klang {
         void set_amplification(SIGNAL_TYPE pValue) {
             mAmplification = pValue;
         }
-        
+
         SIGNAL_TYPE get_amplification() {
             return mAmplification;
         }
-        
+
         void set_command(KLANG_CMD_TYPE pCommand, KLANG_CMD_TYPE* pPayLoad) {
             switch (pCommand) {
                 case KLANG_SET_AMPLIFICATION_F32:
@@ -37,15 +37,15 @@ namespace klang {
                     break;
             }
         }
-        
+
     protected:
         SIGNAL_TYPE kernel(const SIGNAL_TYPE s) {
             return s * mAmplification;
         }
-        
+
     private:
         SIGNAL_TYPE mAmplification = 1.0;
     };
-}
+}  // namespace klang
 
 #endif /* NodeVCA_hpp */

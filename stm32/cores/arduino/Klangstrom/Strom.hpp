@@ -8,11 +8,12 @@
 #ifndef Strom_hpp
 #define Strom_hpp
 
-#include <vector>
+#include <math.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <math.h>
+
+#include <vector>
 
 #if __has_include("StromConfiguration.h")
 #include "StromConfiguration.h"
@@ -29,14 +30,14 @@ namespace strom {
     public:
         static void update_structure(StromNode& pRoot);
         static bool connect(StromNode* pOutNode, STROM_CHANNEL_ID pOutChannel,
-                            StromNode* pInNode,  STROM_CHANNEL_ID pInChannel);
+                            StromNode* pInNode, STROM_CHANNEL_ID pInChannel);
         static bool connect(StromNode& pOutNode, STROM_CHANNEL_ID pOutChannel,
-                            StromNode& pInNode,  STROM_CHANNEL_ID pInChannel);
+                            StromNode& pInNode, STROM_CHANNEL_ID pInChannel);
         static bool connect(StromNode& pOutNode, StromNode& pInNode);
-        
-        static void patch(StromNode* pNodeOut, STROM_CHANNEL_ID pChanneOut, 
-                          StromNode* pNodeIn,  STROM_CHANNEL_ID pChannelIn);
+
+        static void patch(StromNode* pNodeOut, STROM_CHANNEL_ID pChanneOut,
+                          StromNode* pNodeIn, STROM_CHANNEL_ID pChannelIn);
     };
-}
+}  // namespace strom
 
 #endif /* Strom_hpp */

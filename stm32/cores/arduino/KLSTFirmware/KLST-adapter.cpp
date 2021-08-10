@@ -1,10 +1,9 @@
-#include "pins_arduino.h"
 #include "Arduino.h"
-
-#include "KlangstromDefines.hpp"
-#include "KlangstromDefinesArduino.h"
 #include "KlangstromApplicationArduino.h"
 #include "KlangstromApplicationInterfaceArduino.h"
+#include "KlangstromDefines.hpp"
+#include "KlangstromDefinesArduino.h"
+#include "pins_arduino.h"
 
 #if (!defined(KLST_BOARD_KLST_TINY) && !defined(KLST_BOARD_KLST_CORE))
 #warning("@KLST board type not defined! options are KLST_BOARD_KLST_CORE or KLST_BOARD_KLST_TINY")
@@ -23,45 +22,45 @@ using namespace klangstrom;
 extern "C" {
 #endif
 
-char KLST_U_ID_SERIAL[25] = "000000000000000000000000"; // 96-bit unique ID
+char KLST_U_ID_SERIAL[25] = "000000000000000000000000";  // 96-bit unique ID
 
 /* options */
 
-bool mKLSTOptionEnableBeat = true;
-bool mKLSTOptionEnableEncoders = true;
-bool mKLSTOptionEnableSerialPorts = true;
-bool mKLSTOptionEnableProgrammerButton = true;
-bool mKLSTOptionEnableAudioInput = true;
-float mKLSTOptionSerial00BaudRate = KLST_UART_BAUD;
-float mKLSTOptionSerial01BaudRate = KLST_UART_BAUD;
-float mKLSTOptionSerial02BaudRate = KLST_UART_BAUD;
-uint8_t mKLSTAudioLine = KLST_MIC;
+bool    mKLSTOptionEnableBeat             = true;
+bool    mKLSTOptionEnableEncoders         = true;
+bool    mKLSTOptionEnableSerialPorts      = true;
+bool    mKLSTOptionEnableProgrammerButton = true;
+bool    mKLSTOptionEnableAudioInput       = true;
+float   mKLSTOptionSerial00BaudRate       = KLST_UART_BAUD;
+float   mKLSTOptionSerial01BaudRate       = KLST_UART_BAUD;
+float   mKLSTOptionSerial02BaudRate       = KLST_UART_BAUD;
+uint8_t mKLSTAudioLine                    = KLST_MIC;
 
 /* beat */
 
-HardwareTimer *mKLSTBeatTimer;
-uint32_t mKLSTBeatCounter = 0;
-uint32_t mKLSTBeatIntervalDuration = 1000000/2;
+HardwareTimer* mKLSTBeatTimer;
+uint32_t       mKLSTBeatCounter          = 0;
+uint32_t       mKLSTBeatIntervalDuration = 1000000 / 2;
 
 /* encoders */
 
-static int16_t mKLSTENCODER_00TickCount = 0;
-static int16_t mKLSTENCODER_01TickCount = 0;
-static int16_t mKLSTENCODER_02TickCount = 0;
-static bool mKLSTENCODER_00ButtonState = true;
-static bool mKLSTENCODER_01ButtonState = true;
-static bool mKLSTENCODER_02ButtonState = true;
+static int16_t mKLSTENCODER_00TickCount   = 0;
+static int16_t mKLSTENCODER_01TickCount   = 0;
+static int16_t mKLSTENCODER_02TickCount   = 0;
+static bool    mKLSTENCODER_00ButtonState = true;
+static bool    mKLSTENCODER_01ButtonState = true;
+static bool    mKLSTENCODER_02ButtonState = true;
 
 /* ----------------------------------------------------------------------------------------------------------------- */
 /* OPTIONS                                                                                                             */
 /* ----------------------------------------------------------------------------------------------------------------- */
 
 uint32_t KLST_ISH_OPT_audio_line() {
-  return mKLSTAudioLine;
+    return mKLSTAudioLine;
 }
 
 bool KLST_ISH_OPT_audio_input_enabled() {
-  return mKLSTOptionEnableAudioInput;
+    return mKLSTOptionEnableAudioInput;
 }
 
 /* ----------------------------------------------------------------------------------------------------------------- */
@@ -75,11 +74,11 @@ void KLST_IT_beat_callback() {
 unsigned long KLST_get_U_ID(uint8_t pOffset);
 
 void KLST_update_U_ID_serial() {
-    for (uint8_t j=0; j<3; j++) {
+    for (uint8_t j = 0; j < 3; j++) {
         uint32_t pUID_0 = KLST_get_U_ID(j);
-        char mHexStr[9];
+        char     mHexStr[9];
         sprintf(mHexStr, "%08lX", pUID_0);
-        for (uint8_t i=0; i<8; i++) {
+        for (uint8_t i = 0; i < 8; i++) {
             KLST_U_ID_SERIAL[i + j * 8] = mHexStr[i];
         }
     }
@@ -127,7 +126,6 @@ void KLST_ISH_pre_setup() {
  * called after setup
  */
 void KLST_ISH_post_setup() {
-
     KLST_BSP_configure_audio_codec();
     KLST_BSP_start_audio_codec();
 
@@ -248,10 +246,10 @@ void KLST_ISH_handleSerialPorts() {
 #endif
 }
 
-const uint8_t M_NUM_OF_BITS = 16;
-const float M_INT_SCALE = (1 << (M_NUM_OF_BITS-1)) - 1.0; // @todo(see if  is `-1.0` required)
-const uint32_t M_MASK_LEFT = (1 << M_NUM_OF_BITS) - 1;
-const uint32_t M_MASK_RIGHT = ~(M_MASK_LEFT);
+const uint8_t  M_NUM_OF_BITS = 16;
+const float    M_INT_SCALE   = (1 << (M_NUM_OF_BITS - 1)) - 1.0;  // @todo(see if  is `-1.0` required)
+const uint32_t M_MASK_LEFT   = (1 << M_NUM_OF_BITS) - 1;
+const uint32_t M_MASK_RIGHT  = ~(M_MASK_LEFT);
 
 /**
  * fills buffer with new block of samples
@@ -260,34 +258,34 @@ SIGNAL_TYPE mLeftTX[KLANG_SAMPLES_PER_AUDIO_BLOCK];
 SIGNAL_TYPE mRightTX[KLANG_SAMPLES_PER_AUDIO_BLOCK];
 SIGNAL_TYPE mLeftRX[KLANG_SAMPLES_PER_AUDIO_BLOCK];
 SIGNAL_TYPE mRightRX[KLANG_SAMPLES_PER_AUDIO_BLOCK];
-WEAK void KLST_ISH_fill_buffer(uint32_t *pTXBuffer, uint32_t *pRXBuffer, uint16_t pBufferLength) {
+WEAK void   KLST_ISH_fill_buffer(uint32_t* pTXBuffer, uint32_t* pRXBuffer, uint16_t pBufferLength) {
 #ifdef KLST_DISABLE_INTERRUPTS_IN_AUDIOBLOCK
-  noInterrupts();
+    noInterrupts();
 #endif
-  /* unpack receive buffer to sample */
-  if (KLST_ISH_OPT_audio_input_enabled()) {
-    for (int i = 0; i < KLANG_SAMPLES_PER_AUDIO_BLOCK; i++) {
-      const uint32_t p = pRXBuffer[i];
-      const int16_t mLeftInt  = (p & M_MASK_LEFT);
-      const int16_t mRightInt = (p & M_MASK_RIGHT) >> M_NUM_OF_BITS;
-      mLeftRX[i] = mLeftInt / M_INT_SCALE;
-      mRightRX[i] = mRightInt / M_INT_SCALE;
+    /* unpack receive buffer to sample */
+    if (KLST_ISH_OPT_audio_input_enabled()) {
+        for (int i = 0; i < KLANG_SAMPLES_PER_AUDIO_BLOCK; i++) {
+            const uint32_t p         = pRXBuffer[i];
+            const int16_t  mLeftInt  = (p & M_MASK_LEFT);
+            const int16_t  mRightInt = (p & M_MASK_RIGHT) >> M_NUM_OF_BITS;
+            mLeftRX[i]               = mLeftInt / M_INT_SCALE;
+            mRightRX[i]              = mRightInt / M_INT_SCALE;
+        }
     }
-  }
-  /* calculate next audio block */
-  audioblock(mLeftTX, mRightTX, mLeftRX, mRightRX);
-  /* pack sample for transmit buffer */
-  for (int i = 0; i < KLANG_SAMPLES_PER_AUDIO_BLOCK; i++) {
-    int16_t mLeftInt = (int16_t) (mLeftTX[i] * M_INT_SCALE);
-    int16_t mRightInt = (int16_t) (mRightTX[i] * M_INT_SCALE);
-    pTXBuffer[i] = ((uint32_t) (uint16_t) mLeftInt) << 0 | ((uint32_t) (uint16_t) mRightInt) << M_NUM_OF_BITS;
-      // //@todo this assumes a 16bit sample depth!
-      // int16_t mL = (int16_t) (mLeftTX[i] * 32767.0f);
-      // int16_t mR = (int16_t) (mRightTX[i] * 32767.0f);
-      // pTXBuffer[i] = ((uint32_t) (uint16_t) mL) << 0 | ((uint32_t) (uint16_t) mR) << 16;
-  }
+    /* calculate next audio block */
+    audioblock(mLeftTX, mRightTX, mLeftRX, mRightRX);
+    /* pack sample for transmit buffer */
+    for (int i = 0; i < KLANG_SAMPLES_PER_AUDIO_BLOCK; i++) {
+        int16_t mLeftInt  = (int16_t)(mLeftTX[i] * M_INT_SCALE);
+        int16_t mRightInt = (int16_t)(mRightTX[i] * M_INT_SCALE);
+        pTXBuffer[i]      = ((uint32_t)(uint16_t)mLeftInt) << 0 | ((uint32_t)(uint16_t)mRightInt) << M_NUM_OF_BITS;
+        // //@todo this assumes a 16bit sample depth!
+        // int16_t mL = (int16_t) (mLeftTX[i] * 32767.0f);
+        // int16_t mR = (int16_t) (mRightTX[i] * 32767.0f);
+        // pTXBuffer[i] = ((uint32_t) (uint16_t) mL) << 0 | ((uint32_t) (uint16_t) mR) << 16;
+    }
 #ifdef KLST_DISABLE_INTERRUPTS_IN_AUDIOBLOCK
-  interrupts();
+    interrupts();
 #endif
 }
 
@@ -327,54 +325,54 @@ void KLST_ISH_jump_to_bootloader() {
     __enable_irq();
 
     /* Set up the jump to booloader address + 4 */
-    SysMemBootJump = (void (*)(void)) (*((uint32_t*) ((BootAddr + 4))));
+    SysMemBootJump = (void (*)(void))(*((uint32_t*)((BootAddr + 4))));
 
     /* Set the main stack pointer to the bootloader stack */
-    __set_MSP(*(uint32_t*) BootAddr);
+    __set_MSP(*(uint32_t*)BootAddr);
 
-  /* turn on all LEDs */
-  digitalWrite(LED_00, HIGH);
-  digitalWrite(LED_01, HIGH);
-  digitalWrite(LED_02, HIGH);
+    /* turn on all LEDs */
+    digitalWrite(LED_00, HIGH);
+    digitalWrite(LED_01, HIGH);
+    digitalWrite(LED_02, HIGH);
 
     /* Call the function to jump to bootloader location */
     SysMemBootJump();
 }
 
 void KLST_shutdown_toggle_leds(const uint16_t pDelay) {
-  delay(pDelay);
-  digitalWrite(LED_00, !digitalRead(LED_00));
-  digitalWrite(LED_01, !digitalRead(LED_01));
-  digitalWrite(LED_02, !digitalRead(LED_02));
+    delay(pDelay);
+    digitalWrite(LED_00, !digitalRead(LED_00));
+    digitalWrite(LED_01, !digitalRead(LED_01));
+    digitalWrite(LED_02, !digitalRead(LED_02));
 }
 
 void KLST_ISH_shutdown() {
-  KLST_BSP_shutdown();
-  //@todo(check if other peripherals also need to be reset e.g GPIOs, SPI, I2C. see https://github.com/viktorvano/STM32-Bootloader/blob/master/README.md )
-  /* stop beat */
-  mKLSTBeatTimer->pause();
-  /* stop USB */
-  #if defined (USBCON) && defined(USBD_USE_CDC)
-  SerialUSB.end();
-  #endif
-  /* flash LEDs */
-  digitalWrite(LED_00, LOW);
-  digitalWrite(LED_01, HIGH);
-  digitalWrite(LED_02, LOW);
-  for (uint8_t i=16; i > 0; i--) {
-    KLST_shutdown_toggle_leds(24 + 12 * i);
-  }
+    KLST_BSP_shutdown();
+    //@todo(check if other peripherals also need to be reset e.g GPIOs, SPI, I2C. see https://github.com/viktorvano/STM32-Bootloader/blob/master/README.md )
+    /* stop beat */
+    mKLSTBeatTimer->pause();
+/* stop USB */
+#if defined(USBCON) && defined(USBD_USE_CDC)
+    SerialUSB.end();
+#endif
+    /* flash LEDs */
+    digitalWrite(LED_00, LOW);
+    digitalWrite(LED_01, HIGH);
+    digitalWrite(LED_02, LOW);
+    for (uint8_t i = 16; i > 0; i--) {
+        KLST_shutdown_toggle_leds(24 + 12 * i);
+    }
 }
 
 unsigned long KLST_get_U_ID(uint8_t pOffset) {
     static const uint32_t UID_ADDR = KLST_BSP_U_ID_address();
-    return *((unsigned long *) UID_ADDR + pOffset * 0x04);
+    return *((unsigned long*)UID_ADDR + pOffset * 0x04);
 }
 
 bool KLST_check_UID(const uint32_t pUID[]) {
-  return  pUID[0] == KLST_get_U_ID(0) &&
-          pUID[1] == KLST_get_U_ID(1) &&
-          pUID[2] == KLST_get_U_ID(2);
+    return pUID[0] == KLST_get_U_ID(0) &&
+           pUID[1] == KLST_get_U_ID(1) &&
+           pUID[2] == KLST_get_U_ID(2);
 }
 
 #ifdef __cplusplus
@@ -388,26 +386,26 @@ bool KLST_check_UID(const uint32_t pUID[]) {
 #ifdef __cplusplus
 
 int16_t klangstrom::ID() {
-  for (uint8_t i = 0; i < KLST_NUM_OF_U_ID; ++i) {
-      if (KLST_check_UID(KLST_U_ID[i])) {
-          return i;
-      }
-  }
-  return KLST_NO_ID;
+    for (uint8_t i = 0; i < KLST_NUM_OF_U_ID; ++i) {
+        if (KLST_check_UID(KLST_U_ID[i])) {
+            return i;
+        }
+    }
+    return KLST_NO_ID;
 }
 
 void klangstrom::begin_serial_debug(bool pWaitForSerial, uint32_t pBaudRate) {
-#if defined (USBCON) && defined(USBD_USE_CDC)
-        Serial.begin(pBaudRate);
-        if (pWaitForSerial) {
-            static const uint32_t M_ITERATION_GUARD = 180000000;
-            uint32_t mIterationGuard = 0;
-            while (!Serial && mIterationGuard < M_ITERATION_GUARD) {
-                // wait for serial port to connect. needed for native USB …
-                // but only for a limited number of iterations.
-                mIterationGuard++;
-            }
+#if defined(USBCON) && defined(USBD_USE_CDC)
+    Serial.begin(pBaudRate);
+    if (pWaitForSerial) {
+        static const uint32_t M_ITERATION_GUARD = 180000000;
+        uint32_t              mIterationGuard   = 0;
+        while (!Serial && mIterationGuard < M_ITERATION_GUARD) {
+            // wait for serial port to connect. needed for native USB …
+            // but only for a limited number of iterations.
+            mIterationGuard++;
         }
+    }
 #endif
 }
 
@@ -474,7 +472,9 @@ void klangstrom::led_toggle(uint8_t pLED) {
 }
 
 void klangstrom::beats_per_minute(float pBPM) {
-    if (pBPM == 0) { return; }
+    if (pBPM == 0) {
+        return;
+    }
     klangstrom::beats_per_minute_ms((uint32_t)((60.0 / pBPM) * 1000000));
 }
 
@@ -502,30 +502,29 @@ bool klangstrom::pin_state(uint8_t pButton) {
 }
 
 void klangstrom::data_transmit(const uint8_t pSender, uint8_t* pData, uint8_t pDataLength) {
-  switch(pSender) {
+    switch (pSender) {
 #ifdef HAL_UART_MODULE_ENABLED
 #ifdef KLST_SERIAL_00
-    case SERIAL_00:
-      KLST_SERIAL_00.write(pData, pDataLength);
-      break;
+        case SERIAL_00:
+            KLST_SERIAL_00.write(pData, pDataLength);
+            break;
 #endif
 #ifdef KLST_SERIAL_01
-    case SERIAL_01:
-      KLST_SERIAL_01.write(pData, pDataLength);
-      break;
+        case SERIAL_01:
+            KLST_SERIAL_01.write(pData, pDataLength);
+            break;
 #endif
 #ifdef KLST_SERIAL_02
-      case SERIAL_02:
-      KLST_SERIAL_02.write(pData, pDataLength);
-      break;
+        case SERIAL_02:
+            KLST_SERIAL_02.write(pData, pDataLength);
+            break;
 #endif
 #endif
-  }
+    }
 }
 
 char* klangstrom::U_ID() {
     return KLST_U_ID_SERIAL;
 }
 
-
-#endif // __cplusplus
+#endif  // __cplusplus

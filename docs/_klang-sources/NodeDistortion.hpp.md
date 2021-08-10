@@ -38,37 +38,37 @@ namespace klang {
             FOLDBACK,
             FOLDBACK_SINGLE
         };
-        
+
         NodeDistortion() {
             set_clip(1.0);
             set_amplification(1.0);
             set_type(CLIP);
         }
-        
+
         void set_clip(const float pClip) {
             mClip = pClip;
         }
-        
+
         float get_clip() {
             return mClip;
         }
-        
+
         void set_amplification(const float pAmplification) {
             mAmplification = pAmplification;
         }
-        
+
         float get_amplification() {
             return mAmplification;
         }
-        
+
         void set_type(const TYPE pDistortionType) {
             mDistortionType = pDistortionType;
         }
-        
+
         TYPE get_type() {
             return mDistortionType;
         }
-        
+
         void set_command(KLANG_CMD_TYPE pCommand, KLANG_CMD_TYPE* pPayLoad) {
             switch (pCommand) {
                 case KLANG_SET_CLIP_F32:
@@ -82,10 +82,10 @@ namespace klang {
                     break;
             }
         }
-        
+
     protected:
         SIGNAL_TYPE kernel(const SIGNAL_TYPE s) {
-            switch(mDistortionType) {
+            switch (mDistortionType) {
                 case CLIP:
                     return limit_clip(s * mAmplification);
                 case FOLDBACK:
@@ -96,19 +96,19 @@ namespace klang {
                     return 0.0;
             }
         }
-        
+
     private:
         float mClip;
         float mAmplification;
-        TYPE mDistortionType;
-        
+        TYPE  mDistortionType;
+
 #define LOCK_GUARD 1
         float limit_foldback(float v) {
 #if LOCK_GUARD
             const static uint8_t MAX_NUM_OF_ITERATIONS = 16;
-            uint8_t i = 0;
+            uint8_t              i                     = 0;
 #endif
-            while(v > mClip || v < -mClip) {
+            while (v > mClip || v < -mClip) {
                 v = limit_foldback_single(v);
 #if LOCK_GUARD
                 i++;
@@ -119,7 +119,7 @@ namespace klang {
             }
             return v;
         }
-        
+
         inline float limit_foldback_single(const float v) {
             if (v > mClip) {
                 const float w = 2 * mClip - v;
@@ -131,7 +131,7 @@ namespace klang {
                 return v;
             }
         }
-        
+
         inline float limit_clip(const float v) {
             if (v > mClip) {
                 return mClip;
@@ -142,7 +142,7 @@ namespace klang {
             }
         }
     };
-}
+}  // namespace klang
 
 #endif /* NodeDistortion_hpp */
 

@@ -29,9 +29,9 @@
 namespace klang {
     class NodeMute : public Node {
     public:
-        static const CHANNEL_ID NUM_CH_IN         = 1;
-        static const CHANNEL_ID NUM_CH_OUT        = 1;
-        
+        static const CHANNEL_ID NUM_CH_IN  = 1;
+        static const CHANNEL_ID NUM_CH_OUT = 1;
+
         bool connect(Connection* pConnection, CHANNEL_ID pInChannel) {
             if (pInChannel == CH_IN_SIGNAL) {
                 mConnection_CH_IN_SIGNAL = pConnection;
@@ -39,16 +39,16 @@ namespace klang {
             }
             return false;
         }
-        
+
         // @TODO(maybe just use a single method to either MUTE, MUTE_WITH_ZEROS, UNMUTE )
         void set_mute(bool pIsMuted) {
             mIsMuted = pIsMuted;
         }
-        
+
         void fill_muted_audioblock_with_zeros(bool pFillMutedAudioblockWithZeros) {
             mFillMutedAudioblockWithZeros = pFillMutedAudioblockWithZeros;
         }
-        
+
         bool disconnect(CHANNEL_ID pInChannel) {
             if (pInChannel == CH_IN_SIGNAL) {
                 mConnection_CH_IN_SIGNAL = nullptr;
@@ -56,7 +56,7 @@ namespace klang {
             }
             return false;
         }
-        
+
         void update(CHANNEL_ID pChannel, SIGNAL_TYPE* pAudioBlock) {
             if (is_not_updated()) {
                 if (mConnection_CH_IN_SIGNAL != nullptr) {
@@ -68,7 +68,7 @@ namespace klang {
             }
             if (pChannel == CH_OUT_SIGNAL) {
                 if (mIsMuted && mFillMutedAudioblockWithZeros) {
-                    for (uint16_t i=0; i < KLANG_SAMPLES_PER_AUDIO_BLOCK; i++) {
+                    for (uint16_t i = 0; i < KLANG_SAMPLES_PER_AUDIO_BLOCK; i++) {
                         if (mIsMuted) {
                             pAudioBlock[i] = 0.0;
                         }
@@ -76,7 +76,7 @@ namespace klang {
                 }
             }
         }
-        
+
         void set_command(KLANG_CMD_TYPE pCommand, KLANG_CMD_TYPE* pPayLoad) {
             switch (pCommand) {
                 case KLANG_SET_MUTE_I8:
@@ -84,12 +84,12 @@ namespace klang {
                     break;
             }
         }
-        
+
     private:
-        bool mIsMuted                           = true;
-        bool mFillMutedAudioblockWithZeros      = true;
-        Connection* mConnection_CH_IN_SIGNAL    = nullptr;
+        bool        mIsMuted                      = true;
+        bool        mFillMutedAudioblockWithZeros = true;
+        Connection* mConnection_CH_IN_SIGNAL      = nullptr;
     };
-}
+}  // namespace klang
 
 #endif /* NodeMute_hpp */

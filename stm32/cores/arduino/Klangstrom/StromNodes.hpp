@@ -9,7 +9,7 @@
 #define StromNodes_hpp
 
 #include "StromNodeNote.hpp"
-#include "StromNodeValue.hpp"
 #include "StromNodeTrigger.hpp"
+#include "StromNodeValue.hpp"
 
 #endif /* StromNodes_hpp */

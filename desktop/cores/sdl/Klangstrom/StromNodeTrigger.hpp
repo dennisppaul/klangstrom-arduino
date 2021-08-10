@@ -44,15 +44,15 @@ namespace strom {
         static const STROM_CHANNEL_ID CH_OUT_TRIGGER_13 = 0x0D;
         static const STROM_CHANNEL_ID CH_OUT_TRIGGER_14 = 0x0E;
         static const STROM_CHANNEL_ID CH_OUT_TRIGGER_15 = 0x0F;
-        
-        StromNodeTrigger() : StromNode (0, 255) {}
-        
+
+        StromNodeTrigger() : StromNode(0, 255) {}
+
         void in(const STROM_CHANNEL_ID pChannel, const float pData) override {}
-        
+
         float out(const STROM_CHANNEL_ID pChannel) override {
             return STROM_NO_VALUE;
         }
     };
-}
+}  // namespace strom
 
 #endif /* StromNodeTrigger_hpp */

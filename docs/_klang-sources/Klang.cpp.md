@@ -14,17 +14,18 @@ index: 28
 //
 
 #include "Klang.hpp"
-#include "Node.hpp"
+
+#include "AudioBlockPool.hpp"
 #include "Connection.hpp"
 #include "ConnectionPool.hpp"
-#include "AudioBlockPool.hpp"
+#include "Node.hpp"
 
 using namespace klang;
 
-CONNECTION_ID Klang::connect(Node &pOutputNode,
-                                   CHANNEL_ID pOutputChannel,
-                                   Node &pInputNode,
-                                   CHANNEL_ID pInputChannel) {
+CONNECTION_ID Klang::connect(Node &     pOutputNode,
+                             CHANNEL_ID pOutputChannel,
+                             Node &     pInputNode,
+                             CHANNEL_ID pInputChannel) {
     return ConnectionPool::instance().connect(pOutputNode,
                                               pOutputChannel,
                                               pInputNode,
@@ -38,10 +39,10 @@ CONNECTION_ID Klang::connect(Node &pOutputNode, Node &pInputNode) {
                                               Node::CH_IN_SIGNAL);
 }
 
-bool Klang::disconnect(Node &pOutputNode,
-                             CHANNEL_ID pOutputChannel,
-                             Node &pInputNode,
-                             CHANNEL_ID pInputChannel) {
+bool Klang::disconnect(Node &     pOutputNode,
+                       CHANNEL_ID pOutputChannel,
+                       Node &     pInputNode,
+                       CHANNEL_ID pInputChannel) {
     return ConnectionPool::instance().disconnect(pOutputNode,
                                                  Node::CH_OUT_SIGNAL,
                                                  pInputNode,
@@ -80,7 +81,6 @@ void Klang::frame_end() {
     //                return;
     //            }
 }
-
 
 FRAME_TYPE Klang::frame_index() {
     return mFrameCounter;

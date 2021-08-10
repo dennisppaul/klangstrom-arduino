@@ -18,24 +18,25 @@ namespace klang {
                    bool& pStatus);
         Connection(Node& pOutputNode, Node& pInputNode);
         ~Connection();
-        
+
         CONNECTION_ID ID() {
             return mID;
         }
-        
-        Node &output_node;
+
+        Node&      output_node;
         CHANNEL_ID output_channel_id;
-        Node &input_node;
+        Node&      input_node;
         CHANNEL_ID input_channel_id;
-        
+
         void update(SIGNAL_TYPE* pAudioBlock);
         void update(AUDIO_BLOCK_ID pAudioBlockID);
-        
+
         static void reset();
+
     private:
-        CONNECTION_ID mID;
+        CONNECTION_ID        mID;
         static CONNECTION_ID oID;
     };
-}
+}  // namespace klang
 
 #endif /* Connection_hpp */
