@@ -26,9 +26,13 @@ void OTG_FS_IRQHandler(void) {
 //   HAL_HCD_IRQHandler(&hhcd_USB_OTG_HS);
 // }
 
-#define USB_DEBUG_SERIAL 0
-#ifdef USB_DEBUG_SERIAL
 
+
+
+#if USBH_DEBUG_LEVEL > 0U
+  #define USB_DEBUG_SERIAL 0
+#endif
+#ifdef USB_DEBUG_SERIAL
   #if defined(KLST_BOARD_KLST_TINY)
 
     extern UART_HandleTypeDef *uart_handlers;
@@ -42,7 +46,6 @@ void OTG_FS_IRQHandler(void) {
   #elif defined(KLST_BOARD__CORE)
     // @todo(check why this is not required)
   #endif
-
 #endif // USB_DEBUG_SERIAL
 
 #ifdef __cplusplus

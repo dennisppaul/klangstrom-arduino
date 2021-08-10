@@ -20,9 +20,15 @@ void loop() {
     led_blinking_task();
 }
 
+void beat(uint32_t beat) {
+    // @todo(check if transmit works)
+    transmit_midi_note_on(0, 47, 100);
+    led_toggle(LED_02);
+}
+
 void led_blinking_task(void) {
     static uint32_t start_ms = 0;
-    static bool mLEDState = false;
+    static bool mLEDState = true;
 
     // Blink every interval ms
     if ( millis() - start_ms < blink_interval_ms) { return; }
@@ -32,31 +38,49 @@ void led_blinking_task(void) {
     mLEDState = 1 - mLEDState;
 }
 
-void receive_midi_note_on(uint8_t pNote, uint8_t pVelocity) {
+void receive_midi_note_on(const uint8_t channel, const uint8_t note, const uint8_t velocity) {
     KLST_SERIAL_00.print("note_on .... : ");
-    KLST_SERIAL_00.print(pNote);
+    KLST_SERIAL_00.print(channel);
     KLST_SERIAL_00.print(", ");
-    KLST_SERIAL_00.print(pVelocity);
+    KLST_SERIAL_00.print(note);
+    KLST_SERIAL_00.print(", ");
+    KLST_SERIAL_00.print(velocity);
     KLST_SERIAL_00.println();
 }
 
-void receive_midi_note_off(uint8_t pNote, uint8_t pVelocity) {
+void receive_midi_note_off(const uint8_t channel, const uint8_t note) {
     KLST_SERIAL_00.print("note_off ... : ");
-    KLST_SERIAL_00.print(pNote);
+    KLST_SERIAL_00.print(channel);
     KLST_SERIAL_00.print(", ");
-    KLST_SERIAL_00.print(pVelocity);
+    KLST_SERIAL_00.print(note);
     KLST_SERIAL_00.println();
 }
 
-void receive_midi_CC(uint8_t pValue) {
+void receive_midi_control_change(const uint8_t channel, const uint8_t controller, const uint8_t value) {
     KLST_SERIAL_00.print("CC ......... : ");
-    KLST_SERIAL_00.print(pValue);
+    KLST_SERIAL_00.print(channel);
+    KLST_SERIAL_00.print(", ");
+    KLST_SERIAL_00.print(controller);
+    KLST_SERIAL_00.print(", ");
+    KLST_SERIAL_00.print(value);
     KLST_SERIAL_00.println();
 }
 
-void receive_midi_pitch_bend(int16_t pValue) {
+void receive_midi_pitch_bend(const uint8_t channel, const int16_t value) {
     KLST_SERIAL_00.print("pitch bend . : ");
-    KLST_SERIAL_00.print(pValue);
+    KLST_SERIAL_00.print(channel);
+    KLST_SERIAL_00.print(", ");
+    KLST_SERIAL_00.print(value);
+    KLST_SERIAL_00.println();
+}
+
+void receive_midi_sys_ex(const uint8_t type, const uint8_t data1, const uint8_t data2) {
+    KLST_SERIAL_00.print("sys ex ..... : ");
+    KLST_SERIAL_00.print(type);
+    KLST_SERIAL_00.print(", ");
+    KLST_SERIAL_00.print(data1);
+    KLST_SERIAL_00.print(", ");
+    KLST_SERIAL_00.print(data2);
     KLST_SERIAL_00.println();
 }
 

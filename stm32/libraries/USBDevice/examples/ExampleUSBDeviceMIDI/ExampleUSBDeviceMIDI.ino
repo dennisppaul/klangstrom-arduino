@@ -50,5 +50,9 @@ void led_blinking_task(void) {
 }
 
 void receive_midi_note_on(uint8_t channel, uint8_t note, uint8_t velocity) {
-    led_toggle(LED_02);
+    led(LED_02, true);
+}
+
+void receive_midi_note_off(uint8_t channel, uint8_t note) {
+    led(LED_02, false);
 }
