@@ -2,31 +2,40 @@
 // ExampleKlangAndStromInteraction
 //
 
+#include "KlangMath.hpp"
 #include "KlangNodes.hpp"
 #include "StromNodes.hpp"
 
 using namespace klangstrom;
 
-klang::NodeVCOFunction  mVCO;
-klang::NodeDAC          mDAC;
-klang::NodeADSR         mADSR;
-strom::StromNodeTrigger mTrigger;
-strom::StromNodeNote    mNote;
-
-class MEventListener : public strom::StromEventListener {
-    bool mToggle = false;
-
+class MNodeADSR : public strom::StromEventListener, public klang::NodeADSR {
 public:
     void event(strom::STROM_EVENT pEventType, std::vector<float> pData) {
         if (mToggle) {
-            mADSR.start();
+            start();
         } else {
-            mADSR.stop();
+            stop();
         }
         mToggle = !mToggle;
     }
+
+private:
+    bool mToggle = false;
 };
-MEventListener mEventListener;
+
+class MNodeVCOFunction : public strom::StromEventListener, public klang::NodeVCOFunction {
+public:
+    void event(strom::STROM_EVENT pEventType, std::vector<float> pData) {
+        set_frequency(klang::KlangMath::note_to_frequency(pData[0]));
+        set_amplitude(pData[0] / 127.0);
+    }
+};
+
+MNodeADSR               mADSR;
+MNodeVCOFunction        mVCO;
+klang::NodeDAC          mDAC;
+strom::StromNodeTrigger mTrigger;
+strom::StromNodeNote    mNote;
 
 void setup() {
     klang::Klang::lock();
@@ -37,15 +46,19 @@ void setup() {
     mVCO.set_waveform(klang::NodeVCOFunction::WAVEFORM::SINE);
     klang::Klang::unlock();
 
-    mNote.in(strom::StromNodeNote::CH_IN_VELOCITY, 100);
-    mNote.in(strom::StromNodeNote::CH_IN_PITCH, 48);
-    mNote.set_event_listener(&mEventListener);
+    mNote.in(strom::StromNodeNote::CH_IN_VELOCITY, 40);
+    mNote.in(strom::StromNodeNote::CH_IN_PITCH, 48 * 2);
+    mNote.add_event_listener(&mVCO);
+    mNote.add_event_listener(&mADSR);
     strom::Strom::connect(mTrigger, strom::StromNodeTrigger::CH_OUT_TRIGGER_00,
                           mNote, strom::StromNodeNote::CH_IN_TRIGGER);
 }
 
 void beat(uint32_t pBeat) {
     strom::Strom::update(mTrigger);
+    if (pBeat == 8) {
+        mNote.clear_listeners();
+    }
 }
 
 void audioblock(SIGNAL_TYPE* pOutputLeft, SIGNAL_TYPE* pOutputRight,

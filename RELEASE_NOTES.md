@@ -2,8 +2,9 @@
 
 ## 0.0.2
 
-- added USB Host support for Mouse + Keyboard + MIDI ( i.e boards can now host USB devices like e.g MIDI keyboards )
-- added USB Device support for Mouse + Keyboard + MIDI ( via TinyUSB ) ( i.e boards can now act as USB devices )
+- added *Strom* to repository ( still WIP )
+- added *USB Host* support for Mouse + Keyboard + MIDI ( i.e boards can now host USB devices like e.g MIDI keyboards )
+- added *USB Device* support for Mouse + Keyboard + MIDI ( via TinyUSB ) ( i.e boards can now act as USB devices )
 - unique board ID is now represented as single string ( `klangstrom::U_ID()` )
 - added KLST_CORE board
 - added USB-MIDI device support ( via TinyUSB library )

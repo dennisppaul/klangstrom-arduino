@@ -24,7 +24,7 @@ void setup() {
     STROM_LOG("--- STRUCTURE ---");
     mNote.in(StromNodeNote::CH_IN_VELOCITY, 100);
     mNote.in(StromNodeNote::CH_IN_PITCH, 48);
-    mNote.set_event_listener(&mEventListener);
+    mNote.add_event_listener(&mEventListener);
     Strom::connect(mTrigger, StromNodeTrigger::CH_OUT_TRIGGER_00, mNote, StromNodeNote::CH_IN_TRIGGER);
 }
 
