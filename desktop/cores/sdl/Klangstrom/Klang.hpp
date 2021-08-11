@@ -34,7 +34,7 @@
 /* --- DEFAULTS --- */
 
 #ifndef KLANG_DEBUG_LEVEL
-#define KLANG_DEBUG_LEVEL                   0
+#define KLANG_DEBUG_LEVEL 0
 #endif
 
 #ifndef KLANG_DEFINES
@@ -42,21 +42,21 @@
 #endif
 
 #ifndef KLANG_AUDIO_RATE
-#define KLANG_AUDIO_RATE                    48000
+#define KLANG_AUDIO_RATE 48000
 #ifdef DEBUG_SHOW_DEFAULT_WARNINGS
 #warning setting KLANG_AUDIO_RATE to default value: 48000
 #endif
 #endif
 
 #ifndef KLANG_AUDIO_BLOCKS
-#define KLANG_AUDIO_BLOCKS                  32
+#define KLANG_AUDIO_BLOCKS 32
 #ifdef DEBUG_SHOW_DEFAULT_WARNINGS
 #warning setting KLANG_AUDIO_BLOCKS to default value: 32
 #endif
 #endif
 
 #ifndef KLANG_SAMPLES_PER_AUDIO_BLOCK
-#define KLANG_SAMPLES_PER_AUDIO_BLOCK       512
+#define KLANG_SAMPLES_PER_AUDIO_BLOCK 512
 #ifdef DEBUG_SHOW_DEFAULT_WARNINGS
 #warning setting KLANG_SAMPLES_PER_AUDIO_BLOCK to default value: 512
 #endif
@@ -67,7 +67,7 @@
 #endif
 
 #ifndef KLANG_SIGNAL_TYPE
-#define KLANG_SIGNAL_TYPE                   SIGNAL_TYPE_FLOAT
+#define KLANG_SIGNAL_TYPE SIGNAL_TYPE_FLOAT
 #ifdef DEBUG_SHOW_DEFAULT_WARNINGS
 #warning setting KLANG_SIGNAL_TYPE to default value: SIGNAL_TYPE_FLOAT
 #endif

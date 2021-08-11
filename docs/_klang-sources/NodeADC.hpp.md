@@ -2,7 +2,7 @@
 layout: libdoc
 title: NodeADC.hpp
 permalink: /NodeADC.hpp/
-index: 39
+index: 40
 ---
 
 ```c
@@ -29,7 +29,7 @@ index: 39
 
 #include <algorithm>
 
-#include "Node.hpp"
+#include "KlangNode.hpp"
 
 namespace klang {
     class NodeADC : public Node {

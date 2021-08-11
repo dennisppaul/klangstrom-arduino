@@ -8,7 +8,7 @@
     called.
 */
 
-#include "Nodes.hpp"
+#include "KlangNodes.hpp"
 #include "CycleCounter.h"
 
 using namespace klang;

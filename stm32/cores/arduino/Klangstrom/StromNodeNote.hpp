@@ -21,23 +21,21 @@
 #ifndef StromNodeNote_hpp
 #define StromNodeNote_hpp
 
+#include <array>
+
+#include "StromEventListener.hpp"
 #include "StromNode.hpp"
 
 namespace strom {
-    class StromNodeNoteCallback {
-    public:
-        virtual void trigger_note(float pPitch, float pVelocity) = 0;
-    };
-
     class StromNodeNote : public StromNode {
     public:
-        static const STROM_CHANNEL_ID CH_IN_TRIGGER = 0;
-        static const STROM_CHANNEL_ID CH_IN_PITCH = 1;
+        static const STROM_CHANNEL_ID CH_IN_TRIGGER  = 0;
+        static const STROM_CHANNEL_ID CH_IN_PITCH    = 1;
         static const STROM_CHANNEL_ID CH_IN_VELOCITY = 2;
 
         StromNodeNote() : StromNode(3, 0) {}
 
-        void set_callback(StromNodeNoteCallback* pCallback) {
+        void set_event_listener(StromEventListener* pCallback) {
             mCallback = pCallback;
         }
 
@@ -48,7 +46,7 @@ namespace strom {
                     STROM_LOG("+++ @StromNodeNote  Node(%02d) receives trigger : %f", ID(), mTrigger);
                     STROM_LOG("+++ @StromNodeNote      playing note          : pitch(%f) velocity(%f)", mPitch, mVelocity);
                     if (mCallback != nullptr) {
-                        mCallback->trigger_note(mPitch, mVelocity);
+                        mCallback->event(STROM_EVENT::NOTE_ON, std::vector<float>{mPitch, mVelocity});
                     }
                     break;
                 case CH_IN_PITCH:
@@ -67,10 +65,10 @@ namespace strom {
         }
 
     private:
-        float mTrigger = 0.0;
-        float mPitch = 0.0;
-        float mVelocity = 0.0;
-        StromNodeNoteCallback* mCallback = nullptr;
+        float               mTrigger  = 0.0;
+        float               mPitch    = 0.0;
+        float               mVelocity = 0.0;
+        StromEventListener* mCallback = nullptr;
     };
 }  // namespace strom
 

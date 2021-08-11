@@ -2,7 +2,7 @@
 layout: libdoc
 title: NodeMixer4Stereo.hpp
 permalink: /NodeMixer4Stereo.hpp/
-index: 57
+index: 58
 ---
 
 ```c
@@ -38,7 +38,7 @@ index: 57
 #include <CMSIS_DSP.h>
 #endif
 
-#include "Node.hpp"
+#include "KlangNode.hpp"
 
 namespace klang {
     class NodeMixer4Stereo : public Node {

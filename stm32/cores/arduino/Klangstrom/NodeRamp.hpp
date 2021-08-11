@@ -30,7 +30,7 @@
 #define NodeRamp_hpp
 
 #include "KlangMath.hpp"
-#include "Node.hpp"
+#include "KlangNode.hpp"
 
 namespace klang {
     class NodeRamp : public Node {

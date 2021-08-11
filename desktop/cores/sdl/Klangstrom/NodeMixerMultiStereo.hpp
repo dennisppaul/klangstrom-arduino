@@ -22,7 +22,7 @@
 
 #include <vector>
 
-#include "Node.hpp"
+#include "KlangNode.hpp"
 
 using namespace std;
 

@@ -2,7 +2,7 @@
 layout: libdoc
 title: NodeMap.hpp
 permalink: /NodeMap.hpp/
-index: 52
+index: 53
 ---
 
 ```c

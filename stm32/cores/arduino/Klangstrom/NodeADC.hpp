@@ -21,7 +21,7 @@
 
 #include <algorithm>
 
-#include "Node.hpp"
+#include "KlangNode.hpp"
 
 namespace klang {
     class NodeADC : public Node {

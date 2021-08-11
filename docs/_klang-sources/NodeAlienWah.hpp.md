@@ -2,7 +2,7 @@
 layout: libdoc
 title: NodeAlienWah.hpp
 permalink: /NodeAlienWah.hpp/
-index: 42
+index: 43
 ---
 
 ```c
@@ -33,7 +33,7 @@ index: 42
 #include <complex.h>
 
 #include "NodeKernelBlock.hpp"
-#include "Nodes.hpp"
+#include "KlangNodes.hpp"
 //#include <fcntl.h>
 //#include <stdio.h>
 //#include <math.h>

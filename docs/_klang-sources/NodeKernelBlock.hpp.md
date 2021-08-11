@@ -2,7 +2,7 @@
 layout: libdoc
 title: NodeKernelBlock.hpp
 permalink: /NodeKernelBlock.hpp/
-index: 51
+index: 52
 ---
 
 ```c
@@ -30,7 +30,7 @@ index: 51
 #ifndef NodeKernelBlock_hpp
 #define NodeKernelBlock_hpp
 
-#include "Node.hpp"
+#include "KlangNode.hpp"
 
 namespace klang {
     class NodeKernelBlock : public Node {

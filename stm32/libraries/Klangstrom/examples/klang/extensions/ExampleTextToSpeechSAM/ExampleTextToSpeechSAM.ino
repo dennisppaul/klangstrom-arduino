@@ -4,7 +4,7 @@
 
 #define KLANG_EXT_NODE_TEXT_TO_SPEECH_SAM
 
-#include "Nodes.hpp"
+#include "KlangNodes.hpp"
 
 using namespace klang;
 using namespace klangstrom;

@@ -24,7 +24,7 @@
 #ifndef NodeMute_hpp
 #define NodeMute_hpp
 
-#include "Node.hpp"
+#include "KlangNode.hpp"
 
 namespace klang {
     class NodeMute : public Node {

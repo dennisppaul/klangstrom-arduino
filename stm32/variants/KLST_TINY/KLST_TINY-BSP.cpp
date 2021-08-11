@@ -42,46 +42,12 @@ void MX_TIM8_Init();
 /* ----------------------------------------------------------------------------------------------------------------- */
 /* USB                                                                                                 */
 /* ----------------------------------------------------------------------------------------------------------------- */
+#ifdef USE_TINYUSB
 extern void board_init(void);
 void        KLST_BSP_configure_TinyUSB() {
     board_init();
-    // /* Configure USB FS GPIOs */
-    // __HAL_RCC_GPIOA_CLK_ENABLE();
-
-    // GPIO_InitTypeDef GPIO_InitStruct = {0};
-
-    // /* Configure USB D+ D- Pins */
-    // GPIO_InitStruct.Pin = GPIO_PIN_11 | GPIO_PIN_12;
-    // GPIO_InitStruct.Speed = GPIO_SPEED_HIGH;
-    // GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
-    // GPIO_InitStruct.Pull = GPIO_NOPULL;
-    // GPIO_InitStruct.Alternate = GPIO_AF10_OTG_FS;
-    // HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
-
-    // /* Configure VBUS Pin */
-    // //   GPIO_InitStruct.Pin = GPIO_PIN_9;
-    // //   GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
-    // //   GPIO_InitStruct.Pull = GPIO_NOPULL;
-    // //   HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
-
-    // /* ID Pin */
-    // GPIO_InitStruct.Pin = GPIO_PIN_10;
-    // GPIO_InitStruct.Mode = GPIO_MODE_AF_OD;
-    // GPIO_InitStruct.Pull = GPIO_PULLUP;
-    // GPIO_InitStruct.Speed = GPIO_SPEED_HIGH;
-    // GPIO_InitStruct.Alternate = GPIO_AF10_OTG_FS;
-    // HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
-
-    // // Enable USB OTG clock
-    // __HAL_RCC_USB_OTG_FS_CLK_ENABLE();
-
-    // /* Deactivate VBUS Sensing B */
-    // USB_OTG_FS->GCCFG &= ~USB_OTG_GCCFG_VBDEN;
-
-    // /* B-peripheral session valid override enable */
-    // USB_OTG_FS->GOTGCTL |= USB_OTG_GOTGCTL_BVALOEN;
-    // USB_OTG_FS->GOTGCTL |= USB_OTG_GOTGCTL_BVALOVAL;
 }
+#endif
 
 /* ----------------------------------------------------------------------------------------------------------------- */
 /* ENCODERS                                                                                                 */

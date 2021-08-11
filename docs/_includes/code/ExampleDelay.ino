@@ -11,7 +11,7 @@
 * e.g 1 sec requires 48000 samples if audio rate is 48KHz
 */
 
-#include "Nodes.hpp"
+#include "KlangNodes.hpp"
 
 using namespace klang;
 using namespace klangstrom;

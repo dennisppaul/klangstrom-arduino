@@ -2,7 +2,7 @@
 layout: libdoc
 title: NodeVCF.hpp
 permalink: /NodeVCF.hpp/
-index: 72
+index: 73
 ---
 
 ```c
@@ -27,7 +27,7 @@ index: 72
 #ifndef NodeVCF_hpp
 #define NodeVCF_hpp
 
-#include "Node.hpp"
+#include "KlangNode.hpp"
 
 namespace klang {
     class NodeVCF : public Node {

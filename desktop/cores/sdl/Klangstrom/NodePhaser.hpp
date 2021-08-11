@@ -24,7 +24,7 @@
 #define NodePhaser_hpp
 
 #include "LUTSine.hpp"
-#include "Node.hpp"
+#include "KlangNode.hpp"
 
 namespace klang {
     //    static const uint16_t WAVETABLE_LENGTH = 2048;

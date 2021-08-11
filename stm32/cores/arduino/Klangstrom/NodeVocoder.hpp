@@ -19,7 +19,7 @@
 #ifndef NodeVocoder_h
 #define NodeVocoder_h
 
-#include "Node.hpp"
+#include "KlangNode.hpp"
 #include "voclib.h"
 
 namespace klang {

@@ -1,8 +1,8 @@
 ---
 layout: libdoc
-title: Node.hpp
-permalink: /Node.hpp/
-index: 38
+title: KlangNode.hpp
+permalink: /KlangNode.hpp/
+index: 35
 ---
 
 ```c

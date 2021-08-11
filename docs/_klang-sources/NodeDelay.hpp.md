@@ -2,7 +2,7 @@
 layout: libdoc
 title: NodeDelay.hpp
 permalink: /NodeDelay.hpp/
-index: 47
+index: 48
 ---
 
 ```c
@@ -33,7 +33,7 @@ index: 47
 #ifndef NodeDelay_hpp
 #define NodeDelay_hpp
 
-#include "Node.hpp"
+#include "KlangNode.hpp"
 
 namespace klang {
     class NodeDelay : public Node {

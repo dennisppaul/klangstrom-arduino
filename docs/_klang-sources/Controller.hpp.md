@@ -19,7 +19,7 @@ index: 27
 #include "Connection.hpp"
 #include "ConnectionPool.hpp"
 #include "KlangCommands.hpp"
-#include "Node.hpp"
+#include "KlangNode.hpp"
 
 //#define ENABLE_RESET_CMD
 

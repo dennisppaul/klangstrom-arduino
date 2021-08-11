@@ -19,7 +19,7 @@
 #ifndef NodePatch16_hpp
 #define NodePatch16_hpp
 
-#include "Node.hpp"
+#include "KlangNode.hpp"
 
 namespace klang {
     class NodePatch16 : public Node {

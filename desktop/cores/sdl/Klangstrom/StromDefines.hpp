@@ -8,7 +8,7 @@
 #ifndef StromDefines_hpp
 #define StromDefines_hpp
 
-#include <limits.h>
+#include <limits>
 
 #define TRUE     1
 #define FALSE    0
@@ -55,6 +55,13 @@ namespace strom {
     const static STROM_SIGNAL_TYPE STROM_SIGNAL_MIN = std::numeric_limits<STROM_SIGNAL_TYPE>::min();
     const static STROM_SIGNAL_TYPE STROM_SIGNAL_MAX = std::numeric_limits<STROM_SIGNAL_TYPE>::max();
     const static STROM_SIGNAL_TYPE STROM_NO_VALUE   = std::numeric_limits<STROM_SIGNAL_TYPE>::infinity();
+
+    enum STROM_EVENT : uint8_t {
+        RESERVED_00,
+        RESERVED_01,
+        NOTE_ON,
+        NOTE_OFF,
+    };
 };  // namespace strom
 
 #endif /* StromDefines_hpp */

@@ -20,7 +20,7 @@
 #ifndef NodeReverb_hpp
 #define NodeReverb_hpp
 
-#include "Node.hpp"
+#include "KlangNode.hpp"
 #include "revmodel.h"
 
 namespace klang {

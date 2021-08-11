@@ -2,7 +2,7 @@
 layout: libdoc
 title: NodeBuffer.hpp
 permalink: /NodeBuffer.hpp/
-index: 43
+index: 44
 ---
 
 ```c
@@ -25,7 +25,7 @@ index: 43
 #ifndef NodeBuffer_hpp
 #define NodeBuffer_hpp
 
-#include "Node.hpp"
+#include "KlangNode.hpp"
 
 namespace klang {
     class NodeBuffer : public Node {

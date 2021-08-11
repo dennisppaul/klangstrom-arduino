@@ -129,7 +129,7 @@ namespace klangstrom {
     static const EVENT_DATA NUMBER   = 0x01;
     static const EVENT_DATA VALUE    = 0x02;
     static const EVENT_DATA PROG_NUM = 0x01;
-}  // namespace klangstrom
+}
 
 /**
  * this block defines constants for `data_transmit` + `data_receive` operations
@@ -141,7 +141,7 @@ namespace klangstrom {
     static const DATA_PERIPHERAL_TYPE SERIAL_00              = 0x02;
     static const DATA_PERIPHERAL_TYPE SERIAL_01              = 0x03;
     static const DATA_PERIPHERAL_TYPE SERIAL_02              = 0x04;
-};  // namespace klangstrom
+}
 
 /* --- OSC_ADDRESS_PATTERNS --- */
 
@@ -154,7 +154,7 @@ namespace klangstrom {
     static const char KLANG_OSC_MIDI_IN[]  = "/klang/midi_in";
     static const char KLANG_OSC_MIDI_OUT[] = "/klang/midi_out";
     static const char KLANG_OSC_SIM[]      = "/klang/sim";
-};  // namespace klangstrom
+}
 
 #ifndef KLANG_OSC_TRANSMIT_ADDRESS
 #define KLANG_OSC_TRANSMIT_ADDRESS "224.0.0.1"

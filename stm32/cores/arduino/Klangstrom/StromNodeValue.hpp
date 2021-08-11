@@ -29,7 +29,7 @@ namespace strom {
     class StromNodeValue : public StromNode {
     public:
         static const STROM_CHANNEL_ID CH_IN_TRIGGER = 0;
-        static const STROM_CHANNEL_ID CH_OUT_VALUE = 0;
+        static const STROM_CHANNEL_ID CH_OUT_VALUE  = 0;
 
         StromNodeValue() : StromNode(1, 1) {}
 

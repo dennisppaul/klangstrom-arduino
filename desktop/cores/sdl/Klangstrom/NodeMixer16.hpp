@@ -19,7 +19,7 @@
 #ifndef NodeMixer16_hpp
 #define NodeMixer16_hpp
 
-#include "Node.hpp"
+#include "KlangNode.hpp"
 
 namespace klang {
     class NodeMixer16 : public Node {

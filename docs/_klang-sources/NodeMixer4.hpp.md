@@ -2,7 +2,7 @@
 layout: libdoc
 title: NodeMixer4.hpp
 permalink: /NodeMixer4.hpp/
-index: 56
+index: 57
 ---
 
 ```c
@@ -29,7 +29,7 @@ index: 56
 #ifndef NodeMixer4_hpp
 #define NodeMixer4_hpp
 
-#include "Node.hpp"
+#include "KlangNode.hpp"
 
 namespace klang {
     class NodeMixer4 : public Node {

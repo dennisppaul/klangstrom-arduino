@@ -22,7 +22,7 @@
 #ifndef NodeKernel_hpp
 #define NodeKernel_hpp
 
-#include "Node.hpp"
+#include "KlangNode.hpp"
 
 namespace klang {
     class NodeKernel : public Node {

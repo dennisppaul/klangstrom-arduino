@@ -21,7 +21,7 @@
 #ifndef NodeMixer4_hpp
 #define NodeMixer4_hpp
 
-#include "Node.hpp"
+#include "KlangNode.hpp"
 
 namespace klang {
     class NodeMixer4 : public Node {

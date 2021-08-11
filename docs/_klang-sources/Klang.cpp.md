@@ -18,7 +18,7 @@ index: 28
 #include "AudioBlockPool.hpp"
 #include "Connection.hpp"
 #include "ConnectionPool.hpp"
-#include "Node.hpp"
+#include "KlangNode.hpp"
 
 using namespace klang;
 

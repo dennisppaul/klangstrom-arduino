@@ -12,16 +12,16 @@ using namespace strom;
 
 // #define DEBUG_STROM
 
-void Strom::update_structure(StromNode& pRoot) {
+void Strom::update(StromNode& pRoot) {
     /* breadth-first search (BFS) */
     vector<StromNode*> mNodeStructure;
     mNodeStructure.push_back(&pRoot);
     pRoot.traverse(mNodeStructure);
-    for (StromNode* mNode : mNodeStructure) {
 #ifdef DEBUG_STROM
+    for (StromNode* mNode : mNodeStructure) {
         STROM_LOG("+++ @Strom::structure NODE_%02i", mNode->ID());
-#endif
     }
+#endif
 #define _STROM_REVERSE_STRCUTURE_TRAVERSAL_
 #ifndef _STROM_REVERSE_STRCUTURE_TRAVERSAL_
     for (StromNode* mNode : mNodeStructure) {

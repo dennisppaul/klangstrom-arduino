@@ -2,7 +2,7 @@
 layout: libdoc
 title: NodePhaser.hpp
 permalink: /NodePhaser.hpp/
-index: 66
+index: 67
 ---
 
 ```c
@@ -32,7 +32,7 @@ index: 66
 #define NodePhaser_hpp
 
 #include "LUTSine.hpp"
-#include "Node.hpp"
+#include "KlangNode.hpp"
 
 namespace klang {
     //    static const uint16_t WAVETABLE_LENGTH = 2048;

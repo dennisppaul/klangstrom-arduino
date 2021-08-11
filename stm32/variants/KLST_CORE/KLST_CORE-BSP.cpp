@@ -53,51 +53,12 @@ void MX_TIM5_Init(void);
 /* ----------------------------------------------------------------------------------------------------------------- */
 /* USB                                                                                                 */
 /* ----------------------------------------------------------------------------------------------------------------- */
+#ifdef USE_TINYUSB
 extern void board_init(void);
 void        KLST_BSP_configure_TinyUSB() {
     board_init();
-    // GPIO_InitTypeDef GPIO_InitStruct = {0};
-    // RCC_PeriphCLKInitTypeDef PeriphClkInitStruct = {0};
-
-    // PeriphClkInitStruct.PeriphClockSelection = RCC_PERIPHCLK_USB;
-    // PeriphClkInitStruct.UsbClockSelection = RCC_USBCLKSOURCE_HSI48;
-    // if (HAL_RCCEx_PeriphCLKConfig(&PeriphClkInitStruct) != HAL_OK)
-    // {
-    //   Error_Handler();
-    // }
-
-    // /** Enable USB Voltage detector */
-    // HAL_PWREx_EnableUSBVoltageDetector();
-
-    // __HAL_RCC_GPIOA_CLK_ENABLE();
-    // /* Configure DM DP Pins */
-    // GPIO_InitStruct.Pin = GPIO_PIN_11 | GPIO_PIN_12;
-    // GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
-    // GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
-    // GPIO_InitStruct.Pull = GPIO_NOPULL;
-    // GPIO_InitStruct.Alternate = GPIO_AF10_OTG2_HS;
-    // HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
-
-    // /* This for ID line debug */
-    // GPIO_InitStruct.Pin = GPIO_PIN_10;
-    // GPIO_InitStruct.Mode = GPIO_MODE_AF_OD;
-    // GPIO_InitStruct.Pull = GPIO_PULLUP;
-    // GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
-    // GPIO_InitStruct.Alternate = GPIO_AF10_OTG2_HS;
-    // HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
-
-    // // https://community.st.com/s/question/0D50X00009XkYZLSA3/stm32h7-nucleo-usb-fs-cdc
-    // // TODO: Board init actually works fine without this line.
-    // HAL_PWREx_EnableUSBVoltageDetector();
-    // __HAL_RCC_USB2_OTG_FS_CLK_ENABLE();
-
-    // // Disable VBUS sense (B device) via pin PA9
-    // USB_OTG_FS->GCCFG &= ~USB_OTG_GCCFG_VBDEN;
-
-    // // B-peripheral session valid override enable
-    // USB_OTG_FS->GOTGCTL |= USB_OTG_GOTGCTL_BVALOEN;
-    // USB_OTG_FS->GOTGCTL |= USB_OTG_GOTGCTL_BVALOVAL;
 }
+#endif
 
 /* ----------------------------------------------------------------------------------------------------------------- */
 /* ENCODERS                                                                                                 */

@@ -22,13 +22,11 @@
 #include "StromDefines.hpp"
 #include "StromNode.hpp"
 
-using namespace std;
-
 namespace strom {
     class StromNode;
     class Strom {
     public:
-        static void update_structure(StromNode& pRoot);
+        static void update(StromNode& pRoot);
         static bool connect(StromNode* pOutNode, STROM_CHANNEL_ID pOutChannel,
                             StromNode* pInNode, STROM_CHANNEL_ID pInChannel);
         static bool connect(StromNode& pOutNode, STROM_CHANNEL_ID pOutChannel,

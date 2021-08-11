@@ -5,7 +5,7 @@
 //
 //
 
-#include "Node.hpp"
+#include "KlangNode.hpp"
 
 using namespace klang;
 

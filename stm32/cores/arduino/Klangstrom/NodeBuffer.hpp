@@ -17,7 +17,7 @@
 #ifndef NodeBuffer_hpp
 #define NodeBuffer_hpp
 
-#include "Node.hpp"
+#include "KlangNode.hpp"
 
 namespace klang {
     class NodeBuffer : public Node {

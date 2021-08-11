@@ -17,7 +17,7 @@
 #ifndef NodeNoise_hpp
 #define NodeNoise_hpp
 
-#include "Node.hpp"
+#include "KlangNode.hpp"
 
 namespace klang {
     class NodeNoise : public Node {

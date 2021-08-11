@@ -4,7 +4,7 @@
 // @note(this example only works for MCUs)
 
 #include "CycleCounter.h"
-#include "Nodes.hpp"
+#include "KlangNodes.hpp"
 
 using namespace klang;
 using namespace klangstrom;

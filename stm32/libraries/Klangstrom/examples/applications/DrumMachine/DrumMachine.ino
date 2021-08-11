@@ -1,5 +1,5 @@
 #define KLANG_EXT_NODE_REVERB
-#include "Nodes.hpp"
+#include "KlangNodes.hpp"
 #include "606bd1.wav.h"
 #include "606ch.wav.h"
 #include "606sd1.wav.h"

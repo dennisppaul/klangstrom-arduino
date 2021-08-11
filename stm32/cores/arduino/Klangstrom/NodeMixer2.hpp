@@ -19,7 +19,7 @@
 #ifndef NodeMixer2_hpp
 #define NodeMixer2_hpp
 
-#include "Node.hpp"
+#include "KlangNode.hpp"
 
 namespace klang {
     class NodeMixer2 : public Node {

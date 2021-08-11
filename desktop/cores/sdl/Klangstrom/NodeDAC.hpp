@@ -26,7 +26,7 @@
 
 #include <algorithm>
 
-#include "Node.hpp"
+#include "KlangNode.hpp"
 
 namespace klang {
     class NodeDAC : public Node {

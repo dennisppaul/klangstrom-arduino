@@ -2,7 +2,7 @@
 //  ExampleADSRTriggered
 //
 
-#include "Nodes.hpp"
+#include "KlangNodes.hpp"
 
 using namespace klang;
 using namespace klangstrom;

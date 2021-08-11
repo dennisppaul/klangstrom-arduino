@@ -17,7 +17,7 @@
 #ifndef NodePassthrough_hpp
 #define NodePassthrough_hpp
 
-#include "Node.hpp"
+#include "KlangNode.hpp"
 
 namespace klang {
     class NodePassthrough : public Node {

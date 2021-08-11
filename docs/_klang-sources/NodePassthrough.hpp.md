@@ -2,7 +2,7 @@
 layout: libdoc
 title: NodePassthrough.hpp
 permalink: /NodePassthrough.hpp/
-index: 63
+index: 64
 ---
 
 ```c
@@ -25,7 +25,7 @@ index: 63
 #ifndef NodePassthrough_hpp
 #define NodePassthrough_hpp
 
-#include "Node.hpp"
+#include "KlangNode.hpp"
 
 namespace klang {
     class NodePassthrough : public Node {

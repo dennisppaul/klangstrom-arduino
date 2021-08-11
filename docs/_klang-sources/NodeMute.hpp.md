@@ -2,7 +2,7 @@
 layout: libdoc
 title: NodeMute.hpp
 permalink: /NodeMute.hpp/
-index: 61
+index: 62
 ---
 
 ```c
@@ -32,7 +32,7 @@ index: 61
 #ifndef NodeMute_hpp
 #define NodeMute_hpp
 
-#include "Node.hpp"
+#include "KlangNode.hpp"
 
 namespace klang {
     class NodeMute : public Node {

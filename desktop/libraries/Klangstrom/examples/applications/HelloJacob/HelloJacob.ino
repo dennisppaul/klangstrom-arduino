@@ -1,5 +1,5 @@
 #define KLANG_EXT_NODE_REVERB
-#include "Nodes.hpp"
+#include "KlangNodes.hpp"
 
 using namespace std;
 using namespace klang;

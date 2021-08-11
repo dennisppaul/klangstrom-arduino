@@ -2,7 +2,7 @@
 layout: libdoc
 title: NodeNoise.hpp
 permalink: /NodeNoise.hpp/
-index: 62
+index: 63
 ---
 
 ```c
@@ -25,7 +25,7 @@ index: 62
 #ifndef NodeNoise_hpp
 #define NodeNoise_hpp
 
-#include "Node.hpp"
+#include "KlangNode.hpp"
 
 namespace klang {
     class NodeNoise : public Node {

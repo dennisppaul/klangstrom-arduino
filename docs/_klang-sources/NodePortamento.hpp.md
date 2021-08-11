@@ -2,7 +2,7 @@
 layout: libdoc
 title: NodePortamento.hpp
 permalink: /NodePortamento.hpp/
-index: 67
+index: 68
 ---
 
 ```c

@@ -18,9 +18,9 @@ namespace strom {
         virtual ~Cable();
         void patch();
 
-        StromNode* out_node;
+        StromNode*             out_node;
         const STROM_CHANNEL_ID out_channel;
-        StromNode* in_node;
+        StromNode*             in_node;
         const STROM_CHANNEL_ID in_channel;
     };
 }  // namespace strom

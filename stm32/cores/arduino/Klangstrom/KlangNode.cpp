@@ -1,11 +1,3 @@
----
-layout: libdoc
-title: Node.cpp
-permalink: /Node.cpp/
-index: 37
----
-
-```c
 //
 //  Node.cpp
 //  Klang – a node+text-based synthesizer library
@@ -13,7 +5,7 @@ index: 37
 //
 //
 
-#include "Node.hpp"
+#include "KlangNode.hpp"
 
 using namespace klang;
 
@@ -26,5 +18,3 @@ Node::Node() : mID(oID++) {
 void Node::reset() {
     oID = 0;
 }
-
-```

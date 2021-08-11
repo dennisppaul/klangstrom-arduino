@@ -2,7 +2,7 @@
 layout: libdoc
 title: NodeMixerMultiStereo.hpp
 permalink: /NodeMixerMultiStereo.hpp/
-index: 60
+index: 61
 ---
 
 ```c
@@ -30,7 +30,7 @@ index: 60
 
 #include <vector>
 
-#include "Node.hpp"
+#include "KlangNode.hpp"
 
 using namespace std;
 

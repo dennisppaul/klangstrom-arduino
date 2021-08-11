@@ -30,7 +30,7 @@
 #include <CMSIS_DSP.h>
 #endif
 
-#include "Node.hpp"
+#include "KlangNode.hpp"
 
 namespace klang {
     class NodeMixer4Stereo : public Node {

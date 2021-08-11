@@ -2,7 +2,7 @@
 layout: libdoc
 title: NodeChorus.hpp
 permalink: /NodeChorus.hpp/
-index: 44
+index: 45
 ---
 
 ```c
@@ -27,7 +27,7 @@ index: 44
 #define NodeChorus_hpp
 
 #include "LUTSine.hpp"
-#include "Node.hpp"
+#include "KlangNode.hpp"
 
 namespace klang {
     class NodeChorus : public Node {

@@ -2,7 +2,7 @@
 layout: libdoc
 title: NodePatch.hpp
 permalink: /NodePatch.hpp/
-index: 64
+index: 65
 ---
 
 ```c
@@ -47,7 +47,7 @@ index: 64
 #ifndef NodePatch_hpp
 #define NodePatch_hpp
 
-#include "Node.hpp"
+#include "KlangNode.hpp"
 
 namespace klang {
     class NodePatch : public Node {

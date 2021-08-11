@@ -2,7 +2,7 @@
 layout: libdoc
 title: NodeClip.hpp
 permalink: /NodeClip.hpp/
-index: 45
+index: 46
 ---
 
 ```c

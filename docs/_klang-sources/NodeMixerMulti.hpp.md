@@ -2,7 +2,7 @@
 layout: libdoc
 title: NodeMixerMulti.hpp
 permalink: /NodeMixerMulti.hpp/
-index: 59
+index: 60
 ---
 
 ```c
@@ -29,7 +29,7 @@ index: 59
 
 #include <vector>
 
-#include "Node.hpp"
+#include "KlangNode.hpp"
 
 using namespace std;
 

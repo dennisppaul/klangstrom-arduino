@@ -8,7 +8,7 @@
 #ifndef Connection_hpp
 #define Connection_hpp
 
-#include "Node.hpp"
+#include "KlangNode.hpp"
 
 namespace klang {
     class Connection {

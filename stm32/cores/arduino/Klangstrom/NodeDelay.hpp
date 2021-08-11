@@ -25,7 +25,7 @@
 #ifndef NodeDelay_hpp
 #define NodeDelay_hpp
 
-#include "Node.hpp"
+#include "KlangNode.hpp"
 
 namespace klang {
     class NodeDelay : public Node {
