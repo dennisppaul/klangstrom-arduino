@@ -40,6 +40,7 @@
 #include "NodeRamp.hpp"
 #include "NodeSampler.hpp"
 #include "NodeSplitter.hpp"
+#include "NodeTrigger.hpp"
 #include "NodeVCA.hpp"
 #include "NodeVCF.hpp"
 #include "NodeVCFLowPass.hpp"
