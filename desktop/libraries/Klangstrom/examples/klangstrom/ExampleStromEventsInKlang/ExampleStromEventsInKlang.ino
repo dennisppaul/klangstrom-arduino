@@ -1,6 +1,15 @@
 //
-// ExampleKlangAndStromInteraction
+// ExampleStromEventsInKlang
 //
+
+/**
+ * this example demonstrate how to use Strom events to interact with Klang nodes. 
+ * 
+ * in this example the Strom node `strom::StromNodeNote` emits an event to all its listeners. the 
+ * two Klang nodes `MNodeADSR` and `MNodeVCOFunction` receive the event and use an envelope and an
+ * oscillator to play an audible note. both classes inherit properties from existing Klang nodes 
+ * and add `strom::StromEventListener` to enable them to listen to events.
+ */
 
 #include "KlangMath.hpp"
 #include "KlangNodes.hpp"

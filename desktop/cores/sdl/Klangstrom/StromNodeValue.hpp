@@ -14,10 +14,9 @@
  *       |                     |
  *       +---------------------+
  *
- *      @description (
- *          receives a trigger and passes on a single value
- *      )
- *
+ *       @description (
+ *           receives a trigger and passes on a single value.
+ *       )
  */
 
 #ifndef StromNodeValue_hpp

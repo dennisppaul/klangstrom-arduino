@@ -11,11 +11,15 @@
  *       +---------------------+
  *       |                     |
  * IN00--| TRIGGER             |
- * IN02--| NOTE                |
- * IN03--| VELOCITY            |
+ * IN01--| PITCH               |
+ * IN02--| VELOCITY            |
  *       |                     |
  *       +---------------------+
  *
+ *       @description (
+ *           receives a trigger and creates a note event with pitch and velocity values.
+ *       )
+ *       @todo ( how are notes turned off? )
  */
 
 #ifndef StromNodeNote_hpp
@@ -23,6 +27,8 @@
 
 #include "StromEventDistributor.hpp"
 #include "StromNode.hpp"
+
+#define DEBUG_STROM_NODE_NOTE
 
 namespace strom {
     class StromNodeNote : public StromNode, public StromEventDistributor {
@@ -37,17 +43,23 @@ namespace strom {
             switch (pChannel) {
                 case CH_IN_TRIGGER:
                     mTrigger = pData;
+#ifdef DEBUG_STROM_NODE_NOTE
                     STROM_LOG("+++ @StromNodeNote  Node(%02d) receives trigger : %f", ID(), mTrigger);
                     STROM_LOG("+++ @StromNodeNote  playing note              : pitch(%f) velocity(%f)", mPitch, mVelocity);
+#endif
                     fire_event(STROM_EVENT::NOTE_ON, std::vector<float>{mPitch, mVelocity});
                     break;
                 case CH_IN_PITCH:
                     mPitch = pData;
+#ifdef DEBUG_STROM_NODE_NOTE
                     STROM_LOG("+++ @StromNodeNote  Node(%02d) receives pitch   : %f", ID(), mPitch);
+#endif
                     break;
                 case CH_IN_VELOCITY:
                     mVelocity = pData;
+#ifdef DEBUG_STROM_NODE_NOTE
                     STROM_LOG("+++ @StromNodeNote  Node(%02d) receives velocity: %f", ID(), mVelocity);
+#endif
                     break;
             }
         }
