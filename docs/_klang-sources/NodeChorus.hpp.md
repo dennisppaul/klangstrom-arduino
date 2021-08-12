@@ -2,7 +2,7 @@
 layout: libdoc
 title: NodeChorus.hpp
 permalink: /NodeChorus.hpp/
-index: 45
+index: 47
 ---
 
 ```c

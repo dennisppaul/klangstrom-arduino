@@ -81,6 +81,14 @@ index: 31
 
 #include "KlangTypes.hpp"
 
+namespace klang {
+    enum KLANG_EVENT : uint8_t {
+        RESERVED_00,
+        RESERVED_01,
+        TRIGGER,
+    };
+}
+
 #define KLANG_DEFINES
 
 #endif /* KlangDefines_hpp */

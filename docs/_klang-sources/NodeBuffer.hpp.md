@@ -2,7 +2,7 @@
 layout: libdoc
 title: NodeBuffer.hpp
 permalink: /NodeBuffer.hpp/
-index: 44
+index: 46
 ---
 
 ```c

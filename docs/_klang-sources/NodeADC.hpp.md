@@ -2,7 +2,7 @@
 layout: libdoc
 title: NodeADC.hpp
 permalink: /NodeADC.hpp/
-index: 40
+index: 42
 ---
 
 ```c

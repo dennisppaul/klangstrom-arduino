@@ -2,7 +2,7 @@
 layout: libdoc
 title: NodeDistortion.hpp
 permalink: /NodeDistortion.hpp/
-index: 49
+index: 51
 ---
 
 ```c

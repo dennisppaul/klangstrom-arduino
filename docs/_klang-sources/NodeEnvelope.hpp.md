@@ -2,7 +2,7 @@
 layout: libdoc
 title: NodeEnvelope.hpp
 permalink: /NodeEnvelope.hpp/
-index: 50
+index: 52
 ---
 
 ```c

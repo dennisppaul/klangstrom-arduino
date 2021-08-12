@@ -2,7 +2,7 @@
 layout: libdoc
 title: NodeVCF.hpp
 permalink: /NodeVCF.hpp/
-index: 73
+index: 76
 ---
 
 ```c

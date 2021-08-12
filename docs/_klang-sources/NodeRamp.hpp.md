@@ -2,7 +2,7 @@
 layout: libdoc
 title: NodeRamp.hpp
 permalink: /NodeRamp.hpp/
-index: 69
+index: 71
 ---
 
 ```c

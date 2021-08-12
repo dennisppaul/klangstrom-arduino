@@ -2,7 +2,7 @@
 layout: libdoc
 title: KlangMath.cpp
 permalink: /KlangMath.cpp/
-index: 32
+index: 34
 ---
 
 ```c

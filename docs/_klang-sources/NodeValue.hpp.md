@@ -2,7 +2,7 @@
 layout: libdoc
 title: NodeValue.hpp
 permalink: /NodeValue.hpp/
-index: 80
+index: 83
 ---
 
 ```c
