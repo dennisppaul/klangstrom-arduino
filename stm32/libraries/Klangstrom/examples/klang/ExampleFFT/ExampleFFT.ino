@@ -1,0 +1,65 @@
+//
+//  ExampleADSR
+//
+
+#include "KlangNodes.hpp"
+
+using namespace klang;
+using namespace klangstrom;
+
+NodeVCOFunction mVCO;
+NodeADSR        mADSR;
+NodeDAC         mDAC;
+NodeFFT         mFFT;
+
+void setup() {
+    Klang::lock();
+
+    Klang::connect(mVCO, Node::CH_OUT_SIGNAL, mADSR, Node::CH_IN_SIGNAL);
+    Klang::connect(mADSR, Node::CH_OUT_SIGNAL, mFFT, Node::CH_IN_SIGNAL);
+    Klang::connect(mFFT, Node::CH_OUT_SIGNAL, mDAC, NodeDAC::CH_IN_SIGNAL_LEFT);
+
+    mVCO.set_frequency(DEFAULT_FREQUENCY * 2);
+    mVCO.set_amplitude(0.5);
+
+    mADSR.set_attack(0.01);
+    mADSR.set_decay(0.05);
+    mADSR.set_sustain(0.5);
+    mADSR.set_release(0.25);
+
+    Klang::unlock();
+}
+
+void beat(uint32_t pBeat) {
+    Serial.println(mFFT.get_frequency());
+}
+
+void audioblock(SIGNAL_TYPE* pOutputLeft, SIGNAL_TYPE* pOutputRight, SIGNAL_TYPE* pInputLeft, SIGNAL_TYPE* pInputRight) {
+    mDAC.process_frame(pOutputLeft, pOutputRight);
+}
+
+void event_receive(const EVENT_TYPE event, const float* data) {
+    switch (event) {
+        case EVENT_MOUSE_PRESSED:
+        case EVENT_ENCODER_BUTTON_PRESSED:
+            mADSR.start();
+            break;
+        case EVENT_MOUSE_RELEASED:
+        case EVENT_ENCODER_BUTTON_RELEASED:
+            mADSR.stop();
+            break;
+        case EVENT_MOUSE_MOVED:
+        case EVENT_MOUSE_DRAGGED:
+            mVCO.set_frequency(DEFAULT_FREQUENCY * (2 + data[X]));
+            mVCO.set_amplitude(0.5 * data[Y]);
+            break;
+        case EVENT_ENCODER_ROTATE:
+            const float mDelta = data[TICK] - data[PREVIOUS_TICK];
+            if (data[INDEX] == ENCODER_00) {
+                mVCO.set_frequency(mDelta);
+            } else if (data[INDEX] == ENCODER_01) {
+                mVCO.set_amplitude(mDelta * 0.1);
+            }
+            break;
+    }
+}

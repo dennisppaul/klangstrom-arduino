@@ -27,6 +27,7 @@ index: 38
 #include "NodeDelay.hpp"
 #include "NodeDistortion.hpp"
 #include "NodeEnvelope.hpp"
+#include "NodeFFT.hpp"
 #include "NodeKernel.hpp"
 #include "NodeKernelBlock.hpp"
 #include "NodeMap.hpp"

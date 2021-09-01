@@ -2,7 +2,7 @@
 layout: libdoc
 title: NodeVCFMoog2.hpp
 permalink: /NodeVCFMoog2.hpp/
-index: 78
+index: 79
 ---
 
 ```c

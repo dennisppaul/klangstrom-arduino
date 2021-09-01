@@ -23,14 +23,14 @@
 namespace klang {
     class NodeTrigger : public NodeKernel, public KlangEventDistributor {
     public:
-        static constexpr float FALLING_EDGE = -1.0;
-        static constexpr float RISING_EDGE  = 1.0;
+        static constexpr float TRIGGER_FALLING_EDGE = -1.0;
+        static constexpr float TRIGGER_RISING_EDGE  = 1.0;
 
         SIGNAL_TYPE kernel(SIGNAL_TYPE s) {
             if (mPreviousSample > mThreshold && s < mThreshold) {
-                fire_event(KLANG_EVENT::TRIGGER, std::vector<float>{FALLING_EDGE});
+                fire_event(KLANG_EVENT::TRIGGER, std::vector<float>{TRIGGER_FALLING_EDGE});
             } else if (mPreviousSample < mThreshold && s > mThreshold) {
-                fire_event(KLANG_EVENT::TRIGGER, std::vector<float>{RISING_EDGE});
+                fire_event(KLANG_EVENT::TRIGGER, std::vector<float>{TRIGGER_RISING_EDGE});
             }
             mPreviousSample = s;
             return s;
@@ -39,9 +39,8 @@ namespace klang {
         void set_command(KLANG_CMD_TYPE pCommand, KLANG_CMD_TYPE* pPayLoad) {}
 
     private:
-        Connection*            mConnection_CH_IN = nullptr;
-        SIGNAL_TYPE            mPreviousSample   = 0.0;
-        static constexpr float mThreshold        = 0.0;
+        SIGNAL_TYPE            mPreviousSample = 0.0;
+        static constexpr float mThreshold      = 0.0;
     };
 }  // namespace klang
 

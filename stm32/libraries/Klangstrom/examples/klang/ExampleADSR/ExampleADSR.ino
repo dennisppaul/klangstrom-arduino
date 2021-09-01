@@ -14,8 +14,8 @@ NodeDAC         mDAC;
 void setup() {
     Klang::lock();
 
-    Klang::connect(mVCO,    Node::CH_OUT_SIGNAL,  mADSR,   Node::CH_IN_SIGNAL);
-    Klang::connect(mADSR,   Node::CH_OUT_SIGNAL,  mDAC,    NodeDAC::CH_IN_SIGNAL_LEFT);
+    Klang::connect(mVCO, Node::CH_OUT_SIGNAL, mADSR, Node::CH_IN_SIGNAL);
+    Klang::connect(mADSR, Node::CH_OUT_SIGNAL, mDAC, NodeDAC::CH_IN_SIGNAL_LEFT);
 
     mVCO.set_frequency(DEFAULT_FREQUENCY * 2);
     mVCO.set_amplitude(0.5);
@@ -60,6 +60,14 @@ void event_receive(const EVENT_TYPE event, const float* data) {
         case EVENT_MOUSE_DRAGGED:
             mVCO.set_frequency(DEFAULT_FREQUENCY * (2 + data[X]));
             mVCO.set_amplitude(0.5 * data[Y]);
+            break;
+        case EVENT_ENCODER_ROTATE:
+            const float mDelta = data[TICK] - data[PREVIOUS_TICK];
+            if (data[INDEX] == ENCODER_00) {
+                mVCO.set_frequency(mDelta);
+            } else if (data[INDEX] == ENCODER_01) {
+                mVCO.set_amplitude(mDelta * 0.1);
+            }
             break;
     }
 }

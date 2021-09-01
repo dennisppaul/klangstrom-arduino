@@ -8,6 +8,10 @@
 #ifndef KlangstromDefinesArduino_h
 #define KlangstromDefinesArduino_h
 
+/* compatibility */
+
+#define uint32 uint32_t // this is required to compile e.g the library `TFT_22_IL9225`
+
 /* *premature* klang defines */
 
 typedef float SIGNAL_TYPE;

@@ -67,6 +67,7 @@ Klangstrom.menu.xserial.disabled=Disabled (No Serial support)
 Klangstrom.menu.xserial.disabled.build.xSerial=
 
 # USB connectivity
+Klangstrom.menu.usb.none=None
 Klangstrom.menu.usb.DEVICE_MouseKeyboard=USB Device Mouse+Keyboard
 Klangstrom.menu.usb.DEVICE_MouseKeyboard.build.enable_usb=-DUSE_TINYUSB -DTINYUSB_MOUSE_KEYBOARD_DEVICE -DHAL_PCD_MODULE_ENABLED
 Klangstrom.menu.usb.DEVICE_MIDI=USB Device MIDI
@@ -77,7 +78,6 @@ Klangstrom.menu.usb.CDCgen=CDC (generic 'Serial' supersede U(S)ART)
 Klangstrom.menu.usb.CDCgen.build.enable_usb={build.usb_flags} -DUSBD_USE_CDC
 Klangstrom.menu.usb.CDC=CDC (no generic 'Serial')
 Klangstrom.menu.usb.CDC.build.enable_usb={build.usb_flags} -DUSBD_USE_CDC -DDISABLE_GENERIC_SERIALUSB
-Klangstrom.menu.usb.none=None
 Klangstrom.menu.xusb.FS=Low/Full Speed
 Klangstrom.menu.xusb.HS=High Speed
 Klangstrom.menu.xusb.HS.build.usb_speed=-DUSE_USB_HS
