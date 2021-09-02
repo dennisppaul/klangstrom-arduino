@@ -64,9 +64,10 @@ void event_receive(const EVENT_TYPE event, const float* data) {
         case EVENT_ENCODER_ROTATE:
             const float mDelta = data[TICK] - data[PREVIOUS_TICK];
             if (data[INDEX] == ENCODER_00) {
-                mVCO.set_frequency(mDelta);
+                mVCO.set_frequency(mVCO.get_frequency() + mDelta);
             } else if (data[INDEX] == ENCODER_01) {
-                mVCO.set_amplitude(mDelta * 0.1);
+                const float mAmp = fmin(1.0, fmax(0.0, mVCO.get_amplitude()));
+                mVCO.set_amplitude(mAmp + mDelta * 0.05);
             }
             break;
     }
