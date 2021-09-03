@@ -33,6 +33,23 @@ index: 53
 #define KLANG_NODE_FFT_PRECOMPUTE_HAMMING 1
 #endif
 
+#ifndef KLANG_NODE_FFT_BUFFER_SIZE
+#define KLANG_NODE_FFT_BUFFER_SIZE 2048
+#endif
+
+#if (KLANG_SAMPLES_PER_AUDIO_BLOCK > 8192)
+#warning "@NodeFFT / KLANG_SAMPLES_PER_AUDIO_BLOCK exceeds maximum buffer size of 8192"
+#endif
+
+#ifndef KLANG_NODE_FFT_BUFFER_EXPANSION
+#if (KLANG_NODE_FFT_BUFFER_SIZE < KLANG_SAMPLES_PER_AUDIO_BLOCK)
+#warning "@NodeFFT / KLANG_NODE_FFT_BUFFER_SIZE should not be smaller than KLANG_SAMPLES_PER_AUDIO_BLOCK"
+#define KLANG_NODE_FFT_BUFFER_EXPANSION 1
+#else
+#define KLANG_NODE_FFT_BUFFER_EXPANSION (KLANG_NODE_FFT_BUFFER_SIZE / KLANG_SAMPLES_PER_AUDIO_BLOCK)
+#endif
+#endif
+
 namespace klang {
     class NodeFFT : public Node {
     public:
@@ -74,11 +91,14 @@ namespace klang {
                     mConnection_CH_IN_SIGNAL->update(pAudioBlock);
                 }
                 flag_updated();
-                std::copy(pAudioBlock,
-                          pAudioBlock + KLANG_SAMPLES_PER_AUDIO_BLOCK,
-                          mInputBuffer);
-                if (mPerfomAnalysisInline) {
-                    perform_analysis();
+                std::copy_n(pAudioBlock, KLANG_SAMPLES_PER_AUDIO_BLOCK,
+                            mInputBuffer + mSampleBufferPointer * KLANG_SAMPLES_PER_AUDIO_BLOCK);
+                mSampleBufferPointer++;
+                if (mSampleBufferPointer >= KLANG_NODE_FFT_BUFFER_EXPANSION) {
+                    mSampleBufferPointer = 0;
+                    if (mPerfomAnalysisInline) {
+                        perform_analysis();
+                    }
                 }
             }
         }
@@ -91,7 +111,7 @@ namespace klang {
 
         float get_frequency_gaussian_interpolation() {
             // from [Improving FFT Frequency Resolution](http://www.add.ece.ufl.edu/4511/references/ImprovingFFTResoltuion.pdf)
-            if (mMaxIndex > 0 && mMaxIndex < (KLANG_SAMPLES_PER_AUDIO_BLOCK_HALF - 1)) {
+            if (mMaxIndex > 0 && mMaxIndex < (_KLANG_NODE_FFT_BUFFER_SIZE_HALF - 1)) {
                 //calculate the intermittent bin on continuous spectrum using GI
                 const float mInterBin = mMaxIndex + log(mPowerBuffer[mMaxIndex + 1] / mPowerBuffer[mMaxIndex - 1]) * 0.5 / log(mPowerBuffer[mMaxIndex] * mPowerBuffer[mMaxIndex] / (mPowerBuffer[mMaxIndex + 1] * mPowerBuffer[mMaxIndex - 1]));
                 //calculate max input frequency
@@ -106,7 +126,7 @@ namespace klang {
         }
 
         const uint32_t get_number_of_bands() {
-            return KLANG_SAMPLES_PER_AUDIO_BLOCK_HALF;
+            return _KLANG_NODE_FFT_BUFFER_SIZE_HALF;
         }
 
         void enable_hamming_window(bool pEnableWindowHamming) {
@@ -122,46 +142,48 @@ namespace klang {
         }
 
     private:
-        static const uint32_t KLANG_SAMPLES_PER_AUDIO_BLOCK_HALF = KLANG_SAMPLES_PER_AUDIO_BLOCK / 2;
-        Connection*           mConnection_CH_IN_SIGNAL           = nullptr;
-        float                 mInputBuffer[KLANG_SAMPLES_PER_AUDIO_BLOCK];
-        float                 mOutputBuffer[KLANG_SAMPLES_PER_AUDIO_BLOCK];
-        float                 mPowerBuffer[KLANG_SAMPLES_PER_AUDIO_BLOCK_HALF];
-        float32_t             mMaxValue             = 0.0;
-        uint32_t              mMaxIndex             = 0;
-        uint8_t               mIFFTFlag             = 0;
-        float                 mFrequencyResolution  = (float)KLANG_AUDIO_RATE / (float)KLANG_SAMPLES_PER_AUDIO_BLOCK;
-        bool                  mPerfomAnalysisInline = true;
-        bool                  mPerfomHammingWindow  = true;
+        static const uint32_t  _KLANG_NODE_FFT_BUFFER_SIZE      = (KLANG_SAMPLES_PER_AUDIO_BLOCK * KLANG_NODE_FFT_BUFFER_EXPANSION);
+        static const uint32_t  _KLANG_NODE_FFT_BUFFER_SIZE_HALF = _KLANG_NODE_FFT_BUFFER_SIZE / 2;
+        static constexpr float mFrequencyResolution             = (float)KLANG_AUDIO_RATE / (float)_KLANG_NODE_FFT_BUFFER_SIZE;
+        static const uint8_t   mIFFTFlag                        = 0;
+        Connection*            mConnection_CH_IN_SIGNAL         = nullptr;
+        float                  mInputBuffer[_KLANG_NODE_FFT_BUFFER_SIZE];
+        float                  mOutputBuffer[_KLANG_NODE_FFT_BUFFER_SIZE];
+        float                  mPowerBuffer[_KLANG_NODE_FFT_BUFFER_SIZE_HALF];
+        float32_t              mMaxValue             = 0.0;
+        uint32_t               mMaxIndex             = 0;
+        bool                   mPerfomAnalysisInline = true;
+        bool                   mPerfomHammingWindow  = true;
+        uint8_t                mSampleBufferPointer  = 0;
 
         void transform_to_frequency_domain() {
             /* analyze signal */
             arm_rfft_fast_instance_f32 fft;
-            arm_rfft_fast_init_f32(&fft, KLANG_SAMPLES_PER_AUDIO_BLOCK);
+            arm_rfft_fast_init_f32(&fft, _KLANG_NODE_FFT_BUFFER_SIZE);
             arm_rfft_fast_f32(&fft, mInputBuffer, mOutputBuffer, mIFFTFlag);
-            arm_cmplx_mag_f32(mOutputBuffer, mPowerBuffer, KLANG_SAMPLES_PER_AUDIO_BLOCK_HALF);
+            arm_cmplx_mag_f32(mOutputBuffer, mPowerBuffer, _KLANG_NODE_FFT_BUFFER_SIZE_HALF);
             /* find dominant frequency */
-            arm_max_f32(mPowerBuffer, KLANG_SAMPLES_PER_AUDIO_BLOCK_HALF, &mMaxValue, &mMaxIndex);
+            arm_max_f32(mPowerBuffer, _KLANG_NODE_FFT_BUFFER_SIZE_HALF, &mMaxValue, &mMaxIndex);
         }
 
 #if KLANG_NODE_FFT_PRECOMPUTE_HAMMING
-        float mHammingBuffer[KLANG_SAMPLES_PER_AUDIO_BLOCK];
+        float mHammingBuffer[_KLANG_NODE_FFT_BUFFER_SIZE];
         void  _fill_hamming_buffer() {
-            for (uint16_t i = 0; i < KLANG_SAMPLES_PER_AUDIO_BLOCK; i++) {
-                const float r = TWO_PI * i / (KLANG_SAMPLES_PER_AUDIO_BLOCK - 1);
-                const float c = arm_cos_f32(r);
-                mHammingBuffer[i] *= 0.54 - 0.46 * c;
+            for (uint16_t i = 0; i < _KLANG_NODE_FFT_BUFFER_SIZE; i++) {
+                const float r     = TWO_PI * i / (_KLANG_NODE_FFT_BUFFER_SIZE - 1);
+                const float c     = arm_cos_f32(r);
+                mHammingBuffer[i] = 0.54 - 0.46 * c;
             }
         }
 #endif
 
         void window_with_hamming() {
 #if KLANG_NODE_FFT_PRECOMPUTE_HAMMING
-            arm_mult_f32(mInputBuffer, mHammingBuffer, mInputBuffer, KLANG_SAMPLES_PER_AUDIO_BLOCK);
+            arm_mult_f32(mInputBuffer, mHammingBuffer, mInputBuffer, _KLANG_NODE_FFT_BUFFER_SIZE);
 #else
             /* windows the data in samples with a Hamming window */
-            for (uint16_t i = 0; i < KLANG_SAMPLES_PER_AUDIO_BLOCK; i++) {
-                const float r = TWO_PI * i / (KLANG_SAMPLES_PER_AUDIO_BLOCK - 1);
+            for (uint16_t i = 0; i < _KLANG_NODE_FFT_BUFFER_SIZE; i++) {
+                const float r = TWO_PI * i / (_KLANG_NODE_FFT_BUFFER_SIZE - 1);
                 // const float c = klang_math_cos(r);
                 const float c = arm_cos_f32(r);
                 mInputBuffer[i] *= 0.54 - 0.46 * c;

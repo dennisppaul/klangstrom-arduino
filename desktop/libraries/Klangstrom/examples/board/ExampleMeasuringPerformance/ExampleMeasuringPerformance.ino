@@ -9,16 +9,16 @@
 using namespace klang;
 using namespace klangstrom;
 
-NodeDAC             mDAC;
-NodeVCOWavetable    mVCO;
-NodeVCFMoogLP       mVCF;
+NodeVCOWavetable mVCO;
+NodeVCFMoogLP    mVCF;
+NodeDAC          mDAC;
 
-float mAudioblockDuration = 0;
-uint8_t mBlocksUsed       = 0;
+float   mAudioblockDuration = 0;
+uint8_t mBlocksUsed         = 0;
 
-void setup()  {
+void setup() {
     begin_serial_debug(true);
-#if (KLST_ARCH==KLST_ARCH_MCU)
+#if (KLST_ARCH == KLST_ARCH_MCU)
     Serial.print("MCU clock speed (MHz) ................. : ");
     Serial.println(SystemCoreClock);
     Serial.print("maximum duration of audioblock (μs) ... : ");
@@ -26,7 +26,7 @@ void setup()  {
     Serial.println("---");
 #endif
 
-    Klang::connect(mVCO, Node::CH_OUT_SIGNAL, mVCF, NodeDAC::CH_IN_SIGNAL);
+    Klang::connect(mVCO, Node::CH_OUT_SIGNAL, mVCF, Node::CH_IN_SIGNAL);
     Klang::connect(mVCF, Node::CH_OUT_SIGNAL, mDAC, NodeDAC::CH_IN_SIGNAL);
 
     mVCO.set_frequency(110);
@@ -46,11 +46,11 @@ void beat(uint32_t pBeat) {
     Serial.println(mBlocksUsed);
 }
 
-void audioblock(SIGNAL_TYPE* pOutputLeft, SIGNAL_TYPE* pOutputRight, 
-                SIGNAL_TYPE* pInputLeft, SIGNAL_TYPE* pInputRight)  {
+void audioblock(SIGNAL_TYPE* pOutputLeft, SIGNAL_TYPE* pOutputRight,
+                SIGNAL_TYPE* pInputLeft, SIGNAL_TYPE* pInputRight) {
     const uint32_t start = klst_get_cycles();
     mDAC.process_frame(pOutputLeft, pOutputRight);
     const uint32_t delta = klst_get_cycles() - start;
-    mAudioblockDuration = klst_cyclesToMicros(delta);
-    mBlocksUsed = AudioBlockPool::instance().blocks_used_max();
+    mAudioblockDuration  = klst_cyclesToMicros(delta);
+    mBlocksUsed          = AudioBlockPool::instance().blocks_used_max();
 }
