@@ -2,6 +2,7 @@
 
 ## 0.0.2
 
+- added option to select sampling rate and audio block size in Arduino IDE
 - added `NodeFFT` to perform *Fast Fourier Transfom* on audio signals
 - added *Strom* to repository ( still WIP )
 - added *USB Host* support for Mouse + Keyboard + MIDI ( i.e boards can now host USB devices like e.g MIDI keyboards )
