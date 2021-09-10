@@ -48,11 +48,12 @@ namespace klang {
         static const CHANNEL_ID NUM_CH_IN  = 1;
         static const CHANNEL_ID NUM_CH_OUT = 1;
 
-#if KLANG_NODE_FFT_PRECOMPUTE_HAMMING
         NodeFFT() {
+#if KLANG_NODE_FFT_PRECOMPUTE_HAMMING
             _fill_hamming_buffer();
-        }
 #endif
+            arm_rfft_fast_init_f32(&fft, _KLANG_NODE_FFT_BUFFER_SIZE);
+        }
 
         bool connect(Connection* pConnection, CHANNEL_ID pInChannel) {
             if (pInChannel == CH_IN_SIGNAL) {
@@ -77,21 +78,33 @@ namespace klang {
             transform_to_frequency_domain();
         }
 
+        void process_frame() {
+            SIGNAL_TYPE mBuffer[KLANG_SAMPLES_PER_AUDIO_BLOCK];
+            update(Node::CH_IN_SIGNAL, mBuffer);
+        }
+
+        void update(SIGNAL_TYPE* pAudioBlock) {
+            std::copy_n(pAudioBlock, KLANG_SAMPLES_PER_AUDIO_BLOCK,
+                        mInputBuffer + mSampleBufferPointer * KLANG_SAMPLES_PER_AUDIO_BLOCK);
+            // for (uint16_t i = 0; i < KLANG_SAMPLES_PER_AUDIO_BLOCK; i++) {
+            //     mInputBuffer[i + mSampleBufferPointer * KLANG_SAMPLES_PER_AUDIO_BLOCK] = pAudioBlock[i];
+            // }
+            mSampleBufferPointer++;
+            if (mSampleBufferPointer >= KLANG_NODE_FFT_BUFFER_EXPANSION) {
+                mSampleBufferPointer = 0;
+                if (mPerfomAnalysisInline) {
+                    perform_analysis();
+                }
+            }
+        }
+
         void update(CHANNEL_ID pChannel, SIGNAL_TYPE* pAudioBlock) {
             if (is_not_updated()) {
                 if (mConnection_CH_IN_SIGNAL != nullptr) {
                     mConnection_CH_IN_SIGNAL->update(pAudioBlock);
                 }
                 flag_updated();
-                std::copy_n(pAudioBlock, KLANG_SAMPLES_PER_AUDIO_BLOCK,
-                            mInputBuffer + mSampleBufferPointer * KLANG_SAMPLES_PER_AUDIO_BLOCK);
-                mSampleBufferPointer++;
-                if (mSampleBufferPointer >= KLANG_NODE_FFT_BUFFER_EXPANSION) {
-                    mSampleBufferPointer = 0;
-                    if (mPerfomAnalysisInline) {
-                        perform_analysis();
-                    }
-                }
+                update(pAudioBlock);
             }
         }
 
@@ -134,24 +147,23 @@ namespace klang {
         }
 
     private:
-        static const uint32_t  _KLANG_NODE_FFT_BUFFER_SIZE      = (KLANG_SAMPLES_PER_AUDIO_BLOCK * KLANG_NODE_FFT_BUFFER_EXPANSION);
-        static const uint32_t  _KLANG_NODE_FFT_BUFFER_SIZE_HALF = _KLANG_NODE_FFT_BUFFER_SIZE / 2;
-        static constexpr float mFrequencyResolution             = (float)KLANG_AUDIO_RATE / (float)_KLANG_NODE_FFT_BUFFER_SIZE;
-        static const uint8_t   mIFFTFlag                        = 0;
-        Connection*            mConnection_CH_IN_SIGNAL         = nullptr;
-        float                  mInputBuffer[_KLANG_NODE_FFT_BUFFER_SIZE];
-        float                  mOutputBuffer[_KLANG_NODE_FFT_BUFFER_SIZE];
-        float                  mPowerBuffer[_KLANG_NODE_FFT_BUFFER_SIZE_HALF];
-        float32_t              mMaxValue             = 0.0;
-        uint32_t               mMaxIndex             = 0;
-        bool                   mPerfomAnalysisInline = true;
-        bool                   mPerfomHammingWindow  = true;
-        uint8_t                mSampleBufferPointer  = 0;
+        static const uint32_t      _KLANG_NODE_FFT_BUFFER_SIZE      = (KLANG_SAMPLES_PER_AUDIO_BLOCK * KLANG_NODE_FFT_BUFFER_EXPANSION);
+        static const uint32_t      _KLANG_NODE_FFT_BUFFER_SIZE_HALF = _KLANG_NODE_FFT_BUFFER_SIZE / 2;
+        static constexpr float     mFrequencyResolution             = (float)KLANG_AUDIO_RATE / (float)_KLANG_NODE_FFT_BUFFER_SIZE;
+        static const uint8_t       mIFFTFlag                        = 0;
+        Connection*                mConnection_CH_IN_SIGNAL         = nullptr;
+        float                      mInputBuffer[_KLANG_NODE_FFT_BUFFER_SIZE];
+        float                      mOutputBuffer[_KLANG_NODE_FFT_BUFFER_SIZE];
+        float                      mPowerBuffer[_KLANG_NODE_FFT_BUFFER_SIZE_HALF];
+        float32_t                  mMaxValue             = 0.0;
+        uint32_t                   mMaxIndex             = 0;
+        bool                       mPerfomAnalysisInline = true;
+        bool                       mPerfomHammingWindow  = true;
+        uint8_t                    mSampleBufferPointer  = 0;
+        arm_rfft_fast_instance_f32 fft;
 
         void transform_to_frequency_domain() {
             /* analyze signal */
-            arm_rfft_fast_instance_f32 fft;
-            arm_rfft_fast_init_f32(&fft, _KLANG_NODE_FFT_BUFFER_SIZE);
             arm_rfft_fast_f32(&fft, mInputBuffer, mOutputBuffer, mIFFTFlag);
             arm_cmplx_mag_f32(mOutputBuffer, mPowerBuffer, _KLANG_NODE_FFT_BUFFER_SIZE_HALF);
             /* find dominant frequency */
