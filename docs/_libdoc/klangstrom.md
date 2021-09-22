@@ -15,7 +15,7 @@ the following functions can ( but do not have to be ) implemented in the applica
 {% assign items = site.klangstrom | sort: 'index' %}
 {% for page in items %}
     {% if page.tag == "implement" %}
-    <li><code><a href="{{ page.url | relative_url }}">{{ page.title }}()</a></code>{{ page.excerpt | strip_html }}</li>
+    <li><code><a href="{{ page.url | relative_url }}">{{ page.title }}()</a></code> {{ page.excerpt | strip_html }}</li>
     {% endif %}
 {% endfor %}
 </ul>
