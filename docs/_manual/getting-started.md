@@ -18,7 +18,7 @@ a white LED located next to the USB port lights up.
 - select board: `Tools > Board part number > KLST_TINY(STM32F446RE)`
 - select upload method: `Tools > Upload Method > STM32CubeProgrammer (DFU)`.
 
-- note for linux users: if you have problems connecting to the programmer, make sure to copy udev rules from Drivers folder to /etc/udev/rules.d/ (see Readme.txt in /home/USER/STMicroelectronics/STM32Cube/STM32CubeProgrammer/Drivers/rules)
+- note for linux users: if you have problems connecting to the programmer, make sure to copy udev rules from Drivers folder to `/etc/udev/rules.d/` (see `Readme.txt` in `/home/USER/STMicroelectronics/STM32Cube/STM32CubeProgrammer/Drivers/rules`)
 
 after selecting a platform all examples are available under `File > Examples > Klangstrom > …`.
 
