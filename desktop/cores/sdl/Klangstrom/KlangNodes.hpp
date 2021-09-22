@@ -21,6 +21,7 @@
 #include "NodeEnvelope.hpp"
 #include "NodeFFT.hpp"
 #include "NodeKernel.hpp"
+#include "NodeKernelBlock2.hpp"
 #include "NodeKernelBlock.hpp"
 #include "NodeMap.hpp"
 #include "NodeMixer16.hpp"

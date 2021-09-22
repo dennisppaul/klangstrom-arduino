@@ -2,7 +2,7 @@
 layout: libdoc
 title: NodeSplitter.hpp
 permalink: /NodeSplitter.hpp/
-index: 74
+index: 75
 ---
 
 ```c

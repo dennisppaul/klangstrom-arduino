@@ -51,17 +51,7 @@ void MX_TIM2_Init(void);
 void MX_TIM5_Init(void);
 
 /* ----------------------------------------------------------------------------------------------------------------- */
-/* USB                                                                                                 */
-/* ----------------------------------------------------------------------------------------------------------------- */
-#ifdef USE_TINYUSB
-extern void board_init(void);
-void        KLST_BSP_configure_TinyUSB() {
-    board_init();
-}
-#endif
-
-/* ----------------------------------------------------------------------------------------------------------------- */
-/* ENCODERS                                                                                                 */
+/* ENCODERS                                                                                                          */
 /* ----------------------------------------------------------------------------------------------------------------- */
 
 void KLST_BSP_init_peripherals() {
@@ -126,13 +116,15 @@ void KLST_BSP_configure_audio_codec() {
     } else if (KLST_ISH_OPT_audio_line() == KLST_LINE_IN) {
         WM8731_write(WM8731_ANALOG_AUDIO_PATH_CONTROL, 0b00010010);  // LINE_IN
     }
-    WM8731_inputLevel(0x1F);
+    WM8731_input_level(0x1F);
     WM8731_write(WM8731_DIGITAL_AUDIO_PATH_CONTROL, 0b00111);
     WM8731_write(WM8731_DIGITAL_AUDIO_INTERFACE_FORMAT, 0b00000010);
     WM8731_write(WM8731_SAMPLING_CONTROL, 0b000000010);
     WM8731_write(WM8731_ACTIVE_CONTROL, 0b1);
 
     WM8731_write(WM8731_POWER_DOWN_CONTROL, 0b00000000);
+
+    WM8731_headphone_output_volume(KLST_ISH_OPT_headphone_output_volume());
 }
 
 /**

@@ -2,7 +2,7 @@
 layout: libdoc
 title: NodeMixer2.hpp
 permalink: /NodeMixer2.hpp/
-index: 58
+index: 59
 ---
 
 ```c
@@ -37,6 +37,10 @@ namespace klang {
         static const CHANNEL_ID CH_IN_MIX      = 2;
         static const CHANNEL_ID NUM_CH_IN      = 3;
         static const CHANNEL_ID NUM_CH_OUT     = 1;
+
+        /* @deprecated */
+        static const CHANNEL_ID CH_IN_SIGNAL_LEFT  = 0;
+        static const CHANNEL_ID CH_IN_SIGNAL_RIGHT = 1;
 
         bool connect(Connection* pConnection, CHANNEL_ID pInChannel) {
             if (pInChannel == CH_IN_SIGNAL_0) {

@@ -2,7 +2,7 @@
 layout: libdoc
 title: Notes.hpp
 permalink: /Notes.hpp/
-index: 85
+index: 86
 ---
 
 ```c

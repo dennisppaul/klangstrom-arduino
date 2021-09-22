@@ -6,32 +6,32 @@
 
 #define WM8731_I2C_ADDR 0x34
 
-bool WM8731_init() {
-    /* I2S configuration */
-    WM8731_delay(5);
-    WM8731_write(WM8731_REG_RESET, 0);
+// bool WM8731_init() {
+//     /* I2S configuration */
+//     WM8731_delay(5);
+//     WM8731_write(WM8731_REG_RESET, 0);
 
-    WM8731_write(WM8731_REG_INTERFACE, 0b00000010);  // 0x02=0b00000010 // I2S, 16 bit, MCLK slave
-    WM8731_write(WM8731_REG_SAMPLING, 0b00100000);   // 0x20=0b00100000  // 256*Fs, 44.1 kHz, MCLK/1
+//     WM8731_write(WM8731_REG_INTERFACE, 0b00000010);  // 0x02=0b00000010 // I2S, 16 bit, MCLK slave
+//     WM8731_write(WM8731_REG_SAMPLING, 0b00100000);   // 0x20=0b00100000  // 256*Fs, 44.1 kHz, MCLK/1
 
-    WM8731_write(WM8731_REG_DIGITAL, 0x08);  // DAC soft mute
-    WM8731_write(WM8731_REG_ANALOG, 0x00);   // disable all
+//     WM8731_write(WM8731_REG_DIGITAL, 0x08);  // DAC soft mute
+//     WM8731_write(WM8731_REG_ANALOG, 0x00);   // disable all
 
-    WM8731_write(WM8731_REG_POWERDOWN, 0x00);
+//     WM8731_write(WM8731_REG_POWERDOWN, 0x00);
 
-    WM8731_write(WM8731_REG_LHEADOUT, 0x80);
-    WM8731_write(WM8731_REG_RHEADOUT, 0x80);
+//     WM8731_write(WM8731_REG_LHEADOUT, 0x80);
+//     WM8731_write(WM8731_REG_RHEADOUT, 0x80);
 
-    WM8731_delay(5);
-    WM8731_write(WM8731_REG_ACTIVE, 1);
-    WM8731_delay(5);
+//     WM8731_delay(5);
+//     WM8731_write(WM8731_REG_ACTIVE, 1);
+//     WM8731_delay(5);
 
-    WM8731_write(WM8731_REG_DIGITAL, 0b00100);    // DAC unmuted
-    WM8731_write(WM8731_REG_ANALOG, 0b00010000);  // DAC selected
+//     WM8731_write(WM8731_REG_DIGITAL, 0b00100);    // DAC unmuted
+//     WM8731_write(WM8731_REG_ANALOG, 0b00010000);  // DAC selected
 
-    WM8731_volume(0.5);
-    return true;
-}
+//     WM8731_volume(0.5);
+//     return true;
+// }
 
 bool WM8731_write(uint8_t reg, uint16_t val) {
     /*
@@ -60,41 +60,41 @@ bool WM8731_write(uint8_t reg, uint16_t val) {
     return mResult;
 }
 
-bool WM8731_volumeInteger(unsigned int n) {
+bool WM8731_headphone_output_volume_integer(unsigned int n) {
     // n = 127 for max volume (+6 dB)
     // n = 48 for min volume (-73 dB)
     // n = 0 to 47 for mute
     if (n > 127)
         n = 127;
-    WM8731_write(WM8731_REG_LHEADOUT, n | 0x80);
-    WM8731_write(WM8731_REG_RHEADOUT, n | 0x80);
+    WM8731_write(WM8731_HEADPHONE_OUT_LEFT, n | 0x80);
+    WM8731_write(WM8731_HEADPHONE_OUT_RIGHT, n | 0x80);
     return true;
 }
 
-bool WM8731_inputLevel(float n) {
+bool WM8731_input_level(float n) {
     // range is 0x00 (min) - 0x1F (max)
 
     int _level = (int)(n * 31.f);
 
     _level = _level > 0x1F ? 0x1F : _level;
-    WM8731_write(WM8731_REG_LLINEIN, _level);
-    WM8731_write(WM8731_REG_RLINEIN, _level);
+    WM8731_write(WM8731_LINE_IN_LEFT, _level);
+    WM8731_write(WM8731_LINE_IN_RIGHT, _level);
     return true;
 }
 
-bool WM8731_inputSelect(int n) {
+bool WM8731_input_select(int n) {
     if (n == AUDIO_INPUT_LINEIN) {
-        WM8731_write(WM8731_REG_ANALOG, 0x12);
+        WM8731_write(WM8731_ANALOG_AUDIO_PATH_CONTROL, 0x12); // 0b000010010
     } else if (n == AUDIO_INPUT_MIC) {
-        WM8731_write(WM8731_REG_ANALOG, 0x15);
+        WM8731_write(WM8731_ANALOG_AUDIO_PATH_CONTROL, 0x15); // 0b000010101
     } else {
         return false;
     }
     return true;
 }
 
-bool WM8731_volume(float n) {
-    return WM8731_volumeInteger(n * 80.0 + 47.499);
+bool WM8731_headphone_output_volume(float n) {
+    return WM8731_headphone_output_volume_integer(n * 80.0 + 47.499);
 }
 
 // #ifdef __cplusplus

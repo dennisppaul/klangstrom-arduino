@@ -10,7 +10,7 @@
 
 /* compatibility */
 
-#define uint32 uint32_t // this is required to compile e.g the library `TFT_22_IL9225`
+#define uint32 uint32_t  // this is required to compile e.g the library `TFT_22_IL9225`
 
 /* *premature* klang defines */
 
@@ -35,19 +35,20 @@ typedef float SIGNAL_TYPE;
 
 // enum KLST_OPTION { AUDIO_INPUT, ENCODERS, SERIAL_PORTS, BEAT}; // @todo(consider replacing defines with enum)
 
-#define KLST_OPTION_AUDIO_INPUT         0x03
-#define KLST_MIC                            0x00
-#define KLST_LINE_IN                        0x01
-#define KLST_OPTION_ENCODERS            0x04
-#define KLST_DISABLE                        0x00
-#define KLST_ENABLE                         0x01
-#define KLST_OPTION_SERIAL_PORTS        0x05
-#define KLST_OPTION_BEAT                0x06
-#define KLST_OPTION_PROGRAMMER_BUTTON   0x07
-#define KLST_OPTION_ENABLE_AUDIO_INPUT  0x08
-#define KLST_OPTION_SERIAL_00_BAUD_RATE 0x09
-#define KLST_OPTION_SERIAL_01_BAUD_RATE 0x0A
-#define KLST_OPTION_SERIAL_02_BAUD_RATE 0x0B
+#define KLST_OPTION_AUDIO_INPUT             0x03
+#define KLST_MIC                                0x00
+#define KLST_LINE_IN                            0x01
+#define KLST_OPTION_ENCODERS                0x04
+#define KLST_DISABLE                            0x00
+#define KLST_ENABLE                             0x01
+#define KLST_OPTION_SERIAL_PORTS            0x05
+#define KLST_OPTION_BEAT                    0x06
+#define KLST_OPTION_PROGRAMMER_BUTTON       0x07
+#define KLST_OPTION_ENABLE_AUDIO_INPUT      0x08
+#define KLST_OPTION_HEADPHONE_OUTPUT_VOLUME 0x09
+#define KLST_OPTION_SERIAL_00_BAUD_RATE     0x0A
+#define KLST_OPTION_SERIAL_01_BAUD_RATE     0x0B
+#define KLST_OPTION_SERIAL_02_BAUD_RATE     0x0C
 
 /* UIDs */
 

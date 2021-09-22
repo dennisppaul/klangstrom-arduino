@@ -2,6 +2,8 @@
 // ExampleUSBHostMouseKeyboardMIDI
 //
 
+/* @note make sure to select `Tools > USB support (if available) > USB Host Mouse+Keyboard+MIDI` */
+
 #include "USBHost.h"
 
 using namespace klangstrom;

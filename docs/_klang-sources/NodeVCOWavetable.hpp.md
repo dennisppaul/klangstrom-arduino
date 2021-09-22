@@ -2,7 +2,7 @@
 layout: libdoc
 title: NodeVCOWavetable.hpp
 permalink: /NodeVCOWavetable.hpp/
-index: 83
+index: 84
 ---
 
 ```c

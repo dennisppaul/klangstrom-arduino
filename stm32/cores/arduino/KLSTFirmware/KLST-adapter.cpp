@@ -5,6 +5,13 @@
 #include "KlangstromDefinesArduino.h"
 #include "pins_arduino.h"
 
+// @todo(find a way to make library headers available in this context … e.g in `platform.txt`)
+// #if defined(TINYUSB_MIDI_DEVICE) || defined(TINYUSB_MOUSE_KEYBOARD_DEVICE)
+// #if !(__has_include("USBDevice.h"))
+// #warning "could not find USB Device library. make sure to include `#include "USBDevice.h"` at beginning of sketch."
+// #endif
+// #endif
+
 #if (!defined(KLST_BOARD_KLST_TINY) && !defined(KLST_BOARD_KLST_CORE))
 #warning("@KLST board type not defined! options are KLST_BOARD_KLST_CORE or KLST_BOARD_KLST_TINY")
 #endif
@@ -31,6 +38,7 @@ bool    mKLSTOptionEnableEncoders         = true;
 bool    mKLSTOptionEnableSerialPorts      = true;
 bool    mKLSTOptionEnableProgrammerButton = true;
 bool    mKLSTOptionEnableAudioInput       = true;
+float   mKLSTOptionHeadphoneOutputVolume  = 0.89;
 float   mKLSTOptionSerial00BaudRate       = KLST_UART_BAUD;
 float   mKLSTOptionSerial01BaudRate       = KLST_UART_BAUD;
 float   mKLSTOptionSerial02BaudRate       = KLST_UART_BAUD;
@@ -52,7 +60,7 @@ static bool    mKLSTENCODER_01ButtonState = true;
 static bool    mKLSTENCODER_02ButtonState = true;
 
 /* ----------------------------------------------------------------------------------------------------------------- */
-/* OPTIONS                                                                                                             */
+/* OPTIONS                                                                                                           */
 /* ----------------------------------------------------------------------------------------------------------------- */
 
 uint32_t KLST_ISH_OPT_audio_line() {
@@ -62,6 +70,20 @@ uint32_t KLST_ISH_OPT_audio_line() {
 bool KLST_ISH_OPT_audio_input_enabled() {
     return mKLSTOptionEnableAudioInput;
 }
+
+float KLST_ISH_OPT_headphone_output_volume() {
+    return mKLSTOptionHeadphoneOutputVolume;
+}
+
+/* ----------------------------------------------------------------------------------------------------------------- */
+/* USB                                                                                                               */
+/* ----------------------------------------------------------------------------------------------------------------- */
+#ifdef USE_TINYUSB
+extern void board_init(void);
+void        KLST_BSP_configure_TinyUSB() {
+    board_init();
+}
+#endif
 
 /* ----------------------------------------------------------------------------------------------------------------- */
 /* SETUP                                                                                                             */
@@ -409,7 +431,7 @@ void klangstrom::begin_serial_debug(bool pWaitForSerial, uint32_t pBaudRate) {
 #endif
 }
 
-void klangstrom::option(uint8_t pOption, uint32_t pValue) {
+void klangstrom::option(uint8_t pOption, float pValue) {
     switch (pOption) {
         case KLST_OPTION_AUDIO_INPUT:
             mKLSTAudioLine = pValue;
@@ -428,6 +450,9 @@ void klangstrom::option(uint8_t pOption, uint32_t pValue) {
             break;
         case KLST_OPTION_ENABLE_AUDIO_INPUT:
             mKLSTOptionEnableAudioInput = pValue;
+            break;
+        case KLST_OPTION_HEADPHONE_OUTPUT_VOLUME:
+            mKLSTOptionHeadphoneOutputVolume = pValue;
             break;
         case KLST_OPTION_SERIAL_00_BAUD_RATE:
             mKLSTOptionSerial00BaudRate = pValue;

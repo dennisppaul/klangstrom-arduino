@@ -30,6 +30,10 @@ namespace klang {
         static const CHANNEL_ID NUM_CH_IN      = 3;
         static const CHANNEL_ID NUM_CH_OUT     = 1;
 
+        /* @deprecated */
+        static const CHANNEL_ID CH_IN_SIGNAL_LEFT  = 0;
+        static const CHANNEL_ID CH_IN_SIGNAL_RIGHT = 1;
+
         bool connect(Connection* pConnection, CHANNEL_ID pInChannel) {
             if (pInChannel == CH_IN_SIGNAL_0) {
                 mConnection_CH_IN_SIGNAL_0 = pConnection;

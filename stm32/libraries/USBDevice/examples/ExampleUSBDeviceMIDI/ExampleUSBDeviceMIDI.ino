@@ -2,6 +2,8 @@
 // ExampleUSBDeviceMIDI
 //
 
+/* @note make sure to select `Tools > USB support (if available) > USB Device MIDI` */
+
 #include "USBDevice.h"
 
 using namespace klangstrom;

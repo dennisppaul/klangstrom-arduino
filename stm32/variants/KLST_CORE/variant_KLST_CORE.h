@@ -234,9 +234,8 @@ extern "C" {
 
 #define D_CACHE_DISABLED
 
-#ifndef HAL_I2S_MODULE_ENABLED
 #define HAL_MODULE_ENABLED
-#endif
+
 #ifndef HAL_I2S_MODULE_ENABLED
 #define HAL_I2S_MODULE_ENABLED
 #endif
@@ -283,14 +282,14 @@ extern "C" {
 #define HAL_HSEM_MODULE_ENABLED
 #endif
 
-#define HSE_VALUE               16000000
+#define HSE_VALUE               (16000000)
 #define HSE_STARTUP_TIMEOUT     (100UL)
 #define CSI_VALUE               (4000000UL)
 #define HSI_VALUE               (64000000UL)
 #define LSE_VALUE               (32768UL)
 #define LSE_STARTUP_TIMEOUT     (5000UL)
 #define LSI_VALUE               (32000UL)
-#define EXTERNAL_CLOCK_VALUE    12288000UL
+#define EXTERNAL_CLOCK_VALUE    (12288000UL)
 
 #undef USBD_VBUS_DETECTION_ENABLE
 

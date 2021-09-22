@@ -32,6 +32,7 @@ void KLST_ISH_handleSerialPorts();
 
 uint32_t KLST_ISH_OPT_audio_line();
 bool     KLST_ISH_OPT_audio_input_enabled();
+float    KLST_ISH_OPT_headphone_output_volume();
 
 #ifdef __cplusplus
 }
@@ -76,7 +77,7 @@ namespace klangstrom {
     char*   U_ID();
     void    led(uint8_t pLED, bool pState);
     void    led_toggle(uint8_t pLED);
-    void    option(uint8_t pOption, uint32_t pValue);
+    void    option(uint8_t pOption, float pValue);
     bool    pin_state(uint8_t pButton);
 };  // namespace klangstrom
 

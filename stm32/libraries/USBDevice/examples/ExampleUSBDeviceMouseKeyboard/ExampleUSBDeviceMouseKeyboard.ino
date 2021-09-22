@@ -2,6 +2,8 @@
 // ExampleUSBDeviceMouseKeyboard
 //
 
+/* @note make sure to select `Tools > USB support (if available) > USB Device Mouse+Keyboard` */
+
 #include "USBDevice.h"
 
 using namespace klangstrom;

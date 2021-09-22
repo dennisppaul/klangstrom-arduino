@@ -2,7 +2,7 @@
 layout: libdoc
 title: NodeMixer4Stereo.hpp
 permalink: /NodeMixer4Stereo.hpp/
-index: 61
+index: 62
 ---
 
 ```c

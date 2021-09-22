@@ -46,6 +46,7 @@ namespace klang {
         }
 
         void update(CHANNEL_ID pChannel, SIGNAL_TYPE *pAudioBlock) {
+            // @TODO use `std::copy` function
             if (pChannel == CH_OUT_SIGNAL_LEFT) {
                 for (uint16_t i = 0; i < KLANG_SAMPLES_PER_AUDIO_BLOCK; i++) {
                     pAudioBlock[i] = mBufferLeft[i];

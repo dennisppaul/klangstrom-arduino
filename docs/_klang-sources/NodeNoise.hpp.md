@@ -2,7 +2,7 @@
 layout: libdoc
 title: NodeNoise.hpp
 permalink: /NodeNoise.hpp/
-index: 66
+index: 67
 ---
 
 ```c

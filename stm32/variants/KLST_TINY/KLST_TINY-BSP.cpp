@@ -40,17 +40,7 @@ void MX_TIM3_Init();
 void MX_TIM8_Init();
 
 /* ----------------------------------------------------------------------------------------------------------------- */
-/* USB                                                                                                 */
-/* ----------------------------------------------------------------------------------------------------------------- */
-#ifdef USE_TINYUSB
-extern void board_init(void);
-void        KLST_BSP_configure_TinyUSB() {
-    board_init();
-}
-#endif
-
-/* ----------------------------------------------------------------------------------------------------------------- */
-/* ENCODERS                                                                                                 */
+/* ENCODERS                                                                                                          */
 /* ----------------------------------------------------------------------------------------------------------------- */
 
 void KLST_BSP_init_peripherals() {
@@ -88,7 +78,7 @@ void KLST_BSP_configure_audio_codec() {
     /*
     * POWER UP SEQUENCE
     * - Switch on power supplies. By default the WM8731 is in Standby Mode, the DAC is digitally muted and the Audio Interface and Outputs are all OFF.
-    * - Set all required bits in the Power Down reg          ister (0Ch) to ‘0’; EXCEPT the OUTPD bit, this should be set to ‘1’ (Default).
+    * - Set all required bits in the Power Down register (0Ch) to ‘0’; EXCEPT the OUTPD bit, this should be set to ‘1’ (Default).
     * - Set required values in all other registers except 12h (Active).
     * - Set the ‘Active’ bit in register 12h.
     * - The last write of the sequence should be setting OUTPD to ‘0’ (active) in register 0Ch, enabling the DAC signal path, free of any significant power-up noise.
@@ -101,17 +91,19 @@ void KLST_BSP_configure_audio_codec() {
     WM8731_write(WM8731_HEADPHONE_OUT_LEFT, 0b001111001);
     WM8731_write(WM8731_HEADPHONE_OUT_RIGHT, 0b001111001);
     if (KLST_ISH_OPT_audio_line() == KLST_MIC) {
-        WM8731_write(WM8731_ANALOG_AUDIO_PATH_CONTROL, 0b00010100);  // MIC
+        WM8731_write(WM8731_ANALOG_AUDIO_PATH_CONTROL, 0b00010100);  // MIC @todo(enable mic boost(Bit 0)?)
     } else if (KLST_ISH_OPT_audio_line() == KLST_LINE_IN) {
         WM8731_write(WM8731_ANALOG_AUDIO_PATH_CONTROL, 0b00010010);  // LINE_IN
     }
-    WM8731_inputLevel(0x1F);
+    WM8731_input_level(0x1F);
     WM8731_write(WM8731_DIGITAL_AUDIO_PATH_CONTROL, 0b00111);
     WM8731_write(WM8731_DIGITAL_AUDIO_INTERFACE_FORMAT, 0b00000010);
     WM8731_write(WM8731_SAMPLING_CONTROL, 0b000000010);
     WM8731_write(WM8731_ACTIVE_CONTROL, 0b1);
 
     WM8731_write(WM8731_POWER_DOWN_CONTROL, 0b00000000);
+
+    WM8731_headphone_output_volume(KLST_ISH_OPT_headphone_output_volume());
 }
 
 /**

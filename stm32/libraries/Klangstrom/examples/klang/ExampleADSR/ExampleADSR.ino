@@ -66,8 +66,8 @@ void event_receive(const EVENT_TYPE event, const float* data) {
             if (data[INDEX] == ENCODER_00) {
                 mVCO.set_frequency(mVCO.get_frequency() + mDelta);
             } else if (data[INDEX] == ENCODER_01) {
-                const float mAmp = fmin(1.0, fmax(0.0, mVCO.get_amplitude()));
-                mVCO.set_amplitude(mAmp + mDelta * 0.05);
+                const float mAmp = fmin(1.0, fmax(0.0, mVCO.get_amplitude() + mDelta * 0.05));
+                mVCO.set_amplitude(mAmp);
             }
             break;
     }
