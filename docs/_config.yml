@@ -22,6 +22,7 @@ title: Klangstrom Documentation
 email: hello@dennisppaul.de
 description: >- # this means to ignore newlines until "baseurl:"
   Documentation of <a href="https://github.com/dennisppaul/klangstrom-arduino">Klangstrom for Arduino</a>.
+  The Project is generously funded by <a href="https://hfk-bremen.de">Hochschule f&uuml;r K&uuml;nste Bremen</a>.
 baseurl: "" # the subpath of your site, e.g. /blog
 url: "http://klangstrom-for-arduino.dennisppaul.de" # the base hostname & protocol for your site, e.g. http://example.com
 twitter_username: dennisppaul
