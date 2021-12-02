@@ -1,8 +1,5 @@
 //
 // KlangstromApplicationArduino.h
-// Klangstrom
-//
-//
 //
 
 #ifndef KlangstromApplicationArduino_h

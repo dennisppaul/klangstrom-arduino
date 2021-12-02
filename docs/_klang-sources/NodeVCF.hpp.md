@@ -2,7 +2,7 @@
 layout: libdoc
 title: NodeVCF.hpp
 permalink: /NodeVCF.hpp/
-index: 78
+index: 80
 ---
 
 ```c
@@ -99,11 +99,7 @@ namespace klang {
         }
 
         inline void set_cutoff(const float pCutoff) {
-            mCutoff = pCutoff;
-        }
-
-        inline void set_resonance(const float pResonance) {
-            mResonance = pResonance;
+            mCutoff = pCutoff > 1.0f ? 1.0f : (pCutoff < 0.0f ? 0.0f : pCutoff);
         }
 
         float get_cutoff_Hz() {
@@ -113,6 +109,10 @@ namespace klang {
 
         float get_cutoff() {
             return mCutoff;
+        }
+
+        inline void set_resonance(const float pResonance) {
+            mResonance = pResonance > 1.0f ? 1.0f : (pResonance < 0.0f ? 0.0f : pResonance);
         }
 
         float get_resonance() {

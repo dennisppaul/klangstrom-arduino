@@ -52,8 +52,12 @@
 
 /* --- CONSTANTS --- */
 
-#define TRUE                  1
-#define FALSE                 0
+#ifndef TRUE
+#define TRUE 1
+#endif
+#ifndef FALSE
+#define FALSE 0
+#endif
 #define OSC_DEFAULT_FREQUENCY 220.0
 #define OSC_DEFAULT_AMPLITUDE 0.75
 #define SIGNAL_TYPE_FLOAT     1

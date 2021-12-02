@@ -2,7 +2,7 @@
 layout: libdoc
 title: NodeVCFMoog2.hpp
 permalink: /NodeVCFMoog2.hpp/
-index: 80
+index: 82
 ---
 
 ```c
@@ -30,7 +30,7 @@ index: 80
 #include "NodeVCF.hpp"
 
 namespace klang {
-    class NodeVCFMoogLP : public NodeVCF {
+    class NodeVCFMoogLP2 : public NodeVCF {
         /*
          Notes :
          in[x] and out[x] are member variables, init to 0.0 the controls:

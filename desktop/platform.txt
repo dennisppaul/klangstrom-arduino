@@ -83,7 +83,18 @@ recipe.preproc.macros="{preproc.macros.cmd}" {compiler.cpp.flags} {preproc.macro
 recipe.output.tmp_file={build.project_name}.exec
 recipe.output.save_file={build.project_name}.{build.variant}.{build.preferred_out_format}
 
-tools.sdlexecprog.upload.pattern="{build.path}/{build.project_name}.exec"
+tools.sdlexecprog.upload.pattern="{build.path}/{build.project_name}.exec" {upload.options}
+
+#@todo(run application via script to detach it from arduino IDE)
+#tools.sdlexecprog.cmd=klst_sim_start.sh
+#tools.sdlexecprog.cmd.windows=klst_sim_start.bat
+#tools.sdlexecprog.cmd=stm32CubeProg.sh
+#tools.sdlexecprog.cmd.windows=stm32CubeProg.bat
+#tools.sdlexecprog.path.linux={runtime.tools.STM32Tools.path}/linux
+#tools.sdlexecprog.path.macosx={runtime.tools.STM32Tools.path}/macosx
+#tools.sdlexecprog.path.windows={runtime.tools.STM32Tools.path}/win
+#tools.sdlexecprog.upload.pattern="{path}/{cmd}" "{build.path}/{build.project_name}.exec" {upload.options}
+
 tools.sdlexecprog.upload.params.verbose=
 tools.sdlexecprog.upload.params.quiet=
 

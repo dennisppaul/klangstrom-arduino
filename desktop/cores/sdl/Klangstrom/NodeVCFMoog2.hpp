@@ -22,7 +22,7 @@
 #include "NodeVCF.hpp"
 
 namespace klang {
-    class NodeVCFMoogLP : public NodeVCF {
+    class NodeVCFMoogLP2 : public NodeVCF {
         /*
          Notes :
          in[x] and out[x] are member variables, init to 0.0 the controls:

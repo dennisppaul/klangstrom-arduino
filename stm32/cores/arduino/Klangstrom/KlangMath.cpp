@@ -971,6 +971,10 @@ float klang_math_cosh(float x) {
     return cosh_j(x);
 }
 
+float klang_math_tanh(float x) {
+    return tanh_j(x);
+}
+
 #if defined(__clang__)
 #pragma clang diagnostic pop
 #elif defined(__GNUC__)

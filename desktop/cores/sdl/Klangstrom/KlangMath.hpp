@@ -35,6 +35,7 @@ float klang_math_cos(float r);
 float klang_math_tan(float r);
 float klang_math_sinh(float x);
 float klang_math_cosh(float x);
+float klang_math_tanh(float x);
 float klang_math_fast_sqrt(float x);
 
 #ifdef __cplusplus
@@ -175,7 +176,7 @@ namespace klang {
             return ((value - inputMin) * (outputMax - outputMin) / (inputMax - inputMin) + outputMin);
         }
 
-#define USE_FMOD_WITH_WHILE TRUE
+// #define USE_FMOD_WITH_WHILE TRUE
         static float mod(float a, float b) {
 #if USE_FMOD_WITH_WHILE
             while (a >= b) {
@@ -183,7 +184,8 @@ namespace klang {
             }
             return a;
 #else
-            return a >= b ? fmodf(a, b) : a;
+            return a >= b ? (a-b*int(a/b)) : a;
+            // return a >= b ? fmodf(a, b) : a;
             //            return input >= ceil ? input % ceil : input; // from https://stackoverflow.com/questions/33333363/built-in-mod-vs-custom-mod-function-improve-the-performance-of-modulus-op
 #endif
         }

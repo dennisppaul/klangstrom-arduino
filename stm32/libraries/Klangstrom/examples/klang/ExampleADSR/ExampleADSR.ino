@@ -14,8 +14,8 @@ NodeDAC         mDAC;
 void setup() {
     Klang::lock();
 
-    Klang::connect(mVCO, Node::CH_OUT_SIGNAL, mADSR, Node::CH_IN_SIGNAL);
-    Klang::connect(mADSR, Node::CH_OUT_SIGNAL, mDAC, NodeDAC::CH_IN_SIGNAL_LEFT);
+    Klang::connect(mVCO, mADSR);
+    Klang::connect(mADSR, mDAC);
 
     mVCO.set_frequency(DEFAULT_FREQUENCY * 2);
     mVCO.set_amplitude(0.5);

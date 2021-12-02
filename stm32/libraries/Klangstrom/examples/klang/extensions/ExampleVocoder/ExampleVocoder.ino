@@ -9,19 +9,21 @@
 using namespace klang;
 using namespace klangstrom;
 
-NodeDAC                 mDAC;
-NodeVocoder             mVocoder{24, 4, 256};
-NodeVCOWavetable        mVocoderCarrierOsc;
-NodeNoise               mVocoderCarrierOscNoise;
-NodeSampler             mSampler;
+NodeDAC          mDAC;
+NodeVocoder      mVocoder{24, 4, 256};
+NodeVCOWavetable mVocoderCarrierOsc;
+NodeNoise        mVocoderCarrierOscNoise;
+NodeSampler      mSampler;
+SIGNAL_TYPE      mSamplerBuffer[KLANG_SAMPLES_PER_AUDIO_BLOCK];
 
 void setup() {
     Klang::lock();
 
-    Klang::connect(mVocoderCarrierOsc,  Node::CH_OUT_SIGNAL, mVocoder,  NodeVocoder::CH_IN_CARRIER);
-    Klang::connect(mSampler,            Node::CH_OUT_SIGNAL, mVocoder,  NodeVocoder::CH_IN_MODULATOR);
-    Klang::connect(mVocoder,            Node::CH_OUT_SIGNAL, mDAC,      NodeDAC::CH_IN_SIGNAL_LEFT);
+    Klang::connect(mVocoderCarrierOsc, Node::CH_OUT_SIGNAL, mVocoder, NodeVocoder::CH_IN_CARRIER);
+    Klang::connect(mSampler, Node::CH_OUT_SIGNAL, mVocoder, NodeVocoder::CH_IN_MODULATOR);
+    Klang::connect(mVocoder, Node::CH_OUT_SIGNAL, mDAC, NodeDAC::CH_IN_SIGNAL_LEFT);
 
+    mSampler.set_buffer(mSamplerBuffer);
     mSampler.set_buffer_size(KLANG_SAMPLES_PER_AUDIO_BLOCK);
 
     mVocoderCarrierOsc.set_waveform(NodeVCOWavetable::WAVEFORM::SAWTOOTH);
@@ -32,8 +34,12 @@ void setup() {
     Klang::unlock();
 }
 
+void beat(uint32_t pBeat) {
+    led_toggle(LED_00);
+}
+
 void audioblock(SIGNAL_TYPE* pOutputLeft, SIGNAL_TYPE* pOutputRight, SIGNAL_TYPE* pInputLeft, SIGNAL_TYPE* pInputRight) {
-    mSampler.set_buffer(pInputLeft);
+    KLANG_COPY_AUDIO_BUFFER(mSamplerBuffer, pInputLeft);
     mDAC.process_frame(pOutputLeft, pOutputRight);
 }
 

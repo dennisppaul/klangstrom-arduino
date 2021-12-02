@@ -55,6 +55,7 @@ void     KLST_BSP_start_audio_codec();
 void     KLST_BSP_shutdown();
 void     KLST_BSP_init_peripherals();
 void     KLST_BSP_configure_TinyUSB();
+uint8_t  KLST_BSP_error_code();
 
 #ifdef __cplusplus
 }

@@ -77,18 +77,18 @@ namespace klang {
 
         /* reverb adapter */
         void  mute() { mFreeVerb.mute(); }
-        void  setroomsize(float value) { mFreeVerb.setroomsize(value); }  // default: 0.5
-        float getroomsize() { return mFreeVerb.getroomsize(); }
-        void  setdamp(float value) { mFreeVerb.setdamp(value); }  // default: 0.5
-        float getdamp() { return mFreeVerb.getdamp(); }
-        void  setwet(float value) { mFreeVerb.setwet(value); }  // default: 0.33
-        float getwet() { return mFreeVerb.getwet(); }
-        void  setdry(float value) { mFreeVerb.setdry(value); }  // default: 0
-        float getdry() { return mFreeVerb.getdry(); }
-        void  setwidth(float value) { mFreeVerb.setwidth(value); }  // default: 1
-        float getwidth() { return mFreeVerb.getwidth(); }
-        void  setmode(float value) { mFreeVerb.setmode(value); }  // default: 0
-        float getmode() { return mFreeVerb.getmode(); }
+        void  set_roomsize(float value) { mFreeVerb.setroomsize(value); }  // default: 0.5
+        float get_roomsize() { return mFreeVerb.getroomsize(); }
+        void  set_damp(float value) { mFreeVerb.setdamp(value); }  // default: 0.5
+        float get_damp() { return mFreeVerb.getdamp(); }
+        void  set_wet(float value) { mFreeVerb.setwet(value); }  // default: 0.33
+        float get_wet() { return mFreeVerb.getwet(); }
+        void  set_dry(float value) { mFreeVerb.setdry(value); }  // default: 0
+        float get_dry() { return mFreeVerb.getdry(); }
+        void  set_width(float value) { mFreeVerb.setwidth(value); }  // default: 1
+        float get_width() { return mFreeVerb.getwidth(); }
+        void  set_mode(float value) { mFreeVerb.setmode(value); }  // default: 0
+        float get_mode() { return mFreeVerb.getmode(); }
 
         void set_command(const KLANG_CMD_TYPE pCommand, KLANG_CMD_TYPE* pPayLoad) {}
 

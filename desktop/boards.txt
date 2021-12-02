@@ -12,6 +12,7 @@ sdl.menu.upload_method.sdlexec=Execute SDL
 sdl.menu.upload_method.sdlexec.upload.protocol=1
 sdl.menu.upload_method.sdlexec.upload.options=-g
 sdl.menu.upload_method.sdlexec.upload.tool=sdlexecprog
+sdl.menu.upload_method.sdlexec.upload.options=
 
 # Audio Properties
 sdl.menu.samplingrate.xx48000xx=48000Hz

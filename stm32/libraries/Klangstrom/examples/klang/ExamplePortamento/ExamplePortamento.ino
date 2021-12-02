@@ -15,7 +15,7 @@ NodePortamento      mPortamento;
 uint8_t mFrequencyMult = 0;
 
 void setup()  {
-    Klang::connect(mPortamento,   NodePortamento::CH_OUT_VALUE, mOsc,   NodeVCO::CH_IN_FREQ);
+    Klang::connect(mPortamento,   NodePortamento::CH_OUT_VALUE, mOsc,   NodeVCOWavetable::CH_IN_FREQ);
     Klang::connect(mOsc,          Node::CH_OUT_SIGNAL,          mADSR,  Node::CH_IN_SIGNAL);
     Klang::connect(mADSR,         Node::CH_OUT_SIGNAL,          mDAC,   NodeDAC::CH_IN_SIGNAL_LEFT);
 

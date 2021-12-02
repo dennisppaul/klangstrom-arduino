@@ -51,6 +51,15 @@ void MX_TIM2_Init(void);
 void MX_TIM5_Init(void);
 
 /* ----------------------------------------------------------------------------------------------------------------- */
+/* ERROR HANDLING                                                                                                    */
+/* ----------------------------------------------------------------------------------------------------------------- */
+
+uint8_t mErrorCode = KLST_ERROR_CODE_NO_ERROR;
+uint8_t KLST_BSP_error_code() {
+    return mErrorCode;
+}
+
+/* ----------------------------------------------------------------------------------------------------------------- */
 /* ENCODERS                                                                                                          */
 /* ----------------------------------------------------------------------------------------------------------------- */
 
@@ -139,11 +148,16 @@ uint32_t *mCurrentRXBuffer;
 void KLST_BSP_start_audio_codec() {
     memset(dma_TX_buffer, 0, sizeof(dma_TX_buffer));
     memset(dma_RX_buffer, 0, sizeof(dma_RX_buffer));
+
     if (HAL_OK != HAL_I2S_Transmit_DMA(&hi2s2, (uint16_t *)dma_TX_buffer, I2S_BUFFER_SIZE << 1)) {
+        mErrorCode = KLST_ERROR_CODE_I2S_DMA_TX;
     }
     if (KLST_ISH_OPT_audio_input_enabled()) {
-        hi2s2.State = HAL_I2S_STATE_READY;  // @note(state flag needs to be cleared manually)
+        /* @note(state flag needs to be cleared manually) */
+        hi2s2.State = HAL_I2S_STATE_READY;
+        /* @note(make sure `hi2s2.Init.Mode` is set to `I2S_MODE_MASTER_FULLDUPLEX` in `MX_I2S2_Init` in `main.c` ) */
         if (HAL_OK != HAL_I2S_Receive_DMA(&hi2s2, (uint16_t *)dma_RX_buffer, I2S_BUFFER_SIZE << 1)) {
+            mErrorCode = KLST_ERROR_CODE_I2S_DMA_RX;
         }
         mCurrentRXBuffer = &(dma_RX_buffer[0]);
     }
@@ -217,6 +231,7 @@ void HAL_I2S_RxHalfCpltCallback(I2S_HandleTypeDef *hi2s) {
 bool WM8731_I2C_write(uint8_t device_address, uint8_t *data, uint8_t length) {
     HAL_StatusTypeDef mResult = HAL_I2C_Master_Transmit(&hi2c3, device_address, data, length, 10);
     if (mResult != HAL_OK) {
+        mErrorCode = KLST_ERROR_CODE_I2C_WRITE;
         return false;
     }
     return true;

@@ -57,7 +57,7 @@ namespace klang {
         }
 
         void update(CHANNEL_ID pChannel, SIGNAL_TYPE* pAudioBlock) {
-            // @todo(check if the behavior ( only process if both if both input channels are connected ) is desired)
+            // @todo(check if the behavior ( only process if both input channels are connected ) is desired)
             if (mConnection_CH_IN_SIGNAL_A != nullptr && mConnection_CH_IN_SIGNAL_B != nullptr) {
                 if (is_not_updated()) {
                     if (mConnection_CH_IN_SIGNAL_A != nullptr) {

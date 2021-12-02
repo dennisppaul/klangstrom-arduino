@@ -12,12 +12,12 @@
 using namespace klang;
 using namespace klangstrom;
 
-static const uint8_t    NUM_OF_OSC = 3;
-NodeVCOWavetable        mVCO[NUM_OF_OSC];
-NodeADSR                mADSR;
-NodeDAC                 mDAC;
-NodeMixer4              mMixer;
-NodeValue               mValue;
+static const uint8_t NUM_OF_OSC = 3;
+NodeVCOWavetable     mVCO[NUM_OF_OSC];
+NodeADSR             mADSR;
+NodeDAC              mDAC;
+NodeMixer4           mMixer;
+NodeValue            mValue;
 
 float mOSCFreq[NUM_OF_OSC];
 float mBaseFreq = 220;
@@ -28,7 +28,7 @@ void setup() {
     Klang::lock();
 
     for (uint8_t i = 0; i < NUM_OF_OSC; ++i) {
-        Klang::connect(mVCO[i],    Node::CH_OUT_SIGNAL, mMixer,    i);
+        Klang::connect(mVCO[i], Node::CH_OUT_SIGNAL, mMixer, i);
     }
 
     Klang::connect(mMixer,  Node::CH_OUT_SIGNAL, mADSR, Node::CH_IN_SIGNAL);
@@ -54,10 +54,6 @@ void loop() {
         events ( e.g encoder, serial ) are processed right after loop is finished.
     */
     delay(10);
-}
-
-void beat(uint32_t pBeat) {
-
 }
 
 void event_receive(const uint8_t event, const float* data) {

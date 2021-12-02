@@ -623,6 +623,7 @@ extern "C" {
 /* --------------- */
 
 /* USART */
+
 #define KLST_SERIAL_00          Serial6
 #define KLST_SERIAL_01          Serial1
 #define KLST_SERIAL_02          Serial2
@@ -632,6 +633,15 @@ extern "C" {
 /* --------------- */
 #endif
 /* --------------- */
+
+/* SPI for SD Card */
+
+
+#define PIN_SPI_MOSI  SDCARD_MOSI
+#define PIN_SPI_MISO  SDCARD_MISO
+#define PIN_SPI_SCK   SDCARD_SCK
+#define PIN_SPI_CS    SDCARD_CS
+#define PIN_SPI_DETECT_SDIO SDCARD_DETECT_SDIO	
 
 /* -------------------------------------------------------------------------- */
 

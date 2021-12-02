@@ -58,7 +58,7 @@ namespace klang {
             }
         }
 
-        virtual void set_command(KLANG_CMD_TYPE pCommand, KLANG_CMD_TYPE* pPayLoad) = 0;
+        virtual void set_command(KLANG_CMD_TYPE pCommand, KLANG_CMD_TYPE* pPayLoad) {}
 
     protected:
         /* override kernel method to implement custom kernels. */

@@ -42,7 +42,15 @@ float   mKLSTOptionHeadphoneOutputVolume  = 0.89;
 float   mKLSTOptionSerial00BaudRate       = KLST_UART_BAUD;
 float   mKLSTOptionSerial01BaudRate       = KLST_UART_BAUD;
 float   mKLSTOptionSerial02BaudRate       = KLST_UART_BAUD;
-uint8_t mKLSTAudioLine                    = KLST_MIC;
+uint8_t mKLSTAudioLine =
+#if defined(KLST_BOARD_KLST_TINY)
+    KLST_MIC
+#elif defined(KLST_BOARD_KLST_CORE)
+    KLST_LINE_IN
+#else
+    KLST_MIC
+#endif
+    ;
 
 /* beat */
 
@@ -88,6 +96,8 @@ void        KLST_BSP_configure_TinyUSB() {
 /* ----------------------------------------------------------------------------------------------------------------- */
 /* SETUP                                                                                                             */
 /* ----------------------------------------------------------------------------------------------------------------- */
+void KLST_ISH_handle_encoder_rotations();
+void KLST_ISH_handle_encoder_buttons();
 
 void KLST_IT_beat_callback() {
     beat(mKLSTBeatCounter++);
@@ -118,6 +128,15 @@ void KLST_ISH_pre_setup() {
     pinMode(LED_00, OUTPUT);
     pinMode(LED_01, OUTPUT);
     pinMode(LED_02, OUTPUT);
+
+    /* encoder buttons */
+    pinMode(ENCODER_00_BUTTON, INPUT);
+    pinMode(ENCODER_01_BUTTON, INPUT);
+    pinMode(ENCODER_02_BUTTON, INPUT);
+    /* … and read initial button state at start up */
+    mKLSTENCODER_00ButtonState = digitalRead(ENCODER_00_BUTTON);
+    mKLSTENCODER_01ButtonState = digitalRead(ENCODER_01_BUTTON);
+    mKLSTENCODER_02ButtonState = digitalRead(ENCODER_02_BUTTON);
 
     /* start UART interrupts */
     if (mKLSTOptionEnableSerialPorts) {
@@ -151,12 +170,9 @@ void KLST_ISH_post_setup() {
     KLST_BSP_configure_audio_codec();
     KLST_BSP_start_audio_codec();
 
-    /* start encoder */
+    /* start encoder timers */
     if (mKLSTOptionEnableEncoders) {
         KLST_BSP_init_encoders();
-        pinMode(ENCODER_00_BUTTON, INPUT);
-        pinMode(ENCODER_01_BUTTON, INPUT);
-        pinMode(ENCODER_02_BUTTON, INPUT);
 
         mKLSTENCODER_00TickCount = (int16_t)ENCODER_00_TIMER->CNT;
         mKLSTENCODER_01TickCount = (int16_t)ENCODER_01_TIMER->CNT;
@@ -185,7 +201,11 @@ void KLST_ISH_loop() {
 }
 
 void KLST_ISH_handle_encoders() {
-    /* rotation */
+    KLST_ISH_handle_encoder_rotations();
+    KLST_ISH_handle_encoder_buttons();
+}
+
+void KLST_ISH_handle_encoder_rotations() {
     const int16_t mEncoder_00TickCount = (int16_t)ENCODER_00_TIMER->CNT;
     if (mKLSTENCODER_00TickCount != mEncoder_00TickCount) {
         const float f[3] = {ENCODER_00, (float)mEncoder_00TickCount, (float)mKLSTENCODER_00TickCount};
@@ -204,7 +224,9 @@ void KLST_ISH_handle_encoders() {
         event_receive(EVENT_ENCODER_ROTATE, f);
         mKLSTENCODER_02TickCount = mEncoder_02TickCount;
     }
-    /* buttons */
+}
+
+void KLST_ISH_handle_encoder_buttons() {
     bool mENCODER_00ButtonState = digitalRead(ENCODER_00_BUTTON);
     if (mKLSTENCODER_00ButtonState != mENCODER_00ButtonState) {
         const float f[1] = {ENCODER_00};
@@ -236,7 +258,6 @@ void KLST_ISH_handle_encoders() {
         mKLSTENCODER_02ButtonState = mENCODER_02ButtonState;
     }
 }
-
 void KLST_ISH_handleSerialPorts() {
 #ifdef HAL_UART_MODULE_ENABLED
     {
