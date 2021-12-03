@@ -1,5 +1,5 @@
 //
-//  KLST_CORE-BSP.cpp
+//  KLST_SHEEP-BSP.cpp
 //  Klangstrom – a node+text-based synthesizer library
 //
 //
@@ -22,33 +22,25 @@ extern "C" {
 #include "AudioCodecWM8731.h"
 #include "stm32h7xx_hal.h"
 
-extern I2C_HandleTypeDef hi2c3;
 
-extern I2S_HandleTypeDef hi2s2;
+extern I2C_HandleTypeDef hi2c1;
+extern SAI_HandleTypeDef hsai_BlockA1;
+extern SAI_HandleTypeDef hsai_BlockB1;
+extern DMA_HandleTypeDef hdma_sai1_a;
+extern DMA_HandleTypeDef hdma_sai1_b;
 extern DMA_HandleTypeDef hdma_spi2_rx;
 extern DMA_HandleTypeDef hdma_spi2_tx;
-
-extern SPI_HandleTypeDef hspi4;
-
 extern TIM_HandleTypeDef htim1;
 extern TIM_HandleTypeDef htim2;
-extern TIM_HandleTypeDef htim5;
-
-// extern PCD_HandleTypeDef hpcd_USB_OTG_FS;
-// extern HCD_HandleTypeDef hhcd_USB_OTG_HS;
 
 void SystemClock_Config(void);
 void PeriphCommonClock_Config(void);
 void MX_GPIO_Init(void);
 void MX_DMA_Init(void);
-void MX_USB_OTG_FS_PCD_Init(void);
-void MX_USB_OTG_HS_HCD_Init(void);
-void MX_I2S2_Init(void);
-void MX_I2C3_Init(void);
-void MX_SPI4_Init(void);
+void MX_I2C1_Init(void);
+void MX_SAI1_Init(void);
 void MX_TIM1_Init(void);
 void MX_TIM2_Init(void);
-void MX_TIM5_Init(void);
 
 /* ----------------------------------------------------------------------------------------------------------------- */
 /* ERROR HANDLING                                                                                                    */
@@ -66,43 +58,38 @@ uint8_t KLST_BSP_error_code() {
 void KLST_BSP_init_peripherals() {
     MX_GPIO_Init();
     MX_DMA_Init();
-    MX_I2S2_Init();
-    MX_I2C3_Init();
+    MX_I2C1_Init();
+    MX_SAI1_Init();
 }
 
 void KLST_BSP_init_encoders() {
-    MX_TIM5_Init();
     MX_TIM1_Init();
     MX_TIM2_Init();
 
-    HAL_TIM_Encoder_Start(&htim5, TIM_CHANNEL_ALL);
     HAL_TIM_Encoder_Start(&htim1, TIM_CHANNEL_ALL);
     HAL_TIM_Encoder_Start(&htim2, TIM_CHANNEL_ALL);
 }
 
 void KLST_BSP_deinit_encoders() {
-    HAL_TIM_Encoder_DeInit(&htim5);
     HAL_TIM_Encoder_DeInit(&htim1);
     HAL_TIM_Encoder_DeInit(&htim2);
 
-    HAL_TIM_Encoder_Stop(&htim5, TIM_CHANNEL_ALL);
     HAL_TIM_Encoder_Stop(&htim1, TIM_CHANNEL_ALL);
     HAL_TIM_Encoder_Stop(&htim2, TIM_CHANNEL_ALL);
 
-    HAL_TIM_Encoder_MspDeInit(&htim5);
     HAL_TIM_Encoder_MspDeInit(&htim1);
     HAL_TIM_Encoder_MspDeInit(&htim2);
 }
 
 /* ----------------------------------------------------------------------------------------------------------------- */
-/* I2S + AUDIO CODEC                                                                                                 */
+/* SAI + AUDIO CODEC                                                                                                 */
 /* ----------------------------------------------------------------------------------------------------------------- */
 
 void KLST_BSP_configure_audio_codec() {
     /*
     * POWER UP SEQUENCE
     * - Switch on power supplies. By default the WM8731 is in Standby Mode, the DAC is digitally muted and the Audio Interface and Outputs are all OFF.
-    * - Set all required bits in the Power Down reg          ister (0Ch) to ‘0’; EXCEPT the OUTPD bit, this should be set to ‘1’ (Default).
+    * - Set all required bits in the Power Down register (0Ch) to ‘0’; EXCEPT the OUTPD bit, this should be set to ‘1’ (Default).
     * - Set required values in all other registers except 12h (Active).
     * - Set the ‘Active’ bit in register 12h.
     * - The last write of the sequence should be setting OUTPD to ‘0’ (active) in register 0Ch, enabling the DAC signal path, free of any significant power-up noise.
@@ -115,7 +102,7 @@ void KLST_BSP_configure_audio_codec() {
     WM8731_write(WM8731_HEADPHONE_OUT_LEFT, 0b001111001);
     WM8731_write(WM8731_HEADPHONE_OUT_RIGHT, 0b001111001);
     if (KLST_ISH_OPT_audio_line() == KLST_MIC) {
-        WM8731_write(WM8731_ANALOG_AUDIO_PATH_CONTROL, 0b00010100);  // MIC
+        WM8731_write(WM8731_ANALOG_AUDIO_PATH_CONTROL, 0b00010100);  // MIC @todo(enable mic boost(Bit 0)?)
     } else if (KLST_ISH_OPT_audio_line() == KLST_LINE_IN) {
         WM8731_write(WM8731_ANALOG_AUDIO_PATH_CONTROL, 0b00010010);  // LINE_IN
     }
@@ -131,7 +118,7 @@ void KLST_BSP_configure_audio_codec() {
 }
 
 /**
- * I2S callback implementation
+ * SAI callback implementation
  */
 
 #define I2S_BUFFER_SIZE (KLANG_SAMPLES_PER_AUDIO_BLOCK * 2)
@@ -142,16 +129,12 @@ uint32_t *mCurrentRXBuffer;
 void KLST_BSP_start_audio_codec() {
     memset(dma_TX_buffer, 0, sizeof(dma_TX_buffer));
     memset(dma_RX_buffer, 0, sizeof(dma_RX_buffer));
-
-    if (HAL_OK != HAL_I2S_Transmit_DMA(&hi2s2, (uint16_t *)dma_TX_buffer, I2S_BUFFER_SIZE << 1)) {
-        mErrorCode = KLST_ERROR_CODE_I2S_DMA_TX;
+    if (HAL_OK != HAL_SAI_Transmit_DMA(&hsai_BlockB1, (uint8_t *)dma_TX_buffer, I2S_BUFFER_SIZE << 1)) {
+        // 		KLST_LOG("### ERROR initializing SAI TX");
     }
     if (KLST_ISH_OPT_audio_input_enabled()) {
-        /* @note(state flag needs to be cleared manually) */
-        hi2s2.State = HAL_I2S_STATE_READY;
-        /* @note(make sure `hi2s2.Init.Mode` is set to `I2S_MODE_MASTER_FULLDUPLEX` in `MX_I2S2_Init` in `main.c` ) */
-        if (HAL_OK != HAL_I2S_Receive_DMA(&hi2s2, (uint16_t *)dma_RX_buffer, I2S_BUFFER_SIZE << 1)) {
-            mErrorCode = KLST_ERROR_CODE_I2S_DMA_RX;
+        if (HAL_OK != HAL_SAI_Receive_DMA(&hsai_BlockA1, (uint8_t *)dma_RX_buffer, I2S_BUFFER_SIZE << 1)) {
+            // 		KLST_LOG("### ERROR initializing SAI RX");
         }
         mCurrentRXBuffer = &(dma_RX_buffer[0]);
     }
@@ -191,7 +174,7 @@ void FillBuffer(uint32_t *mTXBuffer, uint32_t *mRXBuffer, uint16_t len) {
 }
 #endif
 
-void HAL_I2S_TxCpltCallback(I2S_HandleTypeDef *hi2s) {
+void HAL_SAI_TxCpltCallback(SAI_HandleTypeDef *hsai) {
 #if SANITY_TEST
     FillBuffer(&(dma_TX_buffer[I2S_BUFFER_SIZE >> 1]), mCurrentRXBuffer, I2S_BUFFER_SIZE >> 1);
 #else
@@ -199,7 +182,7 @@ void HAL_I2S_TxCpltCallback(I2S_HandleTypeDef *hi2s) {
 #endif
 }
 
-void HAL_I2S_TxHalfCpltCallback(I2S_HandleTypeDef *hi2s) {
+void HAL_SAI_TxHalfCpltCallback(SAI_HandleTypeDef *hsai) {
 #if SANITY_TEST
     FillBuffer(&(dma_TX_buffer[0]), mCurrentRXBuffer, I2S_BUFFER_SIZE >> 1);
 #else
@@ -207,11 +190,11 @@ void HAL_I2S_TxHalfCpltCallback(I2S_HandleTypeDef *hi2s) {
 #endif
 }
 
-void HAL_I2S_RxCpltCallback(I2S_HandleTypeDef *hi2s) {
+void HAL_SAI_RxCpltCallback(SAI_HandleTypeDef *hsai) {
     mCurrentRXBuffer = &(dma_RX_buffer[I2S_BUFFER_SIZE >> 1]);
 }
 
-void HAL_I2S_RxHalfCpltCallback(I2S_HandleTypeDef *hi2s) {
+void HAL_SAI_RxHalfCpltCallback(SAI_HandleTypeDef *hsai) {
     mCurrentRXBuffer = &(dma_RX_buffer[0]);
 }
 
@@ -223,7 +206,7 @@ void HAL_I2S_RxHalfCpltCallback(I2S_HandleTypeDef *hi2s) {
  * WM8731 I2C implementation
  */
 bool WM8731_I2C_write(uint8_t device_address, uint8_t *data, uint8_t length) {
-    HAL_StatusTypeDef mResult = HAL_I2C_Master_Transmit(&hi2c3, device_address, data, length, 10);
+    HAL_StatusTypeDef mResult = HAL_I2C_Master_Transmit(&hi2c1, device_address, data, length, 10);
     if (mResult != HAL_OK) {
         mErrorCode = KLST_ERROR_CODE_I2C_WRITE;
         return false;
@@ -260,12 +243,12 @@ void KLST_BSP_shutdown() {
     /* stop encoders */
     KLST_BSP_deinit_encoders();
     /* stop audio */
-    HAL_I2S_DMAStop(&hi2s2);
+    HAL_I2S_DMAStop(&hi2s2);xxx
     HAL_I2S_DeInit(&hi2s2);
     HAL_I2S_MspDeInit(&hi2s2);
     /* stop I2C */
-    HAL_I2C_DeInit(&hi2c3);
-    HAL_I2C_MspDeInit(&hi2c3);
+    HAL_I2C_DeInit(&hi2c1);
+    HAL_I2C_MspDeInit(&hi2c1);
     /* stop USB */
     __HAL_RCC_USB_OTG_FS_CLK_DISABLE();
     __HAL_RCC_USB_OTG_HS_CLK_DISABLE();
@@ -275,59 +258,3 @@ void KLST_BSP_shutdown() {
 }
 #endif
 
-/* ------------------------------------------------------------------------------------ */
-//
-// #if 0
-//
-// #if I2S_BUFFER_SIZE > 16
-// #warning BUFFER_SIZE > 16 might cause problems.
-// #endif
-//
-// #include "klangstrom_ISR.h"
-//
-// uint16_t mBufferPointer = 0;
-// bool mScheduleHalfBufferUpdate = false;
-// bool mScheduleCptlBufferUpdate = false;
-//
-// #define __I2S_TIMEOUT             100
-// #define __I2S_DIRECT_BUFFER_SIZE  2
-//
-// void KLST_I2S_transmit(uint16_t pLeft, uint16_t pRight) {
-//   uint16_t mBuffer[__I2S_DIRECT_BUFFER_SIZE];
-//   mBuffer[0] = pLeft;
-//   mBuffer[1] = pRight;
-//   HAL_I2S_Transmit(&hi2s2, mBuffer, __I2S_DIRECT_BUFFER_SIZE, __I2S_TIMEOUT);
-// }
-//
-// void KLST_I2S_receive(uint16_t* pLeft, uint16_t* pRight) {
-// 	uint16_t mBuffer[__I2S_DIRECT_BUFFER_SIZE];
-// 	HAL_I2S_Receive(&hi2s2, mBuffer, __I2S_DIRECT_BUFFER_SIZE, __I2S_TIMEOUT);
-// 	*pLeft = mBuffer[0];
-// 	*pRight = mBuffer[1];
-// }
-//
-// WEAK void KLST_audio_interrupt() {
-//   /* update buffer */
-//   if (mBufferPointer == I2S_BUFFER_SIZE/2) {
-//     // void HAL_I2S_TxHalfCpltCallback(I2S_HandleTypeDef *hi2s)
-//     KLST_ISH_fill_buffer(&(mTXBuffer[0]),
-//                     &(mRXBuffer[0]),
-//                     I2S_BUFFER_SIZE >> 1);
-//   } else if (mBufferPointer >= I2S_BUFFER_SIZE) {
-//     // void HAL_I2S_TxCpltCallback(I2S_HandleTypeDef *hi2s)
-//     KLST_ISH_fill_buffer(&(mTXBuffer[I2S_BUFFER_SIZE >> 1]),
-//                     &(mRXBuffer[I2S_BUFFER_SIZE >> 1]),
-//                     I2S_BUFFER_SIZE >> 1);
-//     mBufferPointer = 0;
-//   }
-//   /* retreive sample from I2S */
-//   uint16_t mTmpRXBuffer[__I2S_DIRECT_BUFFER_SIZE];
-//  	HAL_I2S_Receive(&hi2s2, mTmpRXBuffer, __I2S_DIRECT_BUFFER_SIZE, __I2S_TIMEOUT);
-//   mRXBuffer[mBufferPointer] = ((uint32_t) (uint16_t) mTmpRXBuffer[0]) << 0 | ((uint32_t) (uint16_t) mTmpRXBuffer[0]) << 16;
-//   /* send sample to I2S */
-//   uint16_t *mTmpTXBuffer = (uint16_t*)&mTXBuffer[mBufferPointer];
-//   HAL_I2S_Transmit(&hi2s2, mTmpTXBuffer, __I2S_DIRECT_BUFFER_SIZE, __I2S_TIMEOUT);
-//   mBufferPointer++;
-// }
-//
-// #endif

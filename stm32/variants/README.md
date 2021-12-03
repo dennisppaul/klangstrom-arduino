@@ -1,5 +1,6 @@
 # KLST / variants
 
+- KLST_SHEEP (STM32H743VI)
 - KLST_CORE (STM32H743II)
 - KLST_TINY (STM32F446RE)
 
@@ -13,21 +14,21 @@ see `KlangstromApplicationInterfaceArduino.h` for all functions
 
 ## variant file structure
 
-each variant folder contains the following 6 files adapted to the respective architecture:
+each variant folder contains the following 6 files adapted to the respective architecture ( *STM32CubeIDE* auto-generated files from #STM32CubeIDE or copied files from #STM32duino ):
 
 - `KLST_*-BSP.cpp`
 - `ldscript.ld` #STM32CubeIDE
 - `main.c` #STM32CubeIDE #modified
 - `main.h` #STM32CubeIDE
-- `PeripheralPins.c`
-- `PinNamesVar.h`
+- `PeripheralPins.c` #STM32duino
+- `PinNamesVar.h` #STM32duino
 - `stm32**xx_hal_msp.c` #STM32CubeIDE
 - `stm32**xx_it.c` #STM32CubeIDE #modified
 - `stm32**xx_it.h` #STM32CubeIDE
-- `variant_KLST_*.cpp`
-- `variant_KLST_*.h`
+- `variant_KLST_*.cpp` #STM32duino
+- `variant_KLST_*.h` #STM32duino
 
-note, that the following *STM32CubeIDE* auto-generated files have been removed:
+note, that the following have been removed:
 
 - `syscalls.c`
 - `sysmem.c`
@@ -44,7 +45,7 @@ contains implementations and adapters for peripherials.
 
 ### `ldscript.ld`
 
-linker script can be copied from `STM32********_FLASH.ld`
+linker script is copied from file `*_FLASH.ld`.
 
 ### `main.c`
 
@@ -69,6 +70,7 @@ for `KLST_TINY` if `USB_OTG_FS` is not selected the clock initialization does no
 ### `stm32**xx_hal_msp.c`
 
 - remove `HAL_PCD_MspInit(PCD_HandleTypeDef* hpcd)` + `HAL_PCD_MspDeInit(PCD_HandleTypeDef* hpcd)`
+- ==@todo(check if this is necessary)== remove `HAL_HCD_MspInit(HCD_HandleTypeDef* hhcd)` + `HAL_HCD_MspDeInit(HCD_HandleTypeDef* hhcd)`
 
 ### `stm32**xx_it.c`
 
@@ -82,88 +84,16 @@ for `KLST_TINY` if `USB_OTG_FS` is not selected the clock initialization does no
 
 ### `variant_KLST_*.h`
 
+- specifiy `PIN MAP`, `HAL` + `PERIPHERALS` sections
 - check definitions in `stm32**xx_hal_conf.h` ( e.g `HSE_VALUE` or enabled modules ( e.g `HAL_SAI_MODULE_ENABLED` for `KLST_TINY` ) ) and if needed copy to `variant_KLST_****.h`.
 - define board type ( e.g `#define KLST_BOARD_KLST_TINY` )
-- define `LED_BUILTIN`
-- define peripherals
+- define peripherals:
+    - `LED_BUILTIN`
+    - `USER_BTN`
+    - `PIN_SPI_MOSI` +  `PIN_SPI_MISO` +  `PIN_SPI_SCK` +  `PIN_SPI_SS` ( `CS` ) 
+    - `PIN_WIRE_SDA` + `PIN_WIRE_SCL` ( `I2C` )
+    - `TIMER_TONE`
+    - `TIMER_SERVO`
+    - `PIN_SERIAL_RX` + `PIN_SERIAL_TX`
+- define `KLST_UART_BAUD` + `KLST_SERIAL_**`
 - remove default/onboard defines
-
-## required variant defines
-
-`KLST_TINY` defines:
-
-```
-/* --------------------------------------------------------------- */
-/* KLST                                                            */
-/* --------------------------------------------------------------- */
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-/* PIN LABELS */
-
-#define GPIO_00	                  PC13
-#define GPIO_01	                  PC14
-#define GPIO_02	                  PC15
-#define GPIO_03	                  PC2
-#define GPIO_04	                  PC3
-#define GPIO_05	                  PA2
-#define GPIO_06	                  PA3
-#define GPIO_07	                  PC5
-
-#define ADC_00	                  PB0
-#define ADC_01	                  PB1
-#define DAC_00	                  PA4
-#define DAC_01	                  PA5
-
-#define LED_00	                  PB5
-#define LED_01	                  PD2
-#define LED_02	                  PC12
-
-#define I2C_00_SCL	              PB8
-#define I2C_00_SDA	              PB7
-#define SPI_00_MISO	              PB14
-#define SPI_00_MOSI	              PB15
-#define SPI_00_SCK	              PB13
-
-#define UART_00_RX	              PA10
-#define UART_00_TX	              PB6
-#define UART_01_RX	              PC11
-#define UART_01_TX	              PC10
-
-#define ENCODER_00_BUTTON         PC4
-#define ENCODER_01_BUTTON         PC8
-#define ENCODER_02_BUTTON         PB4
-
-/* --- */
-
-#define BUTTON_PROGRAMMER         PC5
-#define LED_BUILTIN               LED_00
-#define KLST_UART_BAUD            115200
-
-#define ENCODER_00_TIMER          TIM3
-#define ENCODER_01_TIMER          TIM8
-#define ENCODER_02_TIMER          TIM2
-#define KLST_BEAT_TIMER           TIM5
-
-#ifdef __cplusplus
-}
-#endif
-
-#ifdef __cplusplus
-  #define KLST_SERIAL_00          Serial1
-  #define KLST_SERIAL_01          Serial4
-  #define SerialDebug             Serial
-  #define KLST_LOG                Serial
-#endif
-
-/* serial */
-
-// @todo(maybe add option to def out serial support)
-#define ENABLE_HWSERIAL1
-#define PIN_SERIAL1_RX            UART_00_RX
-#define PIN_SERIAL1_TX            UART_00_TX
-#define ENABLE_HWSERIAL4
-#define PIN_SERIAL4_RX            UART_01_RX
-#define PIN_SERIAL4_TX            UART_01_TX
-```

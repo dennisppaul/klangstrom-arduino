@@ -24,6 +24,19 @@ Klangstrom.build.board=Klangstrom
 Klangstrom.build.variant_h=variant_{build.board}.h
 Klangstrom.build.extra_flags=-D{build.product_line} {build.enable_usb} {build.xSerial}
 
+# KLST_SHEEP board
+Klangstrom.menu.pnum.KLST_SHEEP=KLST_SHEEP(STM32H743VIT)
+Klangstrom.menu.pnum.KLST_SHEEP.node=KLST_SHEEP
+Klangstrom.menu.pnum.KLST_SHEEP.upload.maximum_size=2097152
+Klangstrom.menu.pnum.KLST_SHEEP.upload.maximum_data_size=524288
+Klangstrom.menu.pnum.KLST_SHEEP.build.mcu=cortex-m7
+Klangstrom.menu.pnum.KLST_SHEEP.build.flags.fp=-mfpu=fpv5-d16 -mfloat-abi=hard
+Klangstrom.menu.pnum.KLST_SHEEP.build.board=KLST_SHEEP
+Klangstrom.menu.pnum.KLST_SHEEP.build.series=STM32H7xx
+Klangstrom.menu.pnum.KLST_SHEEP.build.product_line=STM32H743xx
+Klangstrom.menu.pnum.KLST_SHEEP.build.variant=KLST_SHEEP
+Klangstrom.menu.pnum.KLST_SHEEP.build.cmsis_lib_gcc=arm_cortexM7lfsp_math
+
 # KLST_TINY board
 Klangstrom.menu.pnum.KLST_TINY=KLST_TINY(STM32F446RE)
 Klangstrom.menu.pnum.KLST_TINY.node=KLST_TINY

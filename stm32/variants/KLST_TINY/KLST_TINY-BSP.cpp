@@ -1,5 +1,5 @@
 //
-//  KLST_TINY-adapter.cpp
+//  KLST_TINY-BSP.cpp
 //  Klangstrom – a node+text-based synthesizer library
 //
 //
