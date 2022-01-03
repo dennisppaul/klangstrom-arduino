@@ -22,7 +22,6 @@ extern "C" {
 #include "AudioCodecWM8731.h"
 #include "stm32h7xx_hal.h"
 
-
 extern I2C_HandleTypeDef hi2c1;
 extern SAI_HandleTypeDef hsai_BlockA1;
 extern SAI_HandleTypeDef hsai_BlockB1;
@@ -129,11 +128,11 @@ uint32_t *mCurrentRXBuffer;
 void KLST_BSP_start_audio_codec() {
     memset(dma_TX_buffer, 0, sizeof(dma_TX_buffer));
     memset(dma_RX_buffer, 0, sizeof(dma_RX_buffer));
-    if (HAL_OK != HAL_SAI_Transmit_DMA(&hsai_BlockB1, (uint8_t *)dma_TX_buffer, I2S_BUFFER_SIZE << 1)) {
+    if (HAL_OK != HAL_SAI_Transmit_DMA(&hsai_BlockA1, (uint8_t *)dma_TX_buffer, I2S_BUFFER_SIZE << 1)) {
         // 		KLST_LOG("### ERROR initializing SAI TX");
     }
     if (KLST_ISH_OPT_audio_input_enabled()) {
-        if (HAL_OK != HAL_SAI_Receive_DMA(&hsai_BlockA1, (uint8_t *)dma_RX_buffer, I2S_BUFFER_SIZE << 1)) {
+        if (HAL_OK != HAL_SAI_Receive_DMA(&hsai_BlockB1, (uint8_t *)dma_RX_buffer, I2S_BUFFER_SIZE << 1)) {
             // 		KLST_LOG("### ERROR initializing SAI RX");
         }
         mCurrentRXBuffer = &(dma_RX_buffer[0]);
@@ -243,9 +242,10 @@ void KLST_BSP_shutdown() {
     /* stop encoders */
     KLST_BSP_deinit_encoders();
     /* stop audio */
-    HAL_I2S_DMAStop(&hi2s2);xxx
-    HAL_I2S_DeInit(&hi2s2);
-    HAL_I2S_MspDeInit(&hi2s2);
+    HAL_SAI_DeInit(&hsai_BlockB1);
+    HAL_SAI_DeInit(&hsai_BlockA1);
+    HAL_SAI_DMAStop(&hsai_BlockB1);
+    HAL_SAI_DMAStop(&hsai_BlockA1);
     /* stop I2C */
     HAL_I2C_DeInit(&hi2c1);
     HAL_I2C_MspDeInit(&hi2c1);
