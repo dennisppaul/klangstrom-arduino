@@ -8,7 +8,7 @@ menu.upload_method=Upload method
 menu.samplingrate=Sampling Rate
 menu.audioblock=Sample per Audio Block
 
-sdl.menu.upload_method.sdlexec=Execute SDL
+sdl.menu.upload_method.sdlexec=Execute Application
 sdl.menu.upload_method.sdlexec.upload.protocol=1
 sdl.menu.upload_method.sdlexec.upload.options=-g
 sdl.menu.upload_method.sdlexec.upload.tool=sdlexecprog
