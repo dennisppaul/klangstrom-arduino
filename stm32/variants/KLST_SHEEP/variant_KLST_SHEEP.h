@@ -276,6 +276,9 @@
 /* --- PIN MAP -------------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 
+#define PC2                             PC2_C
+#define PC3                             PC3_C
+
 #define ADC_00                          PC4
 #define ADC_01                          PC5
 #define AUDIOCODEC_I2C_SCL              PB6
@@ -442,6 +445,7 @@
 
 #define LED_BUILTIN         LED_00
 #define USER_BTN            ENCODER_00_BUTTON
+#define BUTTON_PROGRAMMER   BUTTON_PRG
 
 /* --- U(S)ART -------------------------------------------------------------- */
 

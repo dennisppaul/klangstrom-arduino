@@ -5,6 +5,11 @@
 //
 //
 
+#define KLST_SDL_USE_OSC
+#define KLST_SDL_USE_AUDIO_INPUT
+#define KLST_SDL_INITIALIZE_BEAT
+#define KLST_SDL_DEFAULT_BPM 120
+
 #include <chrono>
 #include <cstdio>
 #include <cstdlib>
@@ -16,11 +21,15 @@
 #include "SDL.h"
 #include "SDL_audio.h"
 #include "SDL_render.h"
+
+#ifdef KLST_SDL_USE_OSC
 #include "ip/UdpSocket.h"
 #include "osc/OscOutboundPacketStream.h"
 #include "osc/OscPacketListener.h"
 #include "osc/OscReceivedElements.h"
-/* */
+#endif
+
+/* KLST */
 #include "klangstrom_arduino_sdl.h"
 
 extern KLST_Simulator mSimulator;
@@ -94,8 +103,10 @@ void delay(uint32_t pMS) {
 using namespace klangstrom;
 using namespace std;
 
+#ifdef KLST_SDL_USE_OSC
 thread             mOSCThread;
 UdpTransmitSocket *mTransmitSocket = nullptr;
+#endif
 
 thread mLoopThread;
 
@@ -104,7 +115,7 @@ float         mInternalAudioOutputBufferRight[KLANG_SAMPLES_PER_AUDIO_BLOCK * 2]
 int           mBufferOffset       = 0;
 uint32_t      mBeatCounter        = 0;
 SDL_TimerID   mTimerID            = 0;
-SDL_Window *  mWindow             = nullptr;
+SDL_Window   *mWindow             = nullptr;
 SDL_Renderer *gRenderer           = nullptr;
 bool          mQuitFlag           = false;
 bool          mMouseButtonPressed = false;
@@ -122,8 +133,6 @@ SIGNAL_TYPE         mInputBufferLeft[NUM_OF_RX_BUFFER][KLANG_SAMPLES_PER_AUDIO_B
 SIGNAL_TYPE         mInputBufferRight[NUM_OF_RX_BUFFER][KLANG_SAMPLES_PER_AUDIO_BLOCK];
 SIGNAL_TYPE         mOutputBufferLeft[KLANG_SAMPLES_PER_AUDIO_BLOCK];
 SIGNAL_TYPE         mOutputBufferRight[KLANG_SAMPLES_PER_AUDIO_BLOCK];
-// auto *              mOutputBufferLeft  = new SIGNAL_TYPE[KLANG_SAMPLES_PER_AUDIO_BLOCK];
-// auto *              mOutputBufferRight = new SIGNAL_TYPE[KLANG_SAMPLES_PER_AUDIO_BLOCK];
 
 #define DEBUG_AUDIO_DEVICE
 #define AUDIO_INPUT  SDL_TRUE
@@ -156,25 +165,27 @@ void init_main() {
     list_audio_devices();
 #endif
     init_audio_output();
+#ifdef KLST_SDL_USE_AUDIO_INPUT
     init_audio_input();
-    start_audio();
+    SDL_PauseAudioDevice(mAudioInputDeviceInternalID, SDL_FALSE);
+#endif
+    SDL_PauseAudioDevice(mAudioOutputDeviceInternalID, SDL_FALSE);
 }
 
 void loop_thread() {
     while (!mQuitFlag) {
         loop();
-        //         this_thread::sleep_for(chrono::milliseconds(get_delay()));
     }
 }
 
 void pre_setup() {}
 
-#define KLST_SDL_DEFAULT_BPM 120
-
 void post_setup() {
     /* @note(if beat has not been set in `setup` start with default BPM */
     if (mTimerID == 0) {
+#ifdef KLST_SDL_INITIALIZE_BEAT
         klangstrom_arduino_beats_per_minute(KLST_SDL_DEFAULT_BPM);
+#endif
     }
 }
 
@@ -290,11 +301,6 @@ void loop_renderer() {
     }
 
     SDL_RenderPresent(gRenderer);
-}
-
-void start_audio() {
-    SDL_PauseAudioDevice(mAudioInputDeviceInternalID, SDL_FALSE);
-    SDL_PauseAudioDevice(mAudioOutputDeviceInternalID, SDL_FALSE);
 }
 
 void list_audio_devices() {
@@ -430,6 +436,7 @@ void init_audio_output() {
     }
 }
 
+#ifdef KLST_SDL_USE_AUDIO_INPUT
 void audio_input_callback(void *userdata, Uint8 *pStream, int pBufferLength) {
     mCurrentInputBufferID++;
     mCurrentInputBufferID %= NUM_OF_RX_BUFFER;
@@ -490,6 +497,7 @@ void init_audio_input() {
     //    // Unlock callback
     //    SDL_UnlockAudioDevice( mAudioInputDeviceID );
 }
+#endif
 
 void init_app() {
     update_audiobuffer();
@@ -545,6 +553,8 @@ void shutdown_main() {
     SDL_CloseAudio();
     SDL_Quit();
 }
+
+#ifdef KLST_SDL_USE_OSC
 
 void process_KLANG_OSC_CMD(const osc::ReceivedMessage &msg) {
 #ifdef DEBUG_OSC
@@ -614,7 +624,7 @@ private:
 
 protected:
     void ProcessMessage(const osc::ReceivedMessage &msg,
-                        const IpEndpointName &      remoteEndpoint) override {
+                        const IpEndpointName       &remoteEndpoint) override {
         (void)remoteEndpoint;  // suppress unused parameter warning
         try {
             if (addr_pattern_equals(msg, KLANG_OSC_CMD)) {
@@ -677,7 +687,7 @@ void osc_thread() {
 #define USE_UDP_MULTICAST
 #ifdef USE_UDP_MULTICAST
         MOscPacketListener mOscListener;
-        PacketListener *   listener_       = &mOscListener;
+        PacketListener    *listener_       = &mOscListener;
         IpEndpointName     mIpEndpointName = IpEndpointName(KLANG_OSC_TRANSMIT_ADDRESS, KLANG_OSC_RECEIVE_PORT);
         if (mIpEndpointName.IsMulticastAddress()) {
 #ifdef DEBUG_OSC
@@ -704,8 +714,10 @@ void osc_thread() {
         KLANG_LOG("@klangstrom_arduino osc_thread %s", mError.c_str());
     }
 }
+#endif
 
 void klangstrom_arduino_event_transmit(EVENT_TYPE pEvent, float *data) {
+#ifdef KLST_SDL_USE_OSC
     // @todo(implement all events)
     char                      buffer[OSC_TRANSMIT_OUTPUT_BUFFER_SIZE];
     osc::OutboundPacketStream p(buffer, OSC_TRANSMIT_OUTPUT_BUFFER_SIZE);
@@ -719,9 +731,11 @@ void klangstrom_arduino_event_transmit(EVENT_TYPE pEvent, float *data) {
           << osc::EndBundle;
         mTransmitSocket->Send(p.Data(), p.Size());
     }
+#endif
 }
 
 void klangstrom_arduino_data_transmit(const uint8_t pSender, uint8_t *pData, uint8_t pDataLength) {
+#ifdef KLST_SDL_USE_OSC
     // @todo(implement all events)
     char                      buffer[OSC_TRANSMIT_OUTPUT_BUFFER_SIZE];
     osc::OutboundPacketStream p(buffer, OSC_TRANSMIT_OUTPUT_BUFFER_SIZE);
@@ -734,9 +748,11 @@ void klangstrom_arduino_data_transmit(const uint8_t pSender, uint8_t *pData, uin
     p << osc::EndMessage
       << osc::EndBundle;
     mTransmitSocket->Send(p.Data(), p.Size());
+#endif
 }
 
 void klangstrom_arduino_sim_transmit(std::vector<float> &pData) {
+#ifdef KLST_SDL_USE_OSC
     char                      buffer[OSC_TRANSMIT_OUTPUT_BUFFER_SIZE];
     osc::OutboundPacketStream p(buffer, OSC_TRANSMIT_OUTPUT_BUFFER_SIZE);
     p << osc::BeginBundleImmediate
@@ -747,8 +763,10 @@ void klangstrom_arduino_sim_transmit(std::vector<float> &pData) {
     p << osc::EndMessage
       << osc::EndBundle;
     mTransmitSocket->Send(p.Data(), p.Size());
+#endif
 }
 
+#ifdef KLST_SDL_USE_OSC
 void init_osc() {
     mOSCThread                   = thread(osc_thread);
     IpEndpointName mEndpointName = IpEndpointName(KLANG_OSC_TRANSMIT_ADDRESS, KLANG_OSC_TRANSMIT_PORT);
@@ -763,14 +781,29 @@ void init_osc() {
 void shutdown_osc() {
     mOSCThread.detach();
 }
+#endif
 
 int main(int argc, char **argv) {
+#ifdef KLST_SDL_PRINT_SDL_VERSION
+    SDL_version compiled;
+    SDL_version linked;
+    SDL_VERSION(&compiled);
+    SDL_GetVersion(&linked);
+    printf("+++ SDL VERION: \n");
+    printf("+++ compiled against SDL version %d.%d.%d\n", compiled.major, compiled.minor, compiled.patch);
+    printf("+++   linked against SDL version %d.%d.%d\n", linked.major, linked.minor, linked.patch);
+#endif
+
+#ifdef KLST_SDL_USE_OSC
     init_osc();
+#endif
     std::cout << std::flush;
     init_main();
     std::cout << std::flush;
     loop_main();
     shutdown_main();
+#ifdef KLST_SDL_USE_OSC
     shutdown_osc();
+#endif
     return 0;
 }
