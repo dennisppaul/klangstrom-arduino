@@ -218,6 +218,7 @@ extern "C" {
 /* -------------------------------------------------------------------------- */
 
 #define BUTTON_PROGRAMMER         PC5
+#define KLST_NUM_LEDS             3
 #define LED_BUILTIN               LED_00
 #define KLST_UART_BAUD            115200
 

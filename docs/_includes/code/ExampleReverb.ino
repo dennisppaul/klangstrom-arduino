@@ -43,7 +43,7 @@ void event_receive(const EVENT_TYPE event, const float* data) {
         case EVENT_MOUSE_MOVED:
             mouseMoved(data[X], data[Y]);
             break;
-        case EVENT_ENCODER_ROTATE:
+        case EVENT_ENCODER_ROTATED:
             const float mDelta = data[TICK] - data[PREVIOUS_TICK];
             break;
     }

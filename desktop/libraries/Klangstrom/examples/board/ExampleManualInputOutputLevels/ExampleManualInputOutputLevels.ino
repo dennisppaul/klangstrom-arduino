@@ -68,7 +68,7 @@ void event_receive(const uint8_t event, const float* data) {
         case EVENT_ENCODER_BUTTON_PRESSED:
             mValue = 0;
             break;
-        case EVENT_ENCODER_ROTATE:
+        case EVENT_ENCODER_ROTATED:
             float mDelta = data[TICK] - data[PREVIOUS_TICK];
             if (mDelta > 0) {
                 mValue += mValueInc;

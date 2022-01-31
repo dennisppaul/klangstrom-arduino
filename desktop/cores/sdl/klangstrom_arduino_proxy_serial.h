@@ -1,24 +1,24 @@
 //
 //  klangstrom_arduino_proxy_serial.h
-//  Klang – a node+text-based synthesizer library
+//  Klangstrom
 //
 //
 //
-
-// #include "Arduino.h"
-#include <stdint.h>
-#include <stddef.h>
-#include <stdio.h>
-#include <iostream>
-#include "WString.h"
 
 #ifndef klangstrom_arduino_proxy_serial_h
 #define klangstrom_arduino_proxy_serial_h
 
+#include <stddef.h>
+#include <stdint.h>
+#include <stdio.h>
+
+#include <iostream>
+
+#include "WString.h"
+
 using namespace std;
 
 class SerialProxy {
-
 #define DEC 10
 #define HEX 16
 #define OCT 8
@@ -42,7 +42,7 @@ public:
     size_t print(long, int = DEC);
     size_t print(unsigned long, int = DEC);
     size_t print(double, int = 2);
-//     size_t print(const Printable &);
+    //     size_t print(const Printable &);
 
     size_t println(const __FlashStringHelper *);
     size_t println(const String &s);
@@ -54,17 +54,19 @@ public:
     size_t println(long, int = DEC);
     size_t println(unsigned long, int = DEC);
     size_t println(double, int = 2);
-//     size_t println(const Printable &);
+    //     size_t println(const Printable &);
     size_t println(void);
-// #ifdef SUPPORT_LONGLONG
-//     void println(int64_t, uint8_t = DEC) {}
-//     void print(int64_t, uint8_t = DEC) {}
-//     void println(uint64_t, uint8_t = DEC) {}
-//     void print(uint64_t, uint8_t = DEC) {}
-// #endif
-// 
+    // #ifdef SUPPORT_LONGLONG
+    //     void println(int64_t, uint8_t = DEC) {}
+    //     void print(int64_t, uint8_t = DEC) {}
+    //     void println(uint64_t, uint8_t = DEC) {}
+    //     void print(uint64_t, uint8_t = DEC) {}
+    // #endif
+    //
     size_t printf(const char *format, ...);
-//     int printf(const __FlashStringHelper *format, ...);
+    //     int printf(const __FlashStringHelper *format, ...);
+private:
+    bool mIsInitialized = false;
 };
 
 #endif /* klangstrom_arduino_proxy_serial_h */

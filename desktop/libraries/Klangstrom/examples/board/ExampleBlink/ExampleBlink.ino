@@ -20,10 +20,10 @@ void setup() {
 }
 
 void loop() {
-    led(LED_00, true);          // turn LED_00 on ( `true` is ON )
+    LED(LED_00, LED_ON);        // turn LED_00 on 
     mVCO.set_amplitude(0.25);   // set amplitude to 25%
     delay(1000);                // wait for a second
-    led(LED_00, false);         // turn LED_00 off ( `false` is OFF )
+    LED(LED_00, LED_OFF);       // turn LED_00 off 
     mVCO.set_amplitude(0.0);    // set amplitude to 0%
     delay(1000);                // wait for a second
 }

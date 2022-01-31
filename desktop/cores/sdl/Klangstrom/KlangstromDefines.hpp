@@ -20,28 +20,28 @@
 #endif
 
 #ifndef KLANG_AUDIO_RATE
-#define KLANG_AUDIO_RATE                  48000
+#define KLANG_AUDIO_RATE 48000
 #ifdef DEBUG_SHOW_DEFAULT_WARNINGS
 #warning setting KLANG_AUDIO_RATE to default value: 48000
 #endif
 #endif
 
 #ifndef KLANG_AUDIO_BLOCKS
-#define KLANG_AUDIO_BLOCKS                32
+#define KLANG_AUDIO_BLOCKS 32
 #ifdef DEBUG_SHOW_DEFAULT_WARNINGS
 #warning setting KLANG_AUDIO_BLOCKS to default value: 32
 #endif
 #endif
 
 #ifndef KLANG_SAMPLES_PER_AUDIO_BLOCK
-#define KLANG_SAMPLES_PER_AUDIO_BLOCK     512
+#define KLANG_SAMPLES_PER_AUDIO_BLOCK 512
 #ifdef DEBUG_SHOW_DEFAULT_WARNINGS
 #warning setting KLANG_SAMPLES_PER_AUDIO_BLOCK to default value: 512
 #endif
 #endif
 
 #ifndef KLANG_SIGNAL_TYPE
-#define KLANG_SIGNAL_TYPE                 SIGNAL_TYPE_FLOAT
+#define KLANG_SIGNAL_TYPE SIGNAL_TYPE_FLOAT
 #ifdef DEBUG_SHOW_DEFAULT_WARNINGS
 #warning setting KLANG_SIGNAL_TYPE to default value: SIGNAL_TYPE_FLOAT
 #endif
@@ -73,7 +73,7 @@ namespace klangstrom {
 
     // @todo(add payload description as comment. see `EVENT_ENCODER_ROTATE_XX`)
 
-    //                      EVENT TYPE                                  // PAYLOAD
+    //                      EVENT TYPE                    // PAYLOAD
 
     static const EVENT_TYPE EVENT_RESERVED_01    = 0x00;
     static const EVENT_TYPE EVENT_RESERVED_02    = 0x01;
@@ -87,18 +87,21 @@ namespace klangstrom {
 
     /* --- EVENT_TYPE (PERIPHERALS) --- */
 
-    static const EVENT_TYPE EVENT_ENCODER_ROTATE          = 0x09;  // [INDEX,TICK,PREVIOUS_TICK]
+    static const EVENT_TYPE EVENT_ENCODER_ROTATED         = 0x09;  // [INDEX,TICK,PREVIOUS_TICK]
     static const EVENT_TYPE EVENT_ENCODER_BUTTON_PRESSED  = 0x0A;  // [INDEX]
     static const EVENT_TYPE EVENT_ENCODER_BUTTON_RELEASED = 0x0B;  // [INDEX]
 
     /* --- EVENT_DATA LOCATIONS + VALUES (PERIPHERALS) --- */
 
-    static const EVENT_DATA INDEX         = 0x00;
-    static const EVENT_DATA TICK          = 0x01;
-    static const EVENT_DATA PREVIOUS_TICK = 0x02;
-    static const EVENT_DATA ENCODER_00    = 0x00;
-    static const EVENT_DATA ENCODER_01    = 0x01;
-    static const EVENT_DATA ENCODER_02    = 0x02;
+    static const EVENT_DATA INDEX                         = 0x00;
+    static const EVENT_DATA TICK                          = 0x01;
+    static const EVENT_DATA PREVIOUS_TICK                 = 0x02;
+    static const EVENT_DATA DELTA                         = 0x03;
+    static const EVENT_DATA ENCODER_ROTATED_NUM_LOCATIONS = 0x04;
+    static const EVENT_DATA ENCODER_BUTTON_NUM_LOCATIONS  = 0x01;
+    static const EVENT_DATA ENCODER_00                    = 0x00;
+    static const EVENT_DATA ENCODER_01                    = 0x01;
+    static const EVENT_DATA ENCODER_02                    = 0x02;
 
     /* --- EVENT_DATA LOCATIONS + VALUES (HID) --- */
 
@@ -129,7 +132,7 @@ namespace klangstrom {
     static const EVENT_DATA NUMBER   = 0x01;
     static const EVENT_DATA VALUE    = 0x02;
     static const EVENT_DATA PROG_NUM = 0x01;
-}
+}  // namespace klangstrom
 
 /**
  * this block defines constants for `data_transmit` + `data_receive` operations
@@ -141,7 +144,7 @@ namespace klangstrom {
     static const DATA_PERIPHERAL_TYPE SERIAL_00              = 0x02;
     static const DATA_PERIPHERAL_TYPE SERIAL_01              = 0x03;
     static const DATA_PERIPHERAL_TYPE SERIAL_02              = 0x04;
-}
+}  // namespace klangstrom
 
 /* --- OSC_ADDRESS_PATTERNS --- */
 
@@ -154,7 +157,7 @@ namespace klangstrom {
     static const char KLANG_OSC_MIDI_IN[]  = "/klang/midi_in";
     static const char KLANG_OSC_MIDI_OUT[] = "/klang/midi_out";
     static const char KLANG_OSC_SIM[]      = "/klang/sim";
-}
+}  // namespace klangstrom
 
 #ifndef KLANG_OSC_TRANSMIT_ADDRESS
 #define KLANG_OSC_TRANSMIT_ADDRESS "224.0.0.1"

@@ -29,7 +29,9 @@ Klangstrom.build.extra_flags=-D{build.product_line} {build.enable_usb} {build.xS
 Klangstrom.menu.pnum.KLST_SHEEP=KLST_SHEEP(STM32H743VIT)
 Klangstrom.menu.pnum.KLST_SHEEP.node=KLST_SHEEP
 Klangstrom.menu.pnum.KLST_SHEEP.upload.maximum_size=2097152
-Klangstrom.menu.pnum.KLST_SHEEP.upload.maximum_data_size=524288
+#Klangstrom.menu.pnum.KLST_SHEEP.upload.maximum_data_size=524288
+# (RAM_D1+RAM_D2+RAM_D3) = (512+288+64)*1024 = 884736
+Klangstrom.menu.pnum.KLST_SHEEP.upload.maximum_data_size=884736
 Klangstrom.menu.pnum.KLST_SHEEP.build.mcu=cortex-m7
 Klangstrom.menu.pnum.KLST_SHEEP.build.flags.fp=-mfpu=fpv5-d16 -mfloat-abi=hard
 Klangstrom.menu.pnum.KLST_SHEEP.build.board=KLST_SHEEP
@@ -86,15 +88,15 @@ Klangstrom.menu.audioblock.64=64 samples
 Klangstrom.menu.audioblock.64.build.flags.audioblock=64
 
 # Upload menu
-Klangstrom.menu.upload_method.dfuMethod=STM32CubeProgrammer (DFU)
-Klangstrom.menu.upload_method.dfuMethod.upload.protocol=2
-Klangstrom.menu.upload_method.dfuMethod.upload.options=-g
-Klangstrom.menu.upload_method.dfuMethod.upload.tool=stm32CubeProg
-
 Klangstrom.menu.upload_method.swdMethod=STM32CubeProgrammer (SWD)
 Klangstrom.menu.upload_method.swdMethod.upload.protocol=0
 Klangstrom.menu.upload_method.swdMethod.upload.options=-g
 Klangstrom.menu.upload_method.swdMethod.upload.tool=stm32CubeProg
+
+Klangstrom.menu.upload_method.dfuMethod=STM32CubeProgrammer (DFU)
+Klangstrom.menu.upload_method.dfuMethod.upload.protocol=2
+Klangstrom.menu.upload_method.dfuMethod.upload.options=-g
+Klangstrom.menu.upload_method.dfuMethod.upload.tool=stm32CubeProg
 
 ################################################################################
 # Serialx activation

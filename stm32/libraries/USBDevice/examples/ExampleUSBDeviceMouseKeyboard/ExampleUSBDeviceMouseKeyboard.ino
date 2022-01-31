@@ -25,7 +25,7 @@ void event_receive(const uint8_t event, const float* data) {
         case EVENT_ENCODER_BUTTON_RELEASED:
             transmit_keyboard_key_released();
             break;
-        case EVENT_ENCODER_ROTATE:
+        case EVENT_ENCODER_ROTATED:
             int mScale = 5;
             if (data[INDEX] == ENCODER_00) {
                 int mDelta = data[TICK] - data[PREVIOUS_TICK];

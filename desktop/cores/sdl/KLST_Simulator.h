@@ -95,11 +95,11 @@ public:
                         digitalWrite((uint32_t) mData[0], (int8_t)mData[1]);
                     }
                     break;
-                case EVENT_ENCODER_ROTATE:
+                case EVENT_ENCODER_ROTATED:
                     if (mLength == 3 && str_equals(msg.TypeTags(), "ifff")) {
-                        event_receive(EVENT_ENCODER_ROTATE, mData);
+                        event_receive(EVENT_ENCODER_ROTATED, mData);
                     } else {
-                        emit_message_error("EVENT_ENCODER_ROTATE", "ifff", msg);
+                        emit_message_error("EVENT_ENCODER_ROTATED", "ifff", msg);
                     }
                     break;
                 case EVENT_ENCODER_BUTTON_PRESSED:

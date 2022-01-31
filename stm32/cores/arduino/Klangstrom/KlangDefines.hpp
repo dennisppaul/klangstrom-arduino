@@ -63,6 +63,13 @@
 #define SIGNAL_TYPE_FLOAT     1
 #define SIGNAL_TYPE_INT16     2
 
+#ifndef KLST_ARCH_MCU
+#define KLST_ARCH_MCU 1
+#endif
+#ifndef KLST_ARCH_CPU
+#define KLST_ARCH_CPU 2
+#endif
+
 /* --- TOOLS --- */
 
 #define PPQN              24

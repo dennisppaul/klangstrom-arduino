@@ -77,7 +77,6 @@ namespace klang {
                     }
                 }
 
-                const float mInverseSigCounter = 1.0 / mSignalInputCounter;
                 for (uint16_t i = 0; i < KLANG_SAMPLES_PER_AUDIO_BLOCK; ++i) {
                     float mSumL = 0.0;
                     float mSumR = 0.0;
@@ -90,8 +89,8 @@ namespace klang {
                             mSumR += s * pR;
                         }
                     }
-                    mBlockData_CH_OUT_SIGNAL_LEFT[i]  = mSumL * mInverseSigCounter;
-                    mBlockData_CH_OUT_SIGNAL_RIGHT[i] = mSumR * mInverseSigCounter;
+                    mBlockData_CH_OUT_SIGNAL_LEFT[i]  = mSumL * fMasterVolume;
+                    mBlockData_CH_OUT_SIGNAL_RIGHT[i] = mSumR * fMasterVolume;
                 }
 
                 for (uint8_t i = 0; i < mNumberOfChannels; ++i) {
@@ -121,6 +120,14 @@ namespace klang {
                     memset(pAudioBlock, 0.0, KLANG_SAMPLES_PER_AUDIO_BLOCK * sizeof(SIGNAL_TYPE));
                 }
             }
+        }
+
+        void set_master(SIGNAL_TYPE pValue) {
+            fMasterVolume = pValue;
+        }
+
+        SIGNAL_TYPE get_master() {
+            return fMasterVolume;
         }
 
         void set_mix(uint8_t pChannel, SIGNAL_TYPE pValue) {
@@ -160,6 +167,7 @@ namespace klang {
             SIGNAL_TYPE pan;
         };
         vector<MixConnectionStruct> mConnection_CH_IN_SIGNAL_and_mix;
+        SIGNAL_TYPE                 fMasterVolume = 1.0;
 
         void add_channel(uint32_t pChannel, Connection* pConnection) {
             if (pChannel >= mConnection_CH_IN_SIGNAL_and_mix.size()) {

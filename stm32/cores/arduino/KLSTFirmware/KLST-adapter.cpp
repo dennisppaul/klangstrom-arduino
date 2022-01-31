@@ -1,3 +1,22 @@
+/*
+ * Klangstrom
+ *
+ * This file is part of the *wellen* library (https://github.com/dennisppaul/wellen).
+ * Copyright (c) 2022 Dennis P Paul.
+ *
+ * This library is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, version 3.
+ *
+ * This library is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
+
 #include "Arduino.h"
 #include "KlangstromApplicationArduino.h"
 #include "KlangstromApplicationInterfaceArduino.h"
@@ -59,15 +78,18 @@ uint32_t       mKLSTBeatCounter          = 0;
 uint32_t       mKLSTBeatIntervalDuration = 1000000 / 2;
 
 /* encoders */
-
-static int16_t mKLSTENCODER_00TickCount   = 0;
-static int16_t mKLSTENCODER_01TickCount   = 0;
+#define KLST_ENCODERS_OMIT_ROTATION_EVENTS
+static int16_t mEncoder_00TickCountPrevious = 0;
+static bool    mEncoder_00ButtonState       = true;
+static bool    mEncoder_00ToggleOmitEvent   = true;
+static int16_t mEncoder_01TickCountPrevious = 0;
+static bool    mEncoder_01ButtonState       = true;
+static bool    mEncoder_01ToggleOmitEvent   = true;
 #ifdef ENCODER_02_TIMER
-static int16_t mKLSTENCODER_02TickCount   = 0;
+static int16_t mEncoder_02TickCountPrevious = 0;
+static bool    mEncoder_02ButtonState       = true;
+static bool    mEncoder_02ToggleOmitEvent   = true;
 #endif
-static bool    mKLSTENCODER_00ButtonState = true;
-static bool    mKLSTENCODER_01ButtonState = true;
-static bool    mKLSTENCODER_02ButtonState = true;
 
 /* ----------------------------------------------------------------------------------------------------------------- */
 /* OPTIONS                                                                                                           */
@@ -124,25 +146,21 @@ void KLST_update_U_ID_serial() {
  */
 void KLST_ISH_pre_setup() {
     KLST_update_U_ID_serial();
+    KLST_BSP_init_LEDs();
     KLST_BSP_init_peripherals();
-
-    /* LEDs */
-    pinMode(LED_00, OUTPUT);
-    pinMode(LED_01, OUTPUT);
-    pinMode(LED_02, OUTPUT);
 
     /* encoder buttons */
     pinMode(ENCODER_00_BUTTON, INPUT);
     pinMode(ENCODER_01_BUTTON, INPUT);
-    #ifdef ENCODER_02_BUTTON
+#ifdef ENCODER_02_BUTTON
     pinMode(ENCODER_02_BUTTON, INPUT);
-    #endif
+#endif
     /* … and read initial button state at start up */
-    mKLSTENCODER_00ButtonState = digitalRead(ENCODER_00_BUTTON);
-    mKLSTENCODER_01ButtonState = digitalRead(ENCODER_01_BUTTON);
-    #ifdef ENCODER_02_BUTTON
-    mKLSTENCODER_02ButtonState = digitalRead(ENCODER_02_BUTTON);
-    #endif
+    mEncoder_00ButtonState = digitalRead(ENCODER_00_BUTTON);
+    mEncoder_01ButtonState = digitalRead(ENCODER_01_BUTTON);
+#ifdef ENCODER_02_BUTTON
+    mEncoder_02ButtonState = digitalRead(ENCODER_02_BUTTON);
+#endif
 
     /* start UART interrupts */
     if (mKLSTOptionEnableSerialPorts) {
@@ -180,11 +198,11 @@ void KLST_ISH_post_setup() {
     if (mKLSTOptionEnableEncoders) {
         KLST_BSP_init_encoders();
 
-        mKLSTENCODER_00TickCount = (int16_t)ENCODER_00_TIMER->CNT;
-        mKLSTENCODER_01TickCount = (int16_t)ENCODER_01_TIMER->CNT;
-        #ifdef ENCODER_02_TIMER
-        mKLSTENCODER_02TickCount = (int16_t)ENCODER_02_TIMER->CNT;
-        #endif
+        mEncoder_00TickCountPrevious = (int16_t)ENCODER_00_TIMER->CNT;
+        mEncoder_01TickCountPrevious = (int16_t)ENCODER_01_TIMER->CNT;
+#ifdef ENCODER_02_TIMER
+        mEncoder_02TickCountPrevious = (int16_t)ENCODER_02_TIMER->CNT;
+#endif
     }
 
     /* beat */
@@ -214,90 +232,147 @@ void KLST_ISH_handle_encoders() {
 }
 
 void KLST_ISH_handle_encoder_rotations() {
-    const int16_t mEncoder_00TickCount = (int16_t)ENCODER_00_TIMER->CNT;
-    if (mKLSTENCODER_00TickCount != mEncoder_00TickCount) {
-        const float f[3] = {ENCODER_00, (float)mEncoder_00TickCount, (float)mKLSTENCODER_00TickCount};
-        event_receive(EVENT_ENCODER_ROTATE, f);
-        mKLSTENCODER_00TickCount = mEncoder_00TickCount;
+    /* --- ENCODER_00 --- */
+    const int16_t mEncoder_00TickCountCurrent = (int16_t)ENCODER_00_TIMER->CNT;
+    if (mEncoder_00TickCountPrevious != mEncoder_00TickCountCurrent) {
+        EventEncoderRotated e;
+        e.index          = ENCODER_00;
+        e.ticks          = (float)mEncoder_00TickCountCurrent;
+        e.previous_ticks = (float)mEncoder_00TickCountPrevious;
+        e.delta          = e.ticks - e.previous_ticks;
+#ifdef KLST_ENCODERS_OMIT_ROTATION_EVENTS
+        mEncoder_00ToggleOmitEvent = !mEncoder_00ToggleOmitEvent;
+        if (mEncoder_00ToggleOmitEvent) {
+#endif
+            event_receive(EVENT_ENCODER_ROTATED, (float*)(&e));
+#ifdef KLST_ENCODERS_OMIT_ROTATION_EVENTS
+        }
+#endif
+        mEncoder_00TickCountPrevious = mEncoder_00TickCountCurrent;
     }
-    const int16_t mEncoder_01TickCount = (int16_t)ENCODER_01_TIMER->CNT;
-    if (mKLSTENCODER_01TickCount != mEncoder_01TickCount) {
-        const float f[3] = {ENCODER_01, (float)mEncoder_01TickCount, (float)mKLSTENCODER_01TickCount};
-        event_receive(EVENT_ENCODER_ROTATE, f);
-        mKLSTENCODER_01TickCount = mEncoder_01TickCount;
+    /* --- ENCODER_01 --- */
+    const int16_t mEncoder_01TickCountCurrent = (int16_t)ENCODER_01_TIMER->CNT;
+    if (mEncoder_01TickCountPrevious != mEncoder_01TickCountCurrent) {
+        EventEncoderRotated e;
+        e.index          = ENCODER_01;
+        e.ticks          = (float)mEncoder_01TickCountCurrent;
+        e.previous_ticks = (float)mEncoder_01TickCountPrevious;
+        e.delta          = e.ticks - e.previous_ticks;
+#ifdef KLST_ENCODERS_OMIT_ROTATION_EVENTS
+        mEncoder_01ToggleOmitEvent = !mEncoder_01ToggleOmitEvent;
+        if (mEncoder_01ToggleOmitEvent) {
+#endif
+            event_receive(EVENT_ENCODER_ROTATED, (float*)(&e));
+#ifdef KLST_ENCODERS_OMIT_ROTATION_EVENTS
+        }
+#endif
+        mEncoder_01TickCountPrevious = mEncoder_01TickCountCurrent;
     }
-    #ifdef ENCODER_02_TIMER
-    const int16_t mEncoder_02TickCount = (int16_t)ENCODER_02_TIMER->CNT;
-    if (mKLSTENCODER_02TickCount != mEncoder_02TickCount) {
-        const float f[3] = {ENCODER_02, (float)mEncoder_02TickCount, (float)mKLSTENCODER_02TickCount};
-        event_receive(EVENT_ENCODER_ROTATE, f);
-        mKLSTENCODER_02TickCount = mEncoder_02TickCount;
+    /* --- ENCODER_02 --- */
+#ifdef ENCODER_02_TIMER
+    const int16_t mEncoder_02TickCountCurrent = (int16_t)ENCODER_02_TIMER->CNT;
+    if (mEncoder_02TickCountPrevious != mEncoder_02TickCountCurrent) {
+        EventEncoderRotated e;
+        e.index          = ENCODER_02;
+        e.ticks          = (float)mEncoder_02TickCountCurrent;
+        e.previous_ticks = (float)mEncoder_02TickCountPrevious;
+        e.delta          = e.ticks - e.previous_ticks;
+#ifdef KLST_ENCODERS_OMIT_ROTATION_EVENTS
+        mEncoder_02ToggleOmitEvent = !mEncoder_02ToggleOmitEvent;
+        if (mEncoder_02ToggleOmitEvent) {
+#endif
+            event_receive(EVENT_ENCODER_ROTATED, (float*)(&e));
+#ifdef KLST_ENCODERS_OMIT_ROTATION_EVENTS
+        }
+#endif
+        mEncoder_02TickCountPrevious = mEncoder_02TickCountCurrent;
     }
-    #endif
+#endif
 }
 
 void KLST_ISH_handle_encoder_buttons() {
     bool mENCODER_00ButtonState = digitalRead(ENCODER_00_BUTTON);
-    if (mKLSTENCODER_00ButtonState != mENCODER_00ButtonState) {
-        const float f[1] = {ENCODER_00};
+    if (mEncoder_00ButtonState != mENCODER_00ButtonState) {
+        const float mData[ENCODER_BUTTON_NUM_LOCATIONS] = {ENCODER_00};
         if (mENCODER_00ButtonState) {
-            event_receive(EVENT_ENCODER_BUTTON_RELEASED, f);
+            event_receive(EVENT_ENCODER_BUTTON_RELEASED, mData);
         } else {
-            event_receive(EVENT_ENCODER_BUTTON_PRESSED, f);
+            event_receive(EVENT_ENCODER_BUTTON_PRESSED, mData);
         }
-        mKLSTENCODER_00ButtonState = mENCODER_00ButtonState;
+        mEncoder_00ButtonState = mENCODER_00ButtonState;
     }
     bool mENCODER_01ButtonState = digitalRead(ENCODER_01_BUTTON);
-    if (mKLSTENCODER_01ButtonState != mENCODER_01ButtonState) {
-        const float f[1] = {ENCODER_01};
+    if (mEncoder_01ButtonState != mENCODER_01ButtonState) {
+        const float mData[ENCODER_BUTTON_NUM_LOCATIONS] = {ENCODER_01};
         if (mENCODER_01ButtonState) {
-            event_receive(EVENT_ENCODER_BUTTON_RELEASED, f);
+            event_receive(EVENT_ENCODER_BUTTON_RELEASED, mData);
         } else {
-            event_receive(EVENT_ENCODER_BUTTON_PRESSED, f);
+            event_receive(EVENT_ENCODER_BUTTON_PRESSED, mData);
         }
-        mKLSTENCODER_01ButtonState = mENCODER_01ButtonState;
+        mEncoder_01ButtonState = mENCODER_01ButtonState;
     }
-    #ifdef ENCODER_02_BUTTON
+#ifdef ENCODER_02_BUTTON
     bool mENCODER_02ButtonState = digitalRead(ENCODER_02_BUTTON);
-    if (mKLSTENCODER_02ButtonState != mENCODER_02ButtonState) {
-        const float f[1] = {ENCODER_02};
+    if (mEncoder_02ButtonState != mENCODER_02ButtonState) {
+        const float mData[ENCODER_BUTTON_NUM_LOCATIONS] = {ENCODER_02};
         if (mENCODER_02ButtonState) {
-            event_receive(EVENT_ENCODER_BUTTON_RELEASED, f);
+            event_receive(EVENT_ENCODER_BUTTON_RELEASED, mData);
         } else {
-            event_receive(EVENT_ENCODER_BUTTON_PRESSED, f);
+            event_receive(EVENT_ENCODER_BUTTON_PRESSED, mData);
         }
-        mKLSTENCODER_02ButtonState = mENCODER_02ButtonState;
-    }
-    #endif
-}
-void KLST_ISH_handleSerialPorts() {
-#ifdef HAL_UART_MODULE_ENABLED
-    {
-        const uint8_t mLength = KLST_SERIAL_00.available();
-        if (mLength > 0) {
-            uint8_t mData[mLength];
-            KLST_SERIAL_00.readBytes(mData, mLength);
-            data_receive(SERIAL_00, mData, mLength);
-        }
-    }
-    {
-        const uint8_t mLength = KLST_SERIAL_01.available();
-        if (mLength > 0) {
-            uint8_t mData[mLength];
-            KLST_SERIAL_01.readBytes(mData, mLength);
-            data_receive(SERIAL_01, mData, mLength);
-        }
-    }
-#ifdef KLST_SERIAL_02
-    {
-        const uint8_t mLength = KLST_SERIAL_02.available();
-        if (mLength > 0) {
-            uint8_t mData[mLength];
-            KLST_SERIAL_02.readBytes(mData, mLength);
-            data_receive(SERIAL_02, mData, mLength);
-        }
+        mEncoder_02ButtonState = mENCODER_02ButtonState;
     }
 #endif
+}
+
+static void handle_serial_data_receive(HardwareSerial& pSerial, DATA_PERIPHERAL_TYPE pPeripheral) {
+    // @TOOD(maybe use a fixed static buffer?)
+    uint8_t mLength;
+    while ((mLength = pSerial.available()) > 0) {
+        uint8_t mData[mLength];
+        size_t  mBytesRead = pSerial.readBytes(mData, mLength);
+        if (mBytesRead > 0) {
+            data_receive(pPeripheral, mData, mBytesRead);
+        }
+    }
+}
+
+void KLST_ISH_handleSerialPorts() {
+#ifdef HAL_UART_MODULE_ENABLED
+    handle_serial_data_receive(KLST_SERIAL_00, SERIAL_00);
+    handle_serial_data_receive(KLST_SERIAL_01, SERIAL_01);
+#ifdef KLST_SERIAL_02
+    handle_serial_data_receive(KLST_SERIAL_02, SERIAL_02);
+#endif
+//     {
+//         // @TOOD(maybe use a fixed static buffer?)
+//         uint8_t mLength;
+//         while ((mLength = KLST_SERIAL_00.available()) > 0) {
+//             uint8_t mData[mLength];
+//             size_t  mBytesRead = KLST_SERIAL_00.readBytes(mData, mLength);
+//             if (mBytesRead > 0) {
+//                 data_receive(SERIAL_00, mData, mBytesRead);
+//             }
+//         }
+//     }
+//     {
+//         const uint8_t mLength = KLST_SERIAL_01.available();
+//         if (mLength > 0) {
+//             uint8_t mData[mLength];
+//             KLST_SERIAL_01.readBytes(mData, mLength);
+//             data_receive(SERIAL_01, mData, mLength);
+//         }
+//     }
+// #ifdef KLST_SERIAL_02
+//     {
+//         const uint8_t mLength = KLST_SERIAL_02.available();
+//         if (mLength > 0) {
+//             uint8_t mData[mLength];
+//             KLST_SERIAL_02.readBytes(mData, mLength);
+//             data_receive(SERIAL_02, mData, mLength);
+//         }
+//     }
+// #endif
 #endif
 }
 
@@ -450,8 +525,8 @@ int16_t klangstrom::ID() {
 }
 
 void klangstrom::begin_serial_debug(bool pWaitForSerial, uint32_t pBaudRate) {
-#if defined(USBCON) && defined(USBD_USE_CDC)
     Serial.begin(pBaudRate);
+#if defined(USBCON) && defined(USBD_USE_CDC)
     if (pWaitForSerial) {
         static const uint32_t M_ITERATION_GUARD = 180000000;
         uint32_t              mIterationGuard   = 0;
@@ -499,34 +574,36 @@ void klangstrom::option(uint8_t pOption, float pValue) {
     }
 }
 
-void klangstrom::led(uint8_t pLED, bool pState) {
-    // @todo(maybe replace with `KLST_LED_00`)
-    switch (pLED) {
-        case LED_00:
-            digitalWrite(LED_00, pState ? HIGH : LOW);
+void klangstrom::LED(uint16_t pLED, uint8_t pState) {
+    switch (pState) {
+        case LED_OFF:
+        case LED_ON:
+            digitalWrite(pLED, pState ? HIGH : LOW);
             break;
-        case LED_01:
-            digitalWrite(LED_01, pState ? HIGH : LOW);
-            break;
-        case LED_02:
-            digitalWrite(LED_02, pState ? HIGH : LOW);
+        case LED_TOGGLE:
+            digitalWrite(pLED, !digitalRead(pLED));
             break;
     }
 }
 
-void klangstrom::led_toggle(uint8_t pLED) {
-    // @todo(maybe replace with `KLST_LED_00`)
-    switch (pLED) {
-        case LED_00:
-            digitalWrite(LED_00, !digitalRead(LED_00));
-            break;
-        case LED_01:
-            digitalWrite(LED_01, !digitalRead(LED_01));
-            break;
-        case LED_02:
-            digitalWrite(LED_02, !digitalRead(LED_02));
-            break;
-    }
+/**
+ * @deprecated use `LED(uint16_t pLED, uint8_t pState)` instead
+ * @brief
+ *
+ * @param pLED
+ * @param pState
+ */
+void klangstrom::led(uint16_t pLED, bool pState) {
+    digitalWrite(pLED, pState ? HIGH : LOW);
+}
+
+/**
+ * @deprecated use `LED(uint16_t pLED, uint8_t pState)` instead
+ * @brief
+ *
+ */
+void klangstrom::led_toggle(uint16_t pLED) {
+    digitalWrite(pLED, !digitalRead(pLED));
 }
 
 void klangstrom::beats_per_minute(float pBPM) {
@@ -544,11 +621,13 @@ void klangstrom::beats_per_minute_ms(uint32_t pMicroSeconds) {
 bool klangstrom::button_state(uint8_t pButton) {
     switch (pButton) {
         case KLST_BUTTON_ENCODER_00:
-            return !mKLSTENCODER_00ButtonState;
+            return !mEncoder_00ButtonState;
         case KLST_BUTTON_ENCODER_01:
-            return !mKLSTENCODER_01ButtonState;
+            return !mEncoder_01ButtonState;
+#ifdef ENCODER_02_TIMER
         case KLST_BUTTON_ENCODER_02:
-            return !mKLSTENCODER_02ButtonState;
+            return !mEncoder_02ButtonState;
+#endif
         case KLST_BUTTON_PROGRAMMER:
             return !digitalRead(BUTTON_PROGRAMMER);
     }

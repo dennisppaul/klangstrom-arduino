@@ -163,86 +163,6 @@
 #define NUM_DUALPAD_PINS        2
 #define NUM_ANALOG_INPUTS       16
 
-/*
-// On-board LED pin number
-#ifndef LED_BUILTIN
-  #define LED_BUILTIN           PNUM_NOT_DEFINED
-#endif
-
-// On-board user button
-#ifndef USER_BTN
-  #define USER_BTN              PNUM_NOT_DEFINED
-#endif
-
-// SPI definitions
-#ifndef PIN_SPI_SS
-  #define PIN_SPI_SS            PA4
-#endif
-#ifndef PIN_SPI_SS1
-  #define PIN_SPI_SS1           PA15
-#endif
-#ifndef PIN_SPI_SS2
-  #define PIN_SPI_SS2           PNUM_NOT_DEFINED
-#endif
-#ifndef PIN_SPI_SS3
-  #define PIN_SPI_SS3           PNUM_NOT_DEFINED
-#endif
-#ifndef PIN_SPI_MOSI
-  #define PIN_SPI_MOSI          PA7
-#endif
-#ifndef PIN_SPI_MISO
-  #define PIN_SPI_MISO          PA6
-#endif
-#ifndef PIN_SPI_SCK
-  #define PIN_SPI_SCK           PA5
-#endif
-
-// I2C definitions
-#ifndef PIN_WIRE_SDA
-  #define PIN_WIRE_SDA          PB7
-#endif
-#ifndef PIN_WIRE_SCL
-  #define PIN_WIRE_SCL          PB6
-#endif
-
-// Timer Definitions
-// Use TIM6/TIM7 when possible as servo and tone don't need GPIO output pin
-#ifndef TIMER_TONE
-  #define TIMER_TONE            TIM6
-#endif
-#ifndef TIMER_SERVO
-  #define TIMER_SERVO           TIM7
-#endif
-
-// UART Definitions
-#ifndef SERIAL_UART_INSTANCE
-  #define SERIAL_UART_INSTANCE  4
-#endif
-
-// Default pin used for generic 'Serial' instance
-// Mandatory for Firmata
-#ifndef PIN_SERIAL_RX
-  #define PIN_SERIAL_RX         PA1
-#endif
-#ifndef PIN_SERIAL_TX
-  #define PIN_SERIAL_TX         PA0
-#endif
-
-// Extra HAL modules
-#if !defined(HAL_DAC_MODULE_DISABLED)
-  #define HAL_DAC_MODULE_ENABLED
-#endif
-#if !defined(HAL_ETH_MODULE_DISABLED)
-  #define HAL_ETH_MODULE_ENABLED
-#endif
-#if !defined(HAL_QSPI_MODULE_DISABLED)
-  #define HAL_QSPI_MODULE_ENABLED
-#endif
-#if !defined(HAL_SD_MODULE_DISABLED)
-  #define HAL_SD_MODULE_ENABLED
-#endif
-*/
-
 /*----------------------------------------------------------------------------
  *        Arduino objects - C++ only
  *----------------------------------------------------------------------------*/
@@ -331,10 +251,10 @@
 #define LED_13                          PA7
 #define LED_14                          PA6
 #define LED_15                          PA2
-#define SD_CARD_CS                      PB12
-#define SD_CARD_MISO                    PC2
-#define SD_CARD_MOSI                    PC3
-#define SD_CARD_SCK                     PB13
+#define SDCARD_SPI_CS                   PB12
+#define SDCARD_SPI_MISO                 PC2
+#define SDCARD_SPI_MOSI                 PC3
+#define SDCARD_SPI_SCK                  PB13
 #define SDCARD_CARD_DETECT              PC1
 #define SERIAL_00_RX                    PE7
 #define SERIAL_00_TX                    PE8
@@ -342,7 +262,8 @@
 #define SERIAL_01_TX                    PE1
 #define SERIAL_DEBUG_RX                 PD6
 #define SERIAL_DEBUG_TX                 PD5
-#define SPI_DISPLAY_CS                  PA15
+#define SPI_DISPLAY_CS                  PA15_ALT1
+// #define SPI_DISPLAY_CS                  PA15
 #define SPI_DISPLAY_MISO                PC11
 #define SPI_DISPLAY_MOSI                PC12
 #define SPI_DISPLAY_REGISTER_SELECT     PD0
@@ -362,7 +283,7 @@
 
 /* -------------------------------------------------------------------------- */
 /* --- KLST ----------------------------------------------------------------- */
-/* --- HAL ------------------------------------------------------------------- */
+/* --- HAL ------------------------------------------------------------------ */
 /* -------------------------------------------------------------------------- */
 
 #define D_CACHE_DISABLED
@@ -443,6 +364,7 @@
 /* --- PERIPHERALS ---------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 
+#define KLST_NUM_LEDS       16
 #define LED_BUILTIN         LED_00
 #define USER_BTN            ENCODER_00_BUTTON
 #define BUTTON_PROGRAMMER   BUTTON_PRG
@@ -481,7 +403,7 @@
 /* --- SPI ------------------------------------------------------------------ */
 
 #ifndef PIN_SPI_SS
-  #define PIN_SPI_SS        SD_CARD_CS
+  #define PIN_SPI_SS        SPI_USR_CS
 #endif
 #ifndef PIN_SPI_SS1
   #define PIN_SPI_SS1       PNUM_NOT_DEFINED
@@ -493,15 +415,19 @@
   #define PIN_SPI_SS3       PNUM_NOT_DEFINED
 #endif
 #ifndef PIN_SPI_MOSI
-  #define PIN_SPI_MOSI      SD_CARD_MOSI
+  #define PIN_SPI_MOSI      SPI_USR_MOSI
 #endif
 #ifndef PIN_SPI_MISO
-  #define PIN_SPI_MISO      SD_CARD_MISO
+  #define PIN_SPI_MISO      SPI_USR_MISO
 #endif
 #ifndef PIN_SPI_SCK
-  #define PIN_SPI_SCK       SD_CARD_SCK
+  #define PIN_SPI_SCK       SPI_USR_SCK
 #endif
 
+/* --- SdFat --- */
+
+#define SPI_DRIVER_SELECT 3
+#define ENABLE_DEDICATED_SPI 1 // set to 0 save memory
 
 /* --- I2C ------------------------------------------------------------------ */
 
@@ -514,8 +440,8 @@
 
 /* --- TIMER ---------------------------------------------------------------- */
 
-#define ENCODER_00_TIMER    TIM1
-#define ENCODER_01_TIMER    TIM2
+#define ENCODER_01_TIMER    TIM1
+#define ENCODER_00_TIMER    TIM2
 #define KLST_BEAT_TIMER     TIM6
 #define KLST_BUTTON_PRG_IT  TIM17
 

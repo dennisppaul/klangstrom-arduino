@@ -1,9 +1,21 @@
-//
-//  Klang.hpp
-//  Klang – a node+text-based synthesizer library
-//
-//
-//
+/*
+ * Klang – a node+text-based synthesizer library
+ *
+ * This file is part of the *wellen* library (https://github.com/dennisppaul/wellen).
+ * Copyright (c) 2022 Dennis P Paul.
+ *
+ * This library is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, version 3.
+ *
+ * This library is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
 
 #ifndef Klang_hpp
 #define Klang_hpp
@@ -71,6 +83,13 @@
 #ifdef DEBUG_SHOW_DEFAULT_WARNINGS
 #warning setting KLANG_SIGNAL_TYPE to default value: SIGNAL_TYPE_FLOAT
 #endif
+#endif
+
+#ifndef KLANG_HEAP_ALLOCATION
+#define KLANG_HEAP_ALLOCATION 0
+#endif
+#if KLANG_HEAP_ALLOCATION > 0
+#define KLANG_USE_HEAP_ALLOCATION
 #endif
 
 /* --- SIGNAL --- */

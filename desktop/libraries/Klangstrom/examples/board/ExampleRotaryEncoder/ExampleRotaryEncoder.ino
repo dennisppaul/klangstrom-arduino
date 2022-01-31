@@ -23,7 +23,8 @@ float mOSCFreq[NUM_OF_OSC];
 float mBaseFreq = 220;
 
 void setup() {
-    begin_serial_debug(true);
+    Serial.begin(115200);
+    Serial.println("ExampleRotaryEncoder");
 
     Klang::lock();
 
@@ -66,7 +67,7 @@ void event_receive(const uint8_t event, const float* data) {
         case EVENT_ENCODER_BUTTON_RELEASED:
             mADSR.stop();
             break;
-        case EVENT_ENCODER_ROTATE:
+        case EVENT_ENCODER_ROTATED:
             if (data[INDEX] == ENCODER_00) {
                 change_freq(0, data[TICK] - data[PREVIOUS_TICK]);
             } else if (data[INDEX] == ENCODER_01) {
@@ -85,7 +86,7 @@ void change_freq(uint8_t i, float mFreqChange) {
 
 void print_encoder_state(const uint8_t event, const float* data) {
     /* print encoder states + toggle LEDs */
-    if (event == EVENT_ENCODER_ROTATE) {
+    if (event == EVENT_ENCODER_ROTATED) {
         if (data[INDEX] == ENCODER_00) {
             Serial.print("ENCODER_00 ROTATION               : ");
             Serial.print(data[TICK]);

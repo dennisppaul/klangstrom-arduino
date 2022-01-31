@@ -78,7 +78,7 @@ namespace klang {
                     }
                 }
 
-                const float mInverseSigCounter = 1.0 / mSignalInputCounter;
+                // const float mInverseSigCounter = 1.0 / mSignalInputCounter;
                 for (uint16_t i = 0; i < KLANG_SAMPLES_PER_AUDIO_BLOCK; ++i) {
                     float sum = 0.0;
                     for (uint8_t j = 0; j < mNumberOfChannels; ++j) {
@@ -87,7 +87,8 @@ namespace klang {
                             sum += s;
                         }
                     }
-                    pAudioBlock[i] = sum * mInverseSigCounter;
+                    pAudioBlock[i] = sum;
+                    // pAudioBlock[i] = sum * mInverseSigCounter;
                 }
 
                 for (uint8_t i = 0; i < mNumberOfChannels; ++i) {

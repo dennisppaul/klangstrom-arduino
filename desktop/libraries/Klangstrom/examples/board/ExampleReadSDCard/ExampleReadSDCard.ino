@@ -13,6 +13,15 @@
     | SCK     | SPI_SCK  |
     | CS      | GPIO_00  |
 
+    pin connection map for KLST_SHEEPv0.1 on :
+
+    | SD_CARD | KLST         |
+    |---------|--------------|
+    | MOSI    | SPI_USR_MOSI |
+    | MISO    | SPI_USR_MISO |
+    | SCK     | SPI_USR_SCK  |
+    | CS      | GPIO_00   |
+
 */
 
 #include <SPI.h>

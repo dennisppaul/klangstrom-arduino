@@ -32,14 +32,13 @@ extern DMA_HandleTypeDef hdma_spi2_tx;
 extern TIM_HandleTypeDef htim1;
 extern TIM_HandleTypeDef htim2;
 
-void SystemClock_Config(void);
-void PeriphCommonClock_Config(void);
 void MX_GPIO_Init(void);
 void MX_DMA_Init(void);
 void MX_I2C1_Init(void);
 void MX_SAI1_Init(void);
 void MX_TIM1_Init(void);
 void MX_TIM2_Init(void);
+void MX_SPI3_Init(void);
 
 /* ----------------------------------------------------------------------------------------------------------------- */
 /* ERROR HANDLING                                                                                                    */
@@ -50,20 +49,45 @@ uint8_t KLST_BSP_error_code() {
     return mErrorCode;
 }
 
-/* ----------------------------------------------------------------------------------------------------------------- */
-/* ENCODERS                                                                                                          */
-/* ----------------------------------------------------------------------------------------------------------------- */
+void KLST_BSP_init_LEDs() {
+    const static int mLEDs[KLST_NUM_LEDS] = {
+        LED_00,
+        LED_01,
+        LED_02,
+        LED_03,
+        LED_04,
+        LED_05,
+        LED_06,
+        LED_07,
+        LED_08,
+        LED_09,
+        LED_10,
+        LED_11,
+        LED_12,
+        LED_13,
+        LED_14,
+        LED_15};
+    /* LEDs */
+    for (uint8_t i = 0; i < KLST_NUM_LEDS; i++) {
+        pinMode(mLEDs[i], OUTPUT);
+    }
+}
 
 void KLST_BSP_init_peripherals() {
     MX_GPIO_Init();
     MX_DMA_Init();
     MX_I2C1_Init();
     MX_SAI1_Init();
+    MX_SPI3_Init();
 }
 
+/* ----------------------------------------------------------------------------------------------------------------- */
+/* ENCODERS                                                                                                          */
+/* ----------------------------------------------------------------------------------------------------------------- */
+
 void KLST_BSP_init_encoders() {
-    MX_TIM1_Init();
-    MX_TIM2_Init();
+    MX_TIM1_Init();  // ENCODER_01
+    MX_TIM2_Init();  // ENCODER_00
 
     HAL_TIM_Encoder_Start(&htim1, TIM_CHANNEL_ALL);
     HAL_TIM_Encoder_Start(&htim2, TIM_CHANNEL_ALL);
@@ -86,13 +110,13 @@ void KLST_BSP_deinit_encoders() {
 
 void KLST_BSP_configure_audio_codec() {
     /*
-    * POWER UP SEQUENCE
-    * - Switch on power supplies. By default the WM8731 is in Standby Mode, the DAC is digitally muted and the Audio Interface and Outputs are all OFF.
-    * - Set all required bits in the Power Down register (0Ch) to ‘0’; EXCEPT the OUTPD bit, this should be set to ‘1’ (Default).
-    * - Set required values in all other registers except 12h (Active).
-    * - Set the ‘Active’ bit in register 12h.
-    * - The last write of the sequence should be setting OUTPD to ‘0’ (active) in register 0Ch, enabling the DAC signal path, free of any significant power-up noise.
-    */
+     * POWER UP SEQUENCE
+     * - Switch on power supplies. By default the WM8731 is in Standby Mode, the DAC is digitally muted and the Audio Interface and Outputs are all OFF.
+     * - Set all required bits in the Power Down register (0Ch) to ‘0’; EXCEPT the OUTPD bit, this should be set to ‘1’ (Default).
+     * - Set required values in all other registers except 12h (Active).
+     * - Set the ‘Active’ bit in register 12h.
+     * - The last write of the sequence should be setting OUTPD to ‘0’ (active) in register 0Ch, enabling the DAC signal path, free of any significant power-up noise.
+     */
     //	WM8731_write(WM8731_RESET_REGISTER, 0b00000000);
     WM8731_write(WM8731_POWER_DOWN_CONTROL, 0b00010000);
     WM8731_write(WM8731_ANALOG_AUDIO_PATH_CONTROL, 0b00000000);
@@ -121,8 +145,8 @@ void KLST_BSP_configure_audio_codec() {
  */
 
 #define I2S_BUFFER_SIZE (KLANG_SAMPLES_PER_AUDIO_BLOCK * 2)
-uint32_t __attribute__((section(".dmadata"))) dma_TX_buffer[I2S_BUFFER_SIZE];
-uint32_t __attribute__((section(".dmadata"))) dma_RX_buffer[I2S_BUFFER_SIZE];
+uint32_t  dma_TX_buffer[I2S_BUFFER_SIZE] __attribute__((section(".dma_buffer")));
+uint32_t  dma_RX_buffer[I2S_BUFFER_SIZE] __attribute__((section(".dma_buffer")));
 uint32_t *mCurrentRXBuffer;
 
 void KLST_BSP_start_audio_codec() {
@@ -257,4 +281,3 @@ void KLST_BSP_shutdown() {
 #ifdef __cplusplus
 }
 #endif
-

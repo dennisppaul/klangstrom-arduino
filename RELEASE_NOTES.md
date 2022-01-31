@@ -2,6 +2,16 @@
 
 ## 0.0.2
 
+- added option to select target board in emulator
+- LEDs can now be turned on, off or toggled from one function (`LED(ID,STATE)` where state can be `LED_ON`, `LED_OFF` or `LED_TOGGLE` )
+- added `TaskScheduler` to easily created time-based callbacks
+- added encoder support to emulator (SDL)
+- added WAV file parser ( e.g for SD Card )
+- added SD Card support to emulator (SDL)
+- added native SD Card support for KLST_SHEEP
+- added display support to emulator (SDL)
+- added native display support for KLST_SHEEP ( incl. drawing primitives, fonts and bitmaps )
+- added KLST_SHEEP board
 - added option to select sampling rate and audio block size in Arduino IDE
 - added `NodeFFT` to perform *Fast Fourier Transfom* on audio signals
 - added *Strom* to repository ( still WIP )
@@ -33,7 +43,7 @@
 - added application to examples ( drum machine + sequencer )
 - added documentation ( e.g node library )
 - fixed DFU mode ( USB peripherals had to be deinitialized before reset )
-- added desktop simulator (SDL)
+- added desktop emulator (SDL)
 - added extensions ( i.e reverb, vocoder + TTS )
 - cleaned up and improved examples
 

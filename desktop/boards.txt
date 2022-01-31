@@ -5,6 +5,7 @@ sdl.build.board=KLST_SDL
 sdl.build.core=sdl
 
 menu.upload_method=Upload method
+menu.board=Klangstrom Board
 menu.samplingrate=Sampling Rate
 menu.audioblock=Sample per Audio Block
 
@@ -34,3 +35,10 @@ sdl.menu.audioblock.128=128 samples
 sdl.menu.audioblock.128.build.flags.audioblock=128
 sdl.menu.audioblock.64=64 samples
 sdl.menu.audioblock.64.build.flags.audioblock=64
+
+sdl.menu.board.KLST_SHEEP=KLST_SHEEP ( 16 LEDs, 2 Encoders, Display, ... )
+sdl.menu.board.KLST_SHEEP.build.flags.board=2
+sdl.menu.board.KLST_TINY=KLST_TINY ( 3 LEDs, 3 Encoders, ... )
+sdl.menu.board.KLST_TINY.build.flags.board=1
+sdl.menu.board.KLST_CORE=KLST_CORE ( 3 LEDs, 3 Encoders, ... )
+sdl.menu.board.KLST_CORE.build.flags.board=0

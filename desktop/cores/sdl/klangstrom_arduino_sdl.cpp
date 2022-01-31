@@ -1,9 +1,21 @@
-//
-//  klangstrom_arduino_sdl.cpp
-//  Klang – a node+text-based synthesizer library
-//
-//
-//
+/*
+ * Klangstrom
+ *
+ * This file is part of the *wellen* library (https://github.com/dennisppaul/wellen).
+ * Copyright (c) 2022 Dennis P Paul.
+ *
+ * This library is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, version 3.
+ *
+ * This library is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
 
 #define KLST_SDL_USE_OSC
 #define KLST_SDL_USE_AUDIO_INPUT
@@ -30,9 +42,15 @@
 #endif
 
 /* KLST */
+#include "KLST_SDL-adapter.h"
+#include "KlangstromApplicationArduino.h"
+#include "KlangstromDisplayBSP_SDL.h"
+#include "klangstrom_arduino_debug.h"
+#include "klangstrom_arduino_proxy_encoder.h"
 #include "klangstrom_arduino_sdl.h"
 
-extern KLST_Simulator mSimulator;
+extern KLST_Simulator     mSimulator;
+KlangstromDisplayBSP_SDL *mDisplay_SDL;
 
 #define Q(x)       #x
 #define QUOTE(x)   Q(x)
@@ -40,48 +58,13 @@ extern KLST_Simulator mSimulator;
 
 /* KLST -------------------------------------------------------------------------------- */
 
-//@todo(move this to `KlangstromDefines`)
-
 #if defined(KLANG_TARGET_MCU)
 #define KLANG_NL "\n\r"
 #else
 #define KLANG_NL "\n"
 #endif
 
-#if (KLANG_DEBUG_LEVEL == 0)
-#define KLANG_LOG_ERR(...)
-#define KLANG_LOG(...)
-#define KLANG_LOG_SIM(...)
-#elif (KLANG_DEBUG_LEVEL == 1)
-#define KLANG_LOG_ERR(...) \
-    printf(__VA_ARGS__);   \
-    printf(KLANG_NL);
-#define KLANG_LOG(...)
-#define KLANG_LOG_SIM(...)
-#elif (KLANG_DEBUG_LEVEL == 2)
-#define KLANG_LOG_ERR(...) \
-    printf(__VA_ARGS__);   \
-    printf(KLANG_NL);
-#define KLANG_LOG(...)   \
-    printf(__VA_ARGS__); \
-    printf(KLANG_NL);
-#define KLANG_LOG_SIM(...)
-#elif (KLANG_DEBUG_LEVEL >= 3)
-#define KLANG_LOG_ERR(...) \
-    printf(__VA_ARGS__);   \
-    printf(KLANG_NL);
-#define KLANG_LOG(...)   \
-    printf(__VA_ARGS__); \
-    printf(KLANG_NL);
-#define KLANG_LOG_SIM(...) \
-    printf(__VA_ARGS__);   \
-    printf(KLANG_NL);
-#endif
-
 /* KLST -------------------------------------------------------------------------------- */
-
-#include "KLST_SDL-adapter.h"
-#include "KlangstromApplicationArduino.h"
 
 float FLOAT_32(uint8_t *pBytes, uint32_t pOffset) {
     float output;
@@ -110,15 +93,18 @@ UdpTransmitSocket *mTransmitSocket = nullptr;
 
 thread mLoopThread;
 
-float         mInternalAudioOutputBufferLeft[KLANG_SAMPLES_PER_AUDIO_BLOCK * 2];
-float         mInternalAudioOutputBufferRight[KLANG_SAMPLES_PER_AUDIO_BLOCK * 2];
-int           mBufferOffset       = 0;
-uint32_t      mBeatCounter        = 0;
-SDL_TimerID   mTimerID            = 0;
-SDL_Window   *mWindow             = nullptr;
-SDL_Renderer *gRenderer           = nullptr;
-bool          mQuitFlag           = false;
-bool          mMouseButtonPressed = false;
+float                         mInternalAudioOutputBufferLeft[KLANG_SAMPLES_PER_AUDIO_BLOCK * 2];
+float                         mInternalAudioOutputBufferRight[KLANG_SAMPLES_PER_AUDIO_BLOCK * 2];
+int                           mBufferOffset       = 0;
+uint32_t                      mBeatCounter        = 0;
+SDL_TimerID                   mTimerID            = 0;
+SDL_Window                   *mWindow             = nullptr;
+SDL_Renderer                 *gRenderer           = nullptr;
+bool                          mQuitFlag           = false;
+bool                          mMouseButtonPressed = false;
+bool                          mCapsLockDown       = false;
+KlangstromArduinoProxyEncoder mEncoders[NUMBER_OF_ENCODERS];
+int8_t                        mCurrentEncoder = NUMBER_OF_ENCODERS > 0 ? 0 : -1;
 
 const static int8_t AUDIO_DEFAULT_DEVICE = -1;
 int8_t              mAudioInputDeviceID  = AUDIO_DEFAULT_DEVICE;
@@ -138,10 +124,15 @@ SIGNAL_TYPE         mOutputBufferRight[KLANG_SAMPLES_PER_AUDIO_BLOCK];
 #define AUDIO_INPUT  SDL_TRUE
 #define AUDIO_OUTPUT SDL_FALSE
 
+static void init_encoders();
+static void loop_encoders();
+
 void init_main() {
     init_SDL();
     init_renderer();
+    init_display();
     init_app();
+    init_encoders();
 
     const char *mAudioDriverName = SDL_GetCurrentAudioDriver();
     if (mAudioDriverName) {
@@ -202,6 +193,96 @@ void loop_main() {
     mLoopThread.detach();
 }
 
+static void handle_key_pressed_capslock(SDL_Event &e) {
+    const SDL_Scancode  mScanCode              = e.key.keysym.scancode;
+    const static int8_t ENCODER_ROTATION_SPEED = 1;
+    switch (mScanCode) {
+        case SDL_SCANCODE_RIGHT:
+            mEncoders[mCurrentEncoder].rotate(ENCODER_ROTATION_SPEED);
+            break;
+        case SDL_SCANCODE_LEFT:
+            mEncoders[mCurrentEncoder].rotate(-ENCODER_ROTATION_SPEED);
+            break;
+        case SDL_SCANCODE_SPACE:
+            if (e.key.repeat == 0) {
+                mEncoders[mCurrentEncoder].button_pressed = true;
+            }
+            break;
+        case SDL_SCANCODE_UP:
+            mCurrentEncoder++;
+            mCurrentEncoder %= NUMBER_OF_ENCODERS;
+            break;
+        case SDL_SCANCODE_DOWN:
+            mCurrentEncoder += NUMBER_OF_ENCODERS - 1;
+            mCurrentEncoder %= NUMBER_OF_ENCODERS;
+            break;
+        default:
+            break;
+    }
+}
+
+static void handle_key_released_capslock(SDL_Event &e) {
+    const SDL_Scancode mScanCode = e.key.keysym.scancode;
+    switch (mScanCode) {
+        case SDL_SCANCODE_SPACE:
+            if (e.key.repeat == 0) {
+                mEncoders[mCurrentEncoder].button_pressed = false;
+            }
+            break;
+        default:
+            break;
+    }
+}
+
+static void handle_key_pressed(SDL_Event &e) {
+    if (e.key.keysym.scancode == SDL_SCANCODE_CAPSLOCK) {
+        mCapsLockDown = true;
+        // if (e.key.keysym.mod == KMOD_CAPS)
+    } else {
+        if (mCapsLockDown) {
+            handle_key_pressed_capslock(e);
+        } else {
+            const char mKey = e.key.keysym.scancode;
+            /* @TODO("dirty hack … this needs to be handle differently") */
+            const float data[1] = {(float)(SDL_GetScancodeName((SDL_Scancode)mKey)[0])};
+            event_receive(EVENT_KEY_PRESSED, data);
+#ifdef DEBUG_PRINT_EVENTS
+            KLANG_LOG("key pressed: %c", SDL_GetScancodeName((SDL_Scancode)mKey)[0]);
+#endif
+        }
+    }
+}
+
+static void handle_key_released(SDL_Event &e) {
+    if (e.key.keysym.scancode == SDL_SCANCODE_CAPSLOCK) {
+        mCapsLockDown = false;
+    } else {
+        if (mCapsLockDown) {
+            handle_key_released_capslock(e);
+        } else {
+            const char mKey = e.key.keysym.scancode;
+            /* @TODO("dirty hack … this needs to be handle differently") */
+            const float data[1] = {(float)(SDL_GetScancodeName((SDL_Scancode)mKey)[0])};
+            event_receive(EVENT_KEY_RELEASED, data);
+#ifdef DEBUG_PRINT_EVENTS
+            KLANG_LOG("key released: %c", SDL_GetScancodeName((SDL_Scancode)mKey)[0]);
+#endif
+        }
+    }
+}
+
+static void init_encoders() {
+    for (int8_t i = 0; i < NUMBER_OF_ENCODERS; i++) {
+        mEncoders[i].ID = i;
+    }
+}
+
+static void loop_encoders() {
+    for (uint8_t i = 0; i < NUMBER_OF_ENCODERS; i++) {
+        mEncoders[i].update(i == mCurrentEncoder);
+    }
+}
+
 void loop_event() {
     SDL_Event e;
     while (SDL_PollEvent(&e) != 0) {
@@ -240,63 +321,126 @@ void loop_event() {
             }
         }
         if (e.type == SDL_KEYDOWN) {
-            const char  mKey    = e.key.keysym.scancode;
-            const float data[1] = {(float)(SDL_GetScancodeName(
-                (SDL_Scancode)mKey)[0])}; /* @TODO("dirty hack … this needs to be handle differently") */
-            event_receive(EVENT_KEY_PRESSED, data);
-#ifdef DEBUG_PRINT_EVENTS
-            KLANG_LOG("key pressed: %c", SDL_GetScancodeName((SDL_Scancode)mKey)[0]);
-#endif
+            handle_key_pressed(e);
         }
         if (e.type == SDL_KEYUP) {
-            const char  mKey    = e.key.keysym.scancode;
-            const float data[1] = {(float)(SDL_GetScancodeName(
-                (SDL_Scancode)mKey)[0])}; /* @TODO("dirty hack … this needs to be handle differently") */
-            event_receive(EVENT_KEY_RELEASED, data);
-#ifdef DEBUG_PRINT_EVENTS
-            KLANG_LOG("key released: %c", SDL_GetScancodeName((SDL_Scancode)mKey)[0]);
-#endif
+            handle_key_released(e);
         }
     }
+    loop_encoders();
+}
+
+static float display_scale;
+static float display_x;
+static float display_y;
+
+static void line(SDL_Renderer *renderer, int x1, int y1, int x2, int y2) {
+    SDL_RenderDrawLine(renderer,
+                       x1 * display_scale + display_x,
+                       y1 * display_scale + display_y,
+                       x2 * display_scale + display_x,
+                       y2 * display_scale + display_y);
 }
 
 void loop_renderer() {
     SDL_SetRenderDrawColor(gRenderer, 0x20, 0x20, 0x20, 0xFF);
     SDL_RenderClear(gRenderer);
 
-    SDL_SetRenderDrawColor(gRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
-    SDL_RenderDrawLine(gRenderer, 0, SCREEN_HEIGHT / 2, SCREEN_WIDTH, SCREEN_HEIGHT / 2);
+    static const int16_t GUI_START_X      = 20;
+    static const int16_t GUI_START_Y      = 20;
+    static const int16_t GUI_UNIT_HEIGHT  = 32;
+    static const int16_t GUI_UNIT_WIDTH   = 16;
+    static const int16_t GUI_UNIT_SPACING = 4;
 
-    SDL_SetRenderDrawColor(gRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
-    for (int i = 0; i < KLANG_SAMPLES_PER_AUDIO_BLOCK; i++) {
-        int j        = (i - 1) + mBufferOffset;
-        int k        = i + mBufferOffset;
-        int x0       = SCREEN_WIDTH * (float)(i - 1) / (float)KLANG_SAMPLES_PER_AUDIO_BLOCK;
-        int x1       = SCREEN_WIDTH * (float)i / (float)KLANG_SAMPLES_PER_AUDIO_BLOCK;
-        int y0_left  = mInternalAudioOutputBufferRight[j] * SCREEN_HEIGHT / 4 + SCREEN_HEIGHT / 4;
-        int y1_left  = mInternalAudioOutputBufferRight[k] * SCREEN_HEIGHT / 4 + SCREEN_HEIGHT / 4;
-        int y0_right = mInternalAudioOutputBufferLeft[j] * SCREEN_HEIGHT / 4 + SCREEN_HEIGHT / 4 * 3;
-        int y1_right = mInternalAudioOutputBufferLeft[k] * SCREEN_HEIGHT / 4 + SCREEN_HEIGHT / 4 * 3;
-        SDL_RenderDrawLine(gRenderer, x0, y0_left, x1, y1_left);
-        SDL_RenderDrawLine(gRenderer, x0, y0_right, x1, y1_right);
+    /* draw oscilloscope  */
+    {
+        display_scale = 0.5f;
+        display_x     = GUI_START_X;
+        display_y     = GUI_START_Y + (GUI_UNIT_HEIGHT + GUI_UNIT_SPACING) * 2;
+
+        SDL_SetRenderDrawColor(gRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
+        line(gRenderer, 0, SCREEN_HEIGHT / 2 - 1, SCREEN_WIDTH, SCREEN_HEIGHT / 2 - 1);
+        line(gRenderer, 0, SCREEN_HEIGHT / 2 + 1, SCREEN_WIDTH, SCREEN_HEIGHT / 2 + 1);
+
+        line(gRenderer, 0, 0, SCREEN_WIDTH, 0);
+        line(gRenderer, 0, SCREEN_HEIGHT, SCREEN_WIDTH, SCREEN_HEIGHT);
+        line(gRenderer, 0, 0, 0, SCREEN_HEIGHT);
+        line(gRenderer, SCREEN_WIDTH, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
+
+        SDL_SetRenderDrawColor(gRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
+
+        for (int i = 0; i < KLANG_SAMPLES_PER_AUDIO_BLOCK; i++) {
+            int j        = (i - 1) + mBufferOffset;
+            int k        = i + mBufferOffset;
+            int x0       = SCREEN_WIDTH * (float)(i - 1) / (float)KLANG_SAMPLES_PER_AUDIO_BLOCK;
+            int x1       = SCREEN_WIDTH * (float)i / (float)KLANG_SAMPLES_PER_AUDIO_BLOCK;
+            int y0_left  = mInternalAudioOutputBufferRight[j] * SCREEN_HEIGHT / 4 + SCREEN_HEIGHT / 4;
+            int y1_left  = mInternalAudioOutputBufferRight[k] * SCREEN_HEIGHT / 4 + SCREEN_HEIGHT / 4;
+            int y0_right = mInternalAudioOutputBufferLeft[j] * SCREEN_HEIGHT / 4 + SCREEN_HEIGHT / 4 * 3;
+            int y1_right = mInternalAudioOutputBufferLeft[k] * SCREEN_HEIGHT / 4 + SCREEN_HEIGHT / 4 * 3;
+            line(gRenderer, x0, y0_left, x1, y1_left);
+            line(gRenderer, x0, y0_right, x1, y1_right);
+        }
     }
 
-    /* draw LEDs */
-    static const uint8_t mWidth   = 16;
-    static const uint8_t mHeight  = 32;
-    static const uint8_t mSpacing = 20;
-    for (uint8_t i = 0; i < NUMBER_OF_LEDS; i++) {
-        SDL_Rect r;
-        r.x = 20 + i * mSpacing;
-        r.y = 20;
+    /* draw CAPS LOCK */
+    {
+        static const int16_t mWidth  = GUI_UNIT_WIDTH / 2;
+        static const int16_t mHeight = GUI_UNIT_HEIGHT;
+        SDL_Rect             r;
+        r.x = GUI_START_X - mWidth - GUI_UNIT_SPACING;
+        r.y = GUI_START_Y + GUI_UNIT_HEIGHT + GUI_UNIT_SPACING;
         r.w = mWidth;
         r.h = mHeight;
-        if (mSimulator.getLEDs()[i]) {
-            SDL_SetRenderDrawColor(gRenderer, 0xFF, 0x00, 0x00, 0xFF);
+        if (mCapsLockDown) {
+            SDL_SetRenderDrawColor(gRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
             SDL_RenderFillRect(gRenderer, &r);
         } else {
+            SDL_SetRenderDrawColor(gRenderer, 0x7F, 0x7F, 0x7F, 0xFF);
+            SDL_RenderDrawRect(gRenderer, &r);
+        }
+    }
+    /* encoders */
+    {
+        static const int16_t mWidth   = GUI_UNIT_WIDTH * 2 + GUI_UNIT_SPACING;
+        static const int16_t mHeight  = GUI_UNIT_HEIGHT;
+        static const int16_t mSpacing = mWidth + GUI_UNIT_SPACING;
+        for (uint8_t i = 0; i < NUMBER_OF_ENCODERS; i++) {
+            KlangstromArduinoProxyEncoder &e = mEncoders[i];
+            e.dimensions.x                   = GUI_START_X + i * mSpacing;
+            e.dimensions.y                   = GUI_START_Y + GUI_UNIT_HEIGHT + GUI_UNIT_SPACING;
+            e.dimensions.w                   = mWidth;
+            e.dimensions.h                   = mHeight;
+        }
+        for (uint8_t i = 0; i < NUMBER_OF_ENCODERS; i++) {
+            mEncoders[i].draw(gRenderer, mCapsLockDown);
+        }
+    }
+    /* draw LEDs */
+    {
+        static const int16_t mWidth   = GUI_UNIT_WIDTH;
+        static const int16_t mHeight  = GUI_UNIT_HEIGHT;
+        static const int16_t mSpacing = mWidth + GUI_UNIT_SPACING;
+        for (uint8_t i = 0; i < NUMBER_OF_LEDS; i++) {
+            SDL_Rect r;
+            r.x = GUI_START_X + i * mSpacing;
+            r.y = GUI_START_Y;
+            r.w = mWidth;
+            r.h = mHeight;
+            if (mSimulator.getLEDs()[i]) {
+                SDL_SetRenderDrawColor(gRenderer, 0xFF, 0x00, 0x00, 0xFF);
+                SDL_RenderFillRect(gRenderer, &r);
+            }
             SDL_SetRenderDrawColor(gRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
             SDL_RenderDrawRect(gRenderer, &r);
+        }
+    }
+    /* draw display */
+    {
+        if (mDisplay_SDL != nullptr) {
+            mDisplay_SDL->set_position(GUI_START_X + SCREEN_WIDTH * display_scale + GUI_UNIT_SPACING,
+                                       GUI_START_Y + (GUI_UNIT_HEIGHT + GUI_UNIT_SPACING) * 2);
+            mDisplay_SDL->draw();
         }
     }
 
@@ -517,15 +661,33 @@ void init_renderer() {
     mWindowName.append(str);
 
     mWindow = SDL_CreateWindow(
-        // "klangstrom_arduino",
         mWindowName.c_str(),
         SDL_WINDOWPOS_UNDEFINED,
         SDL_WINDOWPOS_UNDEFINED,
         SCREEN_WIDTH,
         SCREEN_HEIGHT,
         SDL_WINDOW_SHOWN);
-    gRenderer = SDL_CreateRenderer(mWindow, -1, SDL_RENDERER_ACCELERATED);
+    gRenderer = SDL_CreateRenderer(
+        mWindow,
+        -1,
+        SDL_RENDERER_SOFTWARE
+        // DL_RENDERER_ACCELERATED
+    );
 }
+
+void init_display() {
+    mDisplay_SDL = new KlangstromDisplayBSP_SDL();
+    DisplayPtr   = mDisplay_SDL;
+
+    mDisplay_SDL->init(gRenderer);
+    mDisplay_SDL->set_position(
+        SCREEN_WIDTH / 2 - mDisplay_SDL->width() / 2,
+        SCREEN_HEIGHT / 2 - mDisplay_SDL->height() / 2);
+}
+
+// void init_card() {
+//     CardPtr = new KlangstromCardBSP_SDL();
+// }
 
 void init_SDL() {
     KLANG_LOG("++++++++++++++++++++++++++++++++++++++++++++++++++");
@@ -548,7 +710,7 @@ void init_SDL() {
 }
 
 void shutdown_main() {
-    KLANG_LOG("+++ shuting down gracefully");
+    KLANG_LOG("+++ shutting down gracefully");
     SDL_AudioQuit();
     SDL_CloseAudio();
     SDL_Quit();
@@ -798,6 +960,7 @@ int main(int argc, char **argv) {
     init_osc();
 #endif
     std::cout << std::flush;
+    // init_card();
     init_main();
     std::cout << std::flush;
     loop_main();

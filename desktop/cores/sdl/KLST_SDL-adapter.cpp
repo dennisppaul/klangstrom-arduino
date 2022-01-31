@@ -5,28 +5,29 @@
 //
 //
 
+#include "KLST_SDL-adapter.h"
+
 #include <chrono>
 
 #include "Arduino.h"
-#include "KlangstromDefinesArduino.h"
 #include "KlangstromApplicationArduino.h"
 #include "KlangstromApplicationInterfaceArduino.h"
+#include "KlangstromDefinesArduino.h"
 #include "klangstrom_arduino_sdl.h"
-#include "KLST_SDL-adapter.h"
 
 using namespace std;
 
 #ifdef DEBUG_ARDUINO_PROXY
-#define  KLST_LOG_AP(...)       (cout << __VA_ARGS__ << endl);
+#define KLST_LOG_AP(...) (cout << __VA_ARGS__ << endl);
 #else
-#define  KLST_LOG_AP(...)
+#define KLST_LOG_AP(...)
 #endif
 
 KLST_Simulator mSimulator;
 
 /* ----------------------------------------------------------------------------------------------------- */
 
-void klangstrom::begin_serial_debug(bool pWaitForSerial, uint32_t pBaudRate) {}
+void klangstrom::begin_serial_debug(bool pWaitForSerial, uint32_t pBaudRate) { Serial.begin(115200); }
 
 void klangstrom::option(uint8_t pOption, float pValue) {}
 
@@ -34,11 +35,25 @@ void klangstrom::beats_per_minute(float pBPM) { klangstrom_arduino_beats_per_min
 
 void klangstrom::beats_per_minute_ms(uint32_t pMicroSeconds) { klangstrom_arduino_beats_per_minute_ms(pMicroSeconds); }
 
-void klangstrom::led(uint8_t pLED, bool pState) {
+void klangstrom::LED(uint16_t pLED, uint8_t pState) {
+    switch (pState) {
+        case LED_ON:
+            mSimulator.led(pLED, pState);
+            break;
+        case LED_OFF:
+            mSimulator.led(pLED, pState);
+            break;
+        case LED_TOGGLE:
+            mSimulator.led_toggle(pLED);
+            break;
+    }
+}
+
+void klangstrom::led(uint16_t pLED, bool pState) {
     mSimulator.led(pLED, pState);
 }
 
-void klangstrom::led_toggle(uint8_t pLED) {
+void klangstrom::led_toggle(uint16_t pLED) {
     mSimulator.led_toggle(pLED);
 }
 
@@ -54,11 +69,11 @@ int16_t klangstrom::ID() { return KLST_NO_ID; }
 
 /* ----------------------------------------------------------------------------------------------------- */
 
-int digitalRead(uint32_t pPin) {  
+int digitalRead(uint32_t pPin) {
     return mSimulator.digitalRead(pPin);
 }
 
-void digitalWrite(uint32_t pPin, uint32_t pValue) { 
+void digitalWrite(uint32_t pPin, uint32_t pValue) {
     KLST_LOG_AP("<digitalWrite(%i << %i)> " << pPin << ", " << pValue);
     mSimulator.digitalWrite(pPin, pValue);
 }
@@ -75,7 +90,7 @@ auto mAppStartTime = std::chrono::steady_clock::now();
 
 uint32_t micros() {
     const auto mCurrentTime = std::chrono::steady_clock::now();
-    const auto mDelta = mCurrentTime - mAppStartTime;
+    const auto mDelta       = mCurrentTime - mAppStartTime;
     return std::chrono::duration_cast<std::chrono::microseconds>(mDelta).count();
 }
 
@@ -84,25 +99,25 @@ uint32_t millis() {
 }
 
 // /* ----------------------------------------------------------------------------------------------------------------- */
-// 
-// 
+//
+//
 // /* options */
-// 
+//
 // bool mKLSTOptionEnableBeat = true;
 // bool mKLSTOptionEnableEncoders = true;
 // bool mKLSTOptionEnableSerialPorts = true;
 // bool mKLSTOptionEnableProgrammerButton = false;
 // bool mKLSTOptionEnableUSBSerialDebug = false;
 // uint8_t mKLSTAudioLine = KLST_MIC;
-// 
+//
 // /* beat */
-// 
+//
 // HardwareTimer *mKLSTBeatTimer;
 // uint32_t mKLSTBeatCounter = 0;
 // uint32_t mKLSTBeatIntervalDuration = 1000000/2;
-// 
+//
 // /* encoders */
-// 
+//
 // static int16_t mKLSTENCODER_00TickCount = 0;
 // static int16_t mKLSTENCODER_01TickCount = 0;
 // static int16_t mKLSTENCODER_02TickCount = 0;
@@ -111,18 +126,18 @@ uint32_t millis() {
 // static bool mKLSTENCODER_02ButtonState = false;
 // static const float mKLST_PRESSED[1] = {1.0f};
 // static const float mKLST_RELEASED[1] = {0.0f};
-// 
+//
 // #ifdef __cplusplus
 // extern "C" {
 // #endif
-// 
+//
 // #include "stm32f4xx_hal.h"
 // #include "AudioCodecWM8731.h"
-// 
+//
 // #if !(defined(KLST_BOARD_TYPE) || (KLST_BOARD_TYPE))
 // #warning("KLST_BOARD_TYPE not defined in `variant_KLST.h`. options are KLST_CORE or KLST_TINY")
 // #endif
-// 
+//
 // extern I2C_HandleTypeDef    hi2c3;
 // extern SAI_HandleTypeDef    hsai_BlockA1;
 // extern SAI_HandleTypeDef    hsai_BlockB1;
@@ -131,7 +146,7 @@ uint32_t millis() {
 // extern TIM_HandleTypeDef 	htim2;
 // extern TIM_HandleTypeDef 	htim3;
 // extern TIM_HandleTypeDef 	htim8;
-// 
+//
 // void MX_GPIO_Init();
 // void MX_DMA_Init();
 // void MX_I2C3_Init();
@@ -139,12 +154,12 @@ uint32_t millis() {
 // void MX_TIM2_Init();
 // void MX_TIM3_Init();
 // void MX_TIM8_Init();
-// 
-// 
+//
+//
 // /* ----------------------------------------------------------------------------------------------------------------- */
 // /* SETUP                                                                                                             */
 // /* ----------------------------------------------------------------------------------------------------------------- */
-// 
+//
 // /**
 //  * called before setup
 //  * @note(make sure to remove static from functions!)
@@ -179,12 +194,12 @@ uint32_t millis() {
 // 	MX_DMA_Init();
 // 	MX_I2C3_Init(); // @todo(check if we could use the built-in libs for this?)
 // 	MX_SAI1_Init();
-// 
+//
 // 	/* LEDs */
 // 	pinMode(LED_00, OUTPUT);
 // 	pinMode(LED_01, OUTPUT);
 // 	pinMode(LED_02, OUTPUT);
-// 
+//
 // 	/* start UART interrupts */
 // 	// HAL_UART_Receive_IT(SERIAL_00_Handle, mSERIAL_00_BUFFER, KLST_SERIAL_BUFFER_SIZE);
 // 	// HAL_UART_Receive_IT(SERIAL_01_Handle, mSERIAL_01_BUFFER, KLST_SERIAL_BUFFER_SIZE);
@@ -192,14 +207,14 @@ uint32_t millis() {
 // 		SERIAL_00.begin(KLST_UART_BAUD);
 // 		SERIAL_01.begin(KLST_UART_BAUD);
 // 	}
-// 
+//
 //   	/* beat */
 // 	if (mKLSTOptionEnableBeat) {
 // 		mKLSTBeatTimer = new HardwareTimer(TIM5);
 // 		klangstrom::beats_per_minute(120);
 // 		mKLSTBeatTimer->attachInterrupt(KLST_IT_beat_callback);
 // 	}
-// 
+//
 // 	/* debug serial via USB */
 // 	// @todo(does it make sense to evaluate it here? or rather in `KLST_post_setup`)
 // 	if (mKLSTOptionEnableUSBSerialDebug) {
@@ -212,7 +227,7 @@ uint32_t millis() {
 // 		}
 // 	}
 // }
-// 
+//
 // /**
 //  * called after setup
 //  */
@@ -242,44 +257,44 @@ uint32_t millis() {
 // 	WM8731_write(WM8731_DIGITAL_AUDIO_INTERFACE_FORMAT, 0b00000010);
 // 	WM8731_write(WM8731_SAMPLING_CONTROL, 0b000000010);
 // 	WM8731_write(WM8731_ACTIVE_CONTROL, 0b1);
-// 
+//
 // 	WM8731_write(WM8731_POWER_DOWN_CONTROL, 0b00000000);
-// 
+//
 // 	KLST_start_audio_codec();
-// 
+//
 // 	/* start encoder */
 // 	if (mKLSTOptionEnableEncoders) {
 // 		MX_TIM2_Init();
 // 		MX_TIM3_Init();
 // 		MX_TIM8_Init();
-// 
+//
 // 		pinMode(ENCODER_00_BUTTON, INPUT);
 //   		pinMode(ENCODER_01_BUTTON, INPUT);
 //   		pinMode(ENCODER_02_BUTTON, INPUT);
-// 
+//
 // 		HAL_TIM_Encoder_Start(&htim3, TIM_CHANNEL_ALL);
 // 		HAL_TIM_Encoder_Start(&htim8, TIM_CHANNEL_ALL);
 // 		HAL_TIM_Encoder_Start(&htim2, TIM_CHANNEL_ALL);
 // 		// @note(`HAL_TIM_Encoder_Stop(&htim3, TIM_CHANNEL_ALL);`)
 // 	}
-// 
+//
 // 	/* beat */
 // 	if (mKLSTOptionEnableBeat) {
 // 		mKLSTBeatTimer->resume();
 // 	}
-// 
+//
 // 	/* programmer button */
 // 	if (mKLSTOptionEnableProgrammerButton) {
 // 		pinMode(BUTTON_PROGRAMMER, INPUT);
 //     attachInterrupt(BUTTON_PROGRAMMER, KLST_jump_to_bootloader, RISING);
 // 	}
 // }
-// 
+//
 // uint32_t KLST_boot_address() {
 //   return 0x1FFF0000; // boot address for KLST_TINY
 // //   return 0x1FF09800; // boot address for KLST_CORE
 // }
-// 
+//
 // void KLST_handle_encoders() {
 // 	/* rotation */
 // 	const int16_t mEncoder_00TickCount = (int16_t)ENCODER_00_TIMER->CNT;
@@ -329,7 +344,7 @@ uint32_t millis() {
 // 		mKLSTENCODER_02ButtonState = mENCODER_02ButtonState;
 // 	}
 // }
-// 
+//
 // void KLST_handleSerialPorts() {
 // 	{
 // 		const uint8_t mLength = SERIAL_00.available();
@@ -348,7 +363,7 @@ uint32_t millis() {
 // 		}
 // 	}
 // }
-// 
+//
 // void KLST_loop() {
 // 	if (mKLSTOptionEnableEncoders) {
 // 		KLST_handle_encoders();
@@ -357,17 +372,17 @@ uint32_t millis() {
 // 		KLST_handleSerialPorts();
 // 	}
 // }
-// 
+//
 // #ifdef __cplusplus
 // }
 // #endif
-// 
+//
 // /* ----------------------------------------------------------------------------------------------------------------- */
 // /* arduino sketch related functions ( i.e callbacks )                                                                */
 // /* ----------------------------------------------------------------------------------------------------------------- */
-// 
+//
 // #ifdef __cplusplus
-// 
+//
 // /**
 //  * SERIAL_00 callback
 //  */
@@ -378,7 +393,7 @@ uint32_t millis() {
 // // 		data_receive(KLST_SERIAL_00, &mValue, 1);
 // //     }
 // // }
-// 
+//
 // /**
 //  * SERIAL_01 callback
 //  */
@@ -389,7 +404,7 @@ uint32_t millis() {
 // // 		data_receive(KLST_SERIAL_01, &mValue, 1);
 // //     }
 // // }
-// 
+//
 // void klangstrom::option(uint8_t pOption, uint8_t pValue) {
 // 	switch (pOption) {
 // 		case KLST_OPTION_AUDIO_INPUT:
@@ -409,7 +424,7 @@ uint32_t millis() {
 // 			break;
 // 	}
 // }
-// 
+//
 // void klangstrom::led(uint8_t pLED, bool pState) {
 // 	// @todo(maybe replace with `KLST_LED_00`)
 // 	switch (pLED) {
@@ -424,7 +439,7 @@ uint32_t millis() {
 // 			break;
 // 	}
 // }
-// 
+//
 // void klangstrom::led_toggle(uint8_t pLED) {
 // 	// @todo(maybe replace with `KLST_LED_00`)
 // 	switch (pLED) {
@@ -439,17 +454,17 @@ uint32_t millis() {
 // 			break;
 // 	}
 // }
-// 
+//
 // void klangstrom::beats_per_minute(float pBPM) {
 // 	if (pBPM == 0) { return; }
 // 	klangstrom::beats_per_minute_ms((uint32_t)((60.0 / pBPM) * 1000000));
 // }
-// 
+//
 // void klangstrom::beats_per_minute_ms(uint32_t pMicroSeconds) {
 // 	mKLSTBeatIntervalDuration = pMicroSeconds;
 // 	mKLSTBeatTimer->setOverflow(mKLSTBeatIntervalDuration, MICROSEC_FORMAT);
 // }
-// 
+//
 // bool klangstrom::button_state(uint8_t pButton) {
 // 	switch (pButton) {
 // 		case KLST_BUTTON_ENCODER_00:
@@ -463,11 +478,11 @@ uint32_t millis() {
 // 	}
 // 	return false;
 // }
-// 
+//
 // bool klangstrom::pin_state(uint8_t pButton) {
 // 	return !digitalRead(pButton);
 // }
-// 
+//
 // void data_transmit(const uint8_t pSender, uint8_t* pData, uint8_t pDataLength) {
 //   switch(pSender) {
 //     case KLST_SERIAL_00:
@@ -478,10 +493,10 @@ uint32_t millis() {
 //       break;
 //   }
 // }
-// 
-// 
+//
+//
 // #endif // __cplusplus
-// 
+//
 // /* ------------------------------------------------------------------------------------ */
 // //
 // // #if 0

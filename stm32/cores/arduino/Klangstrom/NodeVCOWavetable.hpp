@@ -1,9 +1,21 @@
-//
-//  NodeVCOWavetable.hpp
-//  Klang – a node+text-based synthesizer library
-//
-//
-//
+/*
+ * Klang – a node+text-based synthesizer library
+ *
+ * This file is part of the *wellen* library (https://github.com/dennisppaul/wellen).
+ * Copyright (c) 2022 Dennis P Paul.
+ *
+ * This library is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, version 3.
+ *
+ * This library is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
 
 /**
  *       [ NODE_VCO_WAVETABLE  ]
@@ -21,7 +33,8 @@
  *          used as an *oscillator* to reproduce a sinewave, triangle, square or sawtooth shaped
  *          signal at an audible frequency ( Voltage-Controlled Oscillator (`VCO`) ). however, a
  *          wavetable node can also be used to manipulate other parameters ( e.g the frequency
- *          of another wavetable node ) at slower speeds ( Low Frequency Oscillator (`LFO`) ).
+ *          of another wavetable node ) at slower speeds ( Low Frequency Oscillator (`LFO`) ). 
+ *          note that the maximum size of a wavetable is 65536 samples.
  *       )
  *
  *       @set_value(FREQUENCY_F32,AMPLITUDE_F32,OFFSET_F32,WAVEFORM)
@@ -65,10 +78,10 @@ namespace klang {
             EXPONENT
         };
 
-        NodeVCOWavetable(uint16_t pBufferLength) : mBufferLength(pBufferLength) {
-            mWavetable   = new SIGNAL_TYPE[mBufferLength];  // @TODO(consider reusing wavetable where possible)
+        NodeVCOWavetable(uint16_t pWavetableLength) : mWavetableLength(pWavetableLength) {
+            mWavetable   = new SIGNAL_TYPE[mWavetableLength];  // @TODO(consider reusing wavetable where possible)
             mDeleteArray = true;
-            if (!isPowerOfTwo(pBufferLength)) {
+            if (!isPowerOfTwo(pWavetableLength)) {
                 KLANG_LOG_ERR("### warning wavetable length needs to be *power of two*");
             }
             set_frequency(OSC_DEFAULT_FREQUENCY);
@@ -77,13 +90,13 @@ namespace klang {
 
         NodeVCOWavetable() : NodeVCOWavetable(256) {}
 
-        NodeVCOWavetable(SIGNAL_TYPE* pWavetable, uint16_t pBufferLength) : mWavetable(pWavetable), mBufferLength(pBufferLength) {
+        NodeVCOWavetable(SIGNAL_TYPE* pWavetable, uint16_t pWavetableLength) : mWavetable(pWavetable), mWavetableLength(pWavetableLength) {
             mDeleteArray = false;
             set_frequency(OSC_DEFAULT_FREQUENCY);
             set_amplitude(OSC_DEFAULT_AMPLITUDE);
         }
 
-        NodeVCOWavetable(const NodeVCOWavetable& obj) : mBufferLength(obj.mBufferLength) {
+        NodeVCOWavetable(const NodeVCOWavetable& obj) : mWavetableLength(obj.mWavetableLength) {
             mDeleteArray = obj.mDeleteArray;
             mWavetable   = obj.mWavetable;
             set_frequency(obj.mFrequency);
@@ -118,8 +131,21 @@ namespace klang {
             return false;
         }
 
+        void set_wavetable(SIGNAL_TYPE* pWavetable, uint16_t pWavetableLength) {
+            mWavetable       = pWavetable;
+            mWavetableLength = pWavetableLength;
+        }
+
+        const SIGNAL_TYPE* get_wavetable() {
+            return mWavetable;
+        }
+
+        const uint16_t get_wavetable_length() {
+            return mWavetableLength;
+        }
+
         void set_array_ptr(const uint16_t pArrayPtr) {
-            const uint16_t mLastIndex = mBufferLength - 1;
+            const uint16_t mLastIndex = mWavetableLength - 1;
             mArrayPtr                 = pArrayPtr > mLastIndex ? mLastIndex : pArrayPtr;
         }
 
@@ -214,7 +240,7 @@ namespace klang {
         }
 
         uint16_t wavetable_size() {
-            return mBufferLength;
+            return mWavetableLength;
         }
 
         SIGNAL_TYPE* wavetable_ptr() {
@@ -263,7 +289,7 @@ namespace klang {
         void set_frequency(SIGNAL_TYPE pFrequency) {
             if (mFrequency != pFrequency) {
                 mFrequency    = pFrequency;
-                const float a = (float)mBufferLength * KLANG_AUDIO_RATE_UINT16_INV;
+                const float a = (float)mWavetableLength * KLANG_AUDIO_RATE_UINT16_INV;
                 // const float a = (float)M_BUFFER_LENGTH / (float)KLANG_AUDIO_RATE_UINT16;
                 mStepSize = mFrequency * a;  // @TODO maybe move this to constructor to do it only once
             }
@@ -329,13 +355,13 @@ namespace klang {
                     mArrayPtr += mStepSize;
                     const uint16_t mInt   = (uint16_t)mArrayPtr;
                     const float    mFrac  = mArrayPtr - mInt;
-                    const uint16_t mIndex = mInt & (mBufferLength - 1);
+                    const uint16_t mIndex = mInt & (mWavetableLength - 1);
                     mArrayPtr             = mIndex + mFrac;
 #define KLST_WAVETABLE_INTERPOLATE_SAMPLES 1
 
 #if KLST_WAVETABLE_INTERPOLATE_SAMPLES == 1
                     // if (mInterpolateSamples) {
-                    const uint16_t mIndexNext = (mIndex + 1) & (mBufferLength - 1);
+                    const uint16_t mIndexNext = (mIndex + 1) & (mWavetableLength - 1);
                     // const uint16_t mIndexNext = (mIndex + 1) % M_BUFFER_LENGTH; // slower ( STM32F446 == +3µs )
                     const float r  = (1.0 - mFrac);
                     const float a  = mWavetable[mIndex] * r;
@@ -381,14 +407,14 @@ namespace klang {
         float       mArrayPtr  = 0.0;
 
         void wrap_array_ptr() {
-            while (mArrayPtr >= mBufferLength) {
-                mArrayPtr -= mBufferLength;
+            while (mArrayPtr >= mWavetableLength) {
+                mArrayPtr -= mWavetableLength;
             }
         }
 #endif
 
         SIGNAL_TYPE*           mWavetable;
-        uint16_t               mBufferLength;
+        uint16_t               mWavetableLength;
         bool                   mDeleteArray;
         static constexpr float KLANG_AUDIO_RATE_UINT16_INV = 1.0 / (float)KLANG_AUDIO_RATE_UINT16;
 

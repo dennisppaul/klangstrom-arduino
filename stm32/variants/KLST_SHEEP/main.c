@@ -56,6 +56,7 @@ DMA_HandleTypeDef hdma_sai1_b;
 SPI_HandleTypeDef hspi2;
 SPI_HandleTypeDef hspi3;
 SPI_HandleTypeDef hspi4;
+DMA_HandleTypeDef hdma_spi3_tx;
 
 TIM_HandleTypeDef htim1;
 TIM_HandleTypeDef htim2;
@@ -84,30 +85,30 @@ void SystemClock_Config(void);
 void PeriphCommonClock_Config(void);
 void MX_GPIO_Init(void);
 void MX_I2C1_Init(void);
-void MX_SPI2_Init(void);
+[[maybe_unused]] static void MX_SPI2_Init(void);
 void MX_TIM2_Init(void);
-void MX_UART7_Init(void);
-void MX_UART8_Init(void);
-void MX_USB_OTG_HS_HCD_Init(void);
-void MX_I2C2_Init(void);
-void MX_SPI4_Init(void);
-void MX_DAC1_Init(void);
+[[maybe_unused]] static void MX_UART7_Init(void);
+[[maybe_unused]] static void MX_UART8_Init(void);
+[[maybe_unused]] static void MX_USB_OTG_HS_HCD_Init(void);
+[[maybe_unused]] static void MX_I2C2_Init(void);
+[[maybe_unused]] static void MX_SPI4_Init(void);
+[[maybe_unused]] [[maybe_unused]] static void MX_DAC1_Init(void);
 void MX_SAI1_Init(void);
 void MX_TIM1_Init(void);
 void MX_DMA_Init(void);
-void MX_ADC1_Init(void);
-void MX_ADC2_Init(void);
-void MX_TIM4_Init(void);
-void MX_TIM8_Init(void);
-void MX_TIM13_Init(void);
-void MX_TIM14_Init(void);
-void MX_TIM15_Init(void);
-void MX_USB_OTG_FS_PCD_Init(void);
-void MX_USART2_UART_Init(void);
+[[maybe_unused]] static void MX_ADC1_Init(void);
+[[maybe_unused]] static void MX_ADC2_Init(void);
+[[maybe_unused]] static void MX_TIM4_Init(void);
+[[maybe_unused]] static void MX_TIM8_Init(void);
+[[maybe_unused]] static void MX_TIM13_Init(void);
+[[maybe_unused]] static void MX_TIM14_Init(void);
+[[maybe_unused]] static void MX_TIM15_Init(void);
+[[maybe_unused]] static void MX_USB_OTG_FS_PCD_Init(void);
+[[maybe_unused]] [[maybe_unused]] static void MX_USART2_UART_Init(void);
 void MX_SPI3_Init(void);
-void MX_TIM3_Init(void);
-void MX_TIM16_Init(void);
-void MX_TIM17_Init(void);
+[[maybe_unused]] static void MX_TIM3_Init(void);
+[[maybe_unused]] static void MX_TIM16_Init(void);
+[[maybe_unused]] static void MX_TIM17_Init(void);
 /* USER CODE BEGIN PFP */
 extern void setup();
 extern void loop();
@@ -125,28 +126,28 @@ extern void loop();
 // int main(void)
 // {
 //   /* USER CODE BEGIN 1 */
-//
+
 //   /* USER CODE END 1 */
-//
+
 //   /* MCU Configuration--------------------------------------------------------*/
-//
+
 //   /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
 //   HAL_Init();
-//
+
 //   /* USER CODE BEGIN Init */
-//
+
 //   /* USER CODE END Init */
-//
+
 //   /* Configure the system clock */
 //   SystemClock_Config();
-//
+
 // /* Configure the peripherals common clocks */
 //   PeriphCommonClock_Config();
-//
+
 //   /* USER CODE BEGIN SysInit */
-//
+
 //   /* USER CODE END SysInit */
-//
+
 //   /* Initialize all configured peripherals */
 //   MX_GPIO_Init();
 //   MX_I2C1_Init();
@@ -177,13 +178,13 @@ extern void loop();
 //   /* USER CODE BEGIN 2 */
 //   setup();
 //   /* USER CODE END 2 */
-//
+
 //   /* Infinite loop */
 //   /* USER CODE BEGIN WHILE */
 //   while (1)
 //   {
 //     /* USER CODE END WHILE */
-//
+
 //     /* USER CODE BEGIN 3 */
 // 	loop();
 //   }
@@ -273,15 +274,15 @@ void PeriphCommonClock_Config(void)
   PeriphClkInitStruct.PLL2.PLL2VCOSEL = RCC_PLL2VCOWIDE;
   PeriphClkInitStruct.PLL2.PLL2FRACN = 0;
   PeriphClkInitStruct.PLL3.PLL3M = 8;
-  PeriphClkInitStruct.PLL3.PLL3N = 96;
-  PeriphClkInitStruct.PLL3.PLL3P = 4;
+  PeriphClkInitStruct.PLL3.PLL3N = 120;
+  PeriphClkInitStruct.PLL3.PLL3P = 2;
   PeriphClkInitStruct.PLL3.PLL3Q = 4;
   PeriphClkInitStruct.PLL3.PLL3R = 4;
   PeriphClkInitStruct.PLL3.PLL3RGE = RCC_PLL3VCIRANGE_1;
   PeriphClkInitStruct.PLL3.PLL3VCOSEL = RCC_PLL3VCOWIDE;
   PeriphClkInitStruct.PLL3.PLL3FRACN = 0;
   PeriphClkInitStruct.Sai1ClockSelection = RCC_SAI1CLKSOURCE_PLL2;
-  PeriphClkInitStruct.Spi123ClockSelection = RCC_SPI123CLKSOURCE_PLL2;
+  PeriphClkInitStruct.Spi123ClockSelection = RCC_SPI123CLKSOURCE_PLL3;
   PeriphClkInitStruct.UsbClockSelection = RCC_USBCLKSOURCE_PLL3;
   PeriphClkInitStruct.AdcClockSelection = RCC_ADCCLKSOURCE_PLL3;
   if (HAL_RCCEx_PeriphCLKConfig(&PeriphClkInitStruct) != HAL_OK)
@@ -295,7 +296,7 @@ void PeriphCommonClock_Config(void)
   * @param None
   * @retval None
   */
-void MX_ADC1_Init(void)
+static void MX_ADC1_Init(void)
 {
 
   /* USER CODE BEGIN ADC1_Init 0 */
@@ -360,7 +361,7 @@ void MX_ADC1_Init(void)
   * @param None
   * @retval None
   */
-void MX_ADC2_Init(void)
+static void MX_ADC2_Init(void)
 {
 
   /* USER CODE BEGIN ADC2_Init 0 */
@@ -417,7 +418,7 @@ void MX_ADC2_Init(void)
   * @param None
   * @retval None
   */
-void MX_DAC1_Init(void)
+static void MX_DAC1_Init(void)
 {
 
   /* USER CODE BEGIN DAC1_Init 0 */
@@ -475,7 +476,8 @@ void MX_I2C1_Init(void)
 
   /* USER CODE END I2C1_Init 1 */
   hi2c1.Instance = I2C1;
-  hi2c1.Init.Timing = 0x307075B1;
+  // hi2c1.Init.Timing = 0x307075B1;
+  hi2c1.Init.Timing = 0x10707DBC;
   hi2c1.Init.OwnAddress1 = 0;
   hi2c1.Init.AddressingMode = I2C_ADDRESSINGMODE_7BIT;
   hi2c1.Init.DualAddressMode = I2C_DUALADDRESS_DISABLE;
@@ -510,7 +512,7 @@ void MX_I2C1_Init(void)
   * @param None
   * @retval None
   */
-void MX_I2C2_Init(void)
+static void MX_I2C2_Init(void)
 {
 
   /* USER CODE BEGIN I2C2_Init 0 */
@@ -521,7 +523,7 @@ void MX_I2C2_Init(void)
 
   /* USER CODE END I2C2_Init 1 */
   hi2c2.Instance = I2C2;
-  hi2c2.Init.Timing = 0x307075B1;
+  hi2c2.Init.Timing = 0x10707DBC;
   hi2c2.Init.OwnAddress1 = 0;
   hi2c2.Init.AddressingMode = I2C_ADDRESSINGMODE_7BIT;
   hi2c2.Init.DualAddressMode = I2C_DUALADDRESS_DISABLE;
@@ -605,7 +607,7 @@ void MX_SAI1_Init(void)
   * @param None
   * @retval None
   */
-void MX_SPI2_Init(void)
+static void MX_SPI2_Init(void)
 {
 
   /* USER CODE BEGIN SPI2_Init 0 */
@@ -666,12 +668,12 @@ void MX_SPI3_Init(void)
   /* SPI3 parameter configuration*/
   hspi3.Instance = SPI3;
   hspi3.Init.Mode = SPI_MODE_MASTER;
-  hspi3.Init.Direction = SPI_DIRECTION_2LINES;
-  hspi3.Init.DataSize = SPI_DATASIZE_4BIT;
+  hspi3.Init.Direction = SPI_DIRECTION_2LINES_TXONLY;
+  hspi3.Init.DataSize = SPI_DATASIZE_8BIT;
   hspi3.Init.CLKPolarity = SPI_POLARITY_LOW;
   hspi3.Init.CLKPhase = SPI_PHASE_1EDGE;
   hspi3.Init.NSS = SPI_NSS_HARD_OUTPUT;
-  hspi3.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_2;
+  hspi3.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_4;
   hspi3.Init.FirstBit = SPI_FIRSTBIT_MSB;
   hspi3.Init.TIMode = SPI_TIMODE_DISABLE;
   hspi3.Init.CRCCalculation = SPI_CRCCALCULATION_DISABLE;
@@ -684,7 +686,7 @@ void MX_SPI3_Init(void)
   hspi3.Init.MasterSSIdleness = SPI_MASTER_SS_IDLENESS_00CYCLE;
   hspi3.Init.MasterInterDataIdleness = SPI_MASTER_INTERDATA_IDLENESS_00CYCLE;
   hspi3.Init.MasterReceiverAutoSusp = SPI_MASTER_RX_AUTOSUSP_DISABLE;
-  hspi3.Init.MasterKeepIOState = SPI_MASTER_KEEP_IO_STATE_DISABLE;
+  hspi3.Init.MasterKeepIOState = SPI_MASTER_KEEP_IO_STATE_ENABLE;
   hspi3.Init.IOSwap = SPI_IO_SWAP_DISABLE;
   if (HAL_SPI_Init(&hspi3) != HAL_OK)
   {
@@ -701,7 +703,7 @@ void MX_SPI3_Init(void)
   * @param None
   * @retval None
   */
-void MX_SPI4_Init(void)
+static void MX_SPI4_Init(void)
 {
 
   /* USER CODE BEGIN SPI4_Init 0 */
@@ -758,7 +760,6 @@ void MX_TIM1_Init(void)
 
   TIM_Encoder_InitTypeDef sConfig = {0};
   TIM_MasterConfigTypeDef sMasterConfig = {0};
-  TIM_IC_InitTypeDef sConfigIC = {0};
 
   /* USER CODE BEGIN TIM1_Init 1 */
 
@@ -770,19 +771,15 @@ void MX_TIM1_Init(void)
   htim1.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
   htim1.Init.RepetitionCounter = 0;
   htim1.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
-  if (HAL_TIM_IC_Init(&htim1) != HAL_OK)
-  {
-    Error_Handler();
-  }
   sConfig.EncoderMode = TIM_ENCODERMODE_TI1;
   sConfig.IC1Polarity = TIM_ICPOLARITY_RISING;
   sConfig.IC1Selection = TIM_ICSELECTION_DIRECTTI;
   sConfig.IC1Prescaler = TIM_ICPSC_DIV1;
-  sConfig.IC1Filter = 0;
+  sConfig.IC1Filter = 7;
   sConfig.IC2Polarity = TIM_ICPOLARITY_RISING;
   sConfig.IC2Selection = TIM_ICSELECTION_DIRECTTI;
   sConfig.IC2Prescaler = TIM_ICPSC_DIV1;
-  sConfig.IC2Filter = 0;
+  sConfig.IC2Filter = 7;
   if (HAL_TIM_Encoder_Init(&htim1, &sConfig) != HAL_OK)
   {
     Error_Handler();
@@ -791,14 +788,6 @@ void MX_TIM1_Init(void)
   sMasterConfig.MasterOutputTrigger2 = TIM_TRGO2_RESET;
   sMasterConfig.MasterSlaveMode = TIM_MASTERSLAVEMODE_DISABLE;
   if (HAL_TIMEx_MasterConfigSynchronization(&htim1, &sMasterConfig) != HAL_OK)
-  {
-    Error_Handler();
-  }
-  sConfigIC.ICPolarity = TIM_INPUTCHANNELPOLARITY_RISING;
-  sConfigIC.ICSelection = TIM_ICSELECTION_DIRECTTI;
-  sConfigIC.ICPrescaler = TIM_ICPSC_DIV1;
-  sConfigIC.ICFilter = 0;
-  if (HAL_TIM_IC_ConfigChannel(&htim1, &sConfigIC, TIM_CHANNEL_3) != HAL_OK)
   {
     Error_Handler();
   }
@@ -822,7 +811,6 @@ void MX_TIM2_Init(void)
 
   TIM_Encoder_InitTypeDef sConfig = {0};
   TIM_MasterConfigTypeDef sMasterConfig = {0};
-  TIM_IC_InitTypeDef sConfigIC = {0};
 
   /* USER CODE BEGIN TIM2_Init 1 */
 
@@ -833,19 +821,15 @@ void MX_TIM2_Init(void)
   htim2.Init.Period = 4294967295;
   htim2.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
   htim2.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
-  if (HAL_TIM_IC_Init(&htim2) != HAL_OK)
-  {
-    Error_Handler();
-  }
   sConfig.EncoderMode = TIM_ENCODERMODE_TI1;
   sConfig.IC1Polarity = TIM_ICPOLARITY_RISING;
   sConfig.IC1Selection = TIM_ICSELECTION_DIRECTTI;
   sConfig.IC1Prescaler = TIM_ICPSC_DIV1;
-  sConfig.IC1Filter = 0;
+  sConfig.IC1Filter = 7;
   sConfig.IC2Polarity = TIM_ICPOLARITY_RISING;
   sConfig.IC2Selection = TIM_ICSELECTION_DIRECTTI;
   sConfig.IC2Prescaler = TIM_ICPSC_DIV1;
-  sConfig.IC2Filter = 0;
+  sConfig.IC2Filter = 7;
   if (HAL_TIM_Encoder_Init(&htim2, &sConfig) != HAL_OK)
   {
     Error_Handler();
@@ -853,14 +837,6 @@ void MX_TIM2_Init(void)
   sMasterConfig.MasterOutputTrigger = TIM_TRGO_RESET;
   sMasterConfig.MasterSlaveMode = TIM_MASTERSLAVEMODE_DISABLE;
   if (HAL_TIMEx_MasterConfigSynchronization(&htim2, &sMasterConfig) != HAL_OK)
-  {
-    Error_Handler();
-  }
-  sConfigIC.ICPolarity = TIM_INPUTCHANNELPOLARITY_RISING;
-  sConfigIC.ICSelection = TIM_ICSELECTION_DIRECTTI;
-  sConfigIC.ICPrescaler = TIM_ICPSC_DIV1;
-  sConfigIC.ICFilter = 0;
-  if (HAL_TIM_IC_ConfigChannel(&htim2, &sConfigIC, TIM_CHANNEL_4) != HAL_OK)
   {
     Error_Handler();
   }
@@ -875,7 +851,7 @@ void MX_TIM2_Init(void)
   * @param None
   * @retval None
   */
-void MX_TIM3_Init(void)
+static void MX_TIM3_Init(void)
 {
 
   /* USER CODE BEGIN TIM3_Init 0 */
@@ -936,7 +912,7 @@ void MX_TIM3_Init(void)
   * @param None
   * @retval None
   */
-void MX_TIM4_Init(void)
+static void MX_TIM4_Init(void)
 {
 
   /* USER CODE BEGIN TIM4_Init 0 */
@@ -997,7 +973,7 @@ void MX_TIM4_Init(void)
   * @param None
   * @retval None
   */
-void MX_TIM8_Init(void)
+static void MX_TIM8_Init(void)
 {
 
   /* USER CODE BEGIN TIM8_Init 0 */
@@ -1079,7 +1055,7 @@ void MX_TIM8_Init(void)
   * @param None
   * @retval None
   */
-void MX_TIM13_Init(void)
+static void MX_TIM13_Init(void)
 {
 
   /* USER CODE BEGIN TIM13_Init 0 */
@@ -1125,7 +1101,7 @@ void MX_TIM13_Init(void)
   * @param None
   * @retval None
   */
-void MX_TIM14_Init(void)
+static void MX_TIM14_Init(void)
 {
 
   /* USER CODE BEGIN TIM14_Init 0 */
@@ -1171,7 +1147,7 @@ void MX_TIM14_Init(void)
   * @param None
   * @retval None
   */
-void MX_TIM15_Init(void)
+static void MX_TIM15_Init(void)
 {
 
   /* USER CODE BEGIN TIM15_Init 0 */
@@ -1237,7 +1213,7 @@ void MX_TIM15_Init(void)
   * @param None
   * @retval None
   */
-void MX_TIM16_Init(void)
+static void MX_TIM16_Init(void)
 {
 
   /* USER CODE BEGIN TIM16_Init 0 */
@@ -1300,7 +1276,7 @@ void MX_TIM16_Init(void)
   * @param None
   * @retval None
   */
-void MX_TIM17_Init(void)
+static void MX_TIM17_Init(void)
 {
 
   /* USER CODE BEGIN TIM17_Init 0 */
@@ -1363,7 +1339,7 @@ void MX_TIM17_Init(void)
   * @param None
   * @retval None
   */
-void MX_UART7_Init(void)
+static void MX_UART7_Init(void)
 {
 
   /* USER CODE BEGIN UART7_Init 0 */
@@ -1411,7 +1387,7 @@ void MX_UART7_Init(void)
   * @param None
   * @retval None
   */
-void MX_UART8_Init(void)
+static void MX_UART8_Init(void)
 {
 
   /* USER CODE BEGIN UART8_Init 0 */
@@ -1459,7 +1435,7 @@ void MX_UART8_Init(void)
   * @param None
   * @retval None
   */
-void MX_USART2_UART_Init(void)
+static void MX_USART2_UART_Init(void)
 {
 
   /* USER CODE BEGIN USART2_Init 0 */
@@ -1507,7 +1483,7 @@ void MX_USART2_UART_Init(void)
   * @param None
   * @retval None
   */
-void MX_USB_OTG_FS_PCD_Init(void)
+static void MX_USB_OTG_FS_PCD_Init(void)
 {
 
   /* USER CODE BEGIN USB_OTG_FS_Init 0 */
@@ -1543,7 +1519,7 @@ void MX_USB_OTG_FS_PCD_Init(void)
   * @param None
   * @retval None
   */
-void MX_USB_OTG_HS_HCD_Init(void)
+static void MX_USB_OTG_HS_HCD_Init(void)
 {
 
   /* USER CODE BEGIN USB_OTG_HS_Init 0 */
@@ -1579,6 +1555,7 @@ void MX_DMA_Init(void)
 
   /* DMA controller clock enable */
   __HAL_RCC_DMA1_CLK_ENABLE();
+  // __HAL_RCC_DMA2_CLK_ENABLE();
 
   /* DMA interrupt init */
   /* DMA1_Stream0_IRQn interrupt configuration */
@@ -1587,6 +1564,9 @@ void MX_DMA_Init(void)
   /* DMA1_Stream1_IRQn interrupt configuration */
   HAL_NVIC_SetPriority(DMA1_Stream1_IRQn, 0, 0);
   HAL_NVIC_EnableIRQ(DMA1_Stream1_IRQn);
+  // /* DMA2_Stream0_IRQn interrupt configuration */
+  // HAL_NVIC_SetPriority(DMA2_Stream0_IRQn, 0, 0);
+  // HAL_NVIC_EnableIRQ(DMA2_Stream0_IRQn);
 
 }
 

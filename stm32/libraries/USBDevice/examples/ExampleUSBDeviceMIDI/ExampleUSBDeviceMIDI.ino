@@ -30,7 +30,7 @@ void event_receive(const uint8_t event, const float* data) {
             transmit_midi_note_off(0, mNote);
             led(LED_00, false);
             break;
-        case EVENT_ENCODER_ROTATE:
+        case EVENT_ENCODER_ROTATED:
             int mDelta = data[TICK] - data[PREVIOUS_TICK];
             mNote += mDelta;
             break;

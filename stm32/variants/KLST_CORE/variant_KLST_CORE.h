@@ -558,6 +558,7 @@ extern "C" {
 
 #define LED_BUILTIN         LED_00
 #define USER_BTN            BUTTON_USER_00
+#define KLST_NUM_LEDS       3
 
 /* SPI */
 #ifndef PIN_SPI_SS

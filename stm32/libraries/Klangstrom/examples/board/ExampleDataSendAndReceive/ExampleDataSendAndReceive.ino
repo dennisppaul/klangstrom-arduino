@@ -102,7 +102,7 @@ void event_receive(const uint8_t event, const float* data) {
             transmit_command(M_ADSR_STOP);
             led_toggle(LED_00);
             break;
-        case EVENT_ENCODER_ROTATE:
+        case EVENT_ENCODER_ROTATED:
             parse_encoder(data[TICK] - data[PREVIOUS_TICK]);
             led_toggle(LED_02);
             break;

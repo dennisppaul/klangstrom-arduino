@@ -48,9 +48,17 @@ uint8_t KLST_BSP_error_code() {
     return mErrorCode;
 }
 
-/* ----------------------------------------------------------------------------------------------------------------- */
-/* ENCODERS                                                                                                          */
-/* ----------------------------------------------------------------------------------------------------------------- */
+void KLST_BSP_init_LEDs() {
+    const static int mLEDs[KLST_NUM_LEDS] = {
+        LED_00,
+        LED_01,
+        LED_02
+    };
+    /* LEDs */
+    for (uint8_t i = 0; i < KLST_NUM_LEDS; i++) {
+        pinMode(mLEDs[i], OUTPUT);
+    }
+}
 
 void KLST_BSP_init_peripherals() {
     MX_GPIO_Init();
@@ -58,6 +66,10 @@ void KLST_BSP_init_peripherals() {
     MX_I2C3_Init();  // @todo(check if we could use the built-in libs for this?)
     MX_SAI1_Init();
 }
+
+/* ----------------------------------------------------------------------------------------------------------------- */
+/* ENCODERS                                                                                                          */
+/* ----------------------------------------------------------------------------------------------------------------- */
 
 void KLST_BSP_init_encoders() {
     MX_TIM2_Init();

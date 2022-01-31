@@ -119,7 +119,8 @@ namespace klang {
                         const float s0 = (mBlockData_SIGNAL_0 != nullptr) ? (mBlockData_SIGNAL_0[i] * m0) : 0.0;
                         const float s1 = (mBlockData_SIGNAL_1 != nullptr) ? (mBlockData_SIGNAL_1[i] * m1) : 0.0;
                         const float s  = s0 + s1;
-                        pAudioBlock[i] = s / (float)mSignalInputCounter;
+                        pAudioBlock[i] = s;
+                        // pAudioBlock[i] = s / (float)mSignalInputCounter;
                     }
                 }
                 AudioBlockPool::instance().release(mBlock_SIGNAL_0);

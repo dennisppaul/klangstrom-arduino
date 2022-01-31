@@ -154,7 +154,7 @@ namespace klang {
                 const float pR3   = mPan3;
                 const float pL3   = 1.0 - mPan3;
 
-                const float mRatio = 1.0 / mSignalInputCounter;
+                // const float mRatio = 1.0 / mSignalInputCounter;
                 for (uint16_t i = 0; i < KLANG_SAMPLES_PER_AUDIO_BLOCK; ++i) {
                     float sL = 0.0;
                     float sR = 0.0;
@@ -181,17 +181,17 @@ namespace klang {
                     mBlockData_CH_OUT_SIGNAL_LEFT[i]  = sL;
                     mBlockData_CH_OUT_SIGNAL_RIGHT[i] = sR;
 
-#ifndef KLST_USE_DSP
-                    mBlockData_CH_OUT_SIGNAL_LEFT[i] *= mRatio;
-                    mBlockData_CH_OUT_SIGNAL_RIGHT[i] *= mRatio;
-#endif
+// #ifndef KLST_USE_DSP
+//                     mBlockData_CH_OUT_SIGNAL_LEFT[i] *= mRatio;
+//                     mBlockData_CH_OUT_SIGNAL_RIGHT[i] *= mRatio;
+// #endif
                 }
 
-#ifdef KLST_USE_DSP
-                //                 arm_offset_f32	(mBlockData_CH_OUT_SIGNAL_LEFT, [[add value]], mBlockData_CH_OUT_SIGNAL_LEFT, KLANG_SAMPLES_PER_AUDIO_BLOCK);
-                arm_scale_f32(mBlockData_CH_OUT_SIGNAL_LEFT, mRatio, mBlockData_CH_OUT_SIGNAL_LEFT, KLANG_SAMPLES_PER_AUDIO_BLOCK);
-                arm_scale_f32(mBlockData_CH_OUT_SIGNAL_RIGHT, mRatio, mBlockData_CH_OUT_SIGNAL_RIGHT, KLANG_SAMPLES_PER_AUDIO_BLOCK);
-#endif
+// #ifdef KLST_USE_DSP
+//                 //                 arm_offset_f32	(mBlockData_CH_OUT_SIGNAL_LEFT, [[add value]], mBlockData_CH_OUT_SIGNAL_LEFT, KLANG_SAMPLES_PER_AUDIO_BLOCK);
+//                 arm_scale_f32(mBlockData_CH_OUT_SIGNAL_LEFT, mRatio, mBlockData_CH_OUT_SIGNAL_LEFT, KLANG_SAMPLES_PER_AUDIO_BLOCK);
+//                 arm_scale_f32(mBlockData_CH_OUT_SIGNAL_RIGHT, mRatio, mBlockData_CH_OUT_SIGNAL_RIGHT, KLANG_SAMPLES_PER_AUDIO_BLOCK);
+// #endif
                 AudioBlockPool::instance().release(mBlock_SIGNAL_0);
                 AudioBlockPool::instance().release(mBlock_SIGNAL_1);
                 AudioBlockPool::instance().release(mBlock_SIGNAL_2);

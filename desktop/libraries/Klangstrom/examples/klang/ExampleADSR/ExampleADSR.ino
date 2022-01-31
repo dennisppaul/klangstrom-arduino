@@ -61,7 +61,7 @@ void event_receive(const EVENT_TYPE event, const float* data) {
             mVCO.set_frequency(DEFAULT_FREQUENCY * (2 + data[X]));
             mVCO.set_amplitude(0.5 * data[Y]);
             break;
-        case EVENT_ENCODER_ROTATE:
+        case EVENT_ENCODER_ROTATED:
             const float mDelta = data[TICK] - data[PREVIOUS_TICK];
             if (data[INDEX] == ENCODER_00) {
                 mVCO.set_frequency(mVCO.get_frequency() + mDelta);

@@ -5,6 +5,8 @@
 #ifndef KlangstromDefinesArduino_h
 #define KlangstromDefinesArduino_h
 
+#include <stdint.h>
+
 /* compatibility */
 
 #define uint32 uint32_t  // this is required to compile e.g the library `TFT_22_IL9225`
@@ -13,7 +15,7 @@
 
 typedef float SIGNAL_TYPE;
 
-/* platform / architecture */
+/* platform / architecture ( as defined in `KLST_ARCH` ) */
 
 #define KLST_ARCH_MCU     1
 #define KLST_ARCH_CPU     2
@@ -69,6 +71,18 @@ static const uint32_t KLST_U_ID[KLST_NUM_OF_U_ID][3] = {
     {0x0019002C, 0xFFFFFFFF, 0x00002F9A},  // KLST_CORE_14
     {0x001A0025, 0xFFFFFFFF, 0x0000302E},  // KLST_CORE_15
 };
+
+/* Klanstrong Defines ( redefined for C context ) */
+
+#ifndef LED_OFF
+#define LED_OFF     0
+#endif
+#ifndef LED_ON
+#define LED_ON      1
+#endif
+#ifndef LED_TOGGLE
+#define LED_TOGGLE  2
+#endif
 
 /* DEBUGGING */
 

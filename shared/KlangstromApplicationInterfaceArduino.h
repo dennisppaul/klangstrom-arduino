@@ -10,6 +10,7 @@
 
 #ifdef __cplusplus
 #include "KlangstromDefines.hpp"
+#include "KlangstromEvents.h"
 #endif
 #include "KlangstromDefinesArduino.h"
 
@@ -54,6 +55,7 @@ void     KLST_BSP_deinit_encoders();
 void     KLST_BSP_start_audio_codec();
 void     KLST_BSP_shutdown();
 void     KLST_BSP_init_peripherals();
+void     KLST_BSP_init_LEDs();
 void     KLST_BSP_configure_TinyUSB();
 uint8_t  KLST_BSP_error_code();
 
@@ -76,8 +78,9 @@ namespace klangstrom {
     void    event_transmit(EVENT_TYPE pEvent, float* pPayload);
     int16_t ID();
     char*   U_ID();
-    void    led(uint8_t pLED, bool pState);
-    void    led_toggle(uint8_t pLED);
+    void    LED(uint16_t pLED, uint8_t pState);
+    void    led(uint16_t pLED, bool pState);
+    void    led_toggle(uint16_t pLED);
     void    option(uint8_t pOption, float pValue);
     bool    pin_state(uint8_t pButton);
 };  // namespace klangstrom
