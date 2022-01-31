@@ -2,7 +2,7 @@
 layout: libdoc
 title: NodeVCFMoogLP.hpp
 permalink: /NodeVCFMoogLP.hpp/
-index: 84
+index: 85
 ---
 
 ```c

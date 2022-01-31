@@ -2,7 +2,7 @@
 layout: libdoc
 title: NodeVCA.hpp
 permalink: /NodeVCA.hpp/
-index: 79
+index: 80
 ---
 
 ```c
@@ -18,7 +18,7 @@ index: 79
  *       +---------------------+
  *       |                     |
  * IN00--| SIGNAL       SIGNAL |--OUT00
- *       |                     |
+ * IN01--| AMPLIFICATION       |
  *       +---------------------+
  */
 
@@ -28,8 +28,11 @@ index: 79
 #include "NodeVCA.hpp"
 
 namespace klang {
-    class NodeVCA : public NodeKernel {
+    class NodeVCA : public NodeKernelBlock2 {
     public:
+        static const CHANNEL_ID CH_IN_SIGNAL        = 0;
+        static const CHANNEL_ID CH_IN_AMPLIFICATION = 1;
+
         void set_amplification(SIGNAL_TYPE pValue) {
             mAmplification = pValue;
         }
@@ -47,8 +50,22 @@ namespace klang {
         }
 
     protected:
-        SIGNAL_TYPE kernel(const SIGNAL_TYPE s) {
-            return s * mAmplification;
+        void kernel(SIGNAL_TYPE* pOutputSignal,
+                    SIGNAL_TYPE* pInputSignal_A,
+                    SIGNAL_TYPE* pInputSignal_B) {
+            if (pInputSignal_A == nullptr) {
+                for (uint16_t i = 0; i < KLANG_SAMPLES_PER_AUDIO_BLOCK; i++) {
+                    pOutputSignal[i] = 0.0;
+                }
+            } else if (pInputSignal_B == nullptr) {
+                for (uint16_t i = 0; i < KLANG_SAMPLES_PER_AUDIO_BLOCK; i++) {
+                    pOutputSignal[i] = pInputSignal_A[i] * mAmplification;
+                }
+            } else {
+                for (uint16_t i = 0; i < KLANG_SAMPLES_PER_AUDIO_BLOCK; i++) {
+                    pOutputSignal[i] = pInputSignal_A[i] * pInputSignal_B[i];
+                }
+            }
         }
 
     private:

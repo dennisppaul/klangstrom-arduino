@@ -2,7 +2,7 @@
 layout: libdoc
 title: NodeMixer4.hpp
 permalink: /NodeMixer4.hpp/
-index: 62
+index: 63
 ---
 
 ```c

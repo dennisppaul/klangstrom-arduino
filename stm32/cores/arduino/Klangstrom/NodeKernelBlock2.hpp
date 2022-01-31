@@ -57,27 +57,36 @@ namespace klang {
         }
 
         void update(CHANNEL_ID pChannel, SIGNAL_TYPE* pAudioBlock) {
-            // @todo(check if the behavior ( only process if both input channels are connected ) is desired)
-            if (mConnection_CH_IN_SIGNAL_A != nullptr && mConnection_CH_IN_SIGNAL_B != nullptr) {
-                if (is_not_updated()) {
-                    if (mConnection_CH_IN_SIGNAL_A != nullptr) {
-                        mBlock_SIGNAL_A = AudioBlockPool::instance().request();
-                        mConnection_CH_IN_SIGNAL_A->update(mBlock_SIGNAL_A);
-                    }
-                    if (mConnection_CH_IN_SIGNAL_B != nullptr) {
-                        mBlock_SIGNAL_B = AudioBlockPool::instance().request();
-                        mConnection_CH_IN_SIGNAL_B->update(mBlock_SIGNAL_B);
-                    }
-                    flag_updated();
-                }
-                if (pChannel == CH_OUT_SIGNAL) {
-                    SIGNAL_TYPE* mBlockData_IN_SIGNAL_A = AudioBlockPool::instance().data(mBlock_SIGNAL_A);
-                    SIGNAL_TYPE* mBlockData_IN_SIGNAL_B = AudioBlockPool::instance().data(mBlock_SIGNAL_B);
-                    kernel(pAudioBlock, mBlockData_IN_SIGNAL_A, mBlockData_IN_SIGNAL_B);
-                }
-            } else {
+            if (mConnection_CH_IN_SIGNAL_A == nullptr && mConnection_CH_IN_SIGNAL_B == nullptr) {
                 for (uint16_t i = 0; i < KLANG_SAMPLES_PER_AUDIO_BLOCK; i++) {
                     pAudioBlock[i] = 0;
+                }
+            } else {
+                if (is_not_updated() && pChannel == CH_OUT_SIGNAL) {
+                    SIGNAL_TYPE*   mBlockData_IN_SIGNAL_A = nullptr;
+                    AUDIO_BLOCK_ID mBlock_SIGNAL_IN_A     = AudioBlockPool::NO_ID;
+                    if (mConnection_CH_IN_SIGNAL_A != nullptr) {
+                        mBlock_SIGNAL_IN_A     = AudioBlockPool::instance().request();
+                        mBlockData_IN_SIGNAL_A = AudioBlockPool::instance().data(mBlock_SIGNAL_IN_A);
+                        mConnection_CH_IN_SIGNAL_A->update(mBlock_SIGNAL_IN_A);
+                    }
+
+                    SIGNAL_TYPE*   mBlockData_IN_SIGNAL_B = nullptr;
+                    AUDIO_BLOCK_ID mBlock_SIGNAL_IN_B     = AudioBlockPool::NO_ID;
+                    if (mConnection_CH_IN_SIGNAL_B != nullptr) {
+                        mBlock_SIGNAL_IN_B     = AudioBlockPool::instance().request();
+                        mBlockData_IN_SIGNAL_B = AudioBlockPool::instance().data(mBlock_SIGNAL_IN_B);
+                        mConnection_CH_IN_SIGNAL_B->update(mBlock_SIGNAL_IN_B);
+                    }
+
+                    kernel(pAudioBlock,
+                           mBlockData_IN_SIGNAL_A,
+                           mBlockData_IN_SIGNAL_B);
+
+                    AudioBlockPool::instance().release(mBlock_SIGNAL_IN_A);
+                    AudioBlockPool::instance().release(mBlock_SIGNAL_IN_B);
+
+                    flag_updated();
                 }
             }
         }
@@ -93,9 +102,6 @@ namespace klang {
     private:
         Connection* mConnection_CH_IN_SIGNAL_A = nullptr;
         Connection* mConnection_CH_IN_SIGNAL_B = nullptr;
-
-        AUDIO_BLOCK_ID mBlock_SIGNAL_A = AudioBlockPool::NO_ID;
-        AUDIO_BLOCK_ID mBlock_SIGNAL_B = AudioBlockPool::NO_ID;
     };
 }  // namespace klang
 

@@ -27,7 +27,7 @@ void setup()  {
     mLFOAmplitude.set_frequency(1);
     mLFOAmplitude.set_amplitude(0.1);
     mLFOAmplitude.set_waveform(NodeVCOWavetable::WAVEFORM::SINE);
-    mLFOAmplitude.set_offset(0.25);
+    mLFOAmplitude.set_offset(0.5);
 }
 
 void audioblock(SIGNAL_TYPE* pOutputLeft, SIGNAL_TYPE* pOutputRight, SIGNAL_TYPE* pInputLeft, SIGNAL_TYPE* pInputRight)  {

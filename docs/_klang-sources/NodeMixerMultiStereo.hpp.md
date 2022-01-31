@@ -2,16 +2,28 @@
 layout: libdoc
 title: NodeMixerMultiStereo.hpp
 permalink: /NodeMixerMultiStereo.hpp/
-index: 66
+index: 67
 ---
 
 ```c
-//
-//  NodeMixerMultiStereo.hpp
-//  Klang – a node+text-based synthesizer library
-//
-//
-//
+/*
+ * Klang – a node+text-based synthesizer library
+ *
+ * This file is part of the *wellen* library (https://github.com/dennisppaul/wellen).
+ * Copyright (c) 2022 Dennis P Paul.
+ *
+ * This library is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, version 3.
+ *
+ * This library is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
 
 /**
  *       [ NODE_MIXER_MULTI_STEREO ]
@@ -63,7 +75,7 @@ namespace klang {
                 m_has_SIGNAL[i] = (mConnection_CH_IN_SIGNAL_and_mix[i].connection != nullptr);
                 mSignalInputCounter += m_has_SIGNAL[i];
             }
-            if (is_not_updated() && pChannel == CH_OUT_SIGNAL && mSignalInputCounter > 0) {
+            if (is_not_updated() && mSignalInputCounter > 0) {
                 mBlock_CH_OUT_SIGNAL_LEFT                   = AudioBlockPool::instance().request();
                 mBlock_CH_OUT_SIGNAL_RIGHT                  = AudioBlockPool::instance().request();
                 SIGNAL_TYPE* mBlockData_CH_OUT_SIGNAL_LEFT  = AudioBlockPool::instance().data(mBlock_CH_OUT_SIGNAL_LEFT);

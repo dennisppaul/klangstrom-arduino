@@ -2,7 +2,7 @@
 layout: libdoc
 title: NodeMute.hpp
 permalink: /NodeMute.hpp/
-index: 67
+index: 68
 ---
 
 ```c

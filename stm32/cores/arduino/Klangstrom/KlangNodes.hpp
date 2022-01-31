@@ -23,6 +23,7 @@
 #include "NodeKernel.hpp"
 #include "NodeKernelBlock.hpp"
 #include "NodeKernelBlock2.hpp"
+#include "NodeKernelBlockMulti.hpp"
 #include "NodeKernelBlockStereo.hpp"
 #include "NodeMap.hpp"
 #include "NodeMixer16.hpp"

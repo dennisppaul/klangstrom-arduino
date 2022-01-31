@@ -2,7 +2,7 @@
 layout: libdoc
 title: NodeSampler.hpp
 permalink: /NodeSampler.hpp/
-index: 75
+index: 76
 ---
 
 ```c

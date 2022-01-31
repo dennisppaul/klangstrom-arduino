@@ -2,6 +2,7 @@
 
 ## 0.0.2
 
+- added `NodeKernelBlockMulti` with ( theoretically ) up to 256 input and output channels. ( `NodeKernel*` classes assist in the development of custom nodes )
 - added option to select target board in emulator
 - LEDs can now be turned on, off or toggled from one function (`LED(ID,STATE)` where state can be `LED_ON`, `LED_OFF` or `LED_TOGGLE` )
 - added `TaskScheduler` to easily created time-based callbacks
