@@ -1,3 +1,22 @@
+/*
+ * Klangstrom
+ *
+ * This file is part of the *wellen* library (https://github.com/dennisppaul/wellen).
+ * Copyright (c) 2022 Dennis P Paul.
+ *
+ * This library is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, version 3.
+ *
+ * This library is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
+
 #include "AudioCodecWM8731.h"
 
 // #ifdef __cplusplus
@@ -6,7 +25,8 @@
 
 #define WM8731_I2C_ADDR 0x34
 
-// bool WM8731_init() {
+// moved to `KLST_*-BSP.cpp`
+// bool WM8731_init() { 
 //     /* I2S configuration */
 //     WM8731_delay(5);
 //     WM8731_write(WM8731_REG_RESET, 0);

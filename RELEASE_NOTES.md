@@ -2,6 +2,8 @@
 
 ## 0.0.2
 
+- added syntax coloring for klangstrom keywords
+- `NodeVCOWavetable` + `NodeSampler` now support 5 different data types: 8/16-bit un/signed integers and 32-bit floats ( i.e `uint8_t`, `int8_t`, `uint16_t`, `int16_t` + `float` )
 - added `NodeKernelBlockMulti` with ( theoretically ) up to 256 input and output channels. ( `NodeKernel*` classes assist in the development of custom nodes )
 - added option to select target board in emulator
 - LEDs can now be turned on, off or toggled from one function (`LED(ID,STATE)` where state can be `LED_ON`, `LED_OFF` or `LED_TOGGLE` )

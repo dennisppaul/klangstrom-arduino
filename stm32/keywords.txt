@@ -924,28 +924,3 @@ refresh	KEYWORD2
 getTimerClkFreq	KEYWORD2
 captureCompareCallback	KEYWORD2
 updateCallback	KEYWORD2
-
-# --------------------------------------------------------------------------- #
-# --- KLST ------------------------------------------------------------------ #
-# --------------------------------------------------------------------------- #
-
-LED_00	LITERAL1
-LED_01	LITERAL1
-LED_02	LITERAL1
-LED_03	LITERAL1
-LED_04	LITERAL1
-LED_05	LITERAL1
-LED_06	LITERAL1
-LED_07	LITERAL1
-LED_08	LITERAL1
-LED_09	LITERAL1
-LED_10	LITERAL1
-LED_11	LITERAL1
-LED_12	LITERAL1
-LED_13	LITERAL1
-LED_14	LITERAL1
-LED_15	LITERAL1
-SERIAL_00	KEYWORD1
-SERIAL_01	KEYWORD2
-klang       KEYWORD2
-klangstrom	KEYWORD2

@@ -23,7 +23,19 @@
 
 #include "Arduino.h"
 #include "KlangstromDisplayFont.h"
-#include "stm32h7xx_hal.h"
+
+#if defined(KLST_BOARD_KLST_TINY)
+  #include "stm32f4xx.h"
+  #include "stm32f4xx_hal.h"
+#elif defined(KLST_BOARD_KLST_CORE)
+  #include "stm32h7xx.h"
+  #include "stm32h7xx_hal.h"
+#elif defined(KLST_BOARD_KLST_SHEEP)
+  #include "stm32h7xx.h"
+  #include "stm32h7xx_hal.h"
+#else
+  #warning @KlangstromDisplayBSP_KLST architecture not supported
+#endif
 
 #define ILI9341_USE_OLD_DRIVER  // also commented out DMA in `main.c`
 

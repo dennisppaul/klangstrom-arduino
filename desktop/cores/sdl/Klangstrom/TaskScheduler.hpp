@@ -1,5 +1,5 @@
 /*
- * Klangstrom
+ * Strom
  *
  * This file is part of the *wellen* library (https://github.com/dennisppaul/wellen).
  * Copyright (c) 2022 Dennis P Paul.

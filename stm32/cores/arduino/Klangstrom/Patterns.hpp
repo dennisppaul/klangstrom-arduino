@@ -1,5 +1,5 @@
 /*
- * Klang – a node+text-based synthesizer library
+ * Strom – a node+text-based composition library
  *
  * This file is part of the *wellen* library (https://github.com/dennisppaul/wellen).
  * Copyright (c) 2022 Dennis P Paul.

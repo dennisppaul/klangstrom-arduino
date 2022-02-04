@@ -7,18 +7,19 @@
 using namespace klang;
 using namespace klangstrom;
 
-NodeVCOFunction     mVCOFunction;
-NodeVCOWavetable    mVCOWavetable;
-NodeDAC             mDAC;
+NodeVCOFunction  mVCOFunction;
+NodeVCOWavetable mVCOWavetable;
+NodeDAC          mDAC;
 
 void setup() {
-    Klang::connect(mVCOFunction,    Node::CH_OUT_SIGNAL,    mDAC,   NodeDAC::CH_IN_SIGNAL_LEFT);
-    Klang::connect(mVCOWavetable,   Node::CH_OUT_SIGNAL,    mDAC,   NodeDAC::CH_IN_SIGNAL_RIGHT);
+    Klang::connect(mVCOFunction,  Node::CH_OUT_SIGNAL, mDAC, NodeDAC::CH_IN_SIGNAL_LEFT);
+    Klang::connect(mVCOWavetable, Node::CH_OUT_SIGNAL, mDAC, NodeDAC::CH_IN_SIGNAL_RIGHT);
 
     mVCOFunction.set_frequency(DEFAULT_FREQUENCY * 2);
     mVCOFunction.set_amplitude(0.5);
     mVCOWavetable.set_frequency(mVCOFunction.get_frequency());
     mVCOWavetable.set_amplitude(mVCOFunction.get_amplitude());
+    mVCOWavetable.set_waveform(NodeVCOWavetable::WAVEFORM::SINE);
 
     mDAC.set_stereo(true);
 }

@@ -9,49 +9,12 @@
 #include "KlangstromDisplayDrawBuffer.h"
 #include "KlangstromDisplayFont.h"
 #include "KlangstromDisplayFont_5x8.h"
+#include "KlangtromDisplayDrawSampler.h"
 #include "TaskScheduler.hpp"
 
 using namespace klang;
 using namespace strom;
 using namespace klangstrom;
-
-class SamplerView : public KlangstromDisplayDrawBuffer {
-public:
-    void draw_in_out(KlangstromDisplay& g, bool pClearBackground = true) {
-        if (fSampler != nullptr) {
-            if (pClearBackground) {
-                g.BSP_rect_fill(x + 1, y + 1, width - 2, height - 1, g.get_background_16i());
-            }
-
-            // @TODO use doted lines for in/out?
-            const uint16_t xIn  = x + (width - 0.5) * fSampler->get_in();
-            const uint16_t xOut = x + (width - 0.5) * fSampler->get_out();
-            const uint16_t y0   = y + 1;
-            const uint16_t h    = height - 2;
-
-            g.BSP_line_vertical(xIn, y0, h, g.get_color_16i());
-            g.BSP_line_vertical(xOut, y0, h, g.get_color_16i());
-        }
-    }
-
-    void draw(KlangstromDisplay& g) {
-        draw_frame(g);
-        draw_buffer(g);
-        draw_in_out(g);
-    }
-
-    void update_sample_data(bool pAverageSamples = false) {
-        // @TODO(average intermediate or omit?)
-        update_buffer(fSampler->get_buffer(), fSampler->get_buffer_size(), pAverageSamples);
-    }
-
-    void set_sampler(NodeSamplerI16* pSampler) {
-        fSampler = pSampler;
-    }
-
-private:
-    NodeSamplerI16* fSampler = nullptr;
-};
 
 static const uint8_t TRACK_COUNT                       = 4;
 static const uint8_t SPACING                           = 4;
@@ -61,7 +24,7 @@ static const uint8_t APP_STATE_COUNT                   = 2;
 static const uint8_t APP_STATE_SELECT_FILE             = APP_STATE_COUNT;
 
 TaskScheduler               fScheduler;
-SamplerView                 fSamplerViews[TRACK_COUNT];
+KlangtromDisplayDrawSampler fSamplerViews[TRACK_COUNT];
 NodeSamplerI16              fSamplers[TRACK_COUNT];
 NodeDAC                     fDAC;
 NodeMixerMultiStereo        fMixer;
@@ -90,13 +53,13 @@ void setup() {
     mDrawBuffer.draw_frame(Display);
 
     for (uint8_t i = 0; i < TRACK_COUNT; ++i) {
-        SamplerView& fSamplerView  = fSamplerViews[i];
-        fSamplerView.width         = 128;
-        fSamplerView.height        = 32;
-        fSamplerView.x             = 10;
-        fSamplerView.y             = 30 + Font_5x8.height + SPACING + mDrawBuffer.height + SPACING + (32 + SPACING) * i;
-        fSamplerView.view          = KlangstromDisplayDrawBuffer::VIEW::LINES_SYMETRIC;
-        fSamplerView.draw_baseline = true;
+        KlangtromDisplayDrawSampler& fSamplerView = fSamplerViews[i];
+        fSamplerView.width                        = 128;
+        fSamplerView.height                       = 32;
+        fSamplerView.x                            = 10;
+        fSamplerView.y                            = 30 + Font_5x8.height + SPACING + mDrawBuffer.height + SPACING + (32 + SPACING) * i;
+        fSamplerView.view                         = KlangstromDisplayDrawBuffer::VIEW::LINES_SYMETRIC;
+        fSamplerView.draw_baseline                = true;
         fSamplerView.draw_frame(Display);
         fSamplerView.set_sampler(&fSamplers[i]);
     }
