@@ -7,13 +7,12 @@
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; Copyright (c) 2021 STMicroelectronics.
-  * All rights reserved.</center></h2>
+  * Copyright (c) 2022 STMicroelectronics.
+  * All rights reserved.
   *
-  * This software component is licensed by ST under Ultimate Liberty license
-  * SLA0044, the "License"; You may not use this file except in compliance with
-  * the License. You may obtain a copy of the License at:
-  *                             www.st.com/SLA0044
+  * This software is licensed under terms that can be found in the LICENSE file
+  * in the root directory of this software component.
+  * If no LICENSE file comes with this software, it is provided AS-IS.
   *
   ******************************************************************************
   */
@@ -22,7 +21,6 @@
 /* Define to prevent recursive inclusion -------------------------------------*/
 #ifndef __USBH_CONF__H__
 #define __USBH_CONF__H__
-
 #ifdef __cplusplus
  extern "C" {
 #endif
@@ -31,7 +29,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "bsp_klst_inc.h"
+#include "USBHost_BSP_inc.h"
 
 /* USER CODE BEGIN INCLUDE */
 
@@ -123,12 +121,10 @@
 
 /* DEBUG macros */
 
-#define __PRINTF printf
-
 #if (USBH_DEBUG_LEVEL > 0U)
 #define  USBH_UsrLog(...)   do { \
-                            __PRINTF(__VA_ARGS__); \
-                            __PRINTF("\r\n"); \
+                            printf(__VA_ARGS__); \
+                            printf("\n\r"); \
 } while (0)
 #else
 #define USBH_UsrLog(...) do {} while (0)
@@ -137,9 +133,9 @@
 #if (USBH_DEBUG_LEVEL > 1U)
 
 #define  USBH_ErrLog(...) do { \
-                            __PRINTF("ERROR: ") ; \
-                            __PRINTF(__VA_ARGS__); \
-                            __PRINTF("\r\n"); \
+                            printf("ERROR: ") ; \
+                            printf(__VA_ARGS__); \
+                            printf("\n\r"); \
 } while (0)
 #else
 #define USBH_ErrLog(...) do {} while (0)
@@ -147,9 +143,9 @@
 
 #if (USBH_DEBUG_LEVEL > 2U)
 #define  USBH_DbgLog(...)   do { \
-                            __PRINTF("DEBUG : ") ; \
-                            __PRINTF(__VA_ARGS__); \
-                            __PRINTF("\r\n"); \
+                            printf("DEBUG : ") ; \
+                            printf(__VA_ARGS__); \
+                            printf("\n\r"); \
 } while (0)
 #else
 #define USBH_DbgLog(...) do {} while (0)
@@ -193,4 +189,3 @@
 
 #endif /* __USBH_CONF__H__ */
 
-/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

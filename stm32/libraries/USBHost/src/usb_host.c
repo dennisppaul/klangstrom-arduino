@@ -7,13 +7,12 @@
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; Copyright (c) 2021 STMicroelectronics.
-  * All rights reserved.</center></h2>
+  * Copyright (c) 2022 STMicroelectronics.
+  * All rights reserved.
   *
-  * This software component is licensed by ST under Ultimate Liberty license
-  * SLA0044, the "License"; You may not use this file except in compliance with
-  * the License. You may obtain a copy of the License at:
-  *                             www.st.com/SLA0044
+  * This software is licensed under terms that can be found in the LICENSE file
+  * in the root directory of this software component.
+  * If no LICENSE file comes with this software, it is provided AS-IS.
   *
   ******************************************************************************
   */
@@ -31,16 +30,16 @@
 
 /* USER CODE BEGIN PV */
 /* Private variables ---------------------------------------------------------*/
-extern void Error_Handler();
+
 /* USER CODE END PV */
 
 /* USER CODE BEGIN PFP */
 /* Private function prototypes -----------------------------------------------*/
-
+extern uint8_t KLST_USB_HOST_get_host_id();
 /* USER CODE END PFP */
 
 /* USB Host core handle declaration */
-USBH_HandleTypeDef hUsbHostFS;
+USBH_HandleTypeDef hUsbHost;
 ApplicationTypeDef Appli_state = APPLICATION_IDLE;
 
 /*
@@ -69,26 +68,28 @@ static void USBH_UserProcess(USBH_HandleTypeDef *phost, uint8_t id);
 void MX_USB_HOST_Init(void)
 {
   /* USER CODE BEGIN USB_HOST_Init_PreTreatment */
+
   /* USER CODE END USB_HOST_Init_PreTreatment */
 
   /* Init host Library, add supported class and start the library. */
-  if (USBH_Init(&hUsbHostFS, USBH_UserProcess, HOST_FS) != USBH_OK)
+  if (USBH_Init(&hUsbHost, USBH_UserProcess, KLST_USB_HOST_get_host_id()) != USBH_OK)
   {
     Error_Handler();
   }
-  if (USBH_RegisterClass(&hUsbHostFS, USBH_HID_CLASS) != USBH_OK)
+  if (USBH_RegisterClass(&hUsbHost, USBH_HID_CLASS) != USBH_OK)
   {
     Error_Handler();
   }
-  if (USBH_RegisterClass(&hUsbHostFS, USBH_MIDI_CLASS) != USBH_OK)
+  if (USBH_RegisterClass(&hUsbHost, USBH_MIDI_CLASS) != USBH_OK)
   {
     Error_Handler();
   }
-  if (USBH_Start(&hUsbHostFS) != USBH_OK)
+  if (USBH_Start(&hUsbHost) != USBH_OK)
   {
     Error_Handler();
   }
   /* USER CODE BEGIN USB_HOST_Init_PostTreatment */
+
   /* USER CODE END USB_HOST_Init_PostTreatment */
 }
 
@@ -99,36 +100,32 @@ extern void MIDI_Application(void);
 void MX_USB_HOST_Process(void)
 {
   /* USB Host Background task */
-  USBH_Process(&hUsbHostFS);
-  const uint8_t mActiveClass = hUsbHostFS.pActiveClass->ClassCode;
+  USBH_Process(&hUsbHost);
+  const uint8_t mActiveClass = hUsbHost.pActiveClass->ClassCode;
   if (mActiveClass == 1) {
-	MIDI_Application();
+	  MIDI_Application();
   }
 }
 /*
  * user callback definition
  */
-static void USBH_UserProcess(USBH_HandleTypeDef *phost, uint8_t id)
+static void USBH_UserProcess  (USBH_HandleTypeDef *phost, uint8_t id)
 {
   /* USER CODE BEGIN CALL_BACK_1 */
   switch(id)
   {
   case HOST_USER_SELECT_CONFIGURATION:
-	  USBH_UsrLog("HOST_USER_SELECT_CONFIGURATION");
   break;
 
   case HOST_USER_DISCONNECTION:
-	  USBH_UsrLog("HOST_USER_DISCONNECTION");
   Appli_state = APPLICATION_DISCONNECT;
   break;
 
   case HOST_USER_CLASS_ACTIVE:
-	  USBH_UsrLog("HOST_USER_CLASS_ACTIVE");
   Appli_state = APPLICATION_READY;
   break;
 
   case HOST_USER_CONNECTION:
-	  USBH_UsrLog("HOST_USER_CONNECTION");
   Appli_state = APPLICATION_START;
   break;
 
@@ -146,4 +143,3 @@ static void USBH_UserProcess(USBH_HandleTypeDef *phost, uint8_t id)
   * @}
   */
 
-/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

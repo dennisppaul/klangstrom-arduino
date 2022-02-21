@@ -2,7 +2,7 @@
 layout: page
 title: KLST_CORE Board
 permalink: /klst_core-board/
-index: 12
+index: 13
 ---
 
 KLST_CORE (v0.1) is a development board incorporating a lot of features that are deemed useful for the development of *Klangstrom* applications. it also features  connectors to Eurorack format devices.  it can be programmed via the Arduin IDE through the USB connector ( DFU mode ) or with an external programmer ( SWD mode ).

@@ -476,8 +476,6 @@ static void MIDI_ProcessReception(USBH_HandleTypeDef *phost)
 
 		URB_Status = USBH_LL_GetURBState(phost, MIDI_Handle->InPipe);
 
-
-
 		/*Check the status done for reception*/
 		if(URB_Status == USBH_URB_DONE )
 		{

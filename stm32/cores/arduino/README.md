@@ -4,12 +4,13 @@
 
 ## `Arduino.h`
 
--  added import `#include "klangstrom_arduino_defines.h"`
--  added import `#include "klangstrom_arduino.h"`
--  added `extern void KLST_pre_setup() __attribute__((weak));`
--  added `extern void KLST_post_setup() __attribute__((weak));`
+- added `#include "KlangstromDefinesArduino.h"`
+- added `#include "KlangstromApplicationInterfaceArduino.h"`
+- added `extern void KLST_pre_setup() __attribute__((weak));`
+- added `extern void KLST_post_setup() __attribute__((weak));`
 
 ## `main.cpp`
 
-- added import `#include "klangstrom_arduino.h"`
-- added `KLST_pre_setup()` + `KLST_post_setup()` to `main()`
+- added `KLST_pre_setup()` to `main()`
+- added `KLST_post_setup()` to `main()`
+- added `KLST_ISH_loop()` to `main()`

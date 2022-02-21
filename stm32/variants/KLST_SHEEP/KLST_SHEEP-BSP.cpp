@@ -40,7 +40,6 @@ extern SAI_HandleTypeDef hsai_BlockB1;
 extern DMA_HandleTypeDef hdma_sai1_a;
 extern DMA_HandleTypeDef hdma_sai1_b;
 extern DMA_HandleTypeDef hdma_spi2_rx;
-extern DMA_HandleTypeDef hdma_spi2_tx;
 extern TIM_HandleTypeDef htim1;
 extern TIM_HandleTypeDef htim2;
 
@@ -282,6 +281,8 @@ void KLST_BSP_shutdown() {
     HAL_SAI_DeInit(&hsai_BlockA1);
     HAL_SAI_DMAStop(&hsai_BlockB1);
     HAL_SAI_DMAStop(&hsai_BlockA1);
+    HAL_SAI_MspDeInit(&hsai_BlockB1);
+    HAL_SAI_MspDeInit(&hsai_BlockA1);
     /* stop I2C */
     HAL_I2C_DeInit(&hi2c1);
     HAL_I2C_MspDeInit(&hi2c1);

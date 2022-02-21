@@ -10,7 +10,6 @@
 #include "usbh_MIDI.h"
 #include "MIDI_interface.h"
 
-extern USBH_HandleTypeDef hUsbHostFS;
 void MIDI_Application(void);
 
 /* --- callback functions --- */

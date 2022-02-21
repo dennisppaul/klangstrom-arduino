@@ -56,6 +56,8 @@
 /* USER CODE END 0 */
 
 /* External variables --------------------------------------------------------*/
+// extern PCD_HandleTypeDef hpcd_USB_OTG_FS;
+// extern HCD_HandleTypeDef hhcd_USB_OTG_HS;
 extern DMA_HandleTypeDef hdma_sai1_a;
 extern DMA_HandleTypeDef hdma_sai1_b;
 extern DMA_HandleTypeDef hdma_spi3_tx;
@@ -257,6 +259,20 @@ void DMA2_Stream0_IRQHandler(void)
 
   /* USER CODE END DMA2_Stream0_IRQn 1 */
 }
+
+// /**
+//   * @brief This function handles USB On The Go HS global interrupt.
+//   */
+// void OTG_HS_IRQHandler(void)
+// {
+//   /* USER CODE BEGIN OTG_HS_IRQn 0 */
+
+//   /* USER CODE END OTG_HS_IRQn 0 */
+//   HAL_HCD_IRQHandler(&hhcd_USB_OTG_HS);
+//   /* USER CODE BEGIN OTG_HS_IRQn 1 */
+
+//   /* USER CODE END OTG_HS_IRQn 1 */
+// }
 
 /* USER CODE BEGIN 1 */
 

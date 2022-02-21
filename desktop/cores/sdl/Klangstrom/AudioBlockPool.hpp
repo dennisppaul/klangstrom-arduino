@@ -112,6 +112,7 @@ namespace klang {
         // @TODO(see if there is a way to move audioblock buffer to specific memory location in class ( with `static`? ) + test this on desktop version too)
         // static SIGNAL_TYPE mAudioBlocks[KLANG_AUDIO_BLOCKS][KLANG_SAMPLES_PER_AUDIO_BLOCK] __attribute__ ((section(".audio_block_buffer"))); // or make this global
         // SIGNAL_TYPE mAudioBlocks[KLANG_AUDIO_BLOCKS][KLANG_SAMPLES_PER_AUDIO_BLOCK];
+        // @TODO(removed `inline` not sure why it was there in the first place.)
         inline static SIGNAL_TYPE mAudioBlocks[KLANG_AUDIO_BLOCKS][KLANG_SAMPLES_PER_AUDIO_BLOCK]
 #if (KLST_ARCH == KLST_ARCH_MCU)
             __attribute__((section(".audio_block_buffer")))

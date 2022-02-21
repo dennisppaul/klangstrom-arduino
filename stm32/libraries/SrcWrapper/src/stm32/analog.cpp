@@ -781,8 +781,12 @@ uint16_t adc_read_value(PinName pin, uint32_t resolution)
   uint32_t bank = 0;
 
   if ((pin & PADC_BASE) && (pin < ANA_START)) {
-#if defined(STM32H7xx)
+#if defined(STM32H7xx) || defined(STM32MP1xx)
+#ifdef ADC3
     AdcHandle.Instance = ADC3;
+#else
+    AdcHandle.Instance = ADC2;
+#endif
 #else
     AdcHandle.Instance = ADC1;
 #if defined(ADC5) && defined(ADC_CHANNEL_TEMPSENSOR_ADC5)
@@ -896,7 +900,7 @@ uint16_t adc_read_value(PinName pin, uint32_t resolution)
   AdcHandle.Init.Overrun               = ADC_OVR_DATA_OVERWRITTEN;      /* DR register is overwritten with the last conversion result in case of overrun */
 #endif
 #ifdef ADC_LEFTBITSHIFT_NONE
-  AdcHandle.Init.LeftBitShift          = ADC_LEFTBITSHIFT_NONE;         /* No bit shift left applied on the final ADC convesion data */
+  AdcHandle.Init.LeftBitShift          = ADC_LEFTBITSHIFT_NONE;         /* No bit shift left applied on the final ADC conversion data */
 #endif
 
 #if defined(STM32F0xx)
@@ -1011,7 +1015,7 @@ uint16_t adc_read_value(PinName pin, uint32_t resolution)
     return 0;
   }
 
-  /* Check if the continous conversion of regular channel is finished */
+  /* Check if the continuous conversion of regular channel is finished */
   if ((HAL_ADC_GetState(&AdcHandle) & HAL_ADC_STATE_REG_EOC) == HAL_ADC_STATE_REG_EOC) {
     /*##-5- Get the converted value of regular channel  ########################*/
     uhADCxConvertedValue = HAL_ADC_GetValue(&AdcHandle);

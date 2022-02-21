@@ -66,6 +66,8 @@ uint8_t mKLSTAudioLine =
     KLST_MIC
 #elif defined(KLST_BOARD_KLST_CORE)
     KLST_LINE_IN
+#elif defined(KLST_BOARD_KLST_SHEEP)
+    KLST_MIC
 #else
     KLST_MIC
 #endif
@@ -174,6 +176,7 @@ void KLST_ISH_pre_setup() {
 #warning @Klangstrom :: serial ports are not enabled in board options. ignore this warning if this was intended.
 #endif
     }
+
 
     /* beat */
     if (mKLSTOptionEnableBeat) {

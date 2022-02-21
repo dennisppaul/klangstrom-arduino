@@ -11,7 +11,7 @@
 # https://arduino.github.io/arduino-cli/latest/platform-specification/
 
 name=Klangstrom (MCU)
-version=1.0.0
+version=1.1.0
 
 # KLST complie variables
 # ----------------------
@@ -31,7 +31,7 @@ compiler.warning_flags.default=
 compiler.warning_flags.more=-Wall
 compiler.warning_flags.all=-Wall -Wextra
 
-compiler.path={runtime.tools.xpack-arm-none-eabi-gcc-10.2.1-1.1.path}/bin/
+compiler.path={runtime.tools.xpack-arm-none-eabi-gcc-10.3.1-2.3.path}/bin/
 
 compiler.S.cmd=arm-none-eabi-gcc
 compiler.c.cmd=arm-none-eabi-gcc
@@ -63,7 +63,7 @@ compiler.ldflags=
 compiler.size.cmd=arm-none-eabi-size
 compiler.define=-DARDUINO=
 
-# These can be overriden in boards.txt
+# These can be overridden in boards.txt
 build.extra_flags=
 build.bootloader_flags=
 build.ldscript=ldscript.ld

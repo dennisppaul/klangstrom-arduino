@@ -98,8 +98,11 @@ using callback_function_t = std::function<void(void)>;
 /* Class --------------------------------------------------------*/
 class HardwareTimer {
   public:
+    HardwareTimer();
     HardwareTimer(TIM_TypeDef *instance);
     ~HardwareTimer();  // destructor
+
+    void setup(TIM_TypeDef *instance); // Setup, only needed if no instance was passed to the constructor
 
     void pause(void);  // Pause counter and all output channels
     void pauseChannel(uint32_t channel); // Timer is still running but channel (output and interrupt) is disabled
@@ -112,7 +115,7 @@ class HardwareTimer {
     void setOverflow(uint32_t val, TimerFormat_t format = TICK_FORMAT); // set AutoReload register depending on format provided
     uint32_t getOverflow(TimerFormat_t format = TICK_FORMAT); // return overflow depending on format provided
 
-    void setPWM(uint32_t channel, PinName pin, uint32_t frequency, uint32_t dutycycle, callback_function_t PeriodCallback = nullptr, callback_function_t CompareCallback = nullptr); // Set all in one command freq in HZ, Duty in percentage. Including both interrup.
+    void setPWM(uint32_t channel, PinName pin, uint32_t frequency, uint32_t dutycycle, callback_function_t PeriodCallback = nullptr, callback_function_t CompareCallback = nullptr); // Set all in one command freq in HZ, Duty in percentage. Including both interrupt.
     void setPWM(uint32_t channel, uint32_t pin, uint32_t frequency, uint32_t dutycycle, callback_function_t PeriodCallback = nullptr, callback_function_t CompareCallback = nullptr);
 
     void setCount(uint32_t val, TimerFormat_t format = TICK_FORMAT); // set timer counter to value 'val' depending on format provided
@@ -140,13 +143,16 @@ class HardwareTimer {
     bool hasInterrupt(uint32_t channel);  //returns true if an interrupt has already been set on the channel compare match
     void timerHandleDeinit();  // Timer deinitialization
 
-    // Refresh() is usefull while timer is running after some registers update
+    // Refresh() is useful while timer is running after some registers update
     void refresh(void); // Generate update event to force all registers (Autoreload, prescaler, compare) to be taken into account
 
     uint32_t getTimerClkFreq();  // return timer clock frequency in Hz.
 
-    static void captureCompareCallback(TIM_HandleTypeDef *htim); // Generic Caputre and Compare callback which will call user callback
+    static void captureCompareCallback(TIM_HandleTypeDef *htim); // Generic Capture and Compare callback which will call user callback
     static void updateCallback(TIM_HandleTypeDef *htim);  // Generic Update (rollover) callback which will call user callback
+
+    bool isRunning(); // return true if HardwareTimer is running
+    bool isRunningChannel(uint32_t channel); // return true if channel is running
 
     // The following function(s) are available for more advanced timer options
     TIM_HandleTypeDef *getHandle();  // return the handle address for HAL related configuration

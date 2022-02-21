@@ -8,7 +8,7 @@
 #include "Arduino.h"
 #include "usb_host.h"
 #include "usbh_conf.h"
-#include "bsp_klst_inc.h"
+#include "USBHost_BSP_inc.h"
 #include "MIDI_application.h"
 
 void usb_host_init();

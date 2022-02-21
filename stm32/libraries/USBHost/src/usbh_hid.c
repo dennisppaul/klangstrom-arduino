@@ -336,7 +336,7 @@ static USBH_StatusTypeDef USBH_HID_ClassRequest(USBH_HandleTypeDef *phost)
   case HID_REQ_SET_PROTOCOL:
     /* set protocol */
     classReqStatus = USBH_HID_SetProtocol(phost, 0U);
-    if (classReqStatus == USBH_OK)
+    if (classReqStatus != USBH_BUSY)
     {
       HID_Handle->ctl_state = HID_REQ_IDLE;
 
@@ -393,7 +393,7 @@ static USBH_StatusTypeDef USBH_HID_Process(USBH_HandleTypeDef *phost)
 
     case HID_IDLE:
       status = USBH_HID_GetReport(phost, 0x01U, 0U, HID_Handle->pData, (uint8_t)HID_Handle->length);
-      if (status == USBH_OK)
+      if (status != USBH_BUSY)
       {
         HID_Handle->state = HID_SYNC;
       }

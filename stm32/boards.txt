@@ -26,11 +26,9 @@ Klangstrom.build.variant_h=variant_{build.board}.h
 Klangstrom.build.extra_flags=-D{build.product_line} {build.enable_usb} {build.xSerial}
 
 # KLST_SHEEP board
-Klangstrom.menu.pnum.KLST_SHEEP=KLST_SHEEP(STM32H743VIT)
+Klangstrom.menu.pnum.KLST_SHEEP=KLST_SHEEP(STM32H743VI)
 Klangstrom.menu.pnum.KLST_SHEEP.node=KLST_SHEEP
 Klangstrom.menu.pnum.KLST_SHEEP.upload.maximum_size=2097152
-#Klangstrom.menu.pnum.KLST_SHEEP.upload.maximum_data_size=524288
-# (RAM_D1+RAM_D2+RAM_D3) = (512+288+64)*1024 = 884736
 Klangstrom.menu.pnum.KLST_SHEEP.upload.maximum_data_size=884736
 Klangstrom.menu.pnum.KLST_SHEEP.build.mcu=cortex-m7
 Klangstrom.menu.pnum.KLST_SHEEP.build.flags.fp=-mfpu=fpv5-d16 -mfloat-abi=hard
@@ -57,7 +55,7 @@ Klangstrom.menu.pnum.KLST_TINY.build.cmsis_lib_gcc=arm_cortexM4lf_math
 Klangstrom.menu.pnum.KLST_CORE=KLST_CORE(STM32H743II)
 Klangstrom.menu.pnum.KLST_CORE.node=KLST_CORE
 Klangstrom.menu.pnum.KLST_CORE.upload.maximum_size=2097152
-Klangstrom.menu.pnum.KLST_CORE.upload.maximum_data_size=524288
+Klangstrom.menu.pnum.KLST_CORE.upload.maximum_data_size=884736
 Klangstrom.menu.pnum.KLST_CORE.build.mcu=cortex-m7
 Klangstrom.menu.pnum.KLST_CORE.build.flags.fp=-mfpu=fpv5-d16 -mfloat-abi=hard
 Klangstrom.menu.pnum.KLST_CORE.build.board=KLST_CORE
@@ -107,17 +105,29 @@ Klangstrom.menu.xserial.disabled=Disabled (No Serial support)
 Klangstrom.menu.xserial.disabled.build.xSerial=
 
 # USB connectivity
+Klangstrom.menu.usb.none=None
 Klangstrom.menu.usb.CDCgen=CDC (generic 'Serial' supersede U(S)ART)
 Klangstrom.menu.usb.CDCgen.build.enable_usb={build.usb_flags} -DUSBD_USE_CDC
 Klangstrom.menu.usb.CDC=CDC (no generic 'Serial')
 Klangstrom.menu.usb.CDC.build.enable_usb={build.usb_flags} -DUSBD_USE_CDC -DDISABLE_GENERIC_SERIALUSB
-Klangstrom.menu.usb.DEVICE_MouseKeyboard=USB Device Mouse+Keyboard
-Klangstrom.menu.usb.DEVICE_MouseKeyboard.build.enable_usb=-DUSE_TINYUSB -DTINYUSB_MOUSE_KEYBOARD_DEVICE -DHAL_PCD_MODULE_ENABLED
+Klangstrom.menu.usb.DEVICE_Mouse=USB Device Mouse
+Klangstrom.menu.usb.DEVICE_Mouse.build.enable_usb=-DUSE_USBDEVICE -DUSBDEVICE_MOUSE_KEYBOARD -DUSBDEVICE_MOUSE -DHAL_HCD_MODULE_ENABLED -DHAL_PCD_MODULE_ENABLED
+Klangstrom.menu.usb.DEVICE_Keyboard=USB Device Keyboard
+Klangstrom.menu.usb.DEVICE_Keyboard.build.enable_usb=-DUSE_USBDEVICE -DUSBDEVICE_MOUSE_KEYBOARD -DUSBDEVICE_KEYBOARD -DHAL_HCD_MODULE_ENABLED -DHAL_PCD_MODULE_ENABLED
 Klangstrom.menu.usb.DEVICE_MIDI=USB Device MIDI
-Klangstrom.menu.usb.DEVICE_MIDI.build.enable_usb=-DUSE_TINYUSB -DTINYUSB_MIDI_DEVICE -DHAL_PCD_MODULE_ENABLED
+Klangstrom.menu.usb.DEVICE_MIDI.build.enable_usb=-DUSE_USBDEVICE -DUSBDEVICE_MIDI -DHAL_HCD_MODULE_ENABLED -DHAL_PCD_MODULE_ENABLED
 Klangstrom.menu.usb.HOST=USB Host Mouse+Keyboard+MIDI
-Klangstrom.menu.usb.HOST.build.enable_usb=-DUSE_USBHOST -DHAL_HCD_MODULE_ENABLED
-Klangstrom.menu.usb.none=None
+Klangstrom.menu.usb.HOST.build.enable_usb=-DUSE_USBHOST -DHAL_HCD_MODULE_ENABLED -DHAL_PCD_MODULE_ENABLED
+Klangstrom.menu.usb.HOST_DEVICE_MOUSE=USB Host Mouse+Keyboard+MIDI + USB Device Mouse
+Klangstrom.menu.usb.HOST_DEVICE_MOUSE.build.enable_usb=-DUSE_USBHOST -DHAL_HCD_MODULE_ENABLED -DHAL_PCD_MODULE_ENABLED -DUSE_USBDEVICE -DUSBDEVICE_MOUSE_KEYBOARD -DUSBDEVICE_MOUSE
+Klangstrom.menu.usb.HOST_DEVICE_KEYBOARD=USB Host Mouse+Keyboard+MIDI + USB Device Keyboard
+Klangstrom.menu.usb.HOST_DEVICE_KEYBOARD.build.enable_usb=-DUSE_USBHOST -DHAL_HCD_MODULE_ENABLED -DHAL_PCD_MODULE_ENABLED -DUSE_USBDEVICE -DUSBDEVICE_MOUSE_KEYBOARD -DUSBDEVICE_KEYBOARD
+Klangstrom.menu.usb.HOST_DEVICE_MIDI=USB Host Mouse+Keyboard+MIDI + USB Device MIDI
+Klangstrom.menu.usb.HOST_DEVICE_MIDI.build.enable_usb=-DUSE_USBHOST -DHAL_HCD_MODULE_ENABLED -DHAL_PCD_MODULE_ENABLED -DUSE_USBDEVICE -DUSBDEVICE_MIDI
+Klangstrom.menu.usb.DEVICE_MouseKeyboard_TU=USB Device Mouse+Keyboard ( Tiny USB )
+Klangstrom.menu.usb.DEVICE_MouseKeyboard_TU.build.enable_usb=-DUSE_TINYUSB -DTINYUSB_MOUSE_KEYBOARD_DEVICE -DHAL_PCD_MODULE_ENABLED
+Klangstrom.menu.usb.DEVICE_MIDI_TU=USB Device MIDI ( Tiny USB )
+Klangstrom.menu.usb.DEVICE_MIDI_TU.build.enable_usb=-DUSE_TINYUSB -DTINYUSB_MIDI_DEVICE -DHAL_PCD_MODULE_ENABLED
 Klangstrom.menu.xusb.FS=Low/Full Speed
 Klangstrom.menu.xusb.HS=High Speed
 Klangstrom.menu.xusb.HS.build.usb_speed=-DUSE_USB_HS

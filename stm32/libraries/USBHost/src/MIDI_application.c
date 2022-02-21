@@ -11,6 +11,7 @@
 #define RX_BUFF_SIZE 64 /* USB MIDI buffer : max received data 64 bytes */
 uint8_t MIDI_RX_Buffer[RX_BUFF_SIZE]; // MIDI reception buffer
 extern ApplicationTypeDef Appli_state;
+extern USBH_HandleTypeDef hUsbHost;
 
 /* Private function prototypes -----------------------------------------------*/
 void ProcessReceivedMidiDatas(void);
@@ -23,12 +24,12 @@ void ProcessReceivedMidiDatas(void);
  */
 void MIDI_Application(void) {
 	if (Appli_state == APPLICATION_READY) {
-		USBH_MIDI_Receive(&hUsbHostFS, MIDI_RX_Buffer, RX_BUFF_SIZE); // just once at the beginning, start the first reception
+		USBH_MIDI_Receive(&hUsbHost, MIDI_RX_Buffer, RX_BUFF_SIZE); // just once at the beginning, start the first reception
 		Appli_state = APPLICATION_RUNNING;
 	} else if (Appli_state == APPLICATION_RUNNING) {
 	} else if (Appli_state == APPLICATION_DISCONNECT) {
 		Appli_state = APPLICATION_IDLE;
-		USBH_MIDI_Stop(&hUsbHostFS);
+		USBH_MIDI_Stop(&hUsbHost);
 	}
 }
 
@@ -40,7 +41,7 @@ void MIDI_Application(void) {
  */
 void USBH_MIDI_ReceiveCallback(USBH_HandleTypeDef *phost) {
 	ProcessReceivedMidiDatas();
-	USBH_MIDI_Receive(&hUsbHostFS, MIDI_RX_Buffer, RX_BUFF_SIZE); // start a new reception
+	USBH_MIDI_Receive(&hUsbHost, MIDI_RX_Buffer, RX_BUFF_SIZE); // start a new reception
 }
 
 void USBH_MIDI_TransmitCallback(USBH_HandleTypeDef *phost) {
@@ -51,7 +52,7 @@ void ProcessReceivedMidiDatas(void) {
 	uint8_t *ptr = MIDI_RX_Buffer;
 	midi_package_t pack;
 
-	numberOfPackets = USBH_MIDI_GetLastReceivedDataSize(&hUsbHostFS) / 4; // each USB midi package is 4 bytes long
+	numberOfPackets = USBH_MIDI_GetLastReceivedDataSize(&hUsbHost) / 4; // each USB midi package is 4 bytes long
 
 	while (numberOfPackets--) {
 		pack.cin_cable = *ptr;
@@ -69,8 +70,8 @@ void ProcessReceivedMidiDatas(void) {
 		const uint8_t a = pack.evnt1;
 		const uint8_t b = pack.evnt2;
 		switch(command) {
-			case MIDI_NOTE_OFF     		: receive_midi_note_off(channel, a); break;
-			case MIDI_NOTE_ON           : receive_midi_note_on(channel, a, b); break;
+			case MIDI_NOTE_OFF     		: receive_midi_note_off(channel, a); USBH_DbgLog("receive_midi_note_off"); break;
+			case MIDI_NOTE_ON           : receive_midi_note_on(channel, a, b); USBH_DbgLog("receive_midi_note_on"); break;
 			case MIDI_AFTERTOUCH        : receive_midi_aftertouch(channel, a, b); break;
 			case MIDI_CONTROL_CHANGE    : receive_midi_control_change(channel, a, b); break;
 			case MIDI_PROGRAM_CHANGE    : receive_midi_program_change(channel, a); break;
@@ -93,7 +94,7 @@ void transmit_midi_message(const uint8_t cable, const uint8_t data1, const uint8
 	data[1] = data1;
 	data[2] = data2;
 	data[3] = data3;
-	USBH_MIDI_Transmit(&hUsbHostFS, data, length);
+	USBH_MIDI_Transmit(&hUsbHost, data, length);
 }
 
 void transmit_midi_note_off(const uint8_t channel, const uint8_t note) {

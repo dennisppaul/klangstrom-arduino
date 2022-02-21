@@ -2,6 +2,10 @@
 
 ## 0.0.2
 
+- added KLST_SHEEP to documentation
+- updated STM32duino to v2.2.0
+- cleaned up + rearranged examples
+- deprecated USB device support ( via TinyUSB library ) 
 - added syntax coloring for klangstrom keywords
 - `NodeVCOWavetable` + `NodeSampler` now support 5 different data types: 8/16-bit un/signed integers and 32-bit floats ( i.e `uint8_t`, `int8_t`, `uint16_t`, `int16_t` + `float` )
 - added `NodeKernelBlockMulti` with ( theoretically ) up to 256 input and output channels. ( `NodeKernel*` classes assist in the development of custom nodes )
@@ -19,10 +23,9 @@
 - added `NodeFFT` to perform *Fast Fourier Transfom* on audio signals
 - added *Strom* to repository ( still WIP )
 - added *USB Host* support for Mouse + Keyboard + MIDI ( i.e boards can now host USB devices like e.g MIDI keyboards )
-- added *USB Device* support for Mouse + Keyboard + MIDI ( via TinyUSB ) ( i.e boards can now act as USB devices )
+- added *USB Device* support for Mouse + Keyboard + MIDI ( i.e boards can now act as USB devices )
 - unique board ID is now represented as single string ( `klangstrom::U_ID()` )
 - added KLST_CORE board
-- added USB-MIDI device support ( via TinyUSB library )
 - `NodeDelay` maximum delay ( line ) length can now be globally configured ( `#define NODE_DELAY_BUFFER_SIZE BUFFER_SIZE_IN_SAMPLES` )
 - added *Klang* source code to documentation
 - added support and example for SD Cards

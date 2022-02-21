@@ -20,6 +20,7 @@
 /* Define to prevent recursive inclusion -------------------------------------*/
 #ifndef __USB_CDC_H
 #define __USB_CDC_H
+#ifdef USBCON
 
 #ifdef __cplusplus
 extern "C" {
@@ -159,6 +160,7 @@ uint8_t USBD_CDC_TransmitPacket(USBD_HandleTypeDef *pdev);
 }
 #endif
 
+#endif  // USBCON
 #endif  /* __USB_CDC_H */
 /**
   * @}

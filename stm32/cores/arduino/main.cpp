@@ -47,7 +47,6 @@ __attribute__((constructor(101))) void premain()
  */
 int main(void)
 {
-
   initVariant();
   KLST_ISH_pre_setup();
   setup();

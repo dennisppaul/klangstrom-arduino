@@ -7,13 +7,12 @@
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; Copyright (c) 2021 STMicroelectronics.
-  * All rights reserved.</center></h2>
+  * Copyright (c) 2022 STMicroelectronics.
+  * All rights reserved.
   *
-  * This software component is licensed by ST under Ultimate Liberty license
-  * SLA0044, the "License"; You may not use this file except in compliance with
-  * the License. You may obtain a copy of the License at:
-  *                             www.st.com/SLA0044
+  * This software is licensed under terms that can be found in the LICENSE file
+  * in the root directory of this software component.
+  * If no LICENSE file comes with this software, it is provided AS-IS.
   *
   ******************************************************************************
   */
@@ -30,25 +29,25 @@
   * @brief  Drive VBUS.
   * @param  state : VBUS state
   *          This parameter can be one of the these values:
-  *           - 1 : VBUS Active
-  *           - 0 : VBUS Inactive
+  *          - 1 : VBUS Active
+  *          - 0 : VBUS Inactive
   */
-void MX_DriverVbusFS(uint8_t state)
+void MX_DriverVbus(uint8_t state)
 {
-  uint8_t data = state;
-  /* USER CODE BEGIN PREPARE_GPIO_DATA_VBUS_FS */
-  if(state == 0)
-  {
-    /* Drive high Charge pump */
-    data = GPIO_PIN_SET;
-  }
-  else
-  {
-    /* Drive low Charge pump */
-    data = GPIO_PIN_RESET;
-  }
-  /* USER CODE END PREPARE_GPIO_DATA_VBUS_FS */
-  HAL_GPIO_WritePin(GPIOC,GPIO_PIN_13,(GPIO_PinState)data);
+  // // @todo(no VBUS implemented)
+  // uint8_t data = state;
+  // /* USER CODE BEGIN PREPARE_GPIO_DATA_VBUS_HS */
+  // if(state == 0)
+  // {
+  //   /* Drive high Charge pump */
+  //   data = GPIO_PIN_SET;
+  // }
+  // else
+  // {
+  //   /* Drive low Charge pump */
+  //   data = GPIO_PIN_RESET;
+  // }
+  // /* USER CODE END PREPARE_GPIO_DATA_VBUS_HS */
+  // HAL_GPIO_WritePin(GPIOD,GPIO_PIN_7,(GPIO_PinState)data);
 }
 
-/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

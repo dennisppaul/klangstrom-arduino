@@ -35,29 +35,18 @@ extern "C" {
 #include "stm32h7xx_hal.h"
 
 extern I2C_HandleTypeDef hi2c3;
-
 extern I2S_HandleTypeDef hi2s2;
 extern DMA_HandleTypeDef hdma_spi2_rx;
 extern DMA_HandleTypeDef hdma_spi2_tx;
-
 extern SPI_HandleTypeDef hspi4;
-
 extern TIM_HandleTypeDef htim1;
 extern TIM_HandleTypeDef htim2;
 extern TIM_HandleTypeDef htim5;
 
-// extern PCD_HandleTypeDef hpcd_USB_OTG_FS;
-// extern HCD_HandleTypeDef hhcd_USB_OTG_HS;
-
-void SystemClock_Config(void);
-void PeriphCommonClock_Config(void);
 void MX_GPIO_Init(void);
 void MX_DMA_Init(void);
-void MX_USB_OTG_FS_PCD_Init(void);
-void MX_USB_OTG_HS_HCD_Init(void);
 void MX_I2S2_Init(void);
 void MX_I2C3_Init(void);
-void MX_SPI4_Init(void);
 void MX_TIM1_Init(void);
 void MX_TIM2_Init(void);
 void MX_TIM5_Init(void);

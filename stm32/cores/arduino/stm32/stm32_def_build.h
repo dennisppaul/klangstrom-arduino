@@ -232,8 +232,12 @@
     #define CMSIS_STARTUP_FILE "startup_stm32h742xx.s"
   #elif defined(STM32H743xx)
     #define CMSIS_STARTUP_FILE "startup_stm32h743xx.s"
+  #elif defined(STM32H745xG)
+    #define CMSIS_STARTUP_FILE "startup_stm32h745xg.s"
   #elif defined(STM32H745xx)
     #define CMSIS_STARTUP_FILE "startup_stm32h745xx.s"
+  #elif defined(STM32H747xG)
+    #define CMSIS_STARTUP_FILE "startup_stm32h747xg.s"
   #elif defined(STM32H747xx)
     #define CMSIS_STARTUP_FILE "startup_stm32h747xx.s"
   #elif defined(STM32H750xx)
@@ -393,7 +397,7 @@
   #elif defined(STM32L562xx)
     #define CMSIS_STARTUP_FILE "startup_stm32l562xx.s"
   #elif defined(STM32MP151Axx)
-    #define CMSIS_STARTUP_FILE "startup_stm32mp151axx_cm4 .s"
+    #define CMSIS_STARTUP_FILE "startup_stm32mp151axx_cm4.s"
   #elif defined(STM32MP151Cxx)
     #define CMSIS_STARTUP_FILE "startup_stm32mp151cxx_cm4.s"
   #elif defined(STM32MP153Axx)

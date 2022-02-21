@@ -2,7 +2,7 @@
 layout: home
 ---
 
-![KLST_TINY]({{ site.baseurl }}{% link assets/KLST_TINY.jpg %})
+![KLST_all_boards]({{ site.baseurl }}{% link assets/KLST_all_boards.jpg %})
 
 {% include_relative /assets/KLST--abstract.md %}
 
