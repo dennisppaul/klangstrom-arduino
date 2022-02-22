@@ -23,7 +23,7 @@ KLST_SHEEP (v0.1) is a hand-held-sized development board with a TFT-Display, 2 p
 | 10 | SD card reader | Micro SD card reader, SPI-based |
 | 11 | audio input, line-in | 3.5mm, line level input for audio signals ( e.g vconnection to computer audio output ) |
 | 12 | audio output, line-out | 3.5mm, line level output for audio signals ( e.g connection to HiFi systems ) |
-| 13 | headphones + mic | 3.5mm, 3 ring audio jack with stereo output and mono input. can be used to connect e.g a *headset*. might require a OMTP to CTIA/AHJ converter. |
+| 13 | headphones + mic | 3.5mm, 3 ring audio jack with stereo output and mono input. can be used to connect e.g a *headset*. |
 | 14 | IDC connector w/ power + UART | `SERIAL_01`, can be used to connect e.g to other KLST_SHEEP boards, see 26 |
 | 15 | USB-A | USB port for connecting USB Devices to board as *USB host* e.g computer mouse or keyboard |
 | 16 | 1× I2C | I2C interface |

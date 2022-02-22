@@ -2,6 +2,8 @@
 
 ## 0.0.2
 
+- added bitmap converter tool ( in `./tools/ImageConverter888_565` ) for display library
+- added font editor tool ( in `./tools/Font565Editor` ) for display library
 - added KLST_SHEEP to documentation
 - updated STM32duino to v2.2.0
 - cleaned up + rearranged examples
