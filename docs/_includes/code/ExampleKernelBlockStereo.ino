@@ -1,6 +1,9 @@
-//
-//  ExampleKernelBlockStereo
-//
+/*
+ * this example demonstrates how to use the `NodeKernelBlockStereo` class to write a custom node with three inputs and
+ * two outputs.
+ * 
+ * move the mouse to change the mix ratio for left and right signal.
+ */
 
 #include "KlangNodes.hpp"
 
@@ -50,6 +53,6 @@ void audioblock(SIGNAL_TYPE* pOutputLeft, SIGNAL_TYPE* pOutputRight, SIGNAL_TYPE
 
 void event_receive(const EVENT_TYPE event, const float* data) {
     if (event == EVENT_MOUSE_MOVED) {
-        mKernel.mix = data[Y];
+        mKernel.mix = mouse_event(data).y;
     }
 }

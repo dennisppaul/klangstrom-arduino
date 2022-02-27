@@ -153,7 +153,6 @@ namespace klang {
                 SIGNAL_TYPE* mBlockData_CH_OUT_SIGNAL_LEFT  = AudioBlockPool::instance().data(mBlock_CH_OUT_SIGNAL_LEFT);
                 SIGNAL_TYPE* mBlockData_CH_OUT_SIGNAL_RIGHT = AudioBlockPool::instance().data(mBlock_CH_OUT_SIGNAL_RIGHT);
 
-                // @todo(this should range from [-1.0...1.0] and not from [0.0...1.0])
                 const float mPan0 = mPan[SIGNAL_CHANNEL::SIGNAL_0] * 0.5 + 0.5;
                 const float mPan1 = mPan[SIGNAL_CHANNEL::SIGNAL_1] * 0.5 + 0.5;
                 const float mPan2 = mPan[SIGNAL_CHANNEL::SIGNAL_2] * 0.5 + 0.5;
@@ -167,7 +166,6 @@ namespace klang {
                 const float pR3   = mPan3;
                 const float pL3   = 1.0 - mPan3;
 
-                // const float mRatio = 1.0 / mSignalInputCounter;
                 for (uint16_t i = 0; i < KLANG_SAMPLES_PER_AUDIO_BLOCK; ++i) {
                     float sL = 0.0;
                     float sR = 0.0;

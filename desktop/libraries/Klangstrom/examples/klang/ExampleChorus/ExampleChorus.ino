@@ -1,20 +1,21 @@
-//
-//  ExampleChorus
-//
+/*
+ * this example demonstrates how to apply a chorus effect to a signal. note, that the effect transforms a mono input
+ * into a stereo signal.
+ */
 
 #include "KlangNodes.hpp"
 
 using namespace klang;
 using namespace klangstrom;
 
-NodeVCOWavetable    mOsc;
-NodeChorus          mChorus;
-NodeDAC             mDAC;
+NodeVCOWavetable mOsc;
+NodeChorus       mChorus;
+NodeDAC          mDAC;
 
-void setup()  {
-    Klang::connect(mOsc,      mChorus);
-    Klang::connect(mChorus,   NodeChorus::CH_OUT_SIGNAL_LEFT,     mDAC,   NodeDAC::CH_IN_SIGNAL_LEFT);
-    Klang::connect(mChorus,   NodeChorus::CH_OUT_SIGNAL_RIGHT,    mDAC,   NodeDAC::CH_IN_SIGNAL_RIGHT);
+void setup() {
+    Klang::connect(mOsc, mChorus);
+    Klang::connect(mChorus, NodeChorus::CH_OUT_SIGNAL_LEFT, mDAC, NodeDAC::CH_IN_SIGNAL_LEFT);
+    Klang::connect(mChorus, NodeChorus::CH_OUT_SIGNAL_RIGHT, mDAC, NodeDAC::CH_IN_SIGNAL_RIGHT);
 
     mChorus.set_stereo(true);
 
@@ -25,22 +26,22 @@ void setup()  {
     mDAC.set_stereo(true);
 }
 
-void audioblock(SIGNAL_TYPE* pOutputLeft, SIGNAL_TYPE* pOutputRight, SIGNAL_TYPE* pInputLeft, SIGNAL_TYPE* pInputRight)  {
+void audioblock(SIGNAL_TYPE* pOutputLeft, SIGNAL_TYPE* pOutputRight, SIGNAL_TYPE* pInputLeft, SIGNAL_TYPE* pInputRight) {
     mDAC.process_frame(pOutputLeft, pOutputRight);
 }
 
-void event_receive(const EVENT_TYPE event, const float* data)  {
+void event_receive(const EVENT_TYPE event, const float* data) {
     switch (event) {
         case EVENT_KEY_PRESSED:
-            handle_key_pressed(data[KEY]);
+            handle_key_pressed(keyboard_event(data).key);
             break;
         case EVENT_MOUSE_MOVED:
-            mChorus.set_feedback(data[X]);
-            mChorus.set_sweep(data[Y]);
+            mChorus.set_feedback(mouse_event(data).x);
+            mChorus.set_sweep(mouse_event(data).y);
             break;
         case EVENT_MOUSE_DRAGGED:
-            mChorus.set_rate(data[X]);
-            mChorus.set_delay(data[Y]);
+            mChorus.set_rate(mouse_event(data).x);
+            mChorus.set_delay(mouse_event(data).y);
             break;
     }
 }

@@ -1,6 +1,10 @@
-//
-//  ExampleFFT
-//
+/*
+ * this example demonstrates how to analyse a signal with the Fast Fourier Transform (FFT). one oscillator generates a
+ * signal which is analyzed for its domination frequency. the detected frequency is then used to set the frequency of a
+ * second oscillator.
+ *
+ * @todo this example does not behave properly on MCUs.
+ */
 
 #include "CycleCounter.h"
 #include "KlangNodes.hpp"
@@ -20,6 +24,8 @@ NodeDAC          mDAC;
 NodeFFT          mFFT;
 
 void setup() {
+    Serial.begin(115200);
+
     Klang::lock();
 
     Klang::connect(mVCO, Node::CH_OUT_SIGNAL, mADSR, Node::CH_IN_SIGNAL);
@@ -85,7 +91,7 @@ void event_receive(const EVENT_TYPE event, const float* data) {
     switch (event) {
         case EVENT_MOUSE_PRESSED:
         case EVENT_ENCODER_BUTTON_PRESSED:
-            mFFT.enable_hamming_window(data[INDEX] != ENCODER_00);
+            mFFT.enable_hamming_window(encoder_event(data).index != ENCODER_00);
             mADSR.start();
             break;
         case EVENT_MOUSE_RELEASED:
@@ -94,14 +100,14 @@ void event_receive(const EVENT_TYPE event, const float* data) {
             break;
         case EVENT_MOUSE_MOVED:
         case EVENT_MOUSE_DRAGGED:
-            mVCO.set_frequency(DEFAULT_FREQUENCY * (2 + data[X]));
-            mVCO.set_amplitude(0.5 * data[Y]);
+            mVCO.set_frequency(DEFAULT_FREQUENCY * (2 + mouse_event(data).x));
+            mVCO.set_amplitude(0.5 * mouse_event(data).y);
             break;
         case EVENT_ENCODER_ROTATED:
-            const float mDelta = data[TICK] - data[PREVIOUS_TICK];
-            if (data[INDEX] == ENCODER_00) {
+            const float mDelta = encoder_event(data).ticks - encoder_event(data).previous_ticks;
+            if (encoder_event(data).index == ENCODER_00) {
                 mVCO.set_frequency(mVCO.get_frequency() + mDelta);
-            } else if (data[INDEX] == ENCODER_01) {
+            } else if (encoder_event(data).index == ENCODER_01) {
                 const float mAmp = fmin(1.0, fmax(0.0, mVCO.get_amplitude()));
                 mVCO.set_amplitude(mAmp + mDelta * 0.05);
             }

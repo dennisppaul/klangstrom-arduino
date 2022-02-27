@@ -1,6 +1,7 @@
-//
-//  ExampleReverb
-//
+/*
+ * this example demonstrates how to apply a reverb effect to a signal.
+ * note that `#define KLANG_EXT_NODE_REVERB` is required to use the effect.
+ */
 
 #define KLANG_EXT_NODE_REVERB
 
@@ -19,7 +20,7 @@ uint8_t mFreq = 0;
 void setup() {
     Klang::connect(mOsc, Node::CH_OUT_SIGNAL, mADSR, Node::CH_IN_SIGNAL);
     Klang::connect(mADSR, Node::CH_OUT_SIGNAL, mReverb, Node::CH_IN_SIGNAL);
-    Klang::connect(mReverb, Node::CH_OUT_SIGNAL, mDAC, NodeDAC::CH_IN_SIGNAL_LEFT);
+    Klang::connect(mReverb, Node::CH_OUT_SIGNAL, mDAC, NodeDAC::CH_IN_SIGNAL);
 
     mOsc.set_frequency(DEFAULT_FREQUENCY);
     mOsc.set_amplitude(0.5);
@@ -33,35 +34,34 @@ void audioblock(SIGNAL_TYPE* pOutputLeft, SIGNAL_TYPE* pOutputRight, SIGNAL_TYPE
 void event_receive(const EVENT_TYPE event, const float* data) {
     switch (event) {
         case EVENT_MOUSE_PRESSED:
+        case EVENT_KEY_PRESSED:
         case EVENT_ENCODER_BUTTON_PRESSED:
-            mousePressed();
+            event_pressed();
             break;
         case EVENT_MOUSE_RELEASED:
+        case EVENT_KEY_RELEASED:
         case EVENT_ENCODER_BUTTON_RELEASED:
-            mouseReleased();
+            event_released();
             break;
         case EVENT_MOUSE_MOVED:
-            mouseMoved(data[X], data[Y]);
-            break;
-        case EVENT_ENCODER_ROTATED:
-            const float mDelta = data[TICK] - data[PREVIOUS_TICK];
+            mouse_moved(mouse_event(data).x, mouse_event(data).y);
             break;
     }
 }
 
-void mouseMoved(float x, float y) {
+void mouse_moved(float x, float y) {
     mReverb.set_roomsize(x);
     mReverb.set_wet(y);
     mReverb.set_dry(1.0 - y);
 }
 
-void mousePressed() {
+void event_pressed() {
     mOsc.set_frequency((mFreq + 1) * DEFAULT_FREQUENCY);
     mADSR.start();
     mFreq++;
     mFreq %= 8;
 }
 
-void mouseReleased() {
+void event_released() {
     mADSR.stop();
 }

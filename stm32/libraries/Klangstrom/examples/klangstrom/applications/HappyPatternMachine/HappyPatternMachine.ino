@@ -244,7 +244,7 @@ void setup() {
     Display.clear();
 
     Display.textFont(&Font_5x8);
-    Display.text(10, 10, "Happy Drum Machine");
+    Display.text(10, 10, "Happy Pattern Machine");
 
     fDrawBuffer.width         = 128;
     fDrawBuffer.height        = 64;

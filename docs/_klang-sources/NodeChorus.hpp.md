@@ -38,8 +38,8 @@ index: 47
 #ifndef NodeChorus_hpp
 #define NodeChorus_hpp
 
-#include "LUTSine.hpp"
 #include "KlangNode.hpp"
+#include "LUTSine.hpp"
 
 namespace klang {
     class NodeChorus : public Node {
@@ -135,6 +135,11 @@ namespace klang {
             ChorusMode_toggle();
         }
 
+        /**
+         * @brief set constant or variable delayed feedback
+         *
+         * @param pValue
+         */
         void set_mode(bool pValue) {
             ChorusMode_switch(pValue ? 127 : 0);
         }
@@ -304,7 +309,7 @@ namespace klang {
             float rate;
             rate      = MAX_RATE * val + MIN_RATE;
             lfoL.freq = rate;
-            //lfoR.freq = 0.98f * rate;
+            // lfoR.freq = 0.98f * rate;
             lfoR.freq = rateCoeff * rate;
         }
         /*---------------------------------------------------------------------------------------------*/
@@ -487,11 +492,11 @@ namespace klang {
                 idx += DEPTH;
             y_n_3 = del->dline[idx];  // y(n-3)
 
-            //return (y_n_1 - y_n) * f + y_n ; // linear interpolation
+            // return (y_n_1 - y_n) * f + y_n ; // linear interpolation
 
-            //return (.5f)*(f-1)*(f-2)*y_n - f*(f-2)*y_n_1 + (.5f)*f*(f-1)*y_n_2 ; // 2nd order Lagrange interpolation
+            // return (.5f)*(f-1)*(f-2)*y_n - f*(f-2)*y_n_1 + (.5f)*f*(f-1)*y_n_2 ; // 2nd order Lagrange interpolation
 
-            //return .5f*(f-1)*((f-2)*y_n + f*y_n_2) - f*(f-2)*y_n_1 ;    // 2nd order Lagrange interpolation (faster)
+            // return .5f*(f-1)*((f-2)*y_n + f*y_n_2) - f*(f-2)*y_n_1 ;    // 2nd order Lagrange interpolation (faster)
 
             /* 3rd order Lagrange interpolation :  */
             return (f - 2) * (f - 3) * (-0.16666666666f * (f - 1) * y_n + 0.5f * f * y_n_1) + f * (f - 1) * (-0.5f * (f - 3) * y_n_2 + 0.166666666666f * (f - 2) * y_n_3);
@@ -510,11 +515,11 @@ namespace klang {
             else
                 x1 = xin + del->fb * delay_read(del, del->baseDelay + MARGIN);  // fixed delay feedback signal
 
-            x1 = (x1 > 1.0f) ? 1.0f : x1;  //clip too loud samples
+            x1 = (x1 > 1.0f) ? 1.0f : x1;  // clip too loud samples
             x1 = (x1 < -1.0f) ? -1.0f : x1;
 
             yout = del->mix * x1 + del->fw * x2;
-            //yout = del->mix * xin + del->fw * x2; // not good sounding...
+            // yout = del->mix * xin + del->fw * x2; // not good sounding...
             delay_write(del, x1);
 
             return yout;

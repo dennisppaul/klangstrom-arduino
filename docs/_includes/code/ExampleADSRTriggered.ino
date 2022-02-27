@@ -1,25 +1,29 @@
-//
-//  ExampleADSRTriggered
-//
+/*
+ * this example demonstrates how to trigger an ADSR envelope from a signale ( in this example the signal is generated
+ * by a second oscillator ). whenever the signal passes a threshold ( default is `0.0` ) on a *rising edge* the ADSR
+ * will be started and when the signal passes a threshold on a *falling edge* the ADSR will be stopped.
+ *
+ * rotate the encoder to change the trigger frequency.
+ */
 
 #include "KlangNodes.hpp"
 
 using namespace klang;
 using namespace klangstrom;
 
-NodeVCOFunction  mTriggerRampFrequency;
-NodeVCOFunction  mVCO;
-NodeADSR         mADSR;
-NodeDAC          mDAC;
+NodeVCOFunction mTriggerRampFrequency;
+NodeVCOFunction mVCO;
+NodeADSR        mADSR;
+NodeDAC         mDAC;
 
 void setup() {
     Klang::lock();
 
     Klang::connect(mTriggerRampFrequency, Node::CH_OUT_SIGNAL, mADSR, NodeADSR::CH_IN_TRIGGER);
-    Klang::connect(mVCO,                  Node::CH_OUT_SIGNAL, mADSR, NodeADSR::CH_IN_SIGNAL);
-    Klang::connect(mADSR,                 Node::CH_OUT_SIGNAL, mDAC,  NodeDAC::CH_IN_SIGNAL_LEFT);
+    Klang::connect(mVCO, Node::CH_OUT_SIGNAL, mADSR, NodeADSR::CH_IN_SIGNAL);
+    Klang::connect(mADSR, Node::CH_OUT_SIGNAL, mDAC, NodeDAC::CH_IN_SIGNAL);
 
-    mVCO.set_frequency(DEFAULT_FREQUENCY * 2);
+    mVCO.set_frequency(DEFAULT_FREQUENCY * 3);
     mVCO.set_amplitude(0.5);
     mVCO.set_waveform(NodeVCOFunction::WAVEFORM::TRIANGLE);
 
@@ -39,18 +43,10 @@ void audioblock(SIGNAL_TYPE* pOutputLeft, SIGNAL_TYPE* pOutputRight, SIGNAL_TYPE
 
 void event_receive(const EVENT_TYPE event, const float* data) {
     switch (event) {
-        case EVENT_KEY_PRESSED:
-            break;
-        case EVENT_MOUSE_PRESSED:
-        case EVENT_ENCODER_BUTTON_PRESSED:
-            break;
-        case EVENT_MOUSE_RELEASED:
-        case EVENT_ENCODER_BUTTON_RELEASED:
+        case EVENT_ENCODER_ROTATED:
+            mTriggerRampFrequency.set_frequency(mTriggerRampFrequency.get_frequency() + encoder_rotated(data).delta);
             break;
         case EVENT_MOUSE_MOVED:
-        case EVENT_MOUSE_DRAGGED:
-            mTriggerRampFrequency.set_frequency(data[X] * 12);
-            mVCO.set_frequency(DEFAULT_FREQUENCY * (2 + data[Y]));
-            break;
+        break;
     }
 }

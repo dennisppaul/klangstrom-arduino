@@ -1,6 +1,6 @@
-//
-//  ExampleWaveshaper
-//
+/*
+ * this example demonstrates how to write a custom waveshaper node from a `NodeKernel` base class.
+ */
 
 #include "KlangNodes.hpp"
 
@@ -8,30 +8,30 @@ using namespace klang;
 using namespace klangstrom;
 
 class NodeWaveshaper : public NodeKernel {
-    public:
-        void set_amount(float pAmount) {
-            mAmount = pAmount;
-        }
+public:
+    void set_amount(float pAmount) {
+        mAmount = pAmount;
+    }
 
-        SIGNAL_TYPE kernel(SIGNAL_TYPE s) {
-            /*
-                from http://www.musicdsp.org/showArchiveComment.php?ArchiveID=46
+    SIGNAL_TYPE kernel(SIGNAL_TYPE s) {
+        /*
+            from http://www.musicdsp.org/showArchiveComment.php?ArchiveID=46
 
-                amount should be in [-1..1]
+            amount should be in [-1..1]
 
-                x = input in [-1..1]
-                y = output
-                k = 2*amount/(1-amount);
+            x = input in [-1..1]
+            y = output
+            k = 2*amount/(1-amount);
 
-                f(x) = (1+k)*x/(1+k*abs(x))
-            */
+            f(x) = (1+k)*x/(1+k*abs(x))
+        */
 
-            const float k = 2 * mAmount / (1 - mAmount);
-            return (1 + k) * s / ( 1 + k * abs(s) );
-        }
+        const float k = 2 * mAmount / (1 - mAmount);
+        return (1 + k) * s / (1 + k * abs(s));
+    }
 
-    private:
-        float mAmount = 0.5;
+private:
+    float mAmount = 0.5;
 };
 
 NodeVCOFunction mVCO01;
@@ -41,9 +41,9 @@ NodeWaveshaper  mWaveshaper;
 NodeDAC         mDAC;
 
 void setup() {
-    Klang::connect(mVCO01,      Node::CH_OUT_SIGNAL,    mMixer, NodeMixer2::CH_IN_SIGNAL_RIGHT);
-    Klang::connect(mVCO02,      Node::CH_OUT_SIGNAL,    mMixer, NodeMixer2::CH_IN_SIGNAL_LEFT);
-    Klang::connect(mMixer,      mWaveshaper);
+    Klang::connect(mVCO01, Node::CH_OUT_SIGNAL, mMixer, NodeMixer2::CH_IN_SIGNAL_RIGHT);
+    Klang::connect(mVCO02, Node::CH_OUT_SIGNAL, mMixer, NodeMixer2::CH_IN_SIGNAL_LEFT);
+    Klang::connect(mMixer, mWaveshaper);
     Klang::connect(mWaveshaper, mDAC);
 
     set_frequency(DEFAULT_FREQUENCY * 2);
@@ -58,22 +58,22 @@ void audioblock(SIGNAL_TYPE* pOutputLeft, SIGNAL_TYPE* pOutputRight, SIGNAL_TYPE
 void event_receive(const EVENT_TYPE event, const float* data) {
     switch (event) {
         case EVENT_KEY_PRESSED:
-            if (data[KEY] == '1') {
+            if (keyboard_event(data).key == '1') {
                 set_waveform(NodeVCOFunction::WAVEFORM::SINE);
             }
-            if (data[KEY] == '2') {
+            if (keyboard_event(data).key == '2') {
                 set_waveform(NodeVCOFunction::WAVEFORM::TRIANGLE);
             }
-            if (data[KEY] == '3') {
+            if (keyboard_event(data).key == '3') {
                 set_waveform(NodeVCOFunction::WAVEFORM::SAWTOOTH);
             }
-            if (data[KEY] == '4') {
+            if (keyboard_event(data).key == '4') {
                 set_waveform(NodeVCOFunction::WAVEFORM::SQUARE);
             }
             break;
         case EVENT_MOUSE_MOVED:
-            set_frequency(DEFAULT_FREQUENCY * floor(15 * data[X] + 1));
-            mWaveshaper.set_amount(2.0 * data[Y] - 1);
+            set_frequency(DEFAULT_FREQUENCY * floor(15 * mouse_event(data).x + 1));
+            mWaveshaper.set_amount(2.0 * mouse_event(data).y - 1);
             break;
     }
 }

@@ -107,6 +107,14 @@ namespace klang {
             set_amplitude(obj.mAmplitude);
         }
 
+        NodeVCOWavetableT& operator=(const NodeVCOWavetableT& obj) {
+            mDeleteArray = obj.mDeleteArray;
+            mWavetable   = obj.mWavetable;
+            set_frequency(obj.mFrequency);
+            set_amplitude(obj.mAmplitude);
+            return *this;
+        }
+
         ~NodeVCOWavetableT() {
             if (mDeleteArray) {
                 delete[] mWavetable;

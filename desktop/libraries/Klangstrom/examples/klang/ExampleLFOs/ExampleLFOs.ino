@@ -1,23 +1,26 @@
-//
-//  ExampleLFOs
-//
+/*
+ * this example demonstrates how to control amplitude and frequency of an oscillator with two other oscillators
+ * configured to oscillate at lower frequencies ( LFO ).
+ *
+ * move the mouse to change the frequency of the LFOs. use keys 1–6 to change the LFOs’ waveforms ( depending on amplitude and frequency the differences can be quite subtle ).
+ */
 
 #include "KlangNodes.hpp"
 
 using namespace klang;
 using namespace klangstrom;
 
-NodeDAC             mDAC;
-NodeVCOWavetable    mOsc;
-NodeVCOWavetable    mLFOAmplitude;
-NodeVCOWavetable    mLFOFrequency;
+NodeDAC          mDAC;
+NodeVCOWavetable mOsc;
+NodeVCOWavetable mLFOAmplitude;
+NodeVCOWavetable mLFOFrequency;
 
-void setup()  {
+void setup() {
     Klang::connect(mLFOFrequency, Node::CH_OUT_SIGNAL, mOsc, NodeVCOWavetable::CH_IN_FREQ);
     Klang::connect(mLFOAmplitude, Node::CH_OUT_SIGNAL, mOsc, NodeVCOWavetable::CH_IN_AMP);
-    Klang::connect(mOsc,          Node::CH_OUT_SIGNAL, mDAC, NodeDAC::CH_IN_SIGNAL_LEFT);
+    Klang::connect(mOsc, Node::CH_OUT_SIGNAL, mDAC, NodeDAC::CH_IN_SIGNAL);
 
-    mOsc.set_waveform(NodeVCOWavetable::WAVEFORM::SINE);
+    mOsc.set_waveform(NodeVCOWavetable::WAVEFORM::TRIANGLE);
 
     mLFOFrequency.set_frequency(10);
     mLFOFrequency.set_amplitude(5);
@@ -30,22 +33,22 @@ void setup()  {
     mLFOAmplitude.set_offset(0.5);
 }
 
-void audioblock(SIGNAL_TYPE* pOutputLeft, SIGNAL_TYPE* pOutputRight, SIGNAL_TYPE* pInputLeft, SIGNAL_TYPE* pInputRight)  {
+void audioblock(SIGNAL_TYPE* pOutputLeft, SIGNAL_TYPE* pOutputRight, SIGNAL_TYPE* pInputLeft, SIGNAL_TYPE* pInputRight) {
     mDAC.process_frame(pOutputLeft, pOutputRight);
 }
 
-void event_receive(const EVENT_TYPE event, const float* data)  {
+void event_receive(const EVENT_TYPE event, const float* data) {
     switch (event) {
         case EVENT_KEY_PRESSED:
-            handle_key_pressed(data[KEY]);
+            handle_key_pressed(keyboard_event(data).key);
             break;
         case EVENT_MOUSE_MOVED:
-            mLFOFrequency.set_offset(DEFAULT_FREQUENCY + DEFAULT_FREQUENCY * floor(data[X] * 8));
-            mLFOAmplitude.set_amplitude(data[Y] * 0.5);
+            mLFOFrequency.set_offset(DEFAULT_FREQUENCY + DEFAULT_FREQUENCY * floor(mouse_event(data).x * 8));
+            mLFOAmplitude.set_amplitude(mouse_event(data).y * 0.5);
             break;
         case EVENT_MOUSE_DRAGGED:
-            mLFOAmplitude.set_frequency(data[X] * 20);
-            mLFOFrequency.set_frequency(data[Y] * 20);
+            mLFOAmplitude.set_frequency(mouse_event(data).x * 20);
+            mLFOFrequency.set_frequency(mouse_event(data).y * 20);
             break;
     }
 }
@@ -53,19 +56,22 @@ void event_receive(const EVENT_TYPE event, const float* data)  {
 void handle_key_pressed(int key) {
     switch (key) {
         case '1':
-            mOsc.set_waveform(NodeVCOWavetable::WAVEFORM::TRIANGLE);
+            mLFOFrequency.set_waveform(NodeVCOWavetable::WAVEFORM::SINE);
             break;
         case '2':
-            mOsc.set_waveform(NodeVCOWavetable::WAVEFORM::SINE);
+            mLFOFrequency.set_waveform(NodeVCOWavetable::WAVEFORM::SAWTOOTH);
             break;
         case '3':
-            mOsc.set_waveform(NodeVCOWavetable::WAVEFORM::SAWTOOTH);
+            mLFOFrequency.set_waveform(NodeVCOWavetable::WAVEFORM::SQUARE);
             break;
         case '4':
-            mOsc.set_waveform(NodeVCOWavetable::WAVEFORM::SQUARE);
+            mLFOAmplitude.set_waveform(NodeVCOWavetable::WAVEFORM::SINE);
             break;
         case '5':
-            mOsc.set_waveform(NodeVCOWavetable::WAVEFORM::EXPONENT);
+            mLFOAmplitude.set_waveform(NodeVCOWavetable::WAVEFORM::SAWTOOTH);
+            break;
+        case '6':
+            mLFOAmplitude.set_waveform(NodeVCOWavetable::WAVEFORM::SQUARE);
             break;
     }
 }

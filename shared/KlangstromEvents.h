@@ -22,129 +22,64 @@
 
 namespace klangstrom {
 
-    /* --- ENCODER ROTATED --- */
+    /* ---------------------------------------- ENCODER ---------------------------------------- */
+
+    // static const EVENT_DATA INDEX         = 0x00;
+    // static const EVENT_DATA TICK          = 0x01;
+    // static const EVENT_DATA PREVIOUS_TICK = 0x02;
+    // static const EVENT_DATA DELTA         = 0x03;
 
     typedef struct {
-        //     static const EVENT_DATA INDEX         = 0x00;
-        //     static const EVENT_DATA TICK          = 0x01;
-        //     static const EVENT_DATA PREVIOUS_TICK = 0x02;
-        //     static const EVENT_DATA DELTA         = 0x03;
         float index;
         float ticks;
         float previous_ticks;
         float delta;
-    } EventEncoderRotated;
+    } EventEncoder;
 
-    inline EventEncoderRotated* wrap_encoder_rotated(const float* pData) {
-        return (EventEncoderRotated*)pData;
+    inline EventEncoder* wrap_encoder_event(const float* pData) {
+        return (EventEncoder*)pData;
     }
 
-    inline EventEncoderRotated encoder_rotated(const float* pData) {
-        return *wrap_encoder_rotated(pData);
+    inline EventEncoder encoder_event(const float* pData) {
+        return *wrap_encoder_event(pData);
     }
 
-    /* --- ENCODER PRESSED --- */
+    /* ----------------------------------------- MOUSE ----------------------------------------- */
+
+    // static const EVENT_DATA X       = 0x00;
+    // static const EVENT_DATA Y       = 0x01;
+    // static const EVENT_DATA X_DELTA = 0x02;
+    // static const EVENT_DATA Y_DELTA = 0x03;
+    // static const EVENT_DATA BUTTON  = 0x04;
 
     typedef struct {
-        //     static const EVENT_DATA INDEX         = 0x00;
-        float index;
-    } EventEncoderPressed;
-
-    inline EventEncoderPressed* wrap_encoder_pressed(const float* pData) {
-        return (EventEncoderPressed*)pData;
-    }
-
-    inline EventEncoderPressed encoder_pressed(const float* pData) {
-        return *wrap_encoder_pressed(pData);
-    }
-
-    /* --- ENCODER RELEASED --- */
-
-    typedef struct {
-        //     static const EVENT_DATA INDEX         = 0x00;
-        float index;
-    } EventEncoderReleased;
-
-    inline EventEncoderReleased* wrap_encoder_released(const float* pData) {
-        return (EventEncoderReleased*)pData;
-    }
-
-    inline EventEncoderReleased encoder_released(const float* pData) {
-        return *wrap_encoder_released(pData);
-    }
-
-    /* --- MOUSE MOVED --- */
-
-    typedef struct {
-        //     static const EVENT_DATA X      = 0x00;
-        //     static const EVENT_DATA Y      = 0x01;
-        float x;
-        float y;
-    } EventMouseMoved;
-
-    inline EventMouseMoved* wrap_mouse_moved(const float* pData) {
-        return (EventMouseMoved*)pData;
-    }
-
-    inline EventMouseMoved mouse_moved(const float* pData) {
-        return *wrap_mouse_moved(pData);
-    }
-
-    /* --- MOUSE DRAGGED --- */
-
-    typedef struct {
-        //     static const EVENT_DATA X      = 0x00;
-        //     static const EVENT_DATA Y      = 0x01;
-        //     static const EVENT_DATA BUTTON = 0x02;
         float x;
         float y;
         float button;
-    } EventMouseDragged;
+        float x_delta;
+        float y_delta;
+    } EventMouse;
 
-    inline EventMouseDragged* wrap_mouse_dragged(const float* pData) {
-        return (EventMouseDragged*)pData;
+    inline EventMouse* wrap_mouse_event(const float* pData) {
+        return (EventMouse*)pData;
     }
 
-    inline EventMouseDragged mouse_dragged(const float* pData) {
-        return *wrap_mouse_dragged(pData);
+    inline EventMouse mouse_event(const float* pData) {
+        return *wrap_mouse_event(pData);
     }
 
-    /* --- MOUSE PRESSED --- */
+    /* ----------------------------------------- KEYBOARD ----------------------------------------- */
 
     typedef struct {
-        //     static const EVENT_DATA X      = 0x00;
-        //     static const EVENT_DATA Y      = 0x01;
-        //     static const EVENT_DATA BUTTON = 0x02;
-        float x;
-        float y;
-        float button;
-    } EventMousePressed;
+        float key;
+    } EventKeyboard;
 
-    inline EventMousePressed* wrap_mouse_pressed(const float* pData) {
-        return (EventMousePressed*)pData;
+    inline EventKeyboard* wrap_keyboard_event(const float* pData) {
+        return (EventKeyboard*)pData;
     }
 
-    inline EventMousePressed mouse_pressed(const float* pData) {
-        return *wrap_mouse_pressed(pData);
-    }
-
-    /* --- MOUSE RELEASED --- */
-
-    typedef struct {
-        //     static const EVENT_DATA X      = 0x00;
-        //     static const EVENT_DATA Y      = 0x01;
-        //     static const EVENT_DATA BUTTON = 0x02;
-        float x;
-        float y;
-        float button;
-    } EventMouseReleased;
-
-    inline EventMouseReleased* wrap_mouse_released(const float* pData) {
-        return (EventMouseReleased*)pData;
-    }
-
-    inline EventMouseReleased mouse_released(const float* pData) {
-        return *wrap_mouse_released(pData);
+    inline EventKeyboard keyboard_event(const float* pData) {
+        return *wrap_keyboard_event(pData);
     }
 
     // @TODO

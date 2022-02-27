@@ -96,10 +96,10 @@ void set_defaults() {
 void event_receive(const uint8_t event, const float* data) {
     switch (event) {
         case EVENT_ENCODER_BUTTON_PRESSED:
-            handleEncoderButton(data[INDEX]);
+            handleEncoderButton(encoder_event(data).index);
             break;
         case EVENT_ENCODER_ROTATED:
-            handleEncoderRotate(data[INDEX], data[TICK], data[PREVIOUS_TICK]);
+            handleEncoderRotate(encoder_event(data).index, encoder_event(data).delta);
             break;
     }
 }
@@ -121,19 +121,19 @@ void handleEncoderButton(uint8_t pIndex) {
 }
 
 
-void handleEncoderRotate(uint8_t pIndex, int pTick, int pPrevTick) {
+void handleEncoderRotate(uint8_t pIndex, float pDelta) {
     switch (pIndex) {
         case ENCODER_00:
-            handle_change_freq_offset(pTick - pPrevTick);
+            handle_change_freq_offset(pDelta);
             break;
         case ENCODER_01:
-            handle_change_bpm(pTick - pPrevTick);
+            handle_change_bpm(pDelta);
             break;
         case ENCODER_02:
             if (mFilterToggle) {
-                handle_change_filter_cutoff(pTick - pPrevTick);
+                handle_change_filter_cutoff(pDelta);
             } else {
-                handle_change_filter_resonance(pTick - pPrevTick);
+                handle_change_filter_resonance(pDelta);
             }
             break;
     }

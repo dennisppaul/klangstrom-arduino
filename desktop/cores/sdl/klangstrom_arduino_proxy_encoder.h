@@ -78,7 +78,7 @@ public:
             /* create event */
             fMoved        = ticks - previous_ticks;
             fMovedCounter = MOVED_COUNTER;
-            EventEncoderRotated e;
+            EventEncoder e;
             e.index          = (float)(ID - ENCODER_00);
             e.ticks          = (float)ticks;
             e.previous_ticks = (float)previous_ticks;
@@ -86,11 +86,15 @@ public:
             event_receive(EVENT_ENCODER_ROTATED, (float *)(&e));
         }
         if (button_pressed != previous_button_pressed) {
-            const float mData[ENCODER_BUTTON_NUM_LOCATIONS] = {(float)(ID - ENCODER_00)};
+            EventEncoder e;
+            e.index          = (float)(ID - ENCODER_00);
+            e.ticks          = (float)ticks;
+            e.previous_ticks = (float)previous_ticks;
+            e.delta          = e.ticks - e.previous_ticks;
             if (button_pressed) {
-                event_receive(EVENT_ENCODER_BUTTON_PRESSED, mData);
+                event_receive(EVENT_ENCODER_BUTTON_PRESSED, (float *)(&e));
             } else {
-                event_receive(EVENT_ENCODER_BUTTON_RELEASED, mData);
+                event_receive(EVENT_ENCODER_BUTTON_RELEASED, (float *)(&e));
             }
         }
         previous_button_pressed = button_pressed;

@@ -17,7 +17,6 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#define KLST_SDL_USE_OSC
 #define KLST_SDL_USE_AUDIO_INPUT
 #define KLST_SDL_INITIALIZE_BEAT
 #define KLST_SDL_DEFAULT_BPM 120
@@ -43,6 +42,7 @@
 
 /* KLST */
 #include "KLST_SDL-adapter.h"
+#include "KlangMath.hpp"
 #include "KlangstromApplicationArduino.h"
 #include "KlangstromDisplayBSP_SDL.h"
 #include "klangstrom_arduino_debug.h"
@@ -243,9 +243,15 @@ static void handle_key_pressed(SDL_Event &e) {
             handle_key_pressed_capslock(e);
         } else {
             const char mKey = e.key.keysym.scancode;
+            // const float data[1] = {(float)(SDL_GetScancodeName((SDL_Scancode)mKey)[0])};
+            // event_receive(EVENT_KEY_PRESSED, data);
             /* @TODO("dirty hack … this needs to be handle differently") */
-            const float data[1] = {(float)(SDL_GetScancodeName((SDL_Scancode)mKey)[0])};
-            event_receive(EVENT_KEY_PRESSED, data);
+            EventKeyboard e;
+            e.key = (float)(SDL_GetScancodeName((SDL_Scancode)mKey)[0]);
+            if ((SDL_Scancode)mKey == SDL_SCANCODE_SPACE) {
+                e.key = ' ';
+            }
+            event_receive(EVENT_KEY_PRESSED, (float *)(&e));
 #ifdef DEBUG_PRINT_EVENTS
             KLANG_LOG("key pressed: %c", SDL_GetScancodeName((SDL_Scancode)mKey)[0]);
 #endif
@@ -261,9 +267,15 @@ static void handle_key_released(SDL_Event &e) {
             handle_key_released_capslock(e);
         } else {
             const char mKey = e.key.keysym.scancode;
+            // const float data[1] = {(float)(SDL_GetScancodeName((SDL_Scancode)mKey)[0])};
+            // event_receive(EVENT_KEY_RELEASED, data);
             /* @TODO("dirty hack … this needs to be handle differently") */
-            const float data[1] = {(float)(SDL_GetScancodeName((SDL_Scancode)mKey)[0])};
-            event_receive(EVENT_KEY_RELEASED, data);
+            EventKeyboard e;
+            e.key = (float)(SDL_GetScancodeName((SDL_Scancode)mKey)[0]);
+            if ((SDL_Scancode)mKey == SDL_SCANCODE_SPACE) {
+                e.key = ' ';
+            }
+            event_receive(EVENT_KEY_RELEASED, (float *)(&e));
 #ifdef DEBUG_PRINT_EVENTS
             KLANG_LOG("key released: %c", SDL_GetScancodeName((SDL_Scancode)mKey)[0]);
 #endif
@@ -283,6 +295,20 @@ static void loop_encoders() {
     }
 }
 
+float fMousePreviousX = 0.0f;
+float fMousePreviousY = 0.0f;
+
+void handle_mouse_event(uint8_t event, int x, int y, int button) {
+    EventMouse e;
+    e.x             = (float)x / SCREEN_WIDTH;
+    e.y             = (float)y / SCREEN_HEIGHT;
+    e.x_delta       = e.x - fMousePreviousX;
+    e.y_delta       = e.y - fMousePreviousY;
+    fMousePreviousX = e.x;
+    fMousePreviousY = e.y;
+    event_receive(event, (float *)(&e));
+}
+
 void loop_event() {
     SDL_Event e;
     while (SDL_PollEvent(&e) != 0) {
@@ -292,32 +318,25 @@ void loop_event() {
         if (e.type == SDL_QUIT) {
             mQuitFlag = true;
         }
-        if (e.type == SDL_MOUSEBUTTONDOWN) {
+        if (e.type == SDL_MOUSEBUTTONDOWN || e.type == SDL_MOUSEBUTTONUP || e.type == SDL_MOUSEMOTION) {
             int x, y;
             SDL_GetMouseState(&x, &y);
-            float data[3]       = {(float)x / SCREEN_WIDTH, (float)y / SCREEN_HEIGHT,
-                             (float)LEFT};
-            mMouseButtonPressed = true;
-            event_receive(EVENT_MOUSE_PRESSED, data);
-        }
-        if (e.type == SDL_MOUSEBUTTONUP) {
-            int x, y;
-            SDL_GetMouseState(&x, &y);
-            float data[3]       = {(float)x / SCREEN_WIDTH, (float)y / SCREEN_HEIGHT,
-                             (float)LEFT};
-            mMouseButtonPressed = false;
-            event_receive(EVENT_MOUSE_RELEASED, data);
-        }
-        if (e.type == SDL_MOUSEMOTION) {
-            int x, y;
-            SDL_GetMouseState(&x, &y);
-            if (mMouseButtonPressed) {
-                float data[3] = {(float)x / SCREEN_WIDTH, (float)y / SCREEN_HEIGHT,
-                                 (float)LEFT};
-                event_receive(EVENT_MOUSE_DRAGGED, data);
-            } else {
-                float data[2] = {(float)x / SCREEN_WIDTH, (float)y / SCREEN_HEIGHT};
-                event_receive(EVENT_MOUSE_MOVED, data);
+            // uint8_t mButton = SDL_BUTTON(SDL_GetMouseState(&x, &y));
+            // bool mLeftButtonPressed = (mButton == SDL_BUTTON_LEFT);
+            // @note(treats all mouse buttons  left mouse button)
+            if (e.type == SDL_MOUSEBUTTONDOWN) {
+                mMouseButtonPressed = true;
+                handle_mouse_event(EVENT_MOUSE_PRESSED, x, y, LEFT);
+            } else if (e.type == SDL_MOUSEBUTTONUP) {
+                mMouseButtonPressed = false;
+                handle_mouse_event(EVENT_MOUSE_RELEASED, x, y, LEFT);
+            }
+            if (e.type == SDL_MOUSEMOTION) {
+                if (mMouseButtonPressed) {
+                    handle_mouse_event(EVENT_MOUSE_DRAGGED, x, y, LEFT);
+                } else {
+                    handle_mouse_event(EVENT_MOUSE_MOVED, x, y, NONE);
+                }
             }
         }
         if (e.type == SDL_KEYDOWN) {
@@ -342,107 +361,111 @@ static void line(SDL_Renderer *renderer, int x1, int y1, int x2, int y2) {
                        y2 * display_scale + display_y);
 }
 
+static const int16_t GUI_START_X       = 20;
+static const int16_t GUI_START_Y       = 20;
+static const int16_t GUI_UNIT_HEIGHT   = 32;
+static const int16_t GUI_UNIT_WIDTH    = 16;
+static const int16_t GUI_UNIT_SPACING  = 4;
+static const int16_t GUI_ELEMENT_WIDTH = GUI_UNIT_WIDTH * 2 + GUI_UNIT_SPACING;
+static const int16_t mHeight           = GUI_UNIT_HEIGHT;
+static const int16_t mSpacing          = GUI_ELEMENT_WIDTH + GUI_UNIT_SPACING;
+
+void draw_oscilloscope() {
+    display_scale = 0.5f;
+    display_x     = GUI_START_X;
+    display_y     = GUI_START_Y + (GUI_UNIT_HEIGHT + GUI_UNIT_SPACING) * 2;
+
+    SDL_SetRenderDrawColor(gRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
+    line(gRenderer, 0, SCREEN_HEIGHT / 2 - 1, SCREEN_WIDTH, SCREEN_HEIGHT / 2 - 1);
+    line(gRenderer, 0, SCREEN_HEIGHT / 2 + 1, SCREEN_WIDTH, SCREEN_HEIGHT / 2 + 1);
+
+    line(gRenderer, 0, 0, SCREEN_WIDTH, 0);
+    line(gRenderer, 0, SCREEN_HEIGHT, SCREEN_WIDTH, SCREEN_HEIGHT);
+    line(gRenderer, 0, 0, 0, SCREEN_HEIGHT);
+    line(gRenderer, SCREEN_WIDTH, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
+
+    SDL_SetRenderDrawColor(gRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
+
+    for (int i = 0; i < KLANG_SAMPLES_PER_AUDIO_BLOCK; i++) {
+        int j        = (i - 1) + mBufferOffset;
+        int k        = i + mBufferOffset;
+        int x0       = SCREEN_WIDTH * (float)(i - 1) / (float)KLANG_SAMPLES_PER_AUDIO_BLOCK;
+        int x1       = SCREEN_WIDTH * (float)i / (float)KLANG_SAMPLES_PER_AUDIO_BLOCK;
+        int y0_left  = klang::KlangMath::clamp(mInternalAudioOutputBufferRight[j]) * SCREEN_HEIGHT / 4 + SCREEN_HEIGHT / 4;
+        int y1_left  = klang::KlangMath::clamp(mInternalAudioOutputBufferRight[k]) * SCREEN_HEIGHT / 4 + SCREEN_HEIGHT / 4;
+        int y0_right = klang::KlangMath::clamp(mInternalAudioOutputBufferLeft[j]) * SCREEN_HEIGHT / 4 + SCREEN_HEIGHT / 4 * 3;
+        int y1_right = klang::KlangMath::clamp(mInternalAudioOutputBufferLeft[k]) * SCREEN_HEIGHT / 4 + SCREEN_HEIGHT / 4 * 3;
+        line(gRenderer, x0, y0_left, x1, y1_left);
+        line(gRenderer, x0, y0_right, x1, y1_right);
+    }
+}
+
+void draw_capslock() {
+    static const int16_t mWidth  = GUI_UNIT_WIDTH / 2;
+    static const int16_t mHeight = GUI_UNIT_HEIGHT;
+    SDL_Rect             r;
+    r.x = GUI_START_X - mWidth - GUI_UNIT_SPACING;
+    r.y = GUI_START_Y + GUI_UNIT_HEIGHT + GUI_UNIT_SPACING;
+    r.w = mWidth;
+    r.h = mHeight;
+    if (mCapsLockDown) {
+        SDL_SetRenderDrawColor(gRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
+        SDL_RenderFillRect(gRenderer, &r);
+    } else {
+        SDL_SetRenderDrawColor(gRenderer, 0x7F, 0x7F, 0x7F, 0xFF);
+        SDL_RenderDrawRect(gRenderer, &r);
+    }
+}
+
+void draw_encoders() {
+    for (uint8_t i = 0; i < NUMBER_OF_ENCODERS; i++) {
+        KlangstromArduinoProxyEncoder &e = mEncoders[i];
+        e.dimensions.x                   = GUI_START_X + i * mSpacing;
+        e.dimensions.y                   = GUI_START_Y + GUI_UNIT_HEIGHT + GUI_UNIT_SPACING;
+        e.dimensions.w                   = GUI_ELEMENT_WIDTH;
+        e.dimensions.h                   = mHeight;
+    }
+    for (uint8_t i = 0; i < NUMBER_OF_ENCODERS; i++) {
+        mEncoders[i].draw(gRenderer, mCapsLockDown);
+    }
+}
+
+void draw_LEDs() {
+    static const int16_t mWidth   = GUI_UNIT_WIDTH;
+    static const int16_t mHeight  = GUI_UNIT_HEIGHT;
+    static const int16_t mSpacing = mWidth + GUI_UNIT_SPACING;
+    for (uint8_t i = 0; i < NUMBER_OF_LEDS; i++) {
+        SDL_Rect r;
+        r.x = GUI_START_X + i * mSpacing;
+        r.y = GUI_START_Y;
+        r.w = mWidth;
+        r.h = mHeight;
+        if (mSimulator.getLEDs()[i]) {
+            SDL_SetRenderDrawColor(gRenderer, 0xFF, 0x00, 0x00, 0xFF);
+            SDL_RenderFillRect(gRenderer, &r);
+        }
+        SDL_SetRenderDrawColor(gRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
+        SDL_RenderDrawRect(gRenderer, &r);
+    }
+}
+
+void draw_display() {
+    if (mDisplay_SDL != nullptr) {
+        mDisplay_SDL->set_position(GUI_START_X + SCREEN_WIDTH * display_scale + GUI_UNIT_SPACING,
+                                   GUI_START_Y + (GUI_UNIT_HEIGHT + GUI_UNIT_SPACING) * 2);
+        mDisplay_SDL->draw();
+    }
+}
+
 void loop_renderer() {
     SDL_SetRenderDrawColor(gRenderer, 0x20, 0x20, 0x20, 0xFF);
     SDL_RenderClear(gRenderer);
 
-    static const int16_t GUI_START_X      = 20;
-    static const int16_t GUI_START_Y      = 20;
-    static const int16_t GUI_UNIT_HEIGHT  = 32;
-    static const int16_t GUI_UNIT_WIDTH   = 16;
-    static const int16_t GUI_UNIT_SPACING = 4;
-
-    /* draw oscilloscope  */
-    {
-        display_scale = 0.5f;
-        display_x     = GUI_START_X;
-        display_y     = GUI_START_Y + (GUI_UNIT_HEIGHT + GUI_UNIT_SPACING) * 2;
-
-        SDL_SetRenderDrawColor(gRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
-        line(gRenderer, 0, SCREEN_HEIGHT / 2 - 1, SCREEN_WIDTH, SCREEN_HEIGHT / 2 - 1);
-        line(gRenderer, 0, SCREEN_HEIGHT / 2 + 1, SCREEN_WIDTH, SCREEN_HEIGHT / 2 + 1);
-
-        line(gRenderer, 0, 0, SCREEN_WIDTH, 0);
-        line(gRenderer, 0, SCREEN_HEIGHT, SCREEN_WIDTH, SCREEN_HEIGHT);
-        line(gRenderer, 0, 0, 0, SCREEN_HEIGHT);
-        line(gRenderer, SCREEN_WIDTH, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
-
-        SDL_SetRenderDrawColor(gRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
-
-        for (int i = 0; i < KLANG_SAMPLES_PER_AUDIO_BLOCK; i++) {
-            int j        = (i - 1) + mBufferOffset;
-            int k        = i + mBufferOffset;
-            int x0       = SCREEN_WIDTH * (float)(i - 1) / (float)KLANG_SAMPLES_PER_AUDIO_BLOCK;
-            int x1       = SCREEN_WIDTH * (float)i / (float)KLANG_SAMPLES_PER_AUDIO_BLOCK;
-            int y0_left  = mInternalAudioOutputBufferRight[j] * SCREEN_HEIGHT / 4 + SCREEN_HEIGHT / 4;
-            int y1_left  = mInternalAudioOutputBufferRight[k] * SCREEN_HEIGHT / 4 + SCREEN_HEIGHT / 4;
-            int y0_right = mInternalAudioOutputBufferLeft[j] * SCREEN_HEIGHT / 4 + SCREEN_HEIGHT / 4 * 3;
-            int y1_right = mInternalAudioOutputBufferLeft[k] * SCREEN_HEIGHT / 4 + SCREEN_HEIGHT / 4 * 3;
-            line(gRenderer, x0, y0_left, x1, y1_left);
-            line(gRenderer, x0, y0_right, x1, y1_right);
-        }
-    }
-
-    /* draw CAPS LOCK */
-    {
-        static const int16_t mWidth  = GUI_UNIT_WIDTH / 2;
-        static const int16_t mHeight = GUI_UNIT_HEIGHT;
-        SDL_Rect             r;
-        r.x = GUI_START_X - mWidth - GUI_UNIT_SPACING;
-        r.y = GUI_START_Y + GUI_UNIT_HEIGHT + GUI_UNIT_SPACING;
-        r.w = mWidth;
-        r.h = mHeight;
-        if (mCapsLockDown) {
-            SDL_SetRenderDrawColor(gRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
-            SDL_RenderFillRect(gRenderer, &r);
-        } else {
-            SDL_SetRenderDrawColor(gRenderer, 0x7F, 0x7F, 0x7F, 0xFF);
-            SDL_RenderDrawRect(gRenderer, &r);
-        }
-    }
-    /* encoders */
-    {
-        static const int16_t mWidth   = GUI_UNIT_WIDTH * 2 + GUI_UNIT_SPACING;
-        static const int16_t mHeight  = GUI_UNIT_HEIGHT;
-        static const int16_t mSpacing = mWidth + GUI_UNIT_SPACING;
-        for (uint8_t i = 0; i < NUMBER_OF_ENCODERS; i++) {
-            KlangstromArduinoProxyEncoder &e = mEncoders[i];
-            e.dimensions.x                   = GUI_START_X + i * mSpacing;
-            e.dimensions.y                   = GUI_START_Y + GUI_UNIT_HEIGHT + GUI_UNIT_SPACING;
-            e.dimensions.w                   = mWidth;
-            e.dimensions.h                   = mHeight;
-        }
-        for (uint8_t i = 0; i < NUMBER_OF_ENCODERS; i++) {
-            mEncoders[i].draw(gRenderer, mCapsLockDown);
-        }
-    }
-    /* draw LEDs */
-    {
-        static const int16_t mWidth   = GUI_UNIT_WIDTH;
-        static const int16_t mHeight  = GUI_UNIT_HEIGHT;
-        static const int16_t mSpacing = mWidth + GUI_UNIT_SPACING;
-        for (uint8_t i = 0; i < NUMBER_OF_LEDS; i++) {
-            SDL_Rect r;
-            r.x = GUI_START_X + i * mSpacing;
-            r.y = GUI_START_Y;
-            r.w = mWidth;
-            r.h = mHeight;
-            if (mSimulator.getLEDs()[i]) {
-                SDL_SetRenderDrawColor(gRenderer, 0xFF, 0x00, 0x00, 0xFF);
-                SDL_RenderFillRect(gRenderer, &r);
-            }
-            SDL_SetRenderDrawColor(gRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
-            SDL_RenderDrawRect(gRenderer, &r);
-        }
-    }
-    /* draw display */
-    {
-        if (mDisplay_SDL != nullptr) {
-            mDisplay_SDL->set_position(GUI_START_X + SCREEN_WIDTH * display_scale + GUI_UNIT_SPACING,
-                                       GUI_START_Y + (GUI_UNIT_HEIGHT + GUI_UNIT_SPACING) * 2);
-            mDisplay_SDL->draw();
-        }
-    }
+    draw_oscilloscope();
+    draw_capslock();
+    draw_encoders();
+    draw_LEDs();
+    draw_display();
 
     SDL_RenderPresent(gRenderer);
 }
@@ -689,20 +712,41 @@ void init_display() {
 //     CardPtr = new KlangstromCardBSP_SDL();
 // }
 
+const char *get_board_name(uint8_t pBoardID) {
+    switch (pBoardID) {
+        case KLANG_BOARD_SIMULATOR_KLST_CORE:
+            return "KLST_CORE ";
+            break;
+        case KLANG_BOARD_SIMULATOR_KLST_TINY:
+            return "KLST_TINY ";
+            break;
+        case KLANG_BOARD_SIMULATOR_KLST_SHEEP:
+            return "KLST_SHEEP";
+            break;
+        default:
+            return "";
+            break;
+    }
+}
+
 void init_SDL() {
     KLANG_LOG("++++++++++++++++++++++++++++++++++++++++++++++++++");
     KLANG_LOG("+++ @Klang_SDL                                 +++");
-    KLANG_LOG("+++ KLANG_AUDIO_RATE              : %i", KLANG_AUDIO_RATE);
+    KLANG_LOG("+++ KLANG_AUDIO_RATE              : %i      +++", KLANG_AUDIO_RATE);
 #ifdef KLANG_AUDIO_BLOCKS
-    KLANG_LOG("+++ KLANG_AUDIO_BLOCKS            : %i", KLANG_AUDIO_BLOCKS);
+    KLANG_LOG("+++ KLANG_AUDIO_BLOCKS            : %i         +++", KLANG_AUDIO_BLOCKS);
 #endif
-    KLANG_LOG("+++ KLANG_SAMPLES_PER_AUDIO_BLOCK : %i", KLANG_SAMPLES_PER_AUDIO_BLOCK);
+    KLANG_LOG("+++ KLANG_SAMPLES_PER_AUDIO_BLOCK : %i       +++", KLANG_SAMPLES_PER_AUDIO_BLOCK);
 #ifdef KLANG_AUDIO_BLOCKS
-    KLANG_LOG("+++ KLANG_SIGNAL_TYPE             : %i", KLANG_SIGNAL_TYPE);
+    KLANG_LOG("+++ KLANG_SIGNAL_TYPE             : %i          +++", KLANG_SIGNAL_TYPE);
 #endif
+#ifdef KLST_SDL_USE_OSC
     KLANG_LOG("+++ KLANG_OSC_TRANSMIT_ADDRESS    : %s", KLANG_OSC_TRANSMIT_ADDRESS);
     KLANG_LOG("+++ KLANG_OSC_TRANSMIT_PORT       : %i", KLANG_OSC_TRANSMIT_PORT);
     KLANG_LOG("+++ KLANG_OSC_RECEIVE_PORT        : %i", KLANG_OSC_RECEIVE_PORT);
+#endif
+    KLANG_LOG("+++ KLANG_BOARD_SIMULATOR         : %s +++", get_board_name(KLANG_BOARD_SIMULATOR));
+    KLANG_LOG("+++++++++++++++++++++++++++++++++++++++++++++++++++");
 
     if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_TIMER) < 0) {
         KLANG_LOG_ERR("@klangstrom_arduino unable to init SDL: %s", SDL_GetError());

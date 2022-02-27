@@ -1,21 +1,21 @@
-#include "KlangNodes.hpp"
 #include "606bd1.wav.h"
 #include "606ch.wav.h"
 #include "606sd1.wav.h"
+#include "KlangNodes.hpp"
 
 using namespace std;
 using namespace klang;
 using namespace klangstrom;
 
-NodeDAC             mDAC;
-NodeMixer2          mMixerMaster;
-NodeMixer2          mMixer1;
-NodeMixer2          mMixer2;
-NodeSampler         mSampleBass(_606bd1_data, _606bd1_data_length);
-NodeSampler         mSampleHihat(_606ch_data, _606ch_data_length);
-NodeSampler         mSampleSnare(_606sd1_data, _606sd1_data_length);
-NodeValue           mZero;
-NodeVCA             mVCA;
+NodeDAC     mDAC;
+NodeMixer2  mMixerMaster;
+NodeMixer2  mMixer1;
+NodeMixer2  mMixer2;
+NodeSampler mSampleBass(_606bd1_data, _606bd1_data_length);
+NodeSampler mSampleHihat(_606ch_data, _606ch_data_length);
+NodeSampler mSampleSnare(_606sd1_data, _606sd1_data_length);
+NodeValue   mZero;
+NodeVCA     mVCA;
 
 float mBPM;
 float mFilterCutoff;
@@ -32,14 +32,14 @@ uint8_t mHihatPattern = 0;
 void setup() {
     Klang::lock();
 
-    Klang::connect(mSampleSnare,   Node::CH_OUT_SIGNAL, mMixer1,      NodeMixer2::CH_IN_SIGNAL_0);
-    Klang::connect(mZero,          Node::CH_OUT_SIGNAL, mMixer1,      NodeMixer2::CH_IN_SIGNAL_1);
-    Klang::connect(mSampleHihat,   Node::CH_OUT_SIGNAL, mMixer2,      NodeMixer2::CH_IN_SIGNAL_0);
-    Klang::connect(mSampleBass,    Node::CH_OUT_SIGNAL, mMixer2,      NodeMixer2::CH_IN_SIGNAL_1);
-    Klang::connect(mMixer1,        Node::CH_OUT_SIGNAL, mMixerMaster, NodeMixer2::CH_IN_SIGNAL_0);
-    Klang::connect(mMixer2,        Node::CH_OUT_SIGNAL, mMixerMaster, NodeMixer2::CH_IN_SIGNAL_1);
-    Klang::connect(mMixerMaster,   Node::CH_OUT_SIGNAL, mVCA,         Node::CH_IN_SIGNAL);
-    Klang::connect(mVCA,           Node::CH_OUT_SIGNAL, mDAC,         NodeDAC::CH_IN_SIGNAL_LEFT);
+    Klang::connect(mSampleSnare, Node::CH_OUT_SIGNAL, mMixer1, NodeMixer2::CH_IN_SIGNAL_0);
+    Klang::connect(mZero, Node::CH_OUT_SIGNAL, mMixer1, NodeMixer2::CH_IN_SIGNAL_1);
+    Klang::connect(mSampleHihat, Node::CH_OUT_SIGNAL, mMixer2, NodeMixer2::CH_IN_SIGNAL_0);
+    Klang::connect(mSampleBass, Node::CH_OUT_SIGNAL, mMixer2, NodeMixer2::CH_IN_SIGNAL_1);
+    Klang::connect(mMixer1, Node::CH_OUT_SIGNAL, mMixerMaster, NodeMixer2::CH_IN_SIGNAL_0);
+    Klang::connect(mMixer2, Node::CH_OUT_SIGNAL, mMixerMaster, NodeMixer2::CH_IN_SIGNAL_1);
+    Klang::connect(mMixerMaster, Node::CH_OUT_SIGNAL, mVCA, Node::CH_IN_SIGNAL);
+    Klang::connect(mVCA, Node::CH_OUT_SIGNAL, mDAC, NodeDAC::CH_IN_SIGNAL);
 
     mSampleBass.loop(false);
     mSampleHihat.loop(false);
@@ -55,14 +55,14 @@ void loop() {
 }
 
 void set_defaults() {
-    mAmplification    = 6.0;
-    mBPM              = 120 * 2;
-    mButton01Shift    = false;
-    mButton02Shift    = false;
-    mPatternID    = 0;
-    mBassPattern  = 1;
-    mSnarePattern = 0;
-    mHihatPattern = 0;
+    mAmplification = 6.0;
+    mBPM           = 120 * 2;
+    mButton01Shift = false;
+    mButton02Shift = false;
+    mPatternID     = 0;
+    mBassPattern   = 1;
+    mSnarePattern  = 0;
+    mHihatPattern  = 0;
     beats_per_minute(mBPM);
     led(LED_01, mButton01Shift);
     led(LED_02, mButton02Shift);
@@ -72,10 +72,10 @@ void set_defaults() {
 void event_receive(const uint8_t event, const float* data) {
     switch (event) {
         case EVENT_ENCODER_BUTTON_PRESSED:
-            handleEncoderButton(data[INDEX]);
+            handleEncoderButton(encoder_event(data).index);
             break;
         case EVENT_ENCODER_ROTATED:
-            handleEncoderRotate(data[INDEX], data[TICK], data[PREVIOUS_TICK]);
+            handleEncoderRotate(encoder_event(data).index, encoder_event(data).tick, encoder_event(data).previous_tick);
             break;
     }
 }
@@ -120,7 +120,7 @@ void handleEncoderRotate(uint8_t pIndex, int pTick, int pPrevTick) {
 
 uint8_t map_tick(const float pTick) {
     const uint16_t mTick = (int16_t)pTick;
-    return ( mTick / 4) % 256;
+    return (mTick / 4) % 256;
 }
 
 void handle_change_bpm(float mEncoderChange) {
@@ -155,5 +155,5 @@ void beat(uint32_t pBeat) {
 
 bool trigger(uint8_t pIndex, uint8_t pPattern) {
     const uint8_t mMask = (uint8_t)(1 << pIndex);
-    return ( mMask & pPattern ) > 0;
+    return (mMask & pPattern) > 0;
 }

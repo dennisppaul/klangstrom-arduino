@@ -17,7 +17,7 @@ void setup() {
 
     Klang::lock();
 
-    Klang::connect(mVCO, Node::CH_OUT_SIGNAL, mDAC, NodeDAC::CH_IN_SIGNAL_LEFT);
+    Klang::connect(mVCO, Node::CH_OUT_SIGNAL, mDAC, NodeDAC::CH_IN_SIGNAL);
     Klang::connect(mADC, NodeADC::CH_OUT_SIGNAL_RIGHT, mDAC, NodeDAC::CH_IN_SIGNAL_RIGHT);
 
     mVCO.set_frequency(0);

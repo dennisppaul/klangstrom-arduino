@@ -26,6 +26,8 @@
  *       +---------------------+
  */
 
+// @todo(implement input signal for speed)
+
 #ifndef NodeSampler_hpp
 #define NodeSampler_hpp
 

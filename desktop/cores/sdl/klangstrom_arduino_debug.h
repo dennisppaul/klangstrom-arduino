@@ -26,6 +26,9 @@
 #define KLANG_NL "\n"
 #endif
 
+#undef KLANG_LOG
+#undef KLANG_LOG_ERR
+
 #if (KLANG_DEBUG_LEVEL == 0)
 #define KLANG_LOG_ERR(...)
 #define KLANG_LOG(...)

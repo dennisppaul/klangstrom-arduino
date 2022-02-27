@@ -26,6 +26,8 @@
  *       +---------------------+
  */
 
+// @TODO implement `NodePatchStereo` and `NodePatchMulti` for multiple in- and outputs
+
 /**
  *       [ NODE_PATCH_STEREO   ]
  *       +---------------------+
@@ -46,7 +48,6 @@
  *       |                     |
  *       +---------------------+
  */
-// @TODO implement `NodePatchStereo` and `NodePatchMulti` for multiple in- and outputs
 
 #ifndef NodePatch_hpp
 #define NodePatch_hpp
@@ -58,12 +59,6 @@ namespace klang {
     public:
         static const CHANNEL_ID NUM_CH_IN  = 1;
         static const CHANNEL_ID NUM_CH_OUT = 1;
-
-        void setup() {
-            // @TODO("get rid of this method call … but constructor does not work … yet")
-            Klang::connect(input(), Node::CH_OUT_SIGNAL, *this, Node::CH_IN_SIGNAL);
-            Klang::connect(*this, Node::CH_OUT_SIGNAL, output(), Node::CH_IN_SIGNAL);
-        }
 
         bool connect(Connection* pConnection, CHANNEL_ID pInChannel) {
             if (pInChannel == CH_IN_SIGNAL) {

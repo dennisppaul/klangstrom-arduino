@@ -177,7 +177,6 @@ void KLST_ISH_pre_setup() {
 #endif
     }
 
-
     /* beat */
     if (mKLSTOptionEnableBeat) {
         mKLSTBeatTimer = new HardwareTimer(KLST_BEAT_TIMER);
@@ -238,7 +237,7 @@ void KLST_ISH_handle_encoder_rotations() {
     /* --- ENCODER_00 --- */
     const int16_t mEncoder_00TickCountCurrent = (int16_t)ENCODER_00_TIMER->CNT;
     if (mEncoder_00TickCountPrevious != mEncoder_00TickCountCurrent) {
-        EventEncoderRotated e;
+        EventEncoder e;
         e.index          = ENCODER_00;
         e.ticks          = (float)mEncoder_00TickCountCurrent;
         e.previous_ticks = (float)mEncoder_00TickCountPrevious;
@@ -256,7 +255,7 @@ void KLST_ISH_handle_encoder_rotations() {
     /* --- ENCODER_01 --- */
     const int16_t mEncoder_01TickCountCurrent = (int16_t)ENCODER_01_TIMER->CNT;
     if (mEncoder_01TickCountPrevious != mEncoder_01TickCountCurrent) {
-        EventEncoderRotated e;
+        EventEncoder e;
         e.index          = ENCODER_01;
         e.ticks          = (float)mEncoder_01TickCountCurrent;
         e.previous_ticks = (float)mEncoder_01TickCountPrevious;
@@ -275,7 +274,7 @@ void KLST_ISH_handle_encoder_rotations() {
 #ifdef ENCODER_02_TIMER
     const int16_t mEncoder_02TickCountCurrent = (int16_t)ENCODER_02_TIMER->CNT;
     if (mEncoder_02TickCountPrevious != mEncoder_02TickCountCurrent) {
-        EventEncoderRotated e;
+        EventEncoder e;
         e.index          = ENCODER_02;
         e.ticks          = (float)mEncoder_02TickCountCurrent;
         e.previous_ticks = (float)mEncoder_02TickCountPrevious;
@@ -296,32 +295,35 @@ void KLST_ISH_handle_encoder_rotations() {
 void KLST_ISH_handle_encoder_buttons() {
     bool mENCODER_00ButtonState = digitalRead(ENCODER_00_BUTTON);
     if (mEncoder_00ButtonState != mENCODER_00ButtonState) {
-        const float mData[ENCODER_BUTTON_NUM_LOCATIONS] = {ENCODER_00};
+        EventEncoder e;
+        e.index = ENCODER_00;
         if (mENCODER_00ButtonState) {
-            event_receive(EVENT_ENCODER_BUTTON_RELEASED, mData);
+            event_receive(EVENT_ENCODER_BUTTON_RELEASED, (float*)(&e));
         } else {
-            event_receive(EVENT_ENCODER_BUTTON_PRESSED, mData);
+            event_receive(EVENT_ENCODER_BUTTON_PRESSED, (float*)(&e));
         }
         mEncoder_00ButtonState = mENCODER_00ButtonState;
     }
     bool mENCODER_01ButtonState = digitalRead(ENCODER_01_BUTTON);
     if (mEncoder_01ButtonState != mENCODER_01ButtonState) {
-        const float mData[ENCODER_BUTTON_NUM_LOCATIONS] = {ENCODER_01};
+        EventEncoder e;
+        e.index = ENCODER_01;
         if (mENCODER_01ButtonState) {
-            event_receive(EVENT_ENCODER_BUTTON_RELEASED, mData);
+            event_receive(EVENT_ENCODER_BUTTON_RELEASED, (float*)(&e));
         } else {
-            event_receive(EVENT_ENCODER_BUTTON_PRESSED, mData);
+            event_receive(EVENT_ENCODER_BUTTON_PRESSED, (float*)(&e));
         }
         mEncoder_01ButtonState = mENCODER_01ButtonState;
     }
 #ifdef ENCODER_02_BUTTON
     bool mENCODER_02ButtonState = digitalRead(ENCODER_02_BUTTON);
     if (mEncoder_02ButtonState != mENCODER_02ButtonState) {
-        const float mData[ENCODER_BUTTON_NUM_LOCATIONS] = {ENCODER_02};
+        EventEncoder e;
+        e.index = ENCODER_02;
         if (mENCODER_02ButtonState) {
-            event_receive(EVENT_ENCODER_BUTTON_RELEASED, mData);
+            event_receive(EVENT_ENCODER_BUTTON_RELEASED, (float*)(&e));
         } else {
-            event_receive(EVENT_ENCODER_BUTTON_PRESSED, mData);
+            event_receive(EVENT_ENCODER_BUTTON_PRESSED, (float*)(&e));
         }
         mEncoder_02ButtonState = mENCODER_02ButtonState;
     }

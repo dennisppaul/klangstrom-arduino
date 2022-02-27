@@ -2,7 +2,7 @@
 layout: libdoc
 title: NodeVCOWavetable.hpp
 permalink: /NodeVCOWavetable.hpp/
-index: 87
+index: 86
 ---
 
 ```c
@@ -113,6 +113,14 @@ namespace klang {
             mWavetable   = obj.mWavetable;
             set_frequency(obj.mFrequency);
             set_amplitude(obj.mAmplitude);
+        }
+
+        NodeVCOWavetableT& operator=(const NodeVCOWavetableT& obj) {
+            mDeleteArray = obj.mDeleteArray;
+            mWavetable   = obj.mWavetable;
+            set_frequency(obj.mFrequency);
+            set_amplitude(obj.mAmplitude);
+            return *this;
         }
 
         ~NodeVCOWavetableT() {

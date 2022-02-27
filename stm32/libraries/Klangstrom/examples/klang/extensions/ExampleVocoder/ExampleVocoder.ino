@@ -1,6 +1,9 @@
-//
-//  ExampleVocoder
-//
+/*
+ * this example demonstrates how to apply a vocoder effect to a signal. the vocoder superimposes a modulator signal
+ * ( e.g a human voice ) onto a carrier signal ( e.g sawtooth oscillator ).
+ *
+ * note that `#define KLANG_EXT_NODE_VOCODER` is required to use the effect.
+ */
 
 #define KLANG_EXT_NODE_VOCODER
 
@@ -10,21 +13,18 @@ using namespace klang;
 using namespace klangstrom;
 
 NodeDAC          mDAC;
+NodeADC          mADC;
 NodeVocoder      mVocoder{24, 4, 256};
 NodeVCOWavetable mVocoderCarrierOsc;
 NodeNoise        mVocoderCarrierOscNoise;
-NodeSampler      mSampler;
 SIGNAL_TYPE      mSamplerBuffer[KLANG_SAMPLES_PER_AUDIO_BLOCK];
 
 void setup() {
     Klang::lock();
 
+    Klang::connect(mADC, Node::CH_OUT_SIGNAL, mVocoder, NodeVocoder::CH_IN_MODULATOR);
     Klang::connect(mVocoderCarrierOsc, Node::CH_OUT_SIGNAL, mVocoder, NodeVocoder::CH_IN_CARRIER);
-    Klang::connect(mSampler, Node::CH_OUT_SIGNAL, mVocoder, NodeVocoder::CH_IN_MODULATOR);
-    Klang::connect(mVocoder, Node::CH_OUT_SIGNAL, mDAC, NodeDAC::CH_IN_SIGNAL_LEFT);
-
-    mSampler.set_buffer(mSamplerBuffer);
-    mSampler.set_buffer_size(KLANG_SAMPLES_PER_AUDIO_BLOCK);
+    Klang::connect(mVocoder, Node::CH_OUT_SIGNAL, mDAC, NodeDAC::CH_IN_SIGNAL);
 
     mVocoderCarrierOsc.set_waveform(NodeVCOWavetable::WAVEFORM::SAWTOOTH);
     mVocoderCarrierOsc.set_frequency(55);
@@ -34,22 +34,18 @@ void setup() {
     Klang::unlock();
 }
 
-void beat(uint32_t pBeat) {
-    led_toggle(LED_00);
-}
-
 void audioblock(SIGNAL_TYPE* pOutputLeft, SIGNAL_TYPE* pOutputRight, SIGNAL_TYPE* pInputLeft, SIGNAL_TYPE* pInputRight) {
-    KLANG_COPY_AUDIO_BUFFER(mSamplerBuffer, pInputLeft);
+    mADC.process_frame(pInputLeft, pInputRight);
     mDAC.process_frame(pOutputLeft, pOutputRight);
 }
 
 void event_receive(const EVENT_TYPE event, const float* data) {
     switch (event) {
         case EVENT_KEY_PRESSED:
-            handle_key_pressed(data[KEY]);
+            handle_key_pressed(keyboard_event(data).key);
             break;
         case EVENT_MOUSE_MOVED:
-            mouseMoved(data[X], data[Y]);
+            mouseMoved(mouse_event(data).x, mouse_event(data).y);
             break;
     }
 }

@@ -90,12 +90,12 @@ namespace klangstrom {
     static const EVENT_TYPE EVENT_RESERVED_01    = 0x00;
     static const EVENT_TYPE EVENT_RESERVED_02    = 0x01;
     static const EVENT_TYPE EVENT_RAW_DATA       = 0x02;
-    static const EVENT_TYPE EVENT_MOUSE_PRESSED  = 0x03;  // [X,Y]
-    static const EVENT_TYPE EVENT_MOUSE_RELEASED = 0x04;  // [X,Y]
-    static const EVENT_TYPE EVENT_MOUSE_MOVED    = 0x05;  // [X,Y]
-    static const EVENT_TYPE EVENT_MOUSE_DRAGGED  = 0x06;  // [X,Y]
-    static const EVENT_TYPE EVENT_KEY_PRESSED    = 0x07;  // [X,Y]
-    static const EVENT_TYPE EVENT_KEY_RELEASED   = 0x08;  // [X,Y]
+    static const EVENT_TYPE EVENT_MOUSE_PRESSED  = 0x03;
+    static const EVENT_TYPE EVENT_MOUSE_RELEASED = 0x04;
+    static const EVENT_TYPE EVENT_MOUSE_MOVED    = 0x05;
+    static const EVENT_TYPE EVENT_MOUSE_DRAGGED  = 0x06;
+    static const EVENT_TYPE EVENT_KEY_PRESSED    = 0x07;
+    static const EVENT_TYPE EVENT_KEY_RELEASED   = 0x08;
 
     /* --- EVENT_TYPE (PERIPHERALS) --- */
 
@@ -105,25 +105,28 @@ namespace klangstrom {
 
     /* --- EVENT_DATA LOCATIONS + VALUES (PERIPHERALS) --- */
 
-    static const EVENT_DATA INDEX                         = 0x00;
-    static const EVENT_DATA TICK                          = 0x01;
-    static const EVENT_DATA PREVIOUS_TICK                 = 0x02;
-    static const EVENT_DATA DELTA                         = 0x03;
-    static const EVENT_DATA ENCODER_ROTATED_NUM_LOCATIONS = 0x04;
-    static const EVENT_DATA ENCODER_BUTTON_NUM_LOCATIONS  = 0x01;
-    static const EVENT_DATA ENCODER_00                    = 0x00;
-    static const EVENT_DATA ENCODER_01                    = 0x01;
-    static const EVENT_DATA ENCODER_02                    = 0x02;
+    // static const EVENT_DATA INDEX                         = 0x00;
+    // static const EVENT_DATA TICK                          = 0x01;
+    // static const EVENT_DATA PREVIOUS_TICK                 = 0x02;
+    // static const EVENT_DATA DELTA                         = 0x03;
+    // static const EVENT_DATA ENCODER_ROTATED_NUM_LOCATIONS = 0x04;
+    // static const EVENT_DATA ENCODER_BUTTON_NUM_LOCATIONS  = 0x01;
+    static const EVENT_DATA ENCODER_00 = 0x00;
+    static const EVENT_DATA ENCODER_01 = 0x01;
+    static const EVENT_DATA ENCODER_02 = 0x02;
 
     /* --- EVENT_DATA LOCATIONS + VALUES (HID) --- */
 
-    static const EVENT_DATA X      = 0x00;
-    static const EVENT_DATA Y      = 0x01;
-    static const EVENT_DATA BUTTON = 0x02;
-    static const EVENT_DATA LEFT   = 0x00;
-    static const EVENT_DATA MIDDLE = 0x01;
-    static const EVENT_DATA RIGHT  = 0x02;
-    static const EVENT_DATA KEY    = 0x00;
+    // static const EVENT_DATA X       = 0x00;
+    // static const EVENT_DATA Y       = 0x01;
+    // static const EVENT_DATA X_DELTA = 0x02;
+    // static const EVENT_DATA Y_DELTA = 0x03;
+    // static const EVENT_DATA BUTTON  = 0x04;
+    static const EVENT_DATA NONE   = 0x00;
+    static const EVENT_DATA LEFT   = 0x01;
+    static const EVENT_DATA MIDDLE = 0x02;
+    static const EVENT_DATA RIGHT  = 0x03;
+    // static const EVENT_DATA KEY     = 0x00;
 
     /* --- EVENT_TYPE (MIDI) --- */
 

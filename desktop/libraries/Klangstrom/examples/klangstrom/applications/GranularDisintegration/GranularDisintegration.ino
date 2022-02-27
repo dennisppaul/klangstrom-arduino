@@ -211,7 +211,7 @@ void handle_file_open() {
 }
 
 void handle_file_select(const float* data) {
-    if (encoder_rotated(data).delta > 0) {
+    if (encoder_event(data).delta > 0) {
         mTextSelected++;
     } else {
         mTextSelected += mFiles.size() - 1;
@@ -223,12 +223,12 @@ void handle_file_select(const float* data) {
 void handle_app_state_select_file(const uint8_t event, const float* data) {
     switch (event) {
         case EVENT_ENCODER_BUTTON_PRESSED:
-            if (encoder_pressed(data).index == ENCODER_00) {
+            if (encoder_event(data).index == ENCODER_00) {
                 handle_file_open();
             }
             break;
         case EVENT_ENCODER_ROTATED:
-            if (encoder_rotated(data).index == ENCODER_00) {
+            if (encoder_event(data).index == ENCODER_00) {
                 handle_file_select(data);
             }
             break;
@@ -239,38 +239,38 @@ void handle_app_state_manipulate_sample(const uint8_t event, const float* data) 
     NodeSamplerI16& mSampler = fSamplers[fTrack];
     switch (event) {
         case EVENT_MOUSE_PRESSED:
-            if (data[X] > 0.5) {
-                mSampler.set_out(data[X]);
+            if (mouse_event(data).x > 0.5) {
+                mSampler.set_out(mouse_event(data).x);
             } else {
-                mSampler.set_in(data[X]);
+                mSampler.set_in(mouse_event(data).x);
             }
             fSamplerViews[fTrack].draw_in_out(Display, true);
             fSamplerViews[fTrack].draw_buffer(Display, false);
             break;
         case EVENT_MOUSE_DRAGGED:
-            mSampler.set_speed(data[X] * 2.0 - 1.0);
+            mSampler.set_speed(mouse_event(data).x * 2.0 - 1.0);
             break;
     }
     switch (event) {
         case EVENT_ENCODER_ROTATED:
             const static float mSpeed = 0.01;
-            if (encoder_rotated(data).index == ENCODER_00) {
-                mSampler.set_in(mSampler.get_in() + encoder_rotated(data).delta * mSpeed);
+            if (encoder_event(data).index == ENCODER_00) {
+                mSampler.set_in(mSampler.get_in() + encoder_event(data).delta * mSpeed);
             }
-            if (encoder_rotated(data).index == ENCODER_01) {
-                mSampler.set_out(mSampler.get_out() + encoder_rotated(data).delta * mSpeed);
+            if (encoder_event(data).index == ENCODER_01) {
+                mSampler.set_out(mSampler.get_out() + encoder_event(data).delta * mSpeed);
             }
             fSamplerViews[fTrack].draw_in_out(Display, true);
             fSamplerViews[fTrack].draw_buffer(Display, false);
             break;
         case EVENT_ENCODER_BUTTON_PRESSED:
-            if (encoder_pressed(data).index == ENCODER_00) {
+            if (encoder_event(data).index == ENCODER_00) {
                 draw_track_manipulate_sample(fTrack, false);
                 fTrack++;
                 fTrack %= TRACK_COUNT;
                 draw_track_manipulate_sample(fTrack, true);
             }
-            if (encoder_pressed(data).index == ENCODER_01) {
+            if (encoder_event(data).index == ENCODER_01) {
                 change_app_state(APP_STATE_MANIPULATE_VOLUME_SPEED);
             }
             break;
@@ -281,24 +281,24 @@ void handle_app_state_manipulate_volume_speed(const uint8_t event, const float* 
     NodeSamplerI16& mSampler = fSamplers[fTrack];
     switch (event) {
         case EVENT_ENCODER_ROTATED:
-            if (encoder_rotated(data).index == ENCODER_00) {
-                const float mAmplification = mSampler.get_amplification() + encoder_rotated(data).delta * 0.05;
+            if (encoder_event(data).index == ENCODER_00) {
+                const float mAmplification = mSampler.get_amplification() + encoder_event(data).delta * 0.05;
                 mSampler.set_amplification(KlangMath::clamp(mAmplification, 0, 20));
                 draw_track_manipulate_volume_speed(fTrack, true);
             }
-            if (encoder_rotated(data).index == ENCODER_01) {
-                mSampler.set_speed(mSampler.get_speed() + encoder_rotated(data).delta * 0.1);
+            if (encoder_event(data).index == ENCODER_01) {
+                mSampler.set_speed(mSampler.get_speed() + encoder_event(data).delta * 0.1);
                 draw_track_manipulate_volume_speed(fTrack, true);
             }
             break;
         case EVENT_ENCODER_BUTTON_PRESSED:
-            if (encoder_pressed(data).index == ENCODER_00) {
+            if (encoder_event(data).index == ENCODER_00) {
                 draw_track_manipulate_volume_speed(fTrack, false);
                 fTrack++;
                 fTrack %= TRACK_COUNT;
                 draw_track_manipulate_volume_speed(fTrack, true);
             }
-            if (encoder_pressed(data).index == ENCODER_01) {
+            if (encoder_event(data).index == ENCODER_01) {
                 change_app_state(APP_STATE_MANIPULATE_SAMPLE);
             }
             break;

@@ -33,12 +33,12 @@ index: 75
  *       |             TRIGGER |--OUT01
  *       |                     |
  *       +---------------------+
- * 
+ *
  *       @description(
  *          the ramp’s duration, start and end value can be specified. however, the ramping process
  *          only starts when the `start()` function is called. if duration, start and end values
  *          are changed during ramping the ramping behavior changes. if the same values are changed
- *          while the ramp is not ramping no behavior change occurs until the `start()` function is 
+ *          while the ramp is not ramping no behavior change occurs until the `start()` function is
  *          called.
  *       )
  *
@@ -230,10 +230,8 @@ namespace klang {
         }
 
         void recompute_delta() {
-            const float mDeltaTotal       = mDestination - mStart;
-            const float mDelta            = mDestination - mCurrentValue;
-            const float mDurationFraction = mDuration * (mDelta / mDeltaTotal);
-            mDeltaFraction                = compute_delta_fraction(mDelta, mDurationFraction);
+            const float mDelta = mDestination - mStart;
+            mDeltaFraction     = compute_delta_fraction(mDelta, mDuration);
         }
 
         static constexpr SIGNAL_TYPE RAMP_NO_EDGE      = 0.0;

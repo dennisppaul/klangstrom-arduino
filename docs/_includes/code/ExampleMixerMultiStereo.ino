@@ -1,77 +1,63 @@
-//
-//  ExampleMixerMultiStereo
-//
+/*
+ * this example demonstrates how to mix 8 ( theoretically up to 256 ) signals into a two output signals ( i.e stereo ).
+ * it also shows how to use the pan parameter on each incoming signal.
+ */
 
-#include "CycleCounter.h"
 #include "KlangNodes.hpp"
 
 using namespace klang;
 using namespace klangstrom;
 
-static const uint8_t  NUM_OF_OSC = 12;
+static const uint8_t NUM_OF_OSC = 8;
 
-NodeDAC                 mDAC;
-NodeVCOWavetable        mOSC[NUM_OF_OSC];
-NodeMixerMultiStereo    mMixer;
+struct Traveller {
+    float            frequency;
+    float            pan;
+    float            speed;
+    float            direction;
+    NodeVCOWavetable oscillator;
+};
 
-float mAudioblockDuration = 0;
-uint8_t mBlocksUsed       = 0;
+NodeDAC              mDAC;
+Traveller            fTraveller[NUM_OF_OSC];
+NodeMixerMultiStereo mMixer;
 
-void setup()  {
-    begin_serial_debug(true);
-
+void setup() {
     for (uint8_t i = 0; i < NUM_OF_OSC; ++i) {
-        Klang::connect(mOSC[i], Node::CH_OUT_SIGNAL, mMixer, i);
+        Klang::connect(fTraveller[i].oscillator, Node::CH_OUT_SIGNAL, mMixer, i);
     }
-    Klang::connect(mMixer, NodeMixerMultiStereo::CH_OUT_SIGNAL_LEFT,    mDAC, NodeDAC::CH_IN_SIGNAL_LEFT);
-    Klang::connect(mMixer, NodeMixerMultiStereo::CH_OUT_SIGNAL_RIGHT,   mDAC, NodeDAC::CH_IN_SIGNAL_RIGHT);
-
-    for (uint8_t i = 0; i < NUM_OF_OSC; ++i) {
-        const float mOffset = 0.1;
-        mOSC[i].set_frequency(DEFAULT_FREQUENCY * 1.5 * ((NUM_OF_OSC - i) + mOffset));
-        mOSC[i].set_waveform(NodeVCOWavetable::WAVEFORM::SINE);
-        mOSC[i].set_amplitude(0.15);
-        float mPan = (float)i / (NUM_OF_OSC - 1) * 2 - 1;
-        mMixer.set_pan(i, mPan);
-    }
+    Klang::connect(mMixer, NodeMixerMultiStereo::CH_OUT_SIGNAL_LEFT, mDAC, NodeDAC::CH_IN_SIGNAL_LEFT);
+    Klang::connect(mMixer, NodeMixerMultiStereo::CH_OUT_SIGNAL_RIGHT, mDAC, NodeDAC::CH_IN_SIGNAL_RIGHT);
 
     mDAC.set_stereo(true);
 
-    beats_per_minute(120);
-    klst_enable_cycle_counter();
-}
-
-void event_receive(const EVENT_TYPE event, const float* data)  {
-    switch (event) {
-        case EVENT_MOUSE_MOVED:
-            mMixer.set_pan(0, data[X] * 2 - 1);
-            mMixer.set_pan(1, data[Y] * 2 - 1);
-            break;
-        case EVENT_MOUSE_DRAGGED:
-            mMixer.set_pan(2, data[X] * 2 - 1);
-            mMixer.set_pan(3, data[Y] * 2 - 1);
-            break;
+    for (uint8_t i = 0; i < NUM_OF_OSC; ++i) {
+        fTraveller[i].frequency = DEFAULT_FREQUENCY * 0.25 * (1.0 + 7.9 * i / NUM_OF_OSC);
+        fTraveller[i].pan       = (float)i / (NUM_OF_OSC - 1) * 2 - 1;
+        fTraveller[i].speed     = 0.01 * i / NUM_OF_OSC + 0.03;
+        fTraveller[i].direction = (i - (i / 2) * 2) ? 1 : -1;
+        fTraveller[i].oscillator.set_frequency(fTraveller[i].frequency);
+        fTraveller[i].oscillator.set_waveform(NodeVCOWavetable::WAVEFORM::TRIANGLE);
+        fTraveller[i].oscillator.set_amplitude(0.5 / NUM_OF_OSC);
+        mMixer.set_pan(i, fTraveller[i].pan);
     }
+
+    beats_per_minute(480);
 }
 
 void beat(uint32_t pBeat) {
-    Serial.print("duration of audioblock (μs) ........... : ");
-    Serial.println(mAudioblockDuration);
-    Serial.print("number of audioblock used ............. : ");
-    Serial.println(mBlocksUsed);
-
-    uint8_t i = pBeat % NUM_OF_OSC;
-    float mPan = mMixer.get_pan(i);
-    mPan += 0.05 + i * 0.1;
-    mPan = ( mPan > 0.9 ) ? -0.9 : mPan;
-    mMixer.set_pan(i, mPan);
+    for (uint8_t i = 0; i < NUM_OF_OSC; ++i) {
+        fTraveller[i].pan += fTraveller[i].speed * fTraveller[i].direction;
+        if (fTraveller[i].pan > 0.9) {
+            fTraveller[i].direction = -1;
+        } else if (fTraveller[i].pan < -0.9) {
+            fTraveller[i].direction = 1;
+        }
+        mMixer.set_pan(i, fTraveller[i].pan);
+    }
 }
 
 void audioblock(SIGNAL_TYPE* pOutputLeft, SIGNAL_TYPE* pOutputRight,
-                SIGNAL_TYPE* pInputLeft, SIGNAL_TYPE* pInputRight)  {
-    const uint32_t start = klst_get_cycles();
+                SIGNAL_TYPE* pInputLeft, SIGNAL_TYPE* pInputRight) {
     mDAC.process_frame(pOutputLeft, pOutputRight);
-    const uint32_t delta = klst_get_cycles() - start;
-    mAudioblockDuration = klst_cyclesToMicros(delta);
-    mBlocksUsed = AudioBlockPool::instance().blocks_used_max();
 }

@@ -1,6 +1,17 @@
-//
-//  ExampleKernel
-//
+/*
+ * this example demonstrates how to use the `NodeKernel` class to write custom nodes. it supplies all the necessary
+ * node infrastructure. only the `SIGNAL_TYPE NodeKernel::kernel(SIGNAL_TYPE)` method needs to implemented. in this
+ * example the input signal is amplified an clamped to create a simple distortion effect.
+ * move the mouse to change amplitude and frequency of the oscillator.
+ *
+ * note that there are a number of different kernel nodes for different input and output configurations:
+ *
+ * - `NodeKernel` :: processes a signal stream sample-by-sample
+ * - `NodeKernelBlock` :: processes a block of samples
+ * - `NodeKernelBlock2` :: processes samples from two input signal streams and outputs a single signal stream
+ * - `NodeKernelBlockStereo` :: processes samples from two input signal streams into two output signal streams
+ * - `NodeKernelBlockMulti` :: processes samples from up to 256 input signal streams into up to 256 output signal streams
+ */
 
 #include "KlangNodes.hpp"
 
@@ -24,7 +35,7 @@ MNodeKernel      mKernel;
 
 void setup() {
     Klang::connect(mOsc, mKernel);
-    Klang::connect(mKernel, Node::CH_OUT_SIGNAL, mDAC, NodeDAC::CH_IN_SIGNAL_LEFT);
+    Klang::connect(mKernel, Node::CH_OUT_SIGNAL, mDAC, NodeDAC::CH_IN_SIGNAL);
 
     mOsc.set_frequency(DEFAULT_FREQUENCY * 2);
     mOsc.set_amplitude(0.5);
@@ -37,7 +48,7 @@ void audioblock(SIGNAL_TYPE* pOutputLeft, SIGNAL_TYPE* pOutputRight, SIGNAL_TYPE
 
 void event_receive(const EVENT_TYPE event, const float* data) {
     if (event == EVENT_MOUSE_MOVED) {
-        mKernel.amplitude = (1.0 - data[Y]) * 4.0;
-        mOsc.set_frequency(DEFAULT_FREQUENCY * 2 * data[X]);
+        mKernel.amplitude = (1.0 - mouse_event(data).y) * 4.0;
+        mOsc.set_frequency(DEFAULT_FREQUENCY * 2 * mouse_event(data).x);
     }
 }

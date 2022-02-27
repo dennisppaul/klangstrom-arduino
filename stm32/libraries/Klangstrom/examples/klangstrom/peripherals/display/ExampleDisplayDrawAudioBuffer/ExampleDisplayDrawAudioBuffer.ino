@@ -29,7 +29,7 @@ void setup() {
     mDrawBuffer.draw_frame(Display);
 
     Klang::lock();
-    Klang::connect(mVCO, Node::CH_OUT_SIGNAL, mDAC, NodeDAC::CH_IN_SIGNAL_LEFT);
+    Klang::connect(mVCO, Node::CH_OUT_SIGNAL, mDAC, NodeDAC::CH_IN_SIGNAL);
     mVCO.set_amplitude(0.5);
     mVCO.set_frequency(440.0);
     mVCO.set_waveform(NodeVCOFunction::WAVEFORM::SINE);

@@ -8,6 +8,7 @@ menu.upload_method=Upload method
 menu.board=Klangstrom Board
 menu.samplingrate=Sampling Rate
 menu.audioblock=Sample per Audio Block
+menu.OSC=Enable OSC
 
 sdl.menu.upload_method.sdlexec=Execute Application
 sdl.menu.upload_method.sdlexec.upload.protocol=1
@@ -42,3 +43,8 @@ sdl.menu.board.KLST_TINY=KLST_TINY ( 3 LEDs, 3 Encoders, ... )
 sdl.menu.board.KLST_TINY.build.flags.board=1
 sdl.menu.board.KLST_CORE=KLST_CORE ( 3 LEDs, 3 Encoders, ... )
 sdl.menu.board.KLST_CORE.build.flags.board=0
+
+sdl.menu.OSC.disable=Disable OSC
+sdl.menu.OSC.disable.build.flags.OSC=
+sdl.menu.OSC.enable=Enable OSC
+sdl.menu.OSC.enable.build.flags.OSC=-DKLST_SDL_USE_OSC

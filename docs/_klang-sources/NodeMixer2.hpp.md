@@ -125,11 +125,14 @@ namespace klang {
                 if (mSignalInputCounter == 0) {
                     memset(pAudioBlock, 0.0, KLANG_SAMPLES_PER_AUDIO_BLOCK * sizeof(SIGNAL_TYPE));
                 } else {
+                    const bool mHasBlockData_MIX_Signal      = mBlockData_MIX != nullptr;
+                    const bool mHasBlockData_SIGNAL_0_Signal = mBlockData_SIGNAL_0 != nullptr;
+                    const bool mHasBlockData_SIGNAL_1_Signal = mBlockData_SIGNAL_1 != nullptr;
                     for (uint16_t i = 0; i < KLANG_SAMPLES_PER_AUDIO_BLOCK; ++i) {
-                        const float m0 = (mBlockData_MIX != nullptr) ? (mBlockData_MIX[i]) : mMix;
+                        const float m0 = mHasBlockData_MIX_Signal ? (mBlockData_MIX[i]) : mMix;
                         const float m1 = 1.0 - m0;
-                        const float s0 = (mBlockData_SIGNAL_0 != nullptr) ? (mBlockData_SIGNAL_0[i] * m0) : 0.0;
-                        const float s1 = (mBlockData_SIGNAL_1 != nullptr) ? (mBlockData_SIGNAL_1[i] * m1) : 0.0;
+                        const float s0 = mHasBlockData_SIGNAL_0_Signal ? (mBlockData_SIGNAL_0[i] * m0) : 0.0;
+                        const float s1 = mHasBlockData_SIGNAL_1_Signal ? (mBlockData_SIGNAL_1[i] * m1) : 0.0;
                         const float s  = s0 + s1;
                         pAudioBlock[i] = s;
                         // pAudioBlock[i] = s / (float)mSignalInputCounter;

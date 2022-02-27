@@ -11,7 +11,7 @@ NodeDAC             mDAC;
 NodeVCOWavetable    mOsc;
 
 void setup()  {
-    Klang::connect(mOsc, Node::CH_OUT_SIGNAL, mDAC, NodeDAC::CH_IN_SIGNAL_LEFT);
+    Klang::connect(mOsc, Node::CH_OUT_SIGNAL, mDAC, NodeDAC::CH_IN_SIGNAL);
 
     mOsc.set_frequency(DEFAULT_FREQUENCY * 2);
     mOsc.set_amplitude(0.35);

@@ -33,7 +33,7 @@ void setup() {
     }
 
     Klang::lock();
-    Klang::connect(mVCO, Node::CH_OUT_SIGNAL, mDAC, NodeDAC::CH_IN_SIGNAL_LEFT);
+    Klang::connect(mVCO, Node::CH_OUT_SIGNAL, mDAC, NodeDAC::CH_IN_SIGNAL);
     mVCO.set_amplitude(mPresets.amplitude);
     mVCO.set_frequency(mPresets.frequency);
     mVCO.set_waveform(NodeVCOFunction::WAVEFORM::SINE);
