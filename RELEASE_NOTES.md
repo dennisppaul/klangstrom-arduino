@@ -2,6 +2,9 @@
 
 ## 0.0.2
 
+- cleaned up events. events received with `event_receive(event,data)` can now be parsed with `encoder_event(data)`, `mouse_event(data)` or `keyboard_event(data)` ( e.g `encoder_event(data).index` )
+- `NodeEnvelope` now has a *start value*. stages are added with `add_stage(duration,value)` i.e the value of the last stage is the *end value*    of an envelope
+- OSC support in emulator can now be en-/disabled in Ardunio IDE
 - added bitmap converter tool ( in `./tools/ImageConverter888_565` ) for display library
 - added font editor tool ( in `./tools/Font565Editor` ) for display library
 - added KLST_SHEEP to documentation
