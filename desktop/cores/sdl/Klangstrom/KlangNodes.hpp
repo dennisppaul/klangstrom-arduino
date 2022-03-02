@@ -27,6 +27,7 @@
 #include "NodeBuffer.hpp"
 #include "NodeChorus.hpp"
 #include "NodeClip.hpp"
+#include "NodeCompressor.hpp"
 #include "NodeDAC.hpp"
 #include "NodeDelay.hpp"
 #include "NodeDistortion.hpp"

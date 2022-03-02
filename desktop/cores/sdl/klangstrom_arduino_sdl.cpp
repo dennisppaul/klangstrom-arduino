@@ -22,6 +22,7 @@
 #define KLST_SDL_DEFAULT_BPM 120
 
 #include <chrono>
+#include <cmath>
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
@@ -491,12 +492,31 @@ void list_audio_devices() {
     }
 }
 
+inline float sanitize_sample(float f) {
+    if (isinf(f)) {
+        return 0.0;
+    }
+    if (isnan(f)) {
+        return 0.0;
+    }
+    if (f != f) {
+        return 0.0;
+    }
+    if (f > 1.0) {
+        return 1.0;
+    }
+    if (f < -1.0) {
+        return -1.0;
+    }
+    return f;
+}
+
 void update_audiobuffer() {
     const uint8_t _mCurrentInputBufferID = mCurrentInputBufferID;
     audioblock(mOutputBufferLeft, mOutputBufferRight, mInputBufferLeft[_mCurrentInputBufferID], mInputBufferRight[_mCurrentInputBufferID]);
     for (int i = 0; i < KLANG_SAMPLES_PER_AUDIO_BLOCK; i++) {
-        mInternalAudioOutputBufferLeft[i + mBufferOffset]  = mOutputBufferLeft[i];
-        mInternalAudioOutputBufferRight[i + mBufferOffset] = mOutputBufferRight[i];
+        mInternalAudioOutputBufferLeft[i + mBufferOffset]  = sanitize_sample(mOutputBufferLeft[i]);
+        mInternalAudioOutputBufferRight[i + mBufferOffset] = sanitize_sample(mOutputBufferRight[i]);
     }
 }
 
@@ -979,7 +999,7 @@ void init_osc() {
     mTransmitSocket              = new UdpTransmitSocket(mEndpointName);
 
     /* --- OSC send test --- */
-    // //@todo(remove this … it s just a test)
+    // //@todo(remove this … it s just a test)
     // float data[3] = {0, 36, 100};
     // klangstrom_arduino_event_transmit(EVENT_MIDI_IN_NOTE_ON, data);
 }

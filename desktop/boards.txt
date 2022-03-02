@@ -36,6 +36,8 @@ sdl.menu.audioblock.128=128 samples
 sdl.menu.audioblock.128.build.flags.audioblock=128
 sdl.menu.audioblock.64=64 samples
 sdl.menu.audioblock.64.build.flags.audioblock=64
+sdl.menu.audioblock.32=32 samples
+sdl.menu.audioblock.32.build.flags.audioblock=32
 
 sdl.menu.board.KLST_SHEEP=KLST_SHEEP ( 16 LEDs, 2 Encoders, Display, ... )
 sdl.menu.board.KLST_SHEEP.build.flags.board=2

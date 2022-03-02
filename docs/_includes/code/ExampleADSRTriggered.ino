@@ -44,9 +44,10 @@ void audioblock(SIGNAL_TYPE* pOutputLeft, SIGNAL_TYPE* pOutputRight, SIGNAL_TYPE
 void event_receive(const EVENT_TYPE event, const float* data) {
     switch (event) {
         case EVENT_ENCODER_ROTATED:
-            mTriggerRampFrequency.set_frequency(mTriggerRampFrequency.get_frequency() + encoder_rotated(data).delta);
+            mTriggerRampFrequency.set_frequency(mTriggerRampFrequency.get_frequency() + encoder_event(data).delta);
             break;
         case EVENT_MOUSE_MOVED:
-        break;
+            mTriggerRampFrequency.set_frequency(mouse_event(data).x * 20);
+            break;
     }
 }

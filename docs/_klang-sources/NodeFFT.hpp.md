@@ -2,7 +2,7 @@
 layout: libdoc
 title: NodeFFT.hpp
 permalink: /NodeFFT.hpp/
-index: 53
+index: 54
 ---
 
 ```c
@@ -36,10 +36,11 @@ index: 53
 
 // @note(uses_cmsis_dsp_library)
 
-#include <CMSIS_DSP.h>
-
 #ifndef NodeFFT_hpp
 #define NodeFFT_hpp
+
+#ifdef KLST_USE_CMSIS_DSP
+#include <CMSIS_DSP.h>
 
 #ifndef KLANG_NODE_FFT_PRECOMPUTE_HAMMING
 #define KLANG_NODE_FFT_PRECOMPUTE_HAMMING 1
@@ -217,6 +218,8 @@ namespace klang {
     };
 
 }  // namespace klang
+
+#endif // KLST_USE_CMSIS_DSP
 
 #endif /* NodeFFT_hpp */
 

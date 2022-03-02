@@ -19,14 +19,14 @@
 
 /*
  *
- *       [ NODE_NOTE           ]
- *       +---------------------+
- *       |                     |
- * IN00--| TRIGGER             |
- * IN01--| PITCH               |
- * IN02--| VELOCITY            |
- *       |                     |
- *       +---------------------+
+ *       [ NODE_NOTE           ]
+ *       +---------------------+
+ *       |                     |
+ * IN00--| TRIGGER             |
+ * IN01--| PITCH               |
+ * IN02--| VELOCITY            |
+ *       |                     |
+ *       +---------------------+
  *
  *       @description (
  *           receives a trigger and creates a note event with pitch and velocity values.

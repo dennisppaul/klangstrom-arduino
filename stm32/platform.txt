@@ -13,9 +13,9 @@
 name=Klangstrom (MCU)
 version=1.1.0
 
-# KLST complie variables
+# KLST compile variables
 # ----------------------
-compiler.klst_define=-DKLST_ARCH=1 -DKLANG_SAMPLES_PER_AUDIO_BLOCK={build.flags.audioblock} -DKLANG_AUDIO_RATE={build.flags.samplingrate} -DKLANG_DEBUG_LEVEL=2 -DKLANG_SIGNAL_TYPE=1 -DKLST_WAVETABLE_INTERPOLATE_SAMPLES=1 -DKLST_BOARD_{build.board}
+compiler.klst_define=-DKLST_ARCH=1 -DKLANG_SAMPLES_PER_AUDIO_BLOCK={build.flags.audioblock} -DKLANG_AUDIO_RATE={build.flags.samplingrate} -DKLANG_DEBUG_LEVEL=2 -DKLANG_SIGNAL_TYPE=1 -DKLST_WAVETABLE_INTERPOLATE_SAMPLES=1 -DKLST_BOARD_{build.board} -DKLST_USE_CMSIS_DSP
 
 compiler.klst_shared=../../../shared
 compiler.klst_lib=../../libraries/Klangstrom/src

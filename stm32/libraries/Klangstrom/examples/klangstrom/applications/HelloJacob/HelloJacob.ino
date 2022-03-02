@@ -65,9 +65,9 @@ void setup() {
     mVCA.set_amplification(4.0);
 
 #ifdef KLANG_EXT_NODE_REVERB
-    mReverb.setroomsize(0.5);
-    mReverb.setwet(0.5);
-    mReverb.setdry(0.5);
+    mReverb.set_roomsize(0.5);
+    mReverb.set_wet(0.5);
+    mReverb.set_dry(0.5);
 #endif
 
     Klang::unlock();

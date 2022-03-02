@@ -45,8 +45,8 @@ void event_receive(const EVENT_TYPE event, const float* data) {
         case EVENT_MOUSE_MOVED:
             mDelay.set_duration(0.5);
             mDelay.set_wet(0.5);
-            mDelay.set_feedback(data[X]);
-            mDelay.set_filter(data[Y]);
+            mDelay.set_feedback(mouse_event(data).x);
+            mDelay.set_filter(mouse_event(data).y);
             break;
         case EVENT_MOUSE_DRAGGED:
             break;

@@ -2,7 +2,7 @@
 layout: libdoc
 title: SampleBuffer.hpp
 permalink: /SampleBuffer.hpp/
-index: 89
+index: 93
 ---
 
 ```c

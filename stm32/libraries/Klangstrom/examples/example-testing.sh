@@ -32,7 +32,6 @@ run_test() {
 	   echo -n $OPT_COMPILE
 	else
 	   echo -n $OPT_UPLOAD
-	   FAILURE_COUNTER=$((FAILURE_COUNTER+1));
 	fi
 	
 	if [ -z "$4" ]; then

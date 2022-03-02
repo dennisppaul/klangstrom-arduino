@@ -19,12 +19,12 @@
 
 /*
  *
- *       [ NODE_TRIGGER        ]
- *       +---------------------+
- *       |                     |
- *       |             TRIGGER |--OUTNN
- *       |                     |
- *       +---------------------+
+ *       [ NODE_TRIGGER        ]
+ *       +---------------------+
+ *       |                     |
+ *       |             TRIGGER |--OUTNN
+ *       |                     |
+ *       +---------------------+
  *
  *       @description (
  *           triggers up to 255 connected nodes

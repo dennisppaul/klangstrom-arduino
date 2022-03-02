@@ -75,7 +75,7 @@ void event_receive(const uint8_t event, const float* data) {
             handleEncoderButton(encoder_event(data).index);
             break;
         case EVENT_ENCODER_ROTATED:
-            handleEncoderRotate(encoder_event(data).index, encoder_event(data).tick, encoder_event(data).previous_tick);
+            handleEncoderRotate(encoder_event(data).index, encoder_event(data).ticks, encoder_event(data).previous_ticks);
             break;
     }
 }

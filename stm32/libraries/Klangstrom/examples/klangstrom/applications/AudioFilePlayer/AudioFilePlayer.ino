@@ -105,7 +105,7 @@ void handle_file_open() {
 }
 
 void handle_file_select(const float* data) {
-    if (encoder_rotated(data).delta > 0) {
+    if (encoder_event(data).delta > 0) {
         mTextSelected++;
     } else {
         mTextSelected += mFiles.size() - 1;
@@ -117,26 +117,26 @@ void handle_file_select(const float* data) {
 void event_receive(const uint8_t event, const float* data) {
     switch (event) {
         case EVENT_ENCODER_BUTTON_PRESSED:
-            if (encoder_pressed(data).index == ENCODER_00) {
+            if (encoder_event(data).index == ENCODER_00) {
                 handle_file_open();
             }
-            if (encoder_pressed(data).index == ENCODER_01) {
+            if (encoder_event(data).index == ENCODER_01) {
                 mEncoder01Mode = !mEncoder01Mode;
                 LED(LED_00, mEncoder01Mode);
                 LED(LED_01, !mEncoder01Mode);
             }
             break;
         case EVENT_ENCODER_ROTATED:
-            if (encoder_rotated(data).index == ENCODER_00) {
+            if (encoder_event(data).index == ENCODER_00) {
                 handle_file_select(data);
             }
-            if (encoder_rotated(data).index == ENCODER_01) {
+            if (encoder_event(data).index == ENCODER_01) {
                 if (mEncoder01Mode) {
-                    mSampler.set_speed(mSampler.get_speed() + encoder_rotated(data).delta * 0.1);
+                    mSampler.set_speed(mSampler.get_speed() + encoder_event(data).delta * 0.1);
                     mSamplerRight.set_speed(mSampler.get_speed());
                 } else {
                     float mAmp = mVCA.get_amplification();
-                    mAmp += encoder_rotated(data).delta * 0.05;
+                    mAmp += encoder_event(data).delta * 0.05;
                     mAmp = KlangMath::clamp(mAmp, 0, 20);
                     mVCA.set_amplification(mAmp);
                     mVCARight.set_amplification(mAmp);

@@ -41,7 +41,7 @@ void event_receive(const EVENT_TYPE event, const float* data)  {
             break;
         case EVENT_MOUSE_MOVED:
         case EVENT_MOUSE_DRAGGED:
-            mOsc.set_frequency(DEFAULT_FREQUENCY * (2 + data[X]));
+            mOsc.set_frequency(DEFAULT_FREQUENCY * (2 + mouse_event(data).x));
             break;
         case EVENT_MIDI_IN_NOTE_ON:
             midi_note_on(data);

@@ -84,6 +84,8 @@ Klangstrom.menu.audioblock.256=256 samples
 Klangstrom.menu.audioblock.256.build.flags.audioblock=256
 Klangstrom.menu.audioblock.64=64 samples
 Klangstrom.menu.audioblock.64.build.flags.audioblock=64
+Klangstrom.menu.audioblock.32=32 samples
+Klangstrom.menu.audioblock.32.build.flags.audioblock=32
 
 # Upload menu
 Klangstrom.menu.upload_method.swdMethod=STM32CubeProgrammer (SWD)

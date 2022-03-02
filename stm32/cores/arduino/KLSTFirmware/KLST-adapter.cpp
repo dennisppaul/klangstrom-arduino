@@ -24,7 +24,7 @@
 #include "KlangstromDefinesArduino.h"
 #include "pins_arduino.h"
 
-// @todo(find a way to make library headers available in this context … e.g in `platform.txt`)
+// @todo(find a way to make library headers available in this context … e.g in `platform.txt`)
 // #if defined(TINYUSB_MIDI_DEVICE) || defined(TINYUSB_MOUSE_KEYBOARD_DEVICE)
 // #if !(__has_include("USBDevice.h"))
 // #warning "could not find USB Device library. make sure to include `#include "USBDevice.h"` at beginning of sketch."

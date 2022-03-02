@@ -335,9 +335,9 @@ void loop() {
 }
 
 void handle_state_instrument_selection(const float* data) {
-    if (encoder_rotated(data).delta != 0) {
+    if (encoder_event(data).delta != 0) {
         fInstruments[fInstrumentSelected]->reset();
-        fInstrumentSelected += encoder_rotated(data).delta;
+        fInstrumentSelected += encoder_event(data).delta;
         if (fInstrumentSelected < 0) {
             fInstrumentSelected = fInstruments.size() - 1;
         }
@@ -350,8 +350,8 @@ void handle_state_instrument_selection(const float* data) {
 }
 
 void handle_state_bpm(const float* data) {
-    if (encoder_rotated(data).delta != 0) {
-        fBPM += encoder_rotated(data).delta;
+    if (encoder_event(data).delta != 0) {
+        fBPM += encoder_event(data).delta;
         if (fBPM < 1) {
             fBPM = 1;
         }
@@ -361,8 +361,8 @@ void handle_state_bpm(const float* data) {
 }
 
 void handle_state_volume(const float* data) {
-    if (encoder_rotated(data).delta != 0) {
-        fMixer.set_master(fMixer.get_master() + 0.05 * encoder_rotated(data).delta);
+    if (encoder_event(data).delta != 0) {
+        fMixer.set_master(fMixer.get_master() + 0.05 * encoder_event(data).delta);
         if (fMixer.get_master() < 0) {
             fMixer.set_master(0);
         }
@@ -374,10 +374,10 @@ void event_receive(const uint8_t event, const float* data) {
     Instrument* mInstrument = fInstruments[fInstrumentSelected];
     switch (event) {
         case EVENT_ENCODER_BUTTON_PRESSED:
-            if (encoder_pressed(data).index == ENCODER_00) {
+            if (encoder_event(data).index == ENCODER_00) {
                 mInstrument->toggle_pad(Display, fPadSelected);
             }
-            if (encoder_pressed(data).index == ENCODER_01) {
+            if (encoder_event(data).index == ENCODER_01) {
                 fState++;
                 fState %= STATE_COUNT;
                 update_display_BPM();
@@ -386,16 +386,16 @@ void event_receive(const uint8_t event, const float* data) {
             }
             break;
         case EVENT_ENCODER_ROTATED:
-            if (encoder_rotated(data).index == ENCODER_00) {
+            if (encoder_event(data).index == ENCODER_00) {
                 mInstrument->select_pad(Display, fPadSelected, false);
-                fPadSelected += encoder_rotated(data).delta;
+                fPadSelected += encoder_event(data).delta;
                 if (fPadSelected < 0) {
                     fPadSelected = NUM_STEPS - 1;
                 }
                 fPadSelected %= NUM_STEPS;
                 mInstrument->select_pad(Display, fPadSelected, true);
             }
-            if (encoder_rotated(data).index == ENCODER_01) {
+            if (encoder_event(data).index == ENCODER_01) {
                 switch (fState) {
                     case STATE_INSTRUMENT:
                         handle_state_instrument_selection(data);

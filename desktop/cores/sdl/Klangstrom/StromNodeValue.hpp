@@ -19,12 +19,12 @@
 
 /*
  *
- *       [ NODE_VALUE          ]
- *       +---------------------+
- *       |                     |
- * IN00--| TRIGGER       VALUE |--OUT00
- *       |                     |
- *       +---------------------+
+ *       [ NODE_VALUE          ]
+ *       +---------------------+
+ *       |                     |
+ * IN00--| TRIGGER       VALUE |--OUT00
+ *       |                     |
+ *       +---------------------+
  *
  *       @description (
  *           receives a trigger and passes on a single value.
@@ -48,7 +48,7 @@ namespace strom {
             if (pChannel == CH_IN_TRIGGER) {
                 STROM_LOG("+++ @StromNodeValue Node(%02d) receives trigger : %f", ID(), pData);
                 if (pData != STROM_NO_VALUE) {
-                    // @TODO(@research, "check if this is desired behavior … maybe the value should not be changed here?!?")
+                    // @TODO(@research, "check if this is desired behavior … maybe the value should not be changed here?!?")
                     mValue = pData;
                 }
             }
