@@ -239,7 +239,7 @@ extern "C" {
 #define SERIAL_01_TX                PE1
 #define SERIAL_DEBUG_RX             PD6
 #define SERIAL_DEBUG_TX             PD5
-#define SPI_DISPLAY_CS              PA15_ALT1 // was `PA15`
+#define SPI_DISPLAY_CS              PA15_ALT1  // was `PA15`
 #define SPI_DISPLAY_MISO            PC11
 #define SPI_DISPLAY_MOSI            PC12
 #define SPI_DISPLAY_REGISTER_SELECT PD0
@@ -340,10 +340,13 @@ extern "C" {
 /* --- PERIPHERALS ---------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 
-#define KLST_NUM_LEDS     16
-#define LED_BUILTIN       LED_00
-#define USER_BTN          ENCODER_00_BUTTON
-#define BUTTON_PROGRAMMER BUTTON_PRG
+#define KLST_NUM_LEDS          16
+#define KLST_NUM_ADCS          2
+#define KLST_NUM_DACS          2
+#define KLST_ANALOG_RESOLUTION 16
+#define LED_BUILTIN            LED_00
+#define USER_BTN               ENCODER_00_BUTTON
+#define BUTTON_PROGRAMMER      BUTTON_PRG
 
 /* --- U(S)ART -------------------------------------------------------------- */
 

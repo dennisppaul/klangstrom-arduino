@@ -82,19 +82,21 @@ uint8_t  KLST_BSP_error_code();
 #ifdef __cplusplus
 
 namespace klangstrom {
-    void    beats_per_minute(float pBPM);
-    void    beats_per_minute_ms(uint32_t pMicroSeconds);
-    void    begin_serial_debug(bool pWaitForSerial = false, uint32_t pBaudRate = 115200);
-    bool    button_state(uint8_t pButton);
-    void    data_transmit(const uint8_t pTransmitter, uint8_t* pData, uint8_t pDataLength);
-    void    event_transmit(EVENT_TYPE pEvent, float* pPayload);
-    int16_t ID();
-    char*   U_ID();
-    void    LED(uint16_t pLED, uint8_t pState);
-    void    led(uint16_t pLED, bool pState);
-    void    led_toggle(uint16_t pLED);
-    void    option(uint8_t pOption, float pValue);
-    bool    pin_state(uint8_t pButton);
+    void     beats_per_minute(float pBPM);
+    void     beats_per_minute_ms(uint32_t pMicroSeconds);
+    void     begin_serial_debug(bool pWaitForSerial = false, uint32_t pBaudRate = 115200);
+    bool     button_state(uint8_t pButton);
+    void     data_transmit(const uint8_t pTransmitter, uint8_t* pData, uint8_t pDataLength);
+    void     event_transmit(EVENT_TYPE pEvent, float* pPayload);
+    int16_t  ID();
+    char*    U_ID();
+    void     LED(uint16_t pLED, uint8_t pState);
+    void     led(uint16_t pLED, bool pState);
+    void     led_toggle(uint16_t pLED);
+    void     option(uint8_t pOption, float pValue);
+    bool     pin_state(uint8_t pButton);
+    uint16_t ADC(uint8_t pADC);
+    void     DAC(uint8_t pDAC, uint16_t pValue);
 };  // namespace klangstrom
 
 #endif

@@ -97,8 +97,11 @@
 
 /* --- */
 
-#define LED_BUILTIN    LED_00
-#define KLST_UART_BAUD 115200
+#define LED_BUILTIN            LED_00
+#define KLST_NUM_ADCS          2
+#define KLST_NUM_DACS          2
+#define KLST_ANALOG_RESOLUTION 16
+#define KLST_UART_BAUD         115200
 
 #define KLST_LOG Serial
 

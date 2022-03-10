@@ -766,7 +766,8 @@ void init_SDL() {
     KLANG_LOG("+++ KLANG_OSC_RECEIVE_PORT        : %i", KLANG_OSC_RECEIVE_PORT);
 #endif
     KLANG_LOG("+++ KLANG_BOARD_SIMULATOR         : %s +++", get_board_name(KLANG_BOARD_SIMULATOR));
-    KLANG_LOG("+++++++++++++++++++++++++++++++++++++++++++++++++++");
+    KLANG_LOG("+++                                            +++");
+    KLANG_LOG("++++++++++++++++++++++++++++++++++++++++++++++++++");
 
     if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_TIMER) < 0) {
         KLANG_LOG_ERR("@klangstrom_arduino unable to init SDL: %s", SDL_GetError());

@@ -67,6 +67,10 @@ void klangstrom::data_transmit(const uint8_t pSender, uint8_t* pData, uint8_t pD
 
 int16_t klangstrom::ID() { return KLST_NO_ID; }
 
+uint16_t klangstrom::ADC(uint8_t pADC) { return 0; }  // @todo(implement ADC)
+
+void klangstrom::DAC(uint8_t pDAC, uint16_t pValue) {}  // @todo(implement DAC)
+
 /* ----------------------------------------------------------------------------------------------------- */
 
 int digitalRead(uint32_t pPin) {

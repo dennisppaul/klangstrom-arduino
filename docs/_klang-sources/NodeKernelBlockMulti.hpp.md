@@ -107,7 +107,7 @@ namespace klang {
                 }
 
                 const uint8_t mNumOutputChannels = get_num_output_channels();
-                mOutputSignals.resize(mNumOutputChannels);
+                mOutputSignals.resize(mNumOutputChannels); // @todo maybe move this to `get_num_output_channels()`
                 for (uint8_t i = 0; i < mNumOutputChannels; ++i) {
                     AUDIO_BLOCK_ID mBlockID = AudioBlockPool::instance().request();
                     mOutputSignals[i]       = AudioBlockPool::instance().data(mBlockID);

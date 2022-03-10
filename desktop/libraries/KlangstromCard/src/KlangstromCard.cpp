@@ -20,8 +20,8 @@
 #include "KlangstromDefinesArduino.h"
 
 #if KLST_ARCH == KLST_ARCH_MCU
-#include "KlangstromCardBSP_KLST.h"
-klangstrom::KlangstromCard *CardPtr = new klangstrom::KlangstromCardBSP_KLST();
+#include "KlangstromCardBSP_STM32.h"
+klangstrom::KlangstromCard *CardPtr = new klangstrom::KlangstromCardBSP_STM32();
 #elif KLST_ARCH == KLST_ARCH_CPU
 #include "KlangstromCardBSP_SDL.h"
 klangstrom::KlangstromCard *CardPtr = new klangstrom::KlangstromCardBSP_SDL();

@@ -7,7 +7,7 @@ menu.samplingrate=Sampling Rate
 menu.audioblock=Sample per Audio Block
 
 menu.xserial=U(S)ART support
-menu.usb=USB support (if available)
+menu.usb=USB support
 menu.xusb=USB speed (if available)
 menu.virtio=Virtual serial support
 

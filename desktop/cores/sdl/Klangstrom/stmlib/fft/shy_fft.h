@@ -84,12 +84,16 @@ struct Math<float> {
   inline float sin(float x) { return sinf(x); }
 };
 
+// @note(dpp, added these aliases to prevent warnings about potential *infinite recursion*) 
+static double cosd(double x) { return cos(x); } 
+static double sind(double x) { return sin(x); } 
+
 template<>
 struct Math<double> {
   inline double pi() const { return 3.141592653589793; }
   inline float sqrt_2_div_2() const { return 0.7071067811865476; }
-  inline double cos(double x) { return cos(x); }
-  inline double sin(double x) { return sin(x); }
+  inline double cos(double x) { return cosd(x); }
+  inline double sin(double x) { return sind(x); }
 };
 
 

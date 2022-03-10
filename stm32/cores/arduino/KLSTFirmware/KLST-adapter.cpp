@@ -151,6 +151,19 @@ void KLST_ISH_pre_setup() {
     KLST_BSP_init_LEDs();
     KLST_BSP_init_peripherals();
 
+    /* ADC + DAC */
+    // @todo(this needs to be handled in a more generic fashion)
+    if (KLST_NUM_ADCS == 2) {
+        pinMode(ADC_00, INPUT);
+        pinMode(ADC_01, INPUT);
+        analogReadResolution(KLST_ANALOG_RESOLUTION);
+    }
+    if (KLST_NUM_DACS == 2) {
+        pinMode(DAC_00, OUTPUT);
+        pinMode(DAC_01, OUTPUT);
+        analogWriteResolution(KLST_ANALOG_RESOLUTION);
+    }
+
     /* encoder buttons */
     pinMode(ENCODER_00_BUTTON, INPUT);
     pinMode(ENCODER_01_BUTTON, INPUT);
@@ -589,6 +602,14 @@ void klangstrom::LED(uint16_t pLED, uint8_t pState) {
             digitalWrite(pLED, !digitalRead(pLED));
             break;
     }
+}
+
+void klangstrom::DAC(uint8_t pDAC, uint16_t pValue) {
+    analogWrite(pDAC, pValue);
+}
+
+uint16_t klangstrom::ADC(uint8_t pADC) {
+    return analogRead(pADC);
 }
 
 /**

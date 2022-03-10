@@ -58,7 +58,7 @@ struct SettingsData {
   uint8_t padding[8];
 };
 
-class PersistentBlock;
+struct PersistentBlock;
 
 class Settings {
  public:
