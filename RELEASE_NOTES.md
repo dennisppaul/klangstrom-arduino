@@ -35,7 +35,7 @@
 - added KLST_CORE board
 - `NodeDelay` maximum delay ( line ) length can now be globally configured ( `#define NODE_DELAY_BUFFER_SIZE BUFFER_SIZE_IN_SAMPLES` )
 - added *Klang* source code to documentation
-- added support and example for SD Cards
+- added support and examples for SD Cards
 
 ## 0.0.1 (20210614)
 
