@@ -20,6 +20,8 @@
 #ifndef klangstrom_card_h
 #define klangstrom_card_h
 
+// @todo(rework the library so that open allow to specify options like read-only, write-only, … and that it return a generic `File` object so that multiple files can be handled)
+// @todo(implement fast raw byte writing see `RawWrite.ino` example from SdFat library + "contiguous files")
 // @todo(add support for folders e.g `cd`, `get_folder_list`)
 
 #include <WString.h>
@@ -83,6 +85,9 @@ namespace klangstrom {
          *
          */
         virtual void close() = 0;
+
+        // @todo(add platform dependent implementation i.e `BSP_create_file`)
+        virtual int create_file(const String pFileName) = 0;
 
         virtual void print_WAV_header(WaveHeader_t *mHeader) = 0;
 
@@ -158,11 +163,16 @@ namespace klangstrom {
             return NO_ERROR;
         }
 
+        int write(uint8_t *pWriteBuffer, uint32_t pWriteBufferSize, bool pSync) {
+            return BSP_write_block(pWriteBuffer, pWriteBufferSize, pSync);
+        }
+
     protected:
         static const uint16_t READ_BUFFER_SIZE = 128;
 
-        virtual int  BSP_read_block(uint8_t *pReadBuffer, uint32_t pReadBufferSize) = 0;
-        virtual void debug_print_error(const char *pString)                         = 0;
+        virtual int  BSP_read_block(uint8_t *pReadBuffer, uint32_t pReadBufferSize)                = 0;
+        virtual int  BSP_write_block(uint8_t *pWriteBuffer, uint32_t pWriteBufferSize, bool pSync) = 0;
+        virtual void debug_print_error(const char *pString)                                        = 0;
 
         inline int16_t BYTES_TO_INT_16(uint8_t *raw) {
             /* @todo(what about endianess?) */

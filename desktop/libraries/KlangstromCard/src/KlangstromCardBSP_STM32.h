@@ -98,17 +98,22 @@ namespace klangstrom {
         void close();
         void print_WAV_header(WaveHeader_t *mHeader);
 
+        int  create_file(const String pFileName);
+
     protected:
         int  BSP_read_block(uint8_t *pReadBuffer, uint32_t pReadBufferSize);
+        int  BSP_write_block(uint8_t *pWriteBuffer, uint32_t pWriteBufferSize, bool pSync);
         void debug_print_error(const char *pString);
 
     private:
 #ifdef KLST_CARD_OPTIMIZE_SPACE
         SdFat32  sd;
-        FatFile *mFile = nullptr;
+        FatFile *mFile    = nullptr;
+        FatFile *mOutFile = nullptr;
 #else
         SdFat   sd;
-        FsFile *mFile = nullptr;
+        FsFile *mFile    = nullptr;
+        FsFile *mOutFile = nullptr;
 #endif
 
         KLST_SDCARD_SPI *mKLST_SDCARD_SPI = new KLST_SDCARD_SPI();

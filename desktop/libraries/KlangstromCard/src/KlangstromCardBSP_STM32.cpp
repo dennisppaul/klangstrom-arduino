@@ -65,6 +65,22 @@ void klangstrom::KlangstromCardBSP_STM32::get_file_list(vector<String> &pFiles, 
     }
 }
 
+int klangstrom::KlangstromCardBSP_STM32::create_file(const String pFileName) {
+    bool mIsOpen;
+#ifdef KLST_CARD_OPTIMIZE_SPACE
+    mOutFile = new FatFile();
+    mIsOpen  = mOutFile->open(pFileName.c_str(), O_WRONLY | O_CREAT | O_AT_END);
+#else
+    mOutFile = &(sd.open(pFileName, O_WRONLY | O_CREAT | O_AT_END));
+#endif
+
+    if (!mIsOpen) {
+        debug_print_error("could not open file: ");
+        return ERROR_FILE_NOT_OPEN;
+    }
+    return 0;
+}
+
 int klangstrom::KlangstromCardBSP_STM32::open(const String pFileName, const uint8_t pReadWriteFlag) {
     bool mIsOpen;
 #ifdef KLST_CARD_OPTIMIZE_SPACE
@@ -73,7 +89,7 @@ int klangstrom::KlangstromCardBSP_STM32::open(const String pFileName, const uint
     // mIsOpen = mFile->openExistingSFN(pFileName.c_str());
     mIsOpen = mFile->open(pFileName.c_str());
 #else
-    mFile = &(sd.open(pFileName));
+    mFile    = &(sd.open(pFileName));
 #endif
 
     if (!mIsOpen) {
@@ -92,6 +108,11 @@ void klangstrom::KlangstromCardBSP_STM32::close() {
         mFile->close();
         delete mFile;
         mFile = nullptr;
+    }
+    if (mOutFile != nullptr) {  // && mFile->isOpen()) {
+        mOutFile->close();
+        delete mOutFile;
+        mOutFile = nullptr;
     }
 }
 
@@ -142,6 +163,18 @@ void klangstrom::KlangstromCardBSP_STM32::print_WAV_header(WaveHeader_t *mHeader
 
 int klangstrom::KlangstromCardBSP_STM32::BSP_read_block(uint8_t *pReadBuffer, uint32_t pReadBufferSize) {
     return mFile->read(pReadBuffer, pReadBufferSize);
+}
+
+int klangstrom::KlangstromCardBSP_STM32::BSP_write_block(uint8_t *pWriteBuffer, uint32_t pWriteBufferSize, bool pSync) {
+    if (mOutFile != nullptr) {
+        int mResult = mOutFile->write(pWriteBuffer, pWriteBufferSize);
+        if (pSync) {
+            mOutFile->sync();
+        }
+        return mResult;
+    } else {
+        return -1;
+    }
 }
 
 void klangstrom::KlangstromCardBSP_STM32::debug_print_error(const char *pString) {

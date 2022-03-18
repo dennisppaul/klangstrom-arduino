@@ -33,13 +33,17 @@ namespace klangstrom {
         void close();
         void print_WAV_header(WaveHeader_t *mHeader);
 
+        int  create_file(const String pFileName);
+
     protected:
         int  BSP_read_block(uint8_t *pReadBuffer, uint32_t pReadBufferSize);
+        int  BSP_write_block(uint8_t *pWriteBuffer, uint32_t pWriteBufferSize, bool pSync);
         void debug_print_error(const char *pString);
 
     private:
         const char *mFolderPath = nullptr;
         FILE *mFile;
+        FILE *mOutFile;
 
         bool KlangstromCard_is_prefixed(const char *pre, const char *str) {
             return strncmp(pre, str, strlen(pre)) == 0;

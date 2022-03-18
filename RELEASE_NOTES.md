@@ -2,6 +2,7 @@
 
 ## 0.0.2
 
+- added writing to file in SD Card library
 - added Mutable Instruments’ [Braids](https://mutable-instruments.net/modules/braids/), [Plaits](https://mutable-instruments.net/modules/plaits/), and [Clouds](https://mutable-instruments.net/modules/clouds/) as nodes
 - cleaned up events. now events received with `event_receive(event,data)` can be parsed with `encoder_event(data)`, `mouse_event(data)` or `keyboard_event(data)` ( e.g `encoder_event(data).index` )
 - `NodeEnvelope` now has a *start value*. stages are added with `add_stage(duration,value)` i.e the value of the last stage is the *end value*    of an envelope

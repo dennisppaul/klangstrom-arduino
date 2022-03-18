@@ -71,6 +71,18 @@ void klangstrom::KlangstromCardBSP_SDL::get_file_list(vector<String> &pFiles, bo
     }
 }
 
+int klangstrom::KlangstromCardBSP_SDL::create_file(const String pFileName) {
+    const String mFilePath = KlangstromCard_get_full_path(pFileName);
+    mOutFile               = fopen(mFilePath.c_str(), "wb");
+
+    if (mOutFile == nullptr) {
+        debug_print_error("could not open file: ");
+        debug_print_error(mFilePath.c_str());
+        return 1;
+    }
+    return 0;
+}
+
 int klangstrom::KlangstromCardBSP_SDL::open(const String pFileName, const uint8_t pReadWriteFlag) {
     const String mFilePath = KlangstromCard_get_full_path(pFileName);
     switch (pReadWriteFlag) {
@@ -98,7 +110,14 @@ bool klangstrom::KlangstromCardBSP_SDL::is_open() {
 }
 
 void klangstrom::KlangstromCardBSP_SDL::close() {
-    fclose(mFile);
+    if (mFile != nullptr) {
+        fclose(mFile);
+        mFile = nullptr;
+    }
+    if (mOutFile != nullptr) {
+        fclose(mOutFile);
+        mOutFile = nullptr;
+    }
 }
 
 // /* C++17 */
@@ -143,6 +162,10 @@ void klangstrom::KlangstromCardBSP_SDL::print_WAV_header(WaveHeader_t *mHeader) 
 
 int klangstrom::KlangstromCardBSP_SDL::BSP_read_block(uint8_t *pReadBuffer, uint32_t pReadBufferSize) {
     return fread(pReadBuffer, 1, pReadBufferSize, mFile);
+}
+
+int klangstrom::KlangstromCardBSP_SDL::BSP_write_block(uint8_t *pWriteBuffer, uint32_t pWriteBufferSize, bool pSync) {
+    return fwrite(pWriteBuffer, 1, pWriteBufferSize, mOutFile);
 }
 
 void klangstrom::KlangstromCardBSP_SDL::debug_print_error(const char *pString) {
