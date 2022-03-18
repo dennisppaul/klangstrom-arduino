@@ -2,7 +2,7 @@
 layout: libdoc
 title: NodePortamento
 permalink: /NodePortamento/
-index: 60
+index: 65
 ---
 
           [ NODE_PORTAMENTO      ]       

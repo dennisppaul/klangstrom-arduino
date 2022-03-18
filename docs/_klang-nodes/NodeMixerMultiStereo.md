@@ -2,7 +2,7 @@
 layout: libdoc
 title: NodeMixerMultiStereo
 permalink: /NodeMixerMultiStereo/
-index: 53
+index: 58
 ---
 
           [ NODE_MIXER_MULTI_STEREO      ]       

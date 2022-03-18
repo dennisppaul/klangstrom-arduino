@@ -5,12 +5,12 @@ permalink: /NodeAlienWah/
 index: 35
 ---
 
-          [ NODE_ALIEN_WAH      ]       
-          +---------------------+       
-          |                     |       
-    IN00--| SIGNAL       SIGNAL |--OUT00
-          |                     |       
-          +---------------------+       
+          [ NODE_ALIENWAH      ]       
+          +--------------------+       
+          |                    |       
+    IN00--| SIGNAL      SIGNAL |--OUT00
+          |                    |       
+          +--------------------+       
 
 this node applies a wahwah-like effect to the incoming signal. author/source: [Nasca Octavian Paul](https://www.musicdsp.org/en/latest/Effects/70-alien-wah.html)
 

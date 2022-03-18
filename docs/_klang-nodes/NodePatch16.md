@@ -2,7 +2,7 @@
 layout: libdoc
 title: NodePatch16
 permalink: /NodePatch16/
-index: 58
+index: 63
 ---
 
           [ NODE_PATCH16        ]       

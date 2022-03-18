@@ -2,7 +2,7 @@
 layout: libdoc
 title: NodeNoise
 permalink: /NodeNoise/
-index: 55
+index: 60
 ---
 
           [ NODE_NOISE      ]       

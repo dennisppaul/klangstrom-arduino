@@ -2,7 +2,7 @@
 layout: libdoc
 title: NodeEnvelope
 permalink: /NodeEnvelope/
-index: 42
+index: 43
 ---
 
           [ NODE_ENVELOPE      ]       

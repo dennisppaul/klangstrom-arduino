@@ -2,17 +2,17 @@
 layout: libdoc
 title: NodeVCFLowPass
 permalink: /NodeVCFLowPass/
-index: 66
+index: 73
 ---
 
-          [ NODE_VCF_LP      ]       
-          +------------------+       
-          |                  |       
-    IN00--| SIGNAL    SIGNAL |--OUT00
-    IN01--| CUTOFF           |       
-    IN02--| RESONANCE        |       
-          |                  |       
-          +------------------+       
+          [ NODE_VCF_LOW_PASS      ]       
+          +------------------------+       
+          |                        |       
+    IN00--| SIGNAL          SIGNAL |--OUT00
+    IN01--| CUTOFF                 |       
+    IN02--| RESONANCE              |       
+          |                        |       
+          +------------------------+       
 
 this filter node is a low filter with resonance. all inputs are *patchable* i.e they can be controlled by another node ( (V)oltage-(C)ontrolled (F)ilter (`VCF`) ). author/source: [Paul Kellett](http://www.musicdsp.org/archive.php?classid=3#259)
 

@@ -2,7 +2,7 @@
 layout: libdoc
 title: NodeVCOWavetable
 permalink: /NodeVCOWavetable/
-index: 70
+index: 77
 ---
 
           [ NODE_VCO_WAVETABLE      ]       

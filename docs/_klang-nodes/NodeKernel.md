@@ -2,10 +2,10 @@
 layout: libdoc
 title: NodeKernel
 permalink: /NodeKernel/
-index: 43
+index: 45
 ---
 
-          [ NODE_KERNAL      ]       
+          [ NODE_KERNEL      ]       
           +------------------+       
           |                  |       
     IN00--| SIGNAL    SIGNAL |--OUT00

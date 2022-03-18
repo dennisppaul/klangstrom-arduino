@@ -2,7 +2,7 @@
 layout: libdoc
 title: NodeSampler
 permalink: /NodeSampler/
-index: 62
+index: 67
 ---
 
           [ NODE_SAMPLER      ]       
