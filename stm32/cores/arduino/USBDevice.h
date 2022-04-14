@@ -56,7 +56,9 @@ void transmit_midi_message(const uint8_t cable, const uint8_t data1, const uint8
 
 /* --- callback functions --- */
 
+#ifndef WEAK
 #define WEAK __attribute__((weak))
+#endif
 WEAK void receive_midi_note_off(const uint8_t channel, const uint8_t note);
 WEAK void receive_midi_note_on(const uint8_t channel, const uint8_t note, const uint8_t velocity);
 WEAK void receive_midi_aftertouch(const uint8_t channel, const uint8_t note, const uint8_t pressure);

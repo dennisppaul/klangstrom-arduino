@@ -1,3 +1,4 @@
+#ifdef USE_USBDEVICE
 /* USER CODE BEGIN Header */
 /**
   ******************************************************************************
@@ -108,3 +109,4 @@ void MX_USB_DEVICE_Init(void)
   * @}
   */
 
+#endif  // USE_USBDEVICE

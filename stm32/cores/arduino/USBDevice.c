@@ -1,3 +1,5 @@
+#ifdef USE_USBDEVICE
+
 #include "USBDevice.h"
 
 #include "USBDevice_BSP_inc.h"
@@ -291,3 +293,4 @@ uint8_t transmit_keyboard_key_released(uint8_t pKey) {
 }
 
 #endif  // USBDEVICE_MOUSE_KEYBOARD
+#endif  // USE_USBDEVICE
