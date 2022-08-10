@@ -16,8 +16,8 @@
           "category": "Contributed",
           "url": "https://github.com/dennisppaul/klangstrom-arduino/raw/release/klangstrom-arduino-desktop-0.0.3.zip",
           "archiveFileName": "klangstrom-arduino-desktop-0.0.3.zip",
-          "checksum": "SHA-256:8d0150ec57d89e3118dac0d03c7bce23176cf216277e718a6a255dcd8f8658a8",
-          "size": "5557351",
+          "checksum": "SHA-256:d6bbe15dd280fd2d5e5d8e7f8425807412c0b0a36bc6f6d33f59f3750fe1353a",
+          "size": "4948691",
           "boards": [
             {"name": "Klangstrom (SDL)"}
           ],
