@@ -16,12 +16,10 @@
           "category": "Contributed",
           "url": "https://github.com/dennisppaul/klangstrom-arduino/raw/release/klangstrom-arduino-stm32-0.0.3.zip",
           "archiveFileName": "klangstrom-arduino-stm32-0.0.3.zip",
-          "checksum": "SHA-256:52fab8473015368dd528f41434a083b6dca353f57067e55e53b100c02d1e1e1f",
-          "size": "8918892",
+          "checksum": "SHA-256:811dc2e4d41baf783bf669578da91bbba62819b87ccdc74265c7af9b146356b1",
+          "size": "8628423",
           "boards": [
-            {"name": "Klangstrom (SDL)"},
-            {"name": "Klangstrom (STM32)"},
-            {"name": "Midatronics (vcvrack)"}
+            {"name": "Klangstrom (STM32)"}
           ],
           "toolsDependencies": [
             {
