@@ -7,6 +7,7 @@
 #include <string.h>
 #include <math.h>
 #include "KLST_Includes.h"
+#include "KLST_SDL-adapter.h"
 
 #ifndef WEAK
 #define WEAK __attribute__ ((weak))
@@ -15,28 +16,22 @@
 #define LOW         0
 #define HIGH        1
 
-/* KLST -------------------------------------------------------------------------------- */
+/* sketch */
 
 #ifdef __cplusplus
 extern "C" {
-#endif
+#endif // __cplusplus
+// Weak empty variant initialization function.
+// May be redefined by variant files.
+extern void initVariant() __attribute__((weak));
 
-#include "KlangstromDefinesArduino.h"
-#include "KlangstromApplicationInterfaceArduino.h"
-#include "KLST_SDL-adapter.h"
+extern void setup(void) ;
+extern void loop(void) ;
 
-//@todo(move function declarations to shared header file `KLST-application.h` )
-// #include "KLST-application.h"
-void setup();
-void loop();
-void beat(uint32_t pBeat);
-void audioblock(float* pLeftTX, float* pRightTX, float* pLeftRX, float* pRightRX);
-void event_receive(const uint8_t event, const float* data);
-void data_receive(uint8_t* data, uint8_t length);
-
+void yield(void);
 #ifdef __cplusplus
-}
-#endif
+} // extern "C"
+#endif // __cplusplus
 
 #include "klangstrom_arduino_proxy_serial.h"
 

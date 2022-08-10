@@ -13,10 +13,23 @@
 #include "dwt.h"
 #include "hw_config.h"
 #include "clock.h"
+#ifdef USBCON
 #include "usbd_if.h"
-
+#endif
 #ifdef __cplusplus
 extern "C" {
+#endif
+
+#if defined(HAL_CRC_MODULE_ENABLED)
+CRC_HandleTypeDef hcrc = {.Instance =
+#if defined(CRC2_BASE)
+                            CRC2
+#elif defined(CRC_BASE)
+                            CRC
+#else
+#error "No CRC instance available!"
+#endif
+                         };
 #endif
 
 /**
@@ -52,6 +65,11 @@ void hw_config_init(void)
 
   /* Configure the system clock */
   SystemClock_Config();
+
+  /* Initialize the CRC */
+#if defined(HAL_CRC_MODULE_ENABLED)
+  HAL_CRC_Init(&hcrc);
+#endif
 
 #if defined (USBCON) && defined(USBD_USE_CDC)
   USBD_CDC_init();

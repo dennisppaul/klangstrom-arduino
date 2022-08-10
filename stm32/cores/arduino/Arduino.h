@@ -34,8 +34,6 @@
 #endif
 
 #include "wiring.h"
-#include "KlangstromDefinesArduino.h"
-#include "KlangstromApplicationInterfaceArduino.h"
 
 /* sketch */
 
@@ -45,8 +43,6 @@ extern "C" {
 // Weak empty variant initialization function.
 // May be redefined by variant files.
 extern void initVariant() __attribute__((weak));
-extern void KLST_pre_setup() __attribute__((weak));
-extern void KLST_post_setup() __attribute__((weak));
 
 extern void setup(void) ;
 extern void loop(void) ;

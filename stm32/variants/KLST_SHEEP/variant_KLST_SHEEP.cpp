@@ -11,6 +11,8 @@
  *******************************************************************************
  */
 
+#if defined(KLST_BOARD_KLST_SHEEP)
+
 #include "pins_arduino.h"
 
 // Digital PinName array
@@ -118,3 +120,5 @@ const uint32_t analogInputPin[] = {
   80, // A14, PC2_C
   81  // A15, PC3_C
 };
+
+#endif // KLST_BOARD_KLST_SHEEP

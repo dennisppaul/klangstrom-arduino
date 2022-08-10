@@ -66,6 +66,7 @@ class TwoWire : public Stream {
 
     void resetRxBuffer(void);
     void resetTxBuffer(void);
+    void recoverBus(void);
 
   public:
     TwoWire();
@@ -89,8 +90,8 @@ class TwoWire : public Stream {
     };
     void begin(bool generalCall = false);
     void begin(uint32_t, uint32_t);
-    void begin(uint8_t, bool generalCall = false);
-    void begin(int, bool generalCall = false);
+    void begin(uint8_t, bool generalCall = false, bool NoStretchMode = false);
+    void begin(int, bool generalCall = false, bool NoStretchMode = false);
     void end();
     void setClock(uint32_t);
     void beginTransmission(uint8_t);
@@ -129,6 +130,12 @@ class TwoWire : public Stream {
       return write((uint8_t)n);
     }
     using Print::write;
+
+    // Could be used to mix Arduino API and STM32Cube HAL API (ex: DMA). Use at your own risk.
+    I2C_HandleTypeDef *getHandle(void)
+    {
+      return &(_i2c.handle);
+    }
 };
 
 

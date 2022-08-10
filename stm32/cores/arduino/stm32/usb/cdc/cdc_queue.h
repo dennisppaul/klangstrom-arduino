@@ -39,7 +39,6 @@
 /* Define to prevent recursive inclusion -------------------------------------*/
 #ifndef __CDC_QUEUE_H
 #define __CDC_QUEUE_H
-#ifdef USBCON
 
 /* Includes ------------------------------------------------------------------*/
 #include <stdbool.h>
@@ -92,5 +91,4 @@ void CDC_ReceiveQueue_CommitBlock(CDC_ReceiveQueue_TypeDef *queue, uint16_t size
 }
 #endif
 
-#endif // USBCON
 #endif // __CDC_QUEUE_H

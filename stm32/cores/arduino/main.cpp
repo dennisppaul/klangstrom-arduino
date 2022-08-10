@@ -48,16 +48,14 @@ __attribute__((constructor(101))) void premain()
 int main(void)
 {
   initVariant();
-  KLST_ISH_pre_setup();
+
   setup();
-  KLST_ISH_post_setup();
 
   for (;;) {
 #if defined(CORE_CALLBACK)
     CoreCallback();
 #endif
     loop();
-    KLST_ISH_loop();
     serialEventRun();
   }
 

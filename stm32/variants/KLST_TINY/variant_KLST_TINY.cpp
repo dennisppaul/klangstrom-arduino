@@ -16,11 +16,9 @@
   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-#include "pins_arduino.h"
+#if defined(KLST_BOARD_KLST_TINY)
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+#include "pins_arduino.h"
 
 // Digital PinName array
 const PinName digitalPin[] = {
@@ -96,6 +94,4 @@ const uint32_t analogInputPin[] = {
     36   // A15, PC5
 };
 
-#ifdef __cplusplus
-}
-#endif
+#endif // KLST_BOARD_KLST_TINY

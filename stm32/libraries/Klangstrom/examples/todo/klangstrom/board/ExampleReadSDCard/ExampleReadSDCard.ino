@@ -24,6 +24,7 @@
 
 */
 
+#include "Klangstrom.h"
 #include <SPI.h>
 #include <SD.h>
 

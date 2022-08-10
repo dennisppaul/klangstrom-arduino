@@ -2,6 +2,8 @@
 // ExampleProgrammerReset
 //
 
+#include "Klangstrom.h"
+
 using namespace klangstrom;
 
 void setup() {

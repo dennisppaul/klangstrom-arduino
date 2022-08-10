@@ -15,6 +15,7 @@
 
 // @todo(not tested in desktop simulator)
 
+#include "Klangstrom.h"
 #include "KlangNodes.hpp"
 
 using namespace klang;

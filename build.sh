@@ -21,12 +21,23 @@ echo "###"
 echo "### copying platform package from development repository to arduino library distribution repository"
 echo "###"
 
-copyPlatfrom shared
+# copyPlatfrom shared
 copyPlatfrom stm32
 copyPlatfrom desktop
 #copyModul vcvrack
 
 echo "###"
 
+source ../build.config
+
 # copy examples to doc
-find $PATH_TO_MODULES/libraries/Klangstrom/examples/klang -name '*.ino' -exec cp {} ./docs/_includes/code/ \;
+EXAMPLE_CODE_DOC_FOLDER=./docs/_includes/code/
+mkdir -p $EXAMPLE_CODE_DOC_FOLDER
+for folder in $KLST_ARDUINO_LIBRARIES
+do
+	echo "### copying examples from '$folder'"
+#     find $PATH_TO_MODULES/libraries/$folder/examples/ -name '*.ino' -exec echo {} \;
+    find $PATH_TO_MODULES/libraries/$folder/examples/ -name 'Example*.ino' -exec cp {} $EXAMPLE_CODE_DOC_FOLDER \;
+done
+
+echo "###"

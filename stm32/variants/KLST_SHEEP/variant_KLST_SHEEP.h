@@ -17,9 +17,12 @@
 #error "@KLST no or wrong board type defined. KLST_BOARD_KLST_SHEEP not defined!"
 #endif
 
-#ifdef __cplusplus
-extern "C" {
-#endif  // __cplusplus
+// #ifdef __cplusplus
+// extern "C" {
+// #endif  // __cplusplus
+
+#include <stddef.h>
+#include <stdint.h>
 
 /*----------------------------------------------------------------------------
  *        STM32 pins number
@@ -427,9 +430,9 @@ extern "C" {
 
 #define ARM_MATH_CM7
 
-#ifdef __cplusplus
-}  // extern "C"
-#endif
+// #ifdef __cplusplus
+// }  // extern "C"
+// #endif
 
 /* -------------------------------------------------------------------------- */
 /* --- KLST ----------------------------------------------------------------- */
@@ -441,8 +444,8 @@ extern "C" {
 #define KLST_UART_BAUD 115200
 #define KLST_SERIAL_00 Serial7
 #define KLST_SERIAL_01 Serial8
-#define SerialDebug    Serial
 #define KLST_LOG       Serial
+#define Console        Serial
 
 #endif
 

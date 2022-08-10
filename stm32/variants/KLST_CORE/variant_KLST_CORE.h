@@ -494,8 +494,8 @@
 #define KLST_SERIAL_00 Serial6
 #define KLST_SERIAL_01 Serial1
 #define KLST_SERIAL_02 Serial2
-#define SerialDebug    Serial
 #define KLST_LOG       Serial
+#define Console        Serial
 
 #endif
 

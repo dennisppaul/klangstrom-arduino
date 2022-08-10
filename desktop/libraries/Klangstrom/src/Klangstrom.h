@@ -20,6 +20,8 @@
 #ifndef Klangstrom_h
 #define Klangstrom_h
 
+#include "KlangstromApplicationInterface.h"
+#include "KlangstromApplicationArduino.h"
 #include "Klang.hpp"
 #include "Strom.hpp"
 

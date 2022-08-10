@@ -2,6 +2,7 @@
 // ExampleSavingPresets
 //
 
+#include "Klangstrom.h"
 #include <EEPROM.h>
 
 #include "KlangNodes.hpp"

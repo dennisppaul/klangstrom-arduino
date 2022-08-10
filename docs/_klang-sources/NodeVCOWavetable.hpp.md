@@ -462,8 +462,8 @@ namespace klang {
     template <>
     float klang::NodeVCOWavetableT<int8_t>::SCALE_SAMPLE(const int8_t pRawSample) {
         const static float mScale  = 1.0 / ((1 << 8) - 1);
-        const float        mOffset = pRawSample + (1 << 7);
-        const float        mRange  = mOffset * mScale;
+        const float        mSampleOffset = pRawSample + (1 << 7);
+        const float        mRange  = mSampleOffset * mScale;
         return mRange * 2.0 - 1.0;
     }
 
@@ -477,8 +477,8 @@ namespace klang {
     template <>
     float klang::NodeVCOWavetableT<int16_t>::SCALE_SAMPLE(const int16_t pRawSample) {
         const static float mScale  = 1.0 / ((1 << 16) - 1);
-        const float        mOffset = pRawSample + (1 << 15);
-        const float        mRange  = mOffset * mScale;
+        const float        mSampleOffset = pRawSample + (1 << 15);
+        const float        mRange  = mSampleOffset * mScale;
         return mRange * 2.0 - 1.0;
     }
 

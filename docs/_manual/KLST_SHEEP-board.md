@@ -12,7 +12,7 @@ KLST_SHEEP (v0.1) is a hand-held-sized development board with a TFT-Display, 2 p
 | \# | FUNCTION             | DESCRIPTION |
 |----|----------------------|-------------|
 | 01 | 16 programmable LEDs | `LED_00` – `LED_16` user programmable + dimmable LEDs |
-| 02 | 3× rotary encoders | with push buttons |
+| 02 | 2× rotary encoders | with push buttons |
 | 03 | 4× mounting holes | M3 diameter |
 | 04 | Display Connector | mount for SPI connection to TFT display, usually fitted with a 2,8" TFT display with 240×320px resolution |
 | 05 | 3.3/5V power pins | power in-+output pins. can either be used to power the board or to power peripherals if board is powered via USB |

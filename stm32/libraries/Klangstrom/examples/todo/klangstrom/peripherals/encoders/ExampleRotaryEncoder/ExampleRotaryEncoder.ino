@@ -7,6 +7,7 @@
     encoders changes the frequency of each oscillator.
 */
 
+#include "Klangstrom.h"
 #include "KlangNodes.hpp"
 
 using namespace klang;

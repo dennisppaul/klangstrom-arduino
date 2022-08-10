@@ -23,9 +23,12 @@
 #error "@KLST no or wrong board type defined. KLST_BOARD_KLST_TINY not defined!"
 #endif
 
-#ifdef __cplusplus
-extern "C" {
-#endif  // __cplusplus
+// #ifdef __cplusplus
+// extern "C" {
+// #endif  // __cplusplus
+
+#include <stddef.h>
+#include <stdint.h>
 
 /*----------------------------------------------------------------------------
  *        STM32 pins number
@@ -244,15 +247,15 @@ extern "C" {
 #define PIN_SPI_SCK  SPI_00_SCK
 // #define PIN_SPI_SS   // @note(there is no CS/SS pin available in KLST_TINYv0.1)
 
-#ifdef __cplusplus
-}
-#endif
+// #ifdef __cplusplus
+// }
+// #endif
 
 #ifdef __cplusplus
 #define KLST_SERIAL_00 Serial1
 #define KLST_SERIAL_01 Serial4
-#define SerialDebug    Serial
 #define KLST_LOG       Serial
+#define Console        Serial
 #endif
 
 #define ARM_MATH_CM4
@@ -277,8 +280,15 @@ extern "C" {
 //
 // SERIAL_PORT_HARDWARE_OPEN  Hardware serial ports which are open for use.  Their RX & TX
 //                            pins are NOT connected to anything by default.
-#define SERIAL_PORT_MONITOR  Serial
+#ifndef SERIAL_PORT_MONITOR
+#define SERIAL_PORT_MONITOR Serial
+#endif
+#ifndef SERIAL_PORT_HARDWARE
 #define SERIAL_PORT_HARDWARE Serial
 #endif
+
+#endif  // __cplusplus
+
+/* -------------------------------------------------------------------------- */
 
 #endif /* _VARIANT_ARDUINO_STM32_ */

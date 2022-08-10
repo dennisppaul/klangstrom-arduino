@@ -110,8 +110,8 @@ class HardwareSerial : public Stream {
     serial_t _serial;
 
   public:
-    HardwareSerial(uint32_t _rx, uint32_t _tx);
-    HardwareSerial(PinName _rx, PinName _tx);
+    HardwareSerial(uint32_t _rx, uint32_t _tx, uint32_t _rts = NUM_DIGITAL_PINS, uint32_t _cts = NUM_DIGITAL_PINS);
+    HardwareSerial(PinName _rx, PinName _tx, PinName _rts = NC, PinName _cts = NC);
     HardwareSerial(void *peripheral, HalfDuplexMode_t halfDuplex = HALF_DUPLEX_DISABLED);
     HardwareSerial(uint32_t _rxtx);
     HardwareSerial(PinName _rxtx);
@@ -155,6 +155,14 @@ class HardwareSerial : public Stream {
     void setRx(PinName _rx);
     void setTx(PinName _tx);
 
+    // Enable HW flow control on RTS, CTS or both
+    void setRts(uint32_t _rts);
+    void setCts(uint32_t _cts);
+    void setRtsCts(uint32_t _rts, uint32_t _cts);
+    void setRts(PinName _rts);
+    void setCts(PinName _cts);
+    void setRtsCts(PinName _rts, PinName _cts);
+
     // Enable half-duplex mode by setting the Rx pin to NC
     // This needs to be done before the call to begin()
     void setHalfDuplex(void);
@@ -166,11 +174,20 @@ class HardwareSerial : public Stream {
     // Interrupt handlers
     static void _rx_complete_irq(serial_t *obj);
     static int _tx_complete_irq(serial_t *obj);
+
+#if defined(HAL_UART_MODULE_ENABLED) && !defined(HAL_UART_MODULE_ONLY)
+    // Could be used to mix Arduino API and STM32Cube HAL API (ex: DMA). Use at your own risk.
+    UART_HandleTypeDef *getHandle(void)
+    {
+      return &(_serial.handle);
+    }
+#endif // HAL_UART_MODULE_ENABLED && !HAL_UART_MODULE_ONLY
+
   private:
     bool _rx_enabled;
     uint8_t _config;
     unsigned long _baud;
-    void init(PinName _rx, PinName _tx);
+    void init(PinName _rx, PinName _tx, PinName _rts = NC, PinName _cts = NC);
     void configForLowPower(void);
 };
 

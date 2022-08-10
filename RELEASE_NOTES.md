@@ -1,10 +1,6 @@
 # Klangstrom for Arduino / Release Notes
 
-## 0.0.3
-
-- 
-
-## 0.0.2
+## 0.0.2 (20220318)
 
 - added writing to file in SD Card library
 - added Mutable Instruments’ [Braids](https://mutable-instruments.net/modules/braids/), [Plaits](https://mutable-instruments.net/modules/plaits/), and [Clouds](https://mutable-instruments.net/modules/clouds/) as nodes

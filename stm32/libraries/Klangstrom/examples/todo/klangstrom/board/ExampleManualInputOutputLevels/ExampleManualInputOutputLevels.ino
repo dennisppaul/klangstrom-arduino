@@ -41,6 +41,7 @@
 // }
 // #endif
 
+#include "Klangstrom.h"
 #include "KlangNodes.hpp"
 
 using namespace klangstrom;
