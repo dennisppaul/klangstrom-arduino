@@ -16,8 +16,8 @@
           "category": "Contributed",
           "url": "https://github.com/dennisppaul/klangstrom-arduino/raw/release/klangstrom-arduino-stm32-0.0.3.tar.bz2",
           "archiveFileName": "klangstrom-arduino-stm32-0.0.3.tar.bz2",
-          "checksum": "SHA-256:f7a94dfad9a222b2f087131c0fe53c7efbb41381e24d446eed40776c644a640b",
-          "size": "6951537",
+          "checksum": "SHA-256:11c9ade340a3b64fc485af06e83d38abd7606140e3b6eeff5e73866b6d6f27c0",
+          "size": "5484495",
           "boards": [
             {"name": "Klangstrom (STM32)"}
           ],
