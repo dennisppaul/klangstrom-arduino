@@ -14,8 +14,8 @@
           "architecture": "desktop",
           "version": "0.0.3",
           "category": "Contributed",
-          "url": "https://github.com/dennisppaul/klangstrom-arduino/raw/release/klangstrom-arduino-desktop-0.0.3.zip",
-          "archiveFileName": "klangstrom-arduino-desktop-0.0.3.zip",
+          "url": "https://github.com/dennisppaul/klangstrom-arduino/raw/release/klangstrom-arduino-desktop-0.0.3.tar",
+          "archiveFileName": "klangstrom-arduino-desktop-0.0.3.tar",
           "checksum": "SHA-256:d6bbe15dd280fd2d5e5d8e7f8425807412c0b0a36bc6f6d33f59f3750fe1353a",
           "size": "4948691",
           "boards": [
@@ -62,8 +62,8 @@
             },
             {
               "host": "i686-mingw32",
-              "url": "https://github.com/xpack-dev-tools/arm-none-eabi-gcc-xpack/releases/download/v10.3.1-2.3/xpack-arm-none-eabi-gcc-10.3.1-2.3-win32-ia32.zip",
-              "archiveFileName": "xpack-arm-none-eabi-gcc-10.3.1-2.3-win32-ia32.zip",
+              "url": "https://github.com/xpack-dev-tools/arm-none-eabi-gcc-xpack/releases/download/v10.3.1-2.3/xpack-arm-none-eabi-gcc-10.3.1-2.3-win32-ia32.tar",
+              "archiveFileName": "xpack-arm-none-eabi-gcc-10.3.1-2.3-win32-ia32.tar",
               "checksum": "SHA-256:c98fc443d7ef3524d42a40b6635e8b99c736efac77729f8a70463bb9ba19bc85",
               "size": "180590105"
             },
