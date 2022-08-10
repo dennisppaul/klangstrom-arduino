@@ -1,9 +1,10 @@
 #! /bin/zsh
 
 build_archive() {
-    tar -zcpf $1.tar $1
-    ls -l $1.tar
-    sha256sum $1.tar
+	M_EXTENSION=tar.bz2
+    tar -cpjSf $1.$M_EXTENSION $1
+    ls -l $1.$M_EXTENSION
+    sha256sum $1.$M_EXTENSION
 }
 
 build_archive klangstrom-arduino-stm32-0.0.3
