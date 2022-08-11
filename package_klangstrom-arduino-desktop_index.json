@@ -6,11 +6,11 @@
       "maintainer": "Dennis P Paul",
       "email": "hello@dennisppaul.de",
       "help": {
-        "online": "https://github.com/dennisppaul/klangstrom-arduino"
+        "online": "http://klangstrom-for-arduino.dennisppaul.de/"
       },
       "platforms": [
         {
-          "name": "Klangstrom for Arduino",
+          "name": "Klangstrom for Arduino ( Simulator )",
           "architecture": "desktop",
           "version": "0.0.3",
           "category": "Contributed",
