@@ -20,65 +20,10 @@
           "size": "4239506",
           "boards": [
             {"name": "Klangstrom (SDL)"}
-          ],
-          "toolsDependencies": [
-            {
-              "packager": "LLVM Developer Group",
-              "name": "clang",
-              "version": "10.0.0"
-            }
           ]
         }
       ],
-      "tools": [
-        {
-          "name": "clang",
-          "version": "10.0.0",
-          "systems":
-          [
-            {
-              "host": "arm-linux-gnueabihf",
-              "url": "https://github.com/llvm/llvm-project/releases/download/llvmorg-10.0.0/clang+llvm-10.0.0-armv7a-linux-gnueabihf.tar.xz",
-              "archiveFileName": "clang+llvm-10.0.0-armv7a-linux-gnueabihf.tar.xz",
-              "checksum": "SHA-256:",
-              "size": "0"
-            },
-            {
-              "host": "aarch64-linux-gnu",
-              "url": "https://github.com/llvm/llvm-project/releases/download/llvmorg-10.0.0/clang+llvm-10.0.0-aarch64-linux-gnu.tar.xz",
-              "archiveFileName": "clang+llvm-10.0.0-aarch64-linux-gnu.tar.xz",
-              "checksum": "SHA-256:",
-              "size": "0"
-            },
-            {
-              "host": "i686-mingw32",
-              "url": "https://github.com/llvm/llvm-project/releases/download/llvmorg-10.0.0/LLVM-10.0.0-win32.exe",
-              "archiveFileName": "LLVM-10.0.0-win32.exe",
-              "checksum": "SHA-256:",
-              "size": "0"
-            },
-            {
-              "host": "x86_64-apple-darwin",
-              "url": "https://github.com/llvm/llvm-project/releases/download/llvmorg-10.0.0/clang+llvm-10.0.0-x86_64-apple-darwin.tar.xz",
-              "archiveFileName": "clang+llvm-10.0.0-x86_64-apple-darwin.tar.xz",
-              "checksum": "SHA-256:",
-              "size": "0"
-            },
-            {
-              "host": "x86_64-pc-linux-gnu",
-              "url": "https://github.com/llvm/llvm-project/releases/download/llvmorg-10.0.0/clang+llvm-10.0.0-x86_64-linux-gnu-ubuntu-18.04.tar.xz",
-              "archiveFileName": "clang+llvm-10.0.0-x86_64-linux-gnu-ubuntu-18.04.tar.xz",
-              "checksum": "SHA-256:b25f592a0c00686f03e3b7db68ca6dc87418f681f4ead4df4745a01d9be63843",
-              "size": "433701532"
-            },
-            {
-              "host": "i686-pc-linux-gnu",
-              "url": "https://github.com/llvm/llvm-project/releases/download/llvmorg-10.0.0/clang+llvm-10.0.0-i386-unknown-freebsd11.tar.xz",
-              "archiveFileName": "clang+llvm-10.0.0-i386-unknown-freebsd11.tar.xz",
-              "checksum": "SHA-256:",
-              "size": "0"
-            }
-          ]
+      "tools": []
         }
       ]
     }
