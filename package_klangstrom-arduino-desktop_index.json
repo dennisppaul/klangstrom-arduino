@@ -139,6 +139,7 @@
             }
           ]
         },
+        {
           "name": "STM32Tools",
           "version": "2.1.1",
           "systems":
