@@ -27,6 +27,8 @@ __attribute__((constructor(101))) void premain()
 //   init();
 }
 
+// WEAK void initVariant() {} // this does not work … maybe because this file is precompiled in `core.a`
+
 /*
  * \brief Main entry point of Arduino application
  */

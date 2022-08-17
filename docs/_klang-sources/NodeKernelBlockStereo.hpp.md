@@ -2,7 +2,7 @@
 layout: libdoc
 title: NodeKernelBlockStereo.hpp
 permalink: /NodeKernelBlockStereo.hpp/
-index: 59
+index: 60
 ---
 
 ```c

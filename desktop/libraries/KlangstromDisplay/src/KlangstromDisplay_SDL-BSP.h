@@ -17,8 +17,8 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef KlangstromDisplay_SDL_BSP_h
-#define KlangstromDisplay_SDL_BSP_h
+#ifndef _KLANGSTROMDISPLAY_SDL_BSP_H_
+#define _KLANGSTROMDISPLAY_SDL_BSP_H_
 
 #include <SDL.h>
 #include <stdio.h>
@@ -26,9 +26,10 @@
 #include <vector>
 
 #include "KlangstromDisplay.h"
+#include "KlangstromCallback.h"
 
 namespace klangstrom {
-    class KlangstromDisplay_SDL_BSP : public KlangstromDisplay {
+    class KlangstromDisplay_SDL_BSP : public KlangstromDisplay, public KlangstromCallback {
     public:
         KlangstromDisplay_SDL_BSP() {
             mPosition.x = 0;
@@ -44,6 +45,8 @@ namespace klangstrom {
         void BSP_rect(uint16_t x, uint16_t y, uint16_t w, uint16_t h, const uint16_t color);
         void BSP_character(uint16_t x, uint16_t y, char ch, const uint16_t foreground_color, const uint16_t background_color);
         void BSP_block(uint16_t x, uint16_t y, uint16_t w, uint16_t h, const uint16_t *data);
+        
+		void callback();
 
         /* --- plattform specific --- */
 
@@ -78,4 +81,4 @@ namespace klangstrom {
     };
 }  // namespace klangstrom
 
-#endif  // KlangstromDisplay_SDL_BSP_h
+#endif  // _KLANGSTROMDISPLAY_SDL_BSP_H_

@@ -2,7 +2,7 @@
 layout: libdoc
 title: LUTSine.cpp
 permalink: /LUTSine.cpp/
-index: 40
+index: 41
 ---
 
 ```c

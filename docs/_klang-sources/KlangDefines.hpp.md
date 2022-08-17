@@ -2,7 +2,7 @@
 layout: libdoc
 title: KlangDefines.hpp
 permalink: /KlangDefines.hpp/
-index: 31
+index: 32
 ---
 
 ```c

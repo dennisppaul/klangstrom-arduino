@@ -22,7 +22,5 @@
 
 #include "KlangstromApplicationInterface.h"
 #include "KlangstromApplicationArduino.h"
-#include "Klang.hpp"
-#include "Strom.hpp"
 
 #endif  // Klangstrom_h

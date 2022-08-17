@@ -16,8 +16,10 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
- 
- #include "KlangstromDefines.hpp"
+
+#ifdef __cplusplus
+
+#include "KlangstromDefines.hpp"
 
 #if (KLST_ARCH==KLST_ARCH_DESKTOP)
 
@@ -28,13 +30,8 @@
 #define min(a, b) (((a) < (b)) ? (a) : (b))
 #endif
 
-klangstrom::KlangstromDisplay_SDL_BSP* DisplayBSPPtr = new klangstrom::KlangstromDisplay_SDL_BSP();
-klangstrom::KlangstromDisplay*         DisplayPtr    = DisplayBSPPtr;
-
-extern void SDL_Renderer* getSDLRenderer();
-
-void updateSDLDisplay() {
-	Display.draw();
+void klangstrom::KlangstromDisplay_SDL_BSP::callback() {
+	draw();
 }
 
 void klangstrom::KlangstromDisplay_SDL_BSP::BSP_init() {
@@ -44,7 +41,9 @@ void klangstrom::KlangstromDisplay_SDL_BSP::BSP_init() {
                                  SDL_PIXELFORMAT_ARGB8888,
                                  SDL_TEXTUREACCESS_STREAMING,
                                  mScreenWidth, mScreenHeight);
-	// register callback
+	registerKlangstromDisplayCallback(this);
+// 	set_position(getSDLRendererWidth() / 2 - width() / 2, getSDLRendererHeight() / 2 -height() / 2);
+	set_position(getKlangstromDisplayPosX(), getKlangstromDisplayPosY());
 }
 
 void klangstrom::KlangstromDisplay_SDL_BSP::draw() {
@@ -235,4 +234,4 @@ void klangstrom::KlangstromDisplay_SDL_BSP::ILI9341_WriteData(uint8_t *buff, siz
 }
 
 #endif // (KLST_ARCH==KLST_ARCH_DESKTOP)
-
+#endif // __cplusplus

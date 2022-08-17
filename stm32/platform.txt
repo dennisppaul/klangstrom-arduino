@@ -4,8 +4,8 @@
 #
 ###################################################################################################
 
-name=Klangstrom (MCU)
-version=1.1.0
+name=Klangstrom (STM32 Boards)
+version=0.0.3
 
 # STM compile variables
 # ----------------------

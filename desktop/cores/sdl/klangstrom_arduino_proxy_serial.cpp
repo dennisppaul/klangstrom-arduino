@@ -9,6 +9,7 @@
 
 #include <fstream>
 #include <iostream>
+#include <stdarg.h>
 
 #ifndef KLANG_NL
 #if defined(KLANG_TARGET_MCU)

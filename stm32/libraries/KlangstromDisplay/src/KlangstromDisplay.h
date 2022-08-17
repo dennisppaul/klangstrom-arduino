@@ -17,8 +17,8 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef klangstrom_display_h
-#define klangstrom_display_h
+#ifndef _KLANGSTROMDISPLAY_H_
+#define _KLANGSTROMDISPLAY_H_
 
 // @TODO(#featurerequest, "add option to draw transparent text ( aka no background color drawing in char )")
 
@@ -27,15 +27,6 @@
 
 #include "KlangstromDisplayFont.h"
 #include "WString.h"
-
-#ifndef _swap_uint16_t
-#define _swap_uint16_t(a, b) \
-    {                        \
-        uint16_t t = a;      \
-        a          = b;      \
-        b          = t;      \
-    }
-#endif
 
 namespace klangstrom {
     class Color {
@@ -61,6 +52,16 @@ namespace klangstrom {
     };
 
     class KlangstromDisplay {
+    
+	#ifndef _swap_uint16_t
+	#define _swap_uint16_t(a, b) \
+		{                        \
+			uint16_t t = a;      \
+			a          = b;      \
+			b          = t;      \
+		}
+	#endif
+
     protected:
         Color                  mColorForeground;
         Color                  mColorBackground;
@@ -70,6 +71,8 @@ namespace klangstrom {
         const uint16_t mScreenHeight = 320;
 
     public:
+        static KlangstromDisplay* create();
+    
         KlangstromDisplay() {
             mColorForeground.r = 255;
             mColorForeground.g = 255;
@@ -383,7 +386,7 @@ namespace klangstrom {
     };
 }  // namespace klangstrom
 
-extern klangstrom::KlangstromDisplay *DisplayPtr;
-#define Display (*DisplayPtr)
+// extern klangstrom::KlangstromDisplay *DisplayPtr;
+// #define Display (*DisplayPtr)
 
-#endif  // klangstrom_display_h
+#endif  // _KLANGSTROMDISPLAY_H_

@@ -1,0 +1,143 @@
+################################################################################
+#
+# BOARD PROPERTIES
+#
+################################################################################
+
+#
+# BSP
+#
+
+KLST_TINY.name=Klangstrom Board KLST_TINY(STM32H743VI)
+
+KLST_TINY.build.variant=KLST_TINY
+KLST_TINY.build.board=KLST_TINY
+KLST_TINY.build.cmsis_lib_gcc=arm_cortexM4lf_math
+KLST_TINY.build.fpu=-mfpu=fpv4-sp-d16
+KLST_TINY.build.series=STM32F4xx
+KLST_TINY.build.mcu=cortex-m4
+KLST_TINY.upload.maximum_size=524288
+KLST_TINY.upload.maximum_data_size=131072
+KLST_TINY.build.product_line=STM32F446xx
+
+#
+# COMMON
+#
+
+KLST_TINY.build.core=arduino
+KLST_TINY.build.variant_h=variant_{build.board}.h
+KLST_TINY.build.float-abi=-mfloat-abi=hard
+KLST_TINY.build.ldscript=ldscript.ld
+KLST_TINY.build.peripheral_pins=-DCUSTOM_PERIPHERAL_PINS
+KLST_TINY.build.st_extra_flags=-D{build.product_line} {build.enable_usb} {build.xSerial}
+KLST_TINY.build.extra_flags=-DKLST_BOARD_{build.board} -DKLST_ARCH=1 -DKLANG_SAMPLES_PER_AUDIO_BLOCK={build.flags.audioblock} -DKLANG_AUDIO_RATE={build.flags.samplingrate} -DKLANG_DEBUG_LEVEL=2 -DKLANG_SIGNAL_TYPE=1 -DKLST_WAVETABLE_INTERPOLATE_SAMPLES=1 -DKLST_USE_CMSIS_DSP -DCORE_CALLBACK
+KLST_TINY.compiler.cpp.std=gnu++17
+
+#
+# MENUS
+#
+
+# Audio Properties
+KLST_TINY.menu.samplingrate.xx48000xx=48000Hz
+KLST_TINY.menu.samplingrate.xx48000xx.build.flags.samplingrate=48000
+KLST_TINY.menu.samplingrate.xx44100xx=44100Hz
+KLST_TINY.menu.samplingrate.xx44100xx.build.flags.samplingrate=44100
+KLST_TINY.menu.samplingrate.xx22050xx=22050Hz
+KLST_TINY.menu.samplingrate.xx22050xx.build.flags.samplingrate=22050
+
+KLST_TINY.menu.audioblock.128=128 samples
+KLST_TINY.menu.audioblock.128.build.flags.audioblock=128
+KLST_TINY.menu.audioblock.2048=2048 samples
+KLST_TINY.menu.audioblock.2048.build.flags.audioblock=2048
+KLST_TINY.menu.audioblock.1024=1024 samples
+KLST_TINY.menu.audioblock.1024.build.flags.audioblock=1024
+KLST_TINY.menu.audioblock.512=512 samples
+KLST_TINY.menu.audioblock.512.build.flags.audioblock=512
+KLST_TINY.menu.audioblock.256=256 samples
+KLST_TINY.menu.audioblock.256.build.flags.audioblock=256
+KLST_TINY.menu.audioblock.64=64 samples
+KLST_TINY.menu.audioblock.64.build.flags.audioblock=64
+KLST_TINY.menu.audioblock.32=32 samples
+KLST_TINY.menu.audioblock.32.build.flags.audioblock=32
+
+# Upload menu
+KLST_TINY.menu.upload_method.swdMethod=STM32CubeProgrammer (SWD)
+KLST_TINY.menu.upload_method.swdMethod.upload.protocol=0
+KLST_TINY.menu.upload_method.swdMethod.upload.options=-g
+KLST_TINY.menu.upload_method.swdMethod.upload.tool=stm32CubeProg
+
+KLST_TINY.menu.upload_method.dfuMethod=STM32CubeProgrammer (DFU)
+KLST_TINY.menu.upload_method.dfuMethod.upload.protocol=2
+KLST_TINY.menu.upload_method.dfuMethod.upload.options=-g
+KLST_TINY.menu.upload_method.dfuMethod.upload.tool=stm32CubeProg
+
+# Serialx activation
+KLST_TINY.menu.xserial.generic=Enabled (generic 'Serial')
+KLST_TINY.menu.xserial.none=Enabled (no generic 'Serial')
+KLST_TINY.menu.xserial.none.build.xSerial=-DHAL_UART_MODULE_ENABLED -DHWSERIAL_NONE
+KLST_TINY.menu.xserial.disabled=Disabled (No Serial support)
+KLST_TINY.menu.xserial.disabled.build.xSerial=
+
+# USB connectivity
+KLST_TINY.menu.usb.none=None
+KLST_TINY.menu.usb.CDCgen=CDC (generic 'Serial' supersede U(S)ART)
+KLST_TINY.menu.usb.CDCgen.build.enable_usb={build.usb_flags} -DUSBD_USE_CDC
+KLST_TINY.menu.usb.CDC=CDC (no generic 'Serial')
+KLST_TINY.menu.usb.CDC.build.enable_usb={build.usb_flags} -DUSBD_USE_CDC -DDISABLE_GENERIC_SERIALUSB
+KLST_TINY.menu.usb.HID=HID (keyboard and mouse)
+KLST_TINY.menu.usb.HID.build.enable_usb={build.usb_flags} -DUSBD_USE_HID_COMPOSITE
+KLST_TINY.menu.usb.DEVICE_Mouse=USB Device Mouse
+KLST_TINY.menu.usb.DEVICE_Mouse.build.enable_usb=-DUSE_USBDEVICE -DUSBDEVICE_MOUSE_KEYBOARD -DUSBDEVICE_MOUSE -DHAL_HCD_MODULE_ENABLED -DHAL_PCD_MODULE_ENABLED
+KLST_TINY.menu.usb.DEVICE_Keyboard=USB Device Keyboard
+KLST_TINY.menu.usb.DEVICE_Keyboard.build.enable_usb=-DUSE_USBDEVICE -DUSBDEVICE_MOUSE_KEYBOARD -DUSBDEVICE_KEYBOARD -DHAL_HCD_MODULE_ENABLED -DHAL_PCD_MODULE_ENABLED
+KLST_TINY.menu.usb.DEVICE_MIDI=USB Device MIDI
+KLST_TINY.menu.usb.DEVICE_MIDI.build.enable_usb=-DUSE_USBDEVICE -DUSBDEVICE_MIDI -DHAL_HCD_MODULE_ENABLED -DHAL_PCD_MODULE_ENABLED
+KLST_TINY.menu.usb.HOST=USB Host Mouse+Keyboard+MIDI
+KLST_TINY.menu.usb.HOST.build.enable_usb=-DUSE_USBHOST -DHAL_HCD_MODULE_ENABLED -DHAL_PCD_MODULE_ENABLED
+KLST_TINY.menu.usb.HOST_DEVICE_MOUSE=USB Host Mouse+Keyboard+MIDI + USB Device Mouse
+KLST_TINY.menu.usb.HOST_DEVICE_MOUSE.build.enable_usb=-DUSE_USBHOST -DHAL_HCD_MODULE_ENABLED -DHAL_PCD_MODULE_ENABLED -DUSE_USBDEVICE -DUSBDEVICE_MOUSE_KEYBOARD -DUSBDEVICE_MOUSE
+KLST_TINY.menu.usb.HOST_DEVICE_KEYBOARD=USB Host Mouse+Keyboard+MIDI + USB Device Keyboard
+KLST_TINY.menu.usb.HOST_DEVICE_KEYBOARD.build.enable_usb=-DUSE_USBHOST -DHAL_HCD_MODULE_ENABLED -DHAL_PCD_MODULE_ENABLED -DUSE_USBDEVICE -DUSBDEVICE_MOUSE_KEYBOARD -DUSBDEVICE_KEYBOARD
+KLST_TINY.menu.usb.HOST_DEVICE_MIDI=USB Host Mouse+Keyboard+MIDI + USB Device MIDI
+KLST_TINY.menu.usb.HOST_DEVICE_MIDI.build.enable_usb=-DUSE_USBHOST -DHAL_HCD_MODULE_ENABLED -DHAL_PCD_MODULE_ENABLED -DUSE_USBDEVICE -DUSBDEVICE_MIDI
+KLST_TINY.menu.xusb.FS=Low/Full Speed
+KLST_TINY.menu.xusb.HS=High Speed
+KLST_TINY.menu.xusb.HS.build.usb_speed=-DUSE_USB_HS
+KLST_TINY.menu.xusb.HSFS=High Speed in Full Speed mode
+KLST_TINY.menu.xusb.HSFS.build.usb_speed=-DUSE_USB_HS -DUSE_USB_HS_IN_FS
+
+# Optimizations
+KLST_TINY.menu.opt.osstd=Smallest (-Os default)
+KLST_TINY.menu.opt.oslto=Smallest (-Os) with LTO
+KLST_TINY.menu.opt.oslto.build.flags.optimize=-Os -flto
+KLST_TINY.menu.opt.o1std=Fast (-O1)
+KLST_TINY.menu.opt.o1std.build.flags.optimize=-O1
+KLST_TINY.menu.opt.o1lto=Fast (-O1) with LTO
+KLST_TINY.menu.opt.o1lto.build.flags.optimize=-O1 -flto
+KLST_TINY.menu.opt.o2std=Faster (-O2)
+KLST_TINY.menu.opt.o2std.build.flags.optimize=-O2
+KLST_TINY.menu.opt.o2lto=Faster (-O2) with LTO
+KLST_TINY.menu.opt.o2lto.build.flags.optimize=-O2 -flto
+KLST_TINY.menu.opt.o3std=Fastest (-O3)
+KLST_TINY.menu.opt.o3std.build.flags.optimize=-O3
+KLST_TINY.menu.opt.o3lto=Fastest (-O3) with LTO
+KLST_TINY.menu.opt.o3lto.build.flags.optimize=-O3 -flto
+KLST_TINY.menu.opt.ogstd=Debug (-Og)
+KLST_TINY.menu.opt.ogstd.build.flags.optimize=-Og
+
+# Debug information
+KLST_TINY.menu.dbg.none=None
+KLST_TINY.menu.dbg.enable=Enabled (-g)
+KLST_TINY.menu.dbg.enable.build.flags.debug=-g
+
+# C Runtime Library
+KLST_TINY.menu.rtlib.nano=Newlib Nano (default)
+KLST_TINY.menu.rtlib.nanofp=Newlib Nano + Float Printf
+KLST_TINY.menu.rtlib.nanofp.build.flags.ldspecs=--specs=nano.specs -u _printf_float
+KLST_TINY.menu.rtlib.nanofs=Newlib Nano + Float Scanf
+KLST_TINY.menu.rtlib.nanofs.build.flags.ldspecs=--specs=nano.specs -u _scanf_float
+KLST_TINY.menu.rtlib.nanofps=Newlib Nano + Float Printf/Scanf
+KLST_TINY.menu.rtlib.nanofps.build.flags.ldspecs=--specs=nano.specs -u _printf_float -u _scanf_float
+KLST_TINY.menu.rtlib.full=Newlib Standard
+KLST_TINY.menu.rtlib.full.build.flags.ldspecs=
+

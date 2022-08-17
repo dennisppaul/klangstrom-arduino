@@ -2,7 +2,7 @@
 layout: libdoc
 title: NodeTrigger.hpp
 permalink: /NodeTrigger.hpp/
-index: 80
+index: 81
 ---
 
 ```c

@@ -39,7 +39,7 @@
 
 using namespace std;
 
-char* buffer;
+extern char* buffer;
 
 namespace klang {
     class NodeTextToSpeechSAM : public Node {

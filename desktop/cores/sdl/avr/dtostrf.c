@@ -21,6 +21,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdint.h>
 
 char *dtostrf(double val, signed char width, unsigned char prec, char *sout)
 {

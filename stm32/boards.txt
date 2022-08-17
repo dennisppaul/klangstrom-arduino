@@ -1,8 +1,6 @@
 # See: https://arduino.github.io/arduino-cli/latest/platform-specification/
 # See: https://github.com/arduino/Arduino/wiki/Arduino-IDE-1.5-3rd-party-Hardware-specification
 
-menu.pnum=Board part number
-
 menu.samplingrate=Sampling Rate
 menu.audioblock=Sample per Audio Block
 
@@ -17,168 +15,430 @@ menu.rtlib=C Runtime Library
 menu.upload_method=Upload method
 
 ################################################################################
-# KLANGSTROM board
+#
+# BOARD PROPERTIES
+#
+################################################################################
 
-Klangstrom.name=Klangstrom (STM32)
+#
+# BSP
+#
 
-Klangstrom.build.core=arduino
-Klangstrom.build.board=Klangstrom
-Klangstrom.build.st_extra_flags=-D{build.product_line} {build.enable_usb} {build.xSerial}
-Klangstrom.build.variant_h=variant_{build.board}.h
-Klangstrom.build.extra_flags=-DKLST_BOARD_{build.board} -DKLST_ARCH=1 -DKLANG_SAMPLES_PER_AUDIO_BLOCK={build.flags.audioblock} -DKLANG_AUDIO_RATE={build.flags.samplingrate} -DKLANG_DEBUG_LEVEL=2 -DKLANG_SIGNAL_TYPE=1 -DKLST_WAVETABLE_INTERPOLATE_SAMPLES=1 -DKLST_USE_CMSIS_DSP -DCORE_CALLBACK
-Klangstrom.compiler.cpp.std=gnu++17
+KLST_SHEEP.name=Klangstrom Board KLST_SHEEP(STM32H743VI)
 
-# KLST_RHINO board @TODO
+KLST_SHEEP.build.board=KLST_SHEEP
+KLST_SHEEP.build.variant=KLST_SHEEP
+KLST_SHEEP.build.cmsis_lib_gcc=arm_cortexM7lfsp_math
+KLST_SHEEP.build.fpu=-mfpu=fpv5-d16
+KLST_SHEEP.build.series=STM32H7xx
+KLST_SHEEP.build.mcu=cortex-m7
+KLST_SHEEP.upload.maximum_size=2097152
+KLST_SHEEP.upload.maximum_data_size=884736
+KLST_SHEEP.build.product_line=STM32H743xx
 
-# KLST_SHEEP board
-Klangstrom.menu.pnum.KLST_SHEEP=KLST_SHEEP(STM32H743VI)
-Klangstrom.menu.pnum.KLST_SHEEP.build.cmsis_lib_gcc=arm_cortexM7lfsp_math
-Klangstrom.menu.pnum.KLST_SHEEP.build.fpu=-mfpu=fpv5-d16
-Klangstrom.menu.pnum.KLST_SHEEP.build.float-abi=-mfloat-abi=hard
-Klangstrom.menu.pnum.KLST_SHEEP.build.series=STM32H7xx
-Klangstrom.menu.pnum.KLST_SHEEP.build.mcu=cortex-m7
-Klangstrom.menu.pnum.KLST_SHEEP.upload.maximum_size=2097152
-Klangstrom.menu.pnum.KLST_SHEEP.upload.maximum_data_size=884736
-Klangstrom.menu.pnum.KLST_SHEEP.build.board=KLST_SHEEP
-Klangstrom.menu.pnum.KLST_SHEEP.build.product_line=STM32H743xx
-Klangstrom.menu.pnum.KLST_SHEEP.build.variant_h=variant_{build.board}.h
-Klangstrom.menu.pnum.KLST_SHEEP.build.variant=KLST_SHEEP
-Klangstrom.menu.pnum.KLST_SHEEP.build.peripheral_pins=-DCUSTOM_PERIPHERAL_PINS
-Klangstrom.menu.pnum.KLST_SHEEP.build.ldscript=ldscript.ld
+#
+# COMMON
+#
 
-# KLST_TINY board
-Klangstrom.menu.pnum.KLST_TINY=KLST_TINY(STM32F446RE)
-Klangstrom.menu.pnum.KLST_TINY.build.cmsis_lib_gcc=arm_cortexM4lf_math
-Klangstrom.menu.pnum.KLST_TINY.build.fpu=-mfpu=fpv4-sp-d16
-Klangstrom.menu.pnum.KLST_TINY.build.float-abi=-mfloat-abi=hard
-Klangstrom.menu.pnum.KLST_TINY.build.series=STM32F4xx
-Klangstrom.menu.pnum.KLST_TINY.build.mcu=cortex-m4
-Klangstrom.menu.pnum.KLST_TINY.upload.maximum_size=524288
-Klangstrom.menu.pnum.KLST_TINY.upload.maximum_data_size=131072
-Klangstrom.menu.pnum.KLST_TINY.build.board=KLST_TINY
-Klangstrom.menu.pnum.KLST_TINY.build.product_line=STM32F446xx
-Klangstrom.menu.pnum.KLST_TINY.build.variant=KLST_TINY
-Klangstrom.menu.pnum.KLST_TINY.build.peripheral_pins=-DCUSTOM_PERIPHERAL_PINS
-Klangstrom.menu.pnum.KLST_TINY.build.ldscript=ldscript.ld
+KLST_SHEEP.build.core=arduino
+KLST_SHEEP.build.variant_h=variant_{build.board}.h
+KLST_SHEEP.build.float-abi=-mfloat-abi=hard
+KLST_SHEEP.build.ldscript=ldscript.ld
+KLST_SHEEP.build.peripheral_pins=-DCUSTOM_PERIPHERAL_PINS
+KLST_SHEEP.build.st_extra_flags=-D{build.product_line} {build.enable_usb} {build.xSerial}
+KLST_SHEEP.build.extra_flags=-DKLST_BOARD_{build.board} -DKLST_ARCH=1 -DKLANG_SAMPLES_PER_AUDIO_BLOCK={build.flags.audioblock} -DKLANG_AUDIO_RATE={build.flags.samplingrate} -DKLANG_DEBUG_LEVEL=2 -DKLANG_SIGNAL_TYPE=1 -DKLST_WAVETABLE_INTERPOLATE_SAMPLES=1 -DKLST_USE_CMSIS_DSP -DCORE_CALLBACK
+KLST_SHEEP.compiler.cpp.std=gnu++17
 
-# KLST_CORE board @TODO
-Klangstrom.menu.pnum.KLST_CORE=KLST_CORE(STM32H743II)
-# Klangstrom.menu.pnum.KLST_CORE.node=KLST_CORE
-Klangstrom.menu.pnum.KLST_CORE.upload.maximum_size=2097152
-Klangstrom.menu.pnum.KLST_CORE.upload.maximum_data_size=884736
-Klangstrom.menu.pnum.KLST_CORE.build.mcu=cortex-m7
-Klangstrom.menu.pnum.KLST_CORE.build.flags.fp=-mfpu=fpv5-d16 -mfloat-abi=hard
-Klangstrom.menu.pnum.KLST_CORE.build.board=KLST_CORE
-Klangstrom.menu.pnum.KLST_CORE.build.series=STM32H7xx
-Klangstrom.menu.pnum.KLST_CORE.build.product_line=STM32H743xx
-Klangstrom.menu.pnum.KLST_CORE.build.variant=KLST_CORE
-Klangstrom.menu.pnum.KLST_CORE.build.cmsis_lib_gcc=arm_cortexM7lfsp_math
+#
+# MENUS
+#
 
 # Audio Properties
-Klangstrom.menu.samplingrate.xx48000xx=48000Hz
-Klangstrom.menu.samplingrate.xx48000xx.build.flags.samplingrate=48000
-Klangstrom.menu.samplingrate.xx44100xx=44100Hz
-Klangstrom.menu.samplingrate.xx44100xx.build.flags.samplingrate=44100
-Klangstrom.menu.samplingrate.xx22050xx=22050Hz
-Klangstrom.menu.samplingrate.xx22050xx.build.flags.samplingrate=22050
+KLST_SHEEP.menu.samplingrate.xx48000xx=48000Hz
+KLST_SHEEP.menu.samplingrate.xx48000xx.build.flags.samplingrate=48000
+KLST_SHEEP.menu.samplingrate.xx44100xx=44100Hz
+KLST_SHEEP.menu.samplingrate.xx44100xx.build.flags.samplingrate=44100
+KLST_SHEEP.menu.samplingrate.xx22050xx=22050Hz
+KLST_SHEEP.menu.samplingrate.xx22050xx.build.flags.samplingrate=22050
 
-Klangstrom.menu.audioblock.128=128 samples
-Klangstrom.menu.audioblock.128.build.flags.audioblock=128
-Klangstrom.menu.audioblock.2048=2048 samples
-Klangstrom.menu.audioblock.2048.build.flags.audioblock=2048
-Klangstrom.menu.audioblock.1024=1024 samples
-Klangstrom.menu.audioblock.1024.build.flags.audioblock=1024
-Klangstrom.menu.audioblock.512=512 samples
-Klangstrom.menu.audioblock.512.build.flags.audioblock=512
-Klangstrom.menu.audioblock.256=256 samples
-Klangstrom.menu.audioblock.256.build.flags.audioblock=256
-Klangstrom.menu.audioblock.64=64 samples
-Klangstrom.menu.audioblock.64.build.flags.audioblock=64
-Klangstrom.menu.audioblock.32=32 samples
-Klangstrom.menu.audioblock.32.build.flags.audioblock=32
+KLST_SHEEP.menu.audioblock.128=128 samples
+KLST_SHEEP.menu.audioblock.128.build.flags.audioblock=128
+KLST_SHEEP.menu.audioblock.2048=2048 samples
+KLST_SHEEP.menu.audioblock.2048.build.flags.audioblock=2048
+KLST_SHEEP.menu.audioblock.1024=1024 samples
+KLST_SHEEP.menu.audioblock.1024.build.flags.audioblock=1024
+KLST_SHEEP.menu.audioblock.512=512 samples
+KLST_SHEEP.menu.audioblock.512.build.flags.audioblock=512
+KLST_SHEEP.menu.audioblock.256=256 samples
+KLST_SHEEP.menu.audioblock.256.build.flags.audioblock=256
+KLST_SHEEP.menu.audioblock.64=64 samples
+KLST_SHEEP.menu.audioblock.64.build.flags.audioblock=64
+KLST_SHEEP.menu.audioblock.32=32 samples
+KLST_SHEEP.menu.audioblock.32.build.flags.audioblock=32
 
 # Upload menu
-Klangstrom.menu.upload_method.swdMethod=STM32CubeProgrammer (SWD)
-Klangstrom.menu.upload_method.swdMethod.upload.protocol=0
-Klangstrom.menu.upload_method.swdMethod.upload.options=-g
-Klangstrom.menu.upload_method.swdMethod.upload.tool=stm32CubeProg
+KLST_SHEEP.menu.upload_method.swdMethod=STM32CubeProgrammer (SWD)
+KLST_SHEEP.menu.upload_method.swdMethod.upload.protocol=0
+KLST_SHEEP.menu.upload_method.swdMethod.upload.options=-g
+KLST_SHEEP.menu.upload_method.swdMethod.upload.tool=stm32CubeProg
 
-Klangstrom.menu.upload_method.dfuMethod=STM32CubeProgrammer (DFU)
-Klangstrom.menu.upload_method.dfuMethod.upload.protocol=2
-Klangstrom.menu.upload_method.dfuMethod.upload.options=-g
-Klangstrom.menu.upload_method.dfuMethod.upload.tool=stm32CubeProg
+KLST_SHEEP.menu.upload_method.dfuMethod=STM32CubeProgrammer (DFU)
+KLST_SHEEP.menu.upload_method.dfuMethod.upload.protocol=2
+KLST_SHEEP.menu.upload_method.dfuMethod.upload.options=-g
+KLST_SHEEP.menu.upload_method.dfuMethod.upload.tool=stm32CubeProg
 
-################################################################################
 # Serialx activation
-Klangstrom.menu.xserial.generic=Enabled (generic 'Serial')
-Klangstrom.menu.xserial.none=Enabled (no generic 'Serial')
-Klangstrom.menu.xserial.none.build.xSerial=-DHAL_UART_MODULE_ENABLED -DHWSERIAL_NONE
-Klangstrom.menu.xserial.disabled=Disabled (No Serial support)
-Klangstrom.menu.xserial.disabled.build.xSerial=
+KLST_SHEEP.menu.xserial.generic=Enabled (generic 'Serial')
+KLST_SHEEP.menu.xserial.none=Enabled (no generic 'Serial')
+KLST_SHEEP.menu.xserial.none.build.xSerial=-DHAL_UART_MODULE_ENABLED -DHWSERIAL_NONE
+KLST_SHEEP.menu.xserial.disabled=Disabled (No Serial support)
+KLST_SHEEP.menu.xserial.disabled.build.xSerial=
 
 # USB connectivity
-Klangstrom.menu.usb.none=None
-Klangstrom.menu.usb.CDCgen=CDC (generic 'Serial' supersede U(S)ART)
-Klangstrom.menu.usb.CDCgen.build.enable_usb={build.usb_flags} -DUSBD_USE_CDC
-Klangstrom.menu.usb.CDC=CDC (no generic 'Serial')
-Klangstrom.menu.usb.CDC.build.enable_usb={build.usb_flags} -DUSBD_USE_CDC -DDISABLE_GENERIC_SERIALUSB
-Klangstrom.menu.usb.HID=HID (keyboard and mouse)
-Klangstrom.menu.usb.HID.build.enable_usb={build.usb_flags} -DUSBD_USE_HID_COMPOSITE
-Klangstrom.menu.usb.DEVICE_Mouse=USB Device Mouse
-Klangstrom.menu.usb.DEVICE_Mouse.build.enable_usb=-DUSE_USBDEVICE -DUSBDEVICE_MOUSE_KEYBOARD -DUSBDEVICE_MOUSE -DHAL_HCD_MODULE_ENABLED -DHAL_PCD_MODULE_ENABLED
-Klangstrom.menu.usb.DEVICE_Keyboard=USB Device Keyboard
-Klangstrom.menu.usb.DEVICE_Keyboard.build.enable_usb=-DUSE_USBDEVICE -DUSBDEVICE_MOUSE_KEYBOARD -DUSBDEVICE_KEYBOARD -DHAL_HCD_MODULE_ENABLED -DHAL_PCD_MODULE_ENABLED
-Klangstrom.menu.usb.DEVICE_MIDI=USB Device MIDI
-Klangstrom.menu.usb.DEVICE_MIDI.build.enable_usb=-DUSE_USBDEVICE -DUSBDEVICE_MIDI -DHAL_HCD_MODULE_ENABLED -DHAL_PCD_MODULE_ENABLED
-Klangstrom.menu.usb.HOST=USB Host Mouse+Keyboard+MIDI
-Klangstrom.menu.usb.HOST.build.enable_usb=-DUSE_USBHOST -DHAL_HCD_MODULE_ENABLED -DHAL_PCD_MODULE_ENABLED
-Klangstrom.menu.usb.HOST_DEVICE_MOUSE=USB Host Mouse+Keyboard+MIDI + USB Device Mouse
-Klangstrom.menu.usb.HOST_DEVICE_MOUSE.build.enable_usb=-DUSE_USBHOST -DHAL_HCD_MODULE_ENABLED -DHAL_PCD_MODULE_ENABLED -DUSE_USBDEVICE -DUSBDEVICE_MOUSE_KEYBOARD -DUSBDEVICE_MOUSE
-Klangstrom.menu.usb.HOST_DEVICE_KEYBOARD=USB Host Mouse+Keyboard+MIDI + USB Device Keyboard
-Klangstrom.menu.usb.HOST_DEVICE_KEYBOARD.build.enable_usb=-DUSE_USBHOST -DHAL_HCD_MODULE_ENABLED -DHAL_PCD_MODULE_ENABLED -DUSE_USBDEVICE -DUSBDEVICE_MOUSE_KEYBOARD -DUSBDEVICE_KEYBOARD
-Klangstrom.menu.usb.HOST_DEVICE_MIDI=USB Host Mouse+Keyboard+MIDI + USB Device MIDI
-Klangstrom.menu.usb.HOST_DEVICE_MIDI.build.enable_usb=-DUSE_USBHOST -DHAL_HCD_MODULE_ENABLED -DHAL_PCD_MODULE_ENABLED -DUSE_USBDEVICE -DUSBDEVICE_MIDI
-# Klangstrom.menu.usb.DEVICE_MouseKeyboard_TU=USB Device Mouse+Keyboard ( Tiny USB )
-# Klangstrom.menu.usb.DEVICE_MouseKeyboard_TU.build.enable_usb=-DUSE_TINYUSB -DTINYUSB_MOUSE_KEYBOARD_DEVICE -DHAL_PCD_MODULE_ENABLED
-# Klangstrom.menu.usb.DEVICE_MIDI_TU=USB Device MIDI ( Tiny USB )
-# Klangstrom.menu.usb.DEVICE_MIDI_TU.build.enable_usb=-DUSE_TINYUSB -DTINYUSB_MIDI_DEVICE -DHAL_PCD_MODULE_ENABLED
-Klangstrom.menu.xusb.FS=Low/Full Speed
-Klangstrom.menu.xusb.HS=High Speed
-Klangstrom.menu.xusb.HS.build.usb_speed=-DUSE_USB_HS
-Klangstrom.menu.xusb.HSFS=High Speed in Full Speed mode
-Klangstrom.menu.xusb.HSFS.build.usb_speed=-DUSE_USB_HS -DUSE_USB_HS_IN_FS
+KLST_SHEEP.menu.usb.none=None
+KLST_SHEEP.menu.usb.CDCgen=CDC (generic 'Serial' supersede U(S)ART)
+KLST_SHEEP.menu.usb.CDCgen.build.enable_usb={build.usb_flags} -DUSBD_USE_CDC
+KLST_SHEEP.menu.usb.CDC=CDC (no generic 'Serial')
+KLST_SHEEP.menu.usb.CDC.build.enable_usb={build.usb_flags} -DUSBD_USE_CDC -DDISABLE_GENERIC_SERIALUSB
+KLST_SHEEP.menu.usb.HID=HID (keyboard and mouse)
+KLST_SHEEP.menu.usb.HID.build.enable_usb={build.usb_flags} -DUSBD_USE_HID_COMPOSITE
+KLST_SHEEP.menu.usb.DEVICE_Mouse=USB Device Mouse
+KLST_SHEEP.menu.usb.DEVICE_Mouse.build.enable_usb=-DUSE_USBDEVICE -DUSBDEVICE_MOUSE_KEYBOARD -DUSBDEVICE_MOUSE -DHAL_HCD_MODULE_ENABLED -DHAL_PCD_MODULE_ENABLED
+KLST_SHEEP.menu.usb.DEVICE_Keyboard=USB Device Keyboard
+KLST_SHEEP.menu.usb.DEVICE_Keyboard.build.enable_usb=-DUSE_USBDEVICE -DUSBDEVICE_MOUSE_KEYBOARD -DUSBDEVICE_KEYBOARD -DHAL_HCD_MODULE_ENABLED -DHAL_PCD_MODULE_ENABLED
+KLST_SHEEP.menu.usb.DEVICE_MIDI=USB Device MIDI
+KLST_SHEEP.menu.usb.DEVICE_MIDI.build.enable_usb=-DUSE_USBDEVICE -DUSBDEVICE_MIDI -DHAL_HCD_MODULE_ENABLED -DHAL_PCD_MODULE_ENABLED
+KLST_SHEEP.menu.usb.HOST=USB Host Mouse+Keyboard+MIDI
+KLST_SHEEP.menu.usb.HOST.build.enable_usb=-DUSE_USBHOST -DHAL_HCD_MODULE_ENABLED -DHAL_PCD_MODULE_ENABLED
+KLST_SHEEP.menu.usb.HOST_DEVICE_MOUSE=USB Host Mouse+Keyboard+MIDI + USB Device Mouse
+KLST_SHEEP.menu.usb.HOST_DEVICE_MOUSE.build.enable_usb=-DUSE_USBHOST -DHAL_HCD_MODULE_ENABLED -DHAL_PCD_MODULE_ENABLED -DUSE_USBDEVICE -DUSBDEVICE_MOUSE_KEYBOARD -DUSBDEVICE_MOUSE
+KLST_SHEEP.menu.usb.HOST_DEVICE_KEYBOARD=USB Host Mouse+Keyboard+MIDI + USB Device Keyboard
+KLST_SHEEP.menu.usb.HOST_DEVICE_KEYBOARD.build.enable_usb=-DUSE_USBHOST -DHAL_HCD_MODULE_ENABLED -DHAL_PCD_MODULE_ENABLED -DUSE_USBDEVICE -DUSBDEVICE_MOUSE_KEYBOARD -DUSBDEVICE_KEYBOARD
+KLST_SHEEP.menu.usb.HOST_DEVICE_MIDI=USB Host Mouse+Keyboard+MIDI + USB Device MIDI
+KLST_SHEEP.menu.usb.HOST_DEVICE_MIDI.build.enable_usb=-DUSE_USBHOST -DHAL_HCD_MODULE_ENABLED -DHAL_PCD_MODULE_ENABLED -DUSE_USBDEVICE -DUSBDEVICE_MIDI
+KLST_SHEEP.menu.xusb.FS=Low/Full Speed
+KLST_SHEEP.menu.xusb.HS=High Speed
+KLST_SHEEP.menu.xusb.HS.build.usb_speed=-DUSE_USB_HS
+KLST_SHEEP.menu.xusb.HSFS=High Speed in Full Speed mode
+KLST_SHEEP.menu.xusb.HSFS.build.usb_speed=-DUSE_USB_HS -DUSE_USB_HS_IN_FS
 
 # Optimizations
-Klangstrom.menu.opt.osstd=Smallest (-Os default)
-Klangstrom.menu.opt.oslto=Smallest (-Os) with LTO
-Klangstrom.menu.opt.oslto.build.flags.optimize=-Os -flto
-Klangstrom.menu.opt.o1std=Fast (-O1)
-Klangstrom.menu.opt.o1std.build.flags.optimize=-O1
-Klangstrom.menu.opt.o1lto=Fast (-O1) with LTO
-Klangstrom.menu.opt.o1lto.build.flags.optimize=-O1 -flto
-Klangstrom.menu.opt.o2std=Faster (-O2)
-Klangstrom.menu.opt.o2std.build.flags.optimize=-O2
-Klangstrom.menu.opt.o2lto=Faster (-O2) with LTO
-Klangstrom.menu.opt.o2lto.build.flags.optimize=-O2 -flto
-Klangstrom.menu.opt.o3std=Fastest (-O3)
-Klangstrom.menu.opt.o3std.build.flags.optimize=-O3
-Klangstrom.menu.opt.o3lto=Fastest (-O3) with LTO
-Klangstrom.menu.opt.o3lto.build.flags.optimize=-O3 -flto
-Klangstrom.menu.opt.ogstd=Debug (-Og)
-Klangstrom.menu.opt.ogstd.build.flags.optimize=-Og
+KLST_SHEEP.menu.opt.osstd=Smallest (-Os default)
+KLST_SHEEP.menu.opt.oslto=Smallest (-Os) with LTO
+KLST_SHEEP.menu.opt.oslto.build.flags.optimize=-Os -flto
+KLST_SHEEP.menu.opt.o1std=Fast (-O1)
+KLST_SHEEP.menu.opt.o1std.build.flags.optimize=-O1
+KLST_SHEEP.menu.opt.o1lto=Fast (-O1) with LTO
+KLST_SHEEP.menu.opt.o1lto.build.flags.optimize=-O1 -flto
+KLST_SHEEP.menu.opt.o2std=Faster (-O2)
+KLST_SHEEP.menu.opt.o2std.build.flags.optimize=-O2
+KLST_SHEEP.menu.opt.o2lto=Faster (-O2) with LTO
+KLST_SHEEP.menu.opt.o2lto.build.flags.optimize=-O2 -flto
+KLST_SHEEP.menu.opt.o3std=Fastest (-O3)
+KLST_SHEEP.menu.opt.o3std.build.flags.optimize=-O3
+KLST_SHEEP.menu.opt.o3lto=Fastest (-O3) with LTO
+KLST_SHEEP.menu.opt.o3lto.build.flags.optimize=-O3 -flto
+KLST_SHEEP.menu.opt.ogstd=Debug (-Og)
+KLST_SHEEP.menu.opt.ogstd.build.flags.optimize=-Og
 
 # Debug information
-Klangstrom.menu.dbg.none=None
-Klangstrom.menu.dbg.enable=Enabled (-g)
-Klangstrom.menu.dbg.enable.build.flags.debug=-g
+KLST_SHEEP.menu.dbg.none=None
+KLST_SHEEP.menu.dbg.enable=Enabled (-g)
+KLST_SHEEP.menu.dbg.enable.build.flags.debug=-g
 
 # C Runtime Library
-Klangstrom.menu.rtlib.nano=Newlib Nano (default)
-Klangstrom.menu.rtlib.nanofp=Newlib Nano + Float Printf
-Klangstrom.menu.rtlib.nanofp.build.flags.ldspecs=--specs=nano.specs -u _printf_float
-Klangstrom.menu.rtlib.nanofs=Newlib Nano + Float Scanf
-Klangstrom.menu.rtlib.nanofs.build.flags.ldspecs=--specs=nano.specs -u _scanf_float
-Klangstrom.menu.rtlib.nanofps=Newlib Nano + Float Printf/Scanf
-Klangstrom.menu.rtlib.nanofps.build.flags.ldspecs=--specs=nano.specs -u _printf_float -u _scanf_float
-Klangstrom.menu.rtlib.full=Newlib Standard
-Klangstrom.menu.rtlib.full.build.flags.ldspecs=
+KLST_SHEEP.menu.rtlib.nano=Newlib Nano (default)
+KLST_SHEEP.menu.rtlib.nanofp=Newlib Nano + Float Printf
+KLST_SHEEP.menu.rtlib.nanofp.build.flags.ldspecs=--specs=nano.specs -u _printf_float
+KLST_SHEEP.menu.rtlib.nanofs=Newlib Nano + Float Scanf
+KLST_SHEEP.menu.rtlib.nanofs.build.flags.ldspecs=--specs=nano.specs -u _scanf_float
+KLST_SHEEP.menu.rtlib.nanofps=Newlib Nano + Float Printf/Scanf
+KLST_SHEEP.menu.rtlib.nanofps.build.flags.ldspecs=--specs=nano.specs -u _printf_float -u _scanf_float
+KLST_SHEEP.menu.rtlib.full=Newlib Standard
+KLST_SHEEP.menu.rtlib.full.build.flags.ldspecs=
+
+################################################################################
+#
+# BOARD PROPERTIES
+#
+################################################################################
+
+#
+# BSP
+#
+
+KLST_TINY.name=Klangstrom Board KLST_TINY(STM32H743VI)
+
+KLST_TINY.build.variant=KLST_TINY
+KLST_TINY.build.board=KLST_TINY
+KLST_TINY.build.cmsis_lib_gcc=arm_cortexM4lf_math
+KLST_TINY.build.fpu=-mfpu=fpv4-sp-d16
+KLST_TINY.build.series=STM32F4xx
+KLST_TINY.build.mcu=cortex-m4
+KLST_TINY.upload.maximum_size=524288
+KLST_TINY.upload.maximum_data_size=131072
+KLST_TINY.build.product_line=STM32F446xx
+
+#
+# COMMON
+#
+
+KLST_TINY.build.core=arduino
+KLST_TINY.build.variant_h=variant_{build.board}.h
+KLST_TINY.build.float-abi=-mfloat-abi=hard
+KLST_TINY.build.ldscript=ldscript.ld
+KLST_TINY.build.peripheral_pins=-DCUSTOM_PERIPHERAL_PINS
+KLST_TINY.build.st_extra_flags=-D{build.product_line} {build.enable_usb} {build.xSerial}
+KLST_TINY.build.extra_flags=-DKLST_BOARD_{build.board} -DKLST_ARCH=1 -DKLANG_SAMPLES_PER_AUDIO_BLOCK={build.flags.audioblock} -DKLANG_AUDIO_RATE={build.flags.samplingrate} -DKLANG_DEBUG_LEVEL=2 -DKLANG_SIGNAL_TYPE=1 -DKLST_WAVETABLE_INTERPOLATE_SAMPLES=1 -DKLST_USE_CMSIS_DSP -DCORE_CALLBACK
+KLST_TINY.compiler.cpp.std=gnu++17
+
+#
+# MENUS
+#
+
+# Audio Properties
+KLST_TINY.menu.samplingrate.xx48000xx=48000Hz
+KLST_TINY.menu.samplingrate.xx48000xx.build.flags.samplingrate=48000
+KLST_TINY.menu.samplingrate.xx44100xx=44100Hz
+KLST_TINY.menu.samplingrate.xx44100xx.build.flags.samplingrate=44100
+KLST_TINY.menu.samplingrate.xx22050xx=22050Hz
+KLST_TINY.menu.samplingrate.xx22050xx.build.flags.samplingrate=22050
+
+KLST_TINY.menu.audioblock.128=128 samples
+KLST_TINY.menu.audioblock.128.build.flags.audioblock=128
+KLST_TINY.menu.audioblock.2048=2048 samples
+KLST_TINY.menu.audioblock.2048.build.flags.audioblock=2048
+KLST_TINY.menu.audioblock.1024=1024 samples
+KLST_TINY.menu.audioblock.1024.build.flags.audioblock=1024
+KLST_TINY.menu.audioblock.512=512 samples
+KLST_TINY.menu.audioblock.512.build.flags.audioblock=512
+KLST_TINY.menu.audioblock.256=256 samples
+KLST_TINY.menu.audioblock.256.build.flags.audioblock=256
+KLST_TINY.menu.audioblock.64=64 samples
+KLST_TINY.menu.audioblock.64.build.flags.audioblock=64
+KLST_TINY.menu.audioblock.32=32 samples
+KLST_TINY.menu.audioblock.32.build.flags.audioblock=32
+
+# Upload menu
+KLST_TINY.menu.upload_method.swdMethod=STM32CubeProgrammer (SWD)
+KLST_TINY.menu.upload_method.swdMethod.upload.protocol=0
+KLST_TINY.menu.upload_method.swdMethod.upload.options=-g
+KLST_TINY.menu.upload_method.swdMethod.upload.tool=stm32CubeProg
+
+KLST_TINY.menu.upload_method.dfuMethod=STM32CubeProgrammer (DFU)
+KLST_TINY.menu.upload_method.dfuMethod.upload.protocol=2
+KLST_TINY.menu.upload_method.dfuMethod.upload.options=-g
+KLST_TINY.menu.upload_method.dfuMethod.upload.tool=stm32CubeProg
+
+# Serialx activation
+KLST_TINY.menu.xserial.generic=Enabled (generic 'Serial')
+KLST_TINY.menu.xserial.none=Enabled (no generic 'Serial')
+KLST_TINY.menu.xserial.none.build.xSerial=-DHAL_UART_MODULE_ENABLED -DHWSERIAL_NONE
+KLST_TINY.menu.xserial.disabled=Disabled (No Serial support)
+KLST_TINY.menu.xserial.disabled.build.xSerial=
+
+# USB connectivity
+KLST_TINY.menu.usb.none=None
+KLST_TINY.menu.usb.CDCgen=CDC (generic 'Serial' supersede U(S)ART)
+KLST_TINY.menu.usb.CDCgen.build.enable_usb={build.usb_flags} -DUSBD_USE_CDC
+KLST_TINY.menu.usb.CDC=CDC (no generic 'Serial')
+KLST_TINY.menu.usb.CDC.build.enable_usb={build.usb_flags} -DUSBD_USE_CDC -DDISABLE_GENERIC_SERIALUSB
+KLST_TINY.menu.usb.HID=HID (keyboard and mouse)
+KLST_TINY.menu.usb.HID.build.enable_usb={build.usb_flags} -DUSBD_USE_HID_COMPOSITE
+KLST_TINY.menu.usb.DEVICE_Mouse=USB Device Mouse
+KLST_TINY.menu.usb.DEVICE_Mouse.build.enable_usb=-DUSE_USBDEVICE -DUSBDEVICE_MOUSE_KEYBOARD -DUSBDEVICE_MOUSE -DHAL_HCD_MODULE_ENABLED -DHAL_PCD_MODULE_ENABLED
+KLST_TINY.menu.usb.DEVICE_Keyboard=USB Device Keyboard
+KLST_TINY.menu.usb.DEVICE_Keyboard.build.enable_usb=-DUSE_USBDEVICE -DUSBDEVICE_MOUSE_KEYBOARD -DUSBDEVICE_KEYBOARD -DHAL_HCD_MODULE_ENABLED -DHAL_PCD_MODULE_ENABLED
+KLST_TINY.menu.usb.DEVICE_MIDI=USB Device MIDI
+KLST_TINY.menu.usb.DEVICE_MIDI.build.enable_usb=-DUSE_USBDEVICE -DUSBDEVICE_MIDI -DHAL_HCD_MODULE_ENABLED -DHAL_PCD_MODULE_ENABLED
+KLST_TINY.menu.usb.HOST=USB Host Mouse+Keyboard+MIDI
+KLST_TINY.menu.usb.HOST.build.enable_usb=-DUSE_USBHOST -DHAL_HCD_MODULE_ENABLED -DHAL_PCD_MODULE_ENABLED
+KLST_TINY.menu.usb.HOST_DEVICE_MOUSE=USB Host Mouse+Keyboard+MIDI + USB Device Mouse
+KLST_TINY.menu.usb.HOST_DEVICE_MOUSE.build.enable_usb=-DUSE_USBHOST -DHAL_HCD_MODULE_ENABLED -DHAL_PCD_MODULE_ENABLED -DUSE_USBDEVICE -DUSBDEVICE_MOUSE_KEYBOARD -DUSBDEVICE_MOUSE
+KLST_TINY.menu.usb.HOST_DEVICE_KEYBOARD=USB Host Mouse+Keyboard+MIDI + USB Device Keyboard
+KLST_TINY.menu.usb.HOST_DEVICE_KEYBOARD.build.enable_usb=-DUSE_USBHOST -DHAL_HCD_MODULE_ENABLED -DHAL_PCD_MODULE_ENABLED -DUSE_USBDEVICE -DUSBDEVICE_MOUSE_KEYBOARD -DUSBDEVICE_KEYBOARD
+KLST_TINY.menu.usb.HOST_DEVICE_MIDI=USB Host Mouse+Keyboard+MIDI + USB Device MIDI
+KLST_TINY.menu.usb.HOST_DEVICE_MIDI.build.enable_usb=-DUSE_USBHOST -DHAL_HCD_MODULE_ENABLED -DHAL_PCD_MODULE_ENABLED -DUSE_USBDEVICE -DUSBDEVICE_MIDI
+KLST_TINY.menu.xusb.FS=Low/Full Speed
+KLST_TINY.menu.xusb.HS=High Speed
+KLST_TINY.menu.xusb.HS.build.usb_speed=-DUSE_USB_HS
+KLST_TINY.menu.xusb.HSFS=High Speed in Full Speed mode
+KLST_TINY.menu.xusb.HSFS.build.usb_speed=-DUSE_USB_HS -DUSE_USB_HS_IN_FS
+
+# Optimizations
+KLST_TINY.menu.opt.osstd=Smallest (-Os default)
+KLST_TINY.menu.opt.oslto=Smallest (-Os) with LTO
+KLST_TINY.menu.opt.oslto.build.flags.optimize=-Os -flto
+KLST_TINY.menu.opt.o1std=Fast (-O1)
+KLST_TINY.menu.opt.o1std.build.flags.optimize=-O1
+KLST_TINY.menu.opt.o1lto=Fast (-O1) with LTO
+KLST_TINY.menu.opt.o1lto.build.flags.optimize=-O1 -flto
+KLST_TINY.menu.opt.o2std=Faster (-O2)
+KLST_TINY.menu.opt.o2std.build.flags.optimize=-O2
+KLST_TINY.menu.opt.o2lto=Faster (-O2) with LTO
+KLST_TINY.menu.opt.o2lto.build.flags.optimize=-O2 -flto
+KLST_TINY.menu.opt.o3std=Fastest (-O3)
+KLST_TINY.menu.opt.o3std.build.flags.optimize=-O3
+KLST_TINY.menu.opt.o3lto=Fastest (-O3) with LTO
+KLST_TINY.menu.opt.o3lto.build.flags.optimize=-O3 -flto
+KLST_TINY.menu.opt.ogstd=Debug (-Og)
+KLST_TINY.menu.opt.ogstd.build.flags.optimize=-Og
+
+# Debug information
+KLST_TINY.menu.dbg.none=None
+KLST_TINY.menu.dbg.enable=Enabled (-g)
+KLST_TINY.menu.dbg.enable.build.flags.debug=-g
+
+# C Runtime Library
+KLST_TINY.menu.rtlib.nano=Newlib Nano (default)
+KLST_TINY.menu.rtlib.nanofp=Newlib Nano + Float Printf
+KLST_TINY.menu.rtlib.nanofp.build.flags.ldspecs=--specs=nano.specs -u _printf_float
+KLST_TINY.menu.rtlib.nanofs=Newlib Nano + Float Scanf
+KLST_TINY.menu.rtlib.nanofs.build.flags.ldspecs=--specs=nano.specs -u _scanf_float
+KLST_TINY.menu.rtlib.nanofps=Newlib Nano + Float Printf/Scanf
+KLST_TINY.menu.rtlib.nanofps.build.flags.ldspecs=--specs=nano.specs -u _printf_float -u _scanf_float
+KLST_TINY.menu.rtlib.full=Newlib Standard
+KLST_TINY.menu.rtlib.full.build.flags.ldspecs=
+
+################################################################################
+#
+# BOARD PROPERTIES
+#
+################################################################################
+
+#
+# BSP
+#
+
+KLST_CORE.name=Klangstrom Board KLST_CORE(STM32H743II)
+
+KLST_CORE.build.variant=KLST_CORE
+KLST_CORE.build.board=KLST_CORE
+KLST_CORE.build.cmsis_lib_gcc=arm_cortexM7lfsp_math
+KLST_CORE.build.fpu=-mfpu=fpv5-d16
+KLST_CORE.build.series=STM32H7xx
+KLST_CORE.build.mcu=cortex-m7
+KLST_CORE.upload.maximum_size=2097152
+KLST_CORE.upload.maximum_data_size=884736
+KLST_CORE.build.product_line=STM32H743xx
+
+#
+# COMMON
+#
+
+KLST_CORE.build.core=arduino
+KLST_CORE.build.variant_h=variant_{build.board}.h
+KLST_CORE.build.float-abi=-mfloat-abi=hard
+KLST_CORE.build.ldscript=ldscript.ld
+KLST_CORE.build.peripheral_pins=-DCUSTOM_PERIPHERAL_PINS
+KLST_CORE.build.st_extra_flags=-D{build.product_line} {build.enable_usb} {build.xSerial}
+KLST_CORE.build.extra_flags=-DKLST_BOARD_{build.board} -DKLST_ARCH=1 -DKLANG_SAMPLES_PER_AUDIO_BLOCK={build.flags.audioblock} -DKLANG_AUDIO_RATE={build.flags.samplingrate} -DKLANG_DEBUG_LEVEL=2 -DKLANG_SIGNAL_TYPE=1 -DKLST_WAVETABLE_INTERPOLATE_SAMPLES=1 -DKLST_USE_CMSIS_DSP -DCORE_CALLBACK
+KLST_CORE.compiler.cpp.std=gnu++17
+
+#
+# MENUS
+#
+
+# Audio Properties
+KLST_CORE.menu.samplingrate.xx48000xx=48000Hz
+KLST_CORE.menu.samplingrate.xx48000xx.build.flags.samplingrate=48000
+KLST_CORE.menu.samplingrate.xx44100xx=44100Hz
+KLST_CORE.menu.samplingrate.xx44100xx.build.flags.samplingrate=44100
+KLST_CORE.menu.samplingrate.xx22050xx=22050Hz
+KLST_CORE.menu.samplingrate.xx22050xx.build.flags.samplingrate=22050
+
+KLST_CORE.menu.audioblock.128=128 samples
+KLST_CORE.menu.audioblock.128.build.flags.audioblock=128
+KLST_CORE.menu.audioblock.2048=2048 samples
+KLST_CORE.menu.audioblock.2048.build.flags.audioblock=2048
+KLST_CORE.menu.audioblock.1024=1024 samples
+KLST_CORE.menu.audioblock.1024.build.flags.audioblock=1024
+KLST_CORE.menu.audioblock.512=512 samples
+KLST_CORE.menu.audioblock.512.build.flags.audioblock=512
+KLST_CORE.menu.audioblock.256=256 samples
+KLST_CORE.menu.audioblock.256.build.flags.audioblock=256
+KLST_CORE.menu.audioblock.64=64 samples
+KLST_CORE.menu.audioblock.64.build.flags.audioblock=64
+KLST_CORE.menu.audioblock.32=32 samples
+KLST_CORE.menu.audioblock.32.build.flags.audioblock=32
+
+# Upload menu
+KLST_CORE.menu.upload_method.swdMethod=STM32CubeProgrammer (SWD)
+KLST_CORE.menu.upload_method.swdMethod.upload.protocol=0
+KLST_CORE.menu.upload_method.swdMethod.upload.options=-g
+KLST_CORE.menu.upload_method.swdMethod.upload.tool=stm32CubeProg
+
+KLST_CORE.menu.upload_method.dfuMethod=STM32CubeProgrammer (DFU)
+KLST_CORE.menu.upload_method.dfuMethod.upload.protocol=2
+KLST_CORE.menu.upload_method.dfuMethod.upload.options=-g
+KLST_CORE.menu.upload_method.dfuMethod.upload.tool=stm32CubeProg
+
+# Serialx activation
+KLST_CORE.menu.xserial.generic=Enabled (generic 'Serial')
+KLST_CORE.menu.xserial.none=Enabled (no generic 'Serial')
+KLST_CORE.menu.xserial.none.build.xSerial=-DHAL_UART_MODULE_ENABLED -DHWSERIAL_NONE
+KLST_CORE.menu.xserial.disabled=Disabled (No Serial support)
+KLST_CORE.menu.xserial.disabled.build.xSerial=
+
+# USB connectivity
+KLST_CORE.menu.usb.none=None
+KLST_CORE.menu.usb.CDCgen=CDC (generic 'Serial' supersede U(S)ART)
+KLST_CORE.menu.usb.CDCgen.build.enable_usb={build.usb_flags} -DUSBD_USE_CDC
+KLST_CORE.menu.usb.CDC=CDC (no generic 'Serial')
+KLST_CORE.menu.usb.CDC.build.enable_usb={build.usb_flags} -DUSBD_USE_CDC -DDISABLE_GENERIC_SERIALUSB
+KLST_CORE.menu.usb.HID=HID (keyboard and mouse)
+KLST_CORE.menu.usb.HID.build.enable_usb={build.usb_flags} -DUSBD_USE_HID_COMPOSITE
+KLST_CORE.menu.usb.DEVICE_Mouse=USB Device Mouse
+KLST_CORE.menu.usb.DEVICE_Mouse.build.enable_usb=-DUSE_USBDEVICE -DUSBDEVICE_MOUSE_KEYBOARD -DUSBDEVICE_MOUSE -DHAL_HCD_MODULE_ENABLED -DHAL_PCD_MODULE_ENABLED
+KLST_CORE.menu.usb.DEVICE_Keyboard=USB Device Keyboard
+KLST_CORE.menu.usb.DEVICE_Keyboard.build.enable_usb=-DUSE_USBDEVICE -DUSBDEVICE_MOUSE_KEYBOARD -DUSBDEVICE_KEYBOARD -DHAL_HCD_MODULE_ENABLED -DHAL_PCD_MODULE_ENABLED
+KLST_CORE.menu.usb.DEVICE_MIDI=USB Device MIDI
+KLST_CORE.menu.usb.DEVICE_MIDI.build.enable_usb=-DUSE_USBDEVICE -DUSBDEVICE_MIDI -DHAL_HCD_MODULE_ENABLED -DHAL_PCD_MODULE_ENABLED
+KLST_CORE.menu.usb.HOST=USB Host Mouse+Keyboard+MIDI
+KLST_CORE.menu.usb.HOST.build.enable_usb=-DUSE_USBHOST -DHAL_HCD_MODULE_ENABLED -DHAL_PCD_MODULE_ENABLED
+KLST_CORE.menu.usb.HOST_DEVICE_MOUSE=USB Host Mouse+Keyboard+MIDI + USB Device Mouse
+KLST_CORE.menu.usb.HOST_DEVICE_MOUSE.build.enable_usb=-DUSE_USBHOST -DHAL_HCD_MODULE_ENABLED -DHAL_PCD_MODULE_ENABLED -DUSE_USBDEVICE -DUSBDEVICE_MOUSE_KEYBOARD -DUSBDEVICE_MOUSE
+KLST_CORE.menu.usb.HOST_DEVICE_KEYBOARD=USB Host Mouse+Keyboard+MIDI + USB Device Keyboard
+KLST_CORE.menu.usb.HOST_DEVICE_KEYBOARD.build.enable_usb=-DUSE_USBHOST -DHAL_HCD_MODULE_ENABLED -DHAL_PCD_MODULE_ENABLED -DUSE_USBDEVICE -DUSBDEVICE_MOUSE_KEYBOARD -DUSBDEVICE_KEYBOARD
+KLST_CORE.menu.usb.HOST_DEVICE_MIDI=USB Host Mouse+Keyboard+MIDI + USB Device MIDI
+KLST_CORE.menu.usb.HOST_DEVICE_MIDI.build.enable_usb=-DUSE_USBHOST -DHAL_HCD_MODULE_ENABLED -DHAL_PCD_MODULE_ENABLED -DUSE_USBDEVICE -DUSBDEVICE_MIDI
+KLST_CORE.menu.xusb.FS=Low/Full Speed
+KLST_CORE.menu.xusb.HS=High Speed
+KLST_CORE.menu.xusb.HS.build.usb_speed=-DUSE_USB_HS
+KLST_CORE.menu.xusb.HSFS=High Speed in Full Speed mode
+KLST_CORE.menu.xusb.HSFS.build.usb_speed=-DUSE_USB_HS -DUSE_USB_HS_IN_FS
+
+# Optimizations
+KLST_CORE.menu.opt.osstd=Smallest (-Os default)
+KLST_CORE.menu.opt.oslto=Smallest (-Os) with LTO
+KLST_CORE.menu.opt.oslto.build.flags.optimize=-Os -flto
+KLST_CORE.menu.opt.o1std=Fast (-O1)
+KLST_CORE.menu.opt.o1std.build.flags.optimize=-O1
+KLST_CORE.menu.opt.o1lto=Fast (-O1) with LTO
+KLST_CORE.menu.opt.o1lto.build.flags.optimize=-O1 -flto
+KLST_CORE.menu.opt.o2std=Faster (-O2)
+KLST_CORE.menu.opt.o2std.build.flags.optimize=-O2
+KLST_CORE.menu.opt.o2lto=Faster (-O2) with LTO
+KLST_CORE.menu.opt.o2lto.build.flags.optimize=-O2 -flto
+KLST_CORE.menu.opt.o3std=Fastest (-O3)
+KLST_CORE.menu.opt.o3std.build.flags.optimize=-O3
+KLST_CORE.menu.opt.o3lto=Fastest (-O3) with LTO
+KLST_CORE.menu.opt.o3lto.build.flags.optimize=-O3 -flto
+KLST_CORE.menu.opt.ogstd=Debug (-Og)
+KLST_CORE.menu.opt.ogstd.build.flags.optimize=-Og
+
+# Debug information
+KLST_CORE.menu.dbg.none=None
+KLST_CORE.menu.dbg.enable=Enabled (-g)
+KLST_CORE.menu.dbg.enable.build.flags.debug=-g
+
+# C Runtime Library
+KLST_CORE.menu.rtlib.nano=Newlib Nano (default)
+KLST_CORE.menu.rtlib.nanofp=Newlib Nano + Float Printf
+KLST_CORE.menu.rtlib.nanofp.build.flags.ldspecs=--specs=nano.specs -u _printf_float
+KLST_CORE.menu.rtlib.nanofs=Newlib Nano + Float Scanf
+KLST_CORE.menu.rtlib.nanofs.build.flags.ldspecs=--specs=nano.specs -u _scanf_float
+KLST_CORE.menu.rtlib.nanofps=Newlib Nano + Float Printf/Scanf
+KLST_CORE.menu.rtlib.nanofps.build.flags.ldspecs=--specs=nano.specs -u _printf_float -u _scanf_float
+KLST_CORE.menu.rtlib.full=Newlib Standard
+KLST_CORE.menu.rtlib.full.build.flags.ldspecs=

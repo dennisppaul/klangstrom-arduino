@@ -2,7 +2,7 @@
 layout: libdoc
 title: NodeCompressor.hpp
 permalink: /NodeCompressor.hpp/
-index: 49
+index: 50
 ---
 
 ```c

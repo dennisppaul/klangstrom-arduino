@@ -6,7 +6,7 @@
 #include <stdbool.h>
 #include <string.h>
 #include <math.h>
-#include "KLST_Includes.h"
+#include "KLST_SDL-includes.h"
 #include "KLST_SDL-adapter.h"
 
 #ifndef WEAK

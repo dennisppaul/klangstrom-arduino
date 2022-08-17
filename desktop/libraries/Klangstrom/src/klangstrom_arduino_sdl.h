@@ -26,6 +26,10 @@
 #include "KlangstromDefinesArduino.h"
 #include "KlangstromApplicationInterface.h"
 #include "KLST_Simulator.h"
+#include "KlangstromCallback.h"
+
+#include "SDL_render.h"
+
 
 const uint16_t SCREEN_WIDTH = 1024;
 const uint16_t SCREEN_HEIGHT = 768;
@@ -45,9 +49,6 @@ void init_SDL();
 
 void init_renderer();
 
-// SDL_Renderer* getSDLRenderer();
-// void init_display();
-
 void init_card();
 
 void init_app();
@@ -63,6 +64,20 @@ void list_audio_devices();
 void update_audiobuffer();
 
 void shutdown_main();
+
+/* klangstrom::KlangstromDisplay */
+
+void registerKlangstromDisplayCallback(klangstrom::KlangstromCallback* pDisplayEventListener);
+
+SDL_Renderer* getSDLRenderer();
+
+uint16_t getSDLRendererWidth();
+
+uint16_t getSDLRendererHeight();
+
+uint16_t getKlangstromDisplayPosX();
+
+uint16_t getKlangstromDisplayPosY();
 
 /* klang::KlangApplicationInterface */
 

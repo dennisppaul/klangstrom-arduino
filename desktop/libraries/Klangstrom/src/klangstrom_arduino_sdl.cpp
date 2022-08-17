@@ -47,27 +47,18 @@
 
 /* KLST */
 #include "KLST_SDL-adapter.h"
-#include "KlangMath.hpp"
 #include "KlangstromApplicationArduino.h"
 #include "klangstrom_arduino_debug.h"
 #include "klangstrom_arduino_proxy_encoder.h"
 #include "klangstrom_arduino_sdl.h"
 
-// #if __has_include("KlangstromDisplayBSP_SDL.h")
-// #include "KlangstromDisplayBSP_SDL.h"
-// #define KLST_SDL_HAS_DISPLAY
-// KlangstromDisplayBSP_SDL *mDisplay_SDL;
-// void init_display();
-// void draw_display();
-// #endif
+/* KLST -------------------------------------------------------------------------------- */
 
 extern KLST_Simulator     mSimulator;
 
 #define Q(x)       #x
 #define QUOTE(x)   Q(x)
 #define APP_HEADER QUOTE(KLANG_APP_CLASS.hpp)
-
-/* KLST -------------------------------------------------------------------------------- */
 
 #if defined(KLANG_TARGET_MCU)
 #define KLANG_NL "\n\r"
@@ -76,6 +67,10 @@ extern KLST_Simulator     mSimulator;
 #endif
 
 /* KLST -------------------------------------------------------------------------------- */
+
+float clamp(float pValue) {
+	return pValue > 1.0 ? 1.0 : (pValue < -1.0 ? -1.0 : pValue);
+}
 
 float FLOAT_32(uint8_t *pBytes, uint32_t pOffset) {
     float output;
@@ -138,10 +133,41 @@ SIGNAL_TYPE         mOutputBufferRight[KLANG_SAMPLES_PER_AUDIO_BLOCK];
 static void init_encoders();
 static void loop_encoders();
 
+/* KlangstromDisplay ------------------------------------------------------------------- */
+
+#ifdef KLST_SDL_HAS_DISPLAY
+
+klangstrom::KlangstromCallback* mDisplayEventListener = nullptr;
+
+void registerKlangstromDisplayCallback(klangstrom::KlangstromCallback* pDisplayEventListener) {
+	mDisplayEventListener = pDisplayEventListener;
+}
+
+void draw_klangstrom_display() {
+	if (mDisplayEventListener != nullptr) {
+		mDisplayEventListener->callback();
+	}
+}
+
+uint16_t getSDLRendererWidth() {
+	return SCREEN_WIDTH;
+}
+
+uint16_t getSDLRendererHeight() {
+	return SCREEN_HEIGHT;
+}
+
+SDL_Renderer* getSDLRenderer() {
+	return gRenderer;
+}
+
+#endif 
+
+/* KLST -------------------------------------------------------------------------------- */
+
 void init_main() {
     init_SDL();
     init_renderer();
-//     init_display();
     init_app();
     init_encoders();
 
@@ -378,8 +404,6 @@ static const int16_t GUI_UNIT_HEIGHT   = 32;
 static const int16_t GUI_UNIT_WIDTH    = 16;
 static const int16_t GUI_UNIT_SPACING  = 4;
 static const int16_t GUI_ELEMENT_WIDTH = GUI_UNIT_WIDTH * 2 + GUI_UNIT_SPACING;
-static const int16_t mHeight           = GUI_UNIT_HEIGHT;
-static const int16_t mSpacing          = GUI_ELEMENT_WIDTH + GUI_UNIT_SPACING;
 
 void draw_oscilloscope() {
     display_scale = 0.5f;
@@ -402,10 +426,10 @@ void draw_oscilloscope() {
         int k        = i + mBufferOffset;
         int x0       = SCREEN_WIDTH * (float)(i - 1) / (float)KLANG_SAMPLES_PER_AUDIO_BLOCK;
         int x1       = SCREEN_WIDTH * (float)i / (float)KLANG_SAMPLES_PER_AUDIO_BLOCK;
-        int y0_left  = klang::KlangMath::clamp(mInternalAudioOutputBufferRight[j]) * SCREEN_HEIGHT / 4 + SCREEN_HEIGHT / 4;
-        int y1_left  = klang::KlangMath::clamp(mInternalAudioOutputBufferRight[k]) * SCREEN_HEIGHT / 4 + SCREEN_HEIGHT / 4;
-        int y0_right = klang::KlangMath::clamp(mInternalAudioOutputBufferLeft[j]) * SCREEN_HEIGHT / 4 + SCREEN_HEIGHT / 4 * 3;
-        int y1_right = klang::KlangMath::clamp(mInternalAudioOutputBufferLeft[k]) * SCREEN_HEIGHT / 4 + SCREEN_HEIGHT / 4 * 3;
+        int y0_left  = clamp(mInternalAudioOutputBufferRight[j]) * SCREEN_HEIGHT / 4 + SCREEN_HEIGHT / 4;
+        int y1_left  = clamp(mInternalAudioOutputBufferRight[k]) * SCREEN_HEIGHT / 4 + SCREEN_HEIGHT / 4;
+        int y0_right = clamp(mInternalAudioOutputBufferLeft[j]) * SCREEN_HEIGHT / 4 + SCREEN_HEIGHT / 4 * 3;
+        int y1_right = clamp(mInternalAudioOutputBufferLeft[k]) * SCREEN_HEIGHT / 4 + SCREEN_HEIGHT / 4 * 3;
         line(gRenderer, x0, y0_left, x1, y1_left);
         line(gRenderer, x0, y0_right, x1, y1_right);
     }
@@ -429,9 +453,11 @@ void draw_capslock() {
 }
 
 void draw_encoders() {
+	static const int16_t mEncoderSpacing = GUI_ELEMENT_WIDTH + GUI_UNIT_SPACING;
+    static const int16_t mHeight = GUI_UNIT_HEIGHT;
     for (uint8_t i = 0; i < NUMBER_OF_ENCODERS; i++) {
         KlangstromArduinoProxyEncoder &e = mEncoders[i];
-        e.dimensions.x                   = GUI_START_X + i * mSpacing;
+        e.dimensions.x                   = GUI_START_X + i * mEncoderSpacing;
         e.dimensions.y                   = GUI_START_Y + GUI_UNIT_HEIGHT + GUI_UNIT_SPACING;
         e.dimensions.w                   = GUI_ELEMENT_WIDTH;
         e.dimensions.h                   = mHeight;
@@ -441,13 +467,23 @@ void draw_encoders() {
     }
 }
 
+uint16_t getKlangstromDisplayPosX() {
+	static const int16_t mSpacing = GUI_ELEMENT_WIDTH + GUI_UNIT_SPACING;
+    return GUI_START_X + mSpacing * 13;
+}
+
+uint16_t getKlangstromDisplayPosY() {
+	static const int16_t mSpacing = GUI_UNIT_HEIGHT + GUI_UNIT_SPACING;
+    return GUI_START_Y + mSpacing * 2;
+}
+
 void draw_LEDs() {
     static const int16_t mWidth   = GUI_UNIT_WIDTH;
     static const int16_t mHeight  = GUI_UNIT_HEIGHT;
-    static const int16_t mSpacing = mWidth + GUI_UNIT_SPACING;
+    static const int16_t mLEDSpacing = mWidth + GUI_UNIT_SPACING;
     for (uint8_t i = 0; i < NUMBER_OF_LEDS; i++) {
         SDL_Rect r;
-        r.x = GUI_START_X + i * mSpacing;
+        r.x = GUI_START_X + i * mLEDSpacing;
         r.y = GUI_START_Y;
         r.w = mWidth;
         r.h = mHeight;
@@ -469,7 +505,7 @@ void loop_renderer() {
     draw_encoders();
     draw_LEDs();
 #ifdef KLST_SDL_HAS_DISPLAY
-    draw_display();
+    draw_klangstrom_display();
 #endif
 
     SDL_RenderPresent(gRenderer);
@@ -720,32 +756,6 @@ void init_renderer() {
         SDL_RENDERER_SOFTWARE
         // DL_RENDERER_ACCELERATED
     );
-}
-
-
-SDL_Renderer* getSDLRenderer() {
-	return gRenderer;
-}
-
-// void init_display() {
-//     mDisplay_SDL = new KlangstromDisplayBSP_SDL();
-//     DisplayPtr   = mDisplay_SDL;
-// 
-//     mDisplay_SDL->init(gRenderer);
-//     mDisplay_SDL->set_position(
-//         SCREEN_WIDTH / 2 - mDisplay_SDL->width() / 2,
-//         SCREEN_HEIGHT / 2 - mDisplay_SDL->height() / 2);
-// }
-
-extern void updateSDLDisplay();
-
-void draw_display() {
-	updateSDLDisplay();
-//     if (mDisplay_SDL != nullptr) {
-//         mDisplay_SDL->set_position(GUI_START_X + SCREEN_WIDTH * display_scale + GUI_UNIT_SPACING,
-//                                    GUI_START_Y + (GUI_UNIT_HEIGHT + GUI_UNIT_SPACING) * 2);
-//         mDisplay_SDL->draw();
-//     }
 }
 
 // void init_card() {

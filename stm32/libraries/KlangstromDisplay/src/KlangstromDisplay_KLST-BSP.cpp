@@ -21,12 +21,10 @@
 
 #if (KLST_ARCH==KLST_ARCH_MCU)
 
-#include "KlangstromDisplay_KLST-BSP.h"
-
 #include <stdbool.h>
 
+#include "KlangstromDisplay_KLST-BSP.h"
 #include "Arduino.h"
-#include "KlangstromDisplayFont.h"
 
 #if defined(KLST_BOARD_KLST_TINY)
   #include "stm32f4xx.h"
@@ -50,8 +48,10 @@
 // see https://github.com/martnak/STM32-ILI9341/blob/master/Src/ILI9341/ILI9341_STM32_Driver.c)
 // @todo(move static methods to class + get rid of ILI9341_WIDTH and ILI9341_HEIGHT)
 
-klangstrom::KlangstromDisplay_KLST_BSP* DisplayBSPPtr = new klangstrom::KlangstromDisplay_KLST_BSP();
-klangstrom::KlangstromDisplay*         DisplayPtr    = DisplayBSPPtr;
+// klangstrom::KlangstromDisplay_KLST_BSP* DisplayBSPPtr = new klangstrom::KlangstromDisplay_KLST_BSP();
+// klangstrom::KlangstromDisplay*         DisplayPtr    = DisplayBSPPtr;
+// klangstrom::KlangstromDisplay_KLST_BSP* DisplayBSPPtr = new klangstrom::KlangstromDisplay_KLST_BSP();
+// klangstrom::KlangstromDisplay*         DisplayPtr    = DisplayBSPPtr;
 
 #define ILI9341_MADCTL_MY  0x80
 #define ILI9341_MADCTL_MX  0x40
@@ -585,7 +585,9 @@ void klangstrom::KlangstromDisplay_KLST_BSP::BSP_character(uint16_t x, uint16_t 
 void klangstrom::KlangstromDisplay_KLST_BSP::BSP_block(uint16_t x, uint16_t y, uint16_t w, uint16_t h, const uint16_t* data) {
     ILI9341_DrawImage(x, y, w, h, data);
 }
-#else
+
+#else // ILI9341_USE_OLD_DRIVER
+
 /* --- BSP --- */
 
 #include "ili9341.h"
@@ -601,8 +603,6 @@ extern SPI_HandleTypeDef hspi3;
 #define ILI9341_DC_GPIO_Port  GPIOD
 
 ili9341_t*                             _lcd;
-klangstrom::KlangstromDisplay_KLST_BSP* DisplayBSPPtr = new klangstrom::KlangstromDisplay_KLST_BSP();
-klangstrom::KlangstromDisplay*         DisplayPtr    = DisplayBSPPtr;
 
 void klangstrom::KlangstromDisplay_KLST_BSP::BSP_init() {
     _lcd = ili9341_new(
@@ -653,6 +653,6 @@ void klangstrom::KlangstromDisplay_KLST_BSP::BSP_character(uint16_t x, uint16_t 
 void klangstrom::KlangstromDisplay_KLST_BSP::BSP_block(uint16_t x, uint16_t y, uint16_t w, uint16_t h, const uint16_t* data) {
     // ILI9341_DrawImage(x, y, w, h, data);
 }
-#endif
+#endif // ILI9341_USE_OLD_DRIVER
 
 #endif // (KLST_ARCH==KLST_ARCH_MCU)

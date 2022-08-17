@@ -1,6 +1,6 @@
 {
     "name": "klangstrom-stm32",
     "description": "Klangstrom Firmware",
-    "version": "0.0.0",
+    "version": "0.0.3",
     "url": "https://github.com/dennisppaul/klangstrom-arduino"
 }
