@@ -25,19 +25,23 @@ compiler.klst_lib_src=./Klangstrom
 #compiler.klst_lib_src=../../libraries/Klangstrom/src
 #compiler.klst_shared_lib=../../libraries/Klangstrom/lib/klangstrom.a
 
+compiler.SDL2_lib_src.macosx=SDL2.macosx/include/
+compiler.SDL2_lib_src.linux=SDL2.linux/include/
+compiler.SDL2_lib_src.windows=SDL2.windows/include/
+
 compiler.c.cmd=gcc
 compiler.c.std=c17
 compiler.c.flags.macosx=-c -g -MMD -Wall -flto -std={compiler.c.std} {compiler.klst_define}
-compiler.c.flags.linux=-c -Wall -std={compiler.c.std} {compiler.klst_define}
+compiler.c.flags.linux=-c -g -MMD -Wall -flto -std={compiler.c.std} {compiler.klst_define}
 compiler.c.flags.windows=
-recipe.c.o.pattern="{compiler.path}{compiler.c.cmd}" {compiler.c.flags} {includes} "-I{build.core.path}/{compiler.klst_shared}" "-I{build.core.path}/{compiler.klst_lib_src}" "{source_file}" -o "{object_file}"
+recipe.c.o.pattern="{compiler.path}{compiler.c.cmd}" {compiler.c.flags} {includes} "-I{build.core.path}/{compiler.klst_shared}" "-I{build.core.path}/{compiler.klst_lib_src}" "-I{build.core.path}/{compiler.SDL2_lib_src}" "{source_file}" -o "{object_file}"
 
 compiler.cpp.cmd=g++
 compiler.cpp.std=c++17
 compiler.cpp.flags.macosx=-c -g -MMD -Wall -flto  -std={compiler.cpp.std} -Wno-long-long -pthread {compiler.klst_define}
-compiler.cpp.flags.linux=-c -Wall -std={compiler.cpp.std} -Wno-long-long -pthread {compiler.klst_define}
+compiler.cpp.flags.linux=-c -g -MMD -Wall -flto -std={compiler.cpp.std} -Wno-long-long -pthread {compiler.klst_define}
 compiler.cpp.flags.windows=
-recipe.cpp.o.pattern="{compiler.path}{compiler.cpp.cmd}" {compiler.cpp.flags} {includes} "-I{build.core.path}/{compiler.klst_shared}" "-I{build.core.path}/{compiler.klst_lib_src}" "{source_file}" -o "{object_file}"
+recipe.cpp.o.pattern="{compiler.path}{compiler.cpp.cmd}" {compiler.cpp.flags} {includes} "-I{build.core.path}/{compiler.klst_shared}" "-I{build.core.path}/{compiler.klst_lib_src}" "-I{build.core.path}/{compiler.SDL2_lib_src}" "{source_file}" -o "{object_file}"
 
 ###################################################################################################
 #
@@ -57,13 +61,15 @@ recipe.ar.pattern="{compiler.path}{compiler.ar.cmd}" {compiler.ar.flags} "{archi
 
 compiler.c.linker.cmd=g++
 compiler.ldflags=
-compiler.c.linker.libpath.macosx=cores/sdl/lib.macos/libSDL2.a
-compiler.c.linker.libpath.linux=cores/sdl/lib.linux/libSDL2.a
-compiler.c.linker.libpath.windows=
-compiler.c.linker.SDL2flags.macosx=-lm -liconv -Wl,-framework,CoreAudio -Wl,-framework,AudioToolbox -Wl,-framework,ForceFeedback -lobjc -Wl,-framework,CoreVideo -Wl,-framework,Cocoa -Wl,-framework,Carbon -Wl,-framework,IOKit -Wl,-weak_framework,QuartzCore -Wl,-weak_framework,Metal
-compiler.c.linker.SDL2flags.linux=-D_THREAD_SAFE -D_REENTRANT
+# @TODO try to get rif of `cores/sdl` in `libpath`
+compiler.c.linker.libpath.macosx=cores/sdl/SDL2.macos
+compiler.c.linker.libpath.linux=cores/sdl/SDL2.linux
+compiler.c.linker.libpath.windows=cores/sdl/SDL2.windows
+compiler.c.linker.SDL2flags.macosx=-lm -liconv -Wl,-framework,CoreAudio -Wl,-framework,AudioToolbox -Wl,-framework,ForceFeedback -lobjc -Wl,-framework,CoreVideo -Wl,-framework,Cocoa -Wl,-framework,Carbon -Wl,-framework,IOKit -Wl,-weak_framework,QuartzCore -Wl,-weak_framework,Metal -lSDL2
+compiler.c.linker.SDL2flags.linux=-lm -D_THREAD_SAFE -D_REENTRANT -lpthread -lSDL2 -L{runtime.platform.path}/{compiler.c.linker.libpath}/lib/
 compiler.c.linker.SDL2flags.windows=
-recipe.c.combine.pattern="{compiler.path}{compiler.c.linker.cmd}" {object_files} {compiler.c.linker.SDL2flags} {runtime.platform.path}/{compiler.c.linker.libpath} "{build.path}/{archive_file}" "-L{build.path}" -o "{build.path}/{build.project_name}.exec" {compiler.ldflags}
+recipe.c.combine.pattern="{compiler.path}{compiler.c.linker.cmd}" {object_files} {compiler.c.linker.SDL2flags} "{build.path}/{archive_file}" "-L{build.path}" -o "{build.path}/{build.project_name}.exec" {compiler.ldflags}
+# recipe.c.combine.pattern="{compiler.path}{compiler.c.linker.cmd}" {object_files} {compiler.c.linker.SDL2flags} {runtime.platform.path}/{compiler.c.linker.libpath} "{build.path}/{archive_file}" "-L{build.path}" -o "{build.path}/{build.project_name}.exec" {compiler.ldflags}
 
 # copy run script to `/tmp/` ( or similar )
 compiler.execpath=sketch-exec
@@ -84,12 +90,12 @@ recipe.hooks.linking.postlink.1.pattern="{build.core.path}/../../{compiler.copy}
 preproc.includes.cmd.macosx=g++
 preproc.includes.cmd.linux=g++
 preproc.includes.flags=-w -x c++ -M -MG -MP
-recipe.preproc.includes="{compiler.path}{preproc.includes.cmd}" {compiler.cpp.flags} {preproc.includes.flags} {compiler.cpp.extra_flags} {build.extra_flags} {includes} "-I{build.core.path}/{compiler.klst_shared}" "-I{build.core.path}/{compiler.klst_lib_src}" "{source_file}"
+recipe.preproc.includes="{compiler.path}{preproc.includes.cmd}" {compiler.cpp.flags} {preproc.includes.flags} {compiler.cpp.extra_flags} {build.extra_flags} {includes} "-I{build.core.path}/{compiler.klst_shared}" "-I{build.core.path}/{compiler.klst_lib_src}" "-I{build.core.path}/{compiler.SDL2_lib_src}" "{source_file}"
 
 preproc.macros.cmd.macosx=g++
 preproc.macros.cmd.linux=g++
 preproc.macros.flags=-w -x c++ -E -CC
-recipe.preproc.macros="{compiler.path}{preproc.macros.cmd}" {compiler.cpp.flags} {preproc.macros.flags} {compiler.cpp.extra_flags} {build.extra_flags} {includes} "-I{build.core.path}/{compiler.klst_shared}" "-I{build.core.path}/{compiler.klst_lib_src}" "{source_file}" -o "{preprocessed_file_path}"
+recipe.preproc.macros="{compiler.path}{preproc.macros.cmd}" {compiler.cpp.flags} {preproc.macros.flags} {compiler.cpp.extra_flags} {build.extra_flags} {includes} "-I{build.core.path}/{compiler.klst_shared}" "-I{build.core.path}/{compiler.klst_lib_src}" "-I{build.core.path}/{compiler.SDL2_lib_src}" "{source_file}" -o "{preprocessed_file_path}"
 
 ###################################################################################################
 #
