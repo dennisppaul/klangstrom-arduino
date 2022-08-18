@@ -8,7 +8,7 @@
 # BSP
 #
 
-KLST_CORE.name=Klangstrom Board KLST_CORE(STM32H743II)
+KLST_CORE.name=Klangstrom Board KLST_CORE (STM32H743II)
 
 KLST_CORE.build.variant=KLST_CORE
 KLST_CORE.build.board=KLST_CORE

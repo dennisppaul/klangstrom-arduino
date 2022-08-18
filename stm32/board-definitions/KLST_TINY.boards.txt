@@ -8,7 +8,7 @@
 # BSP
 #
 
-KLST_TINY.name=Klangstrom Board KLST_TINY(STM32H743VI)
+KLST_TINY.name=Klangstrom Board KLST_TINY (STM32F446RET)
 
 KLST_TINY.build.variant=KLST_TINY
 KLST_TINY.build.board=KLST_TINY

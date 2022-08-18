@@ -24,7 +24,7 @@ menu.upload_method=Upload method
 # BSP
 #
 
-KLST_SHEEP.name=Klangstrom Board KLST_SHEEP(STM32H743VI)
+KLST_SHEEP.name=Klangstrom Board KLST_SHEEP (STM32H743VI)
 
 KLST_SHEEP.build.board=KLST_SHEEP
 KLST_SHEEP.build.variant=KLST_SHEEP
@@ -167,7 +167,7 @@ KLST_SHEEP.menu.rtlib.full.build.flags.ldspecs=
 # BSP
 #
 
-KLST_TINY.name=Klangstrom Board KLST_TINY(STM32H743VI)
+KLST_TINY.name=Klangstrom Board KLST_TINY (STM32F446RET)
 
 KLST_TINY.build.variant=KLST_TINY
 KLST_TINY.build.board=KLST_TINY
@@ -310,7 +310,7 @@ KLST_TINY.menu.rtlib.full.build.flags.ldspecs=
 # BSP
 #
 
-KLST_CORE.name=Klangstrom Board KLST_CORE(STM32H743II)
+KLST_CORE.name=Klangstrom Board KLST_CORE (STM32H743II)
 
 KLST_CORE.build.variant=KLST_CORE
 KLST_CORE.build.board=KLST_CORE

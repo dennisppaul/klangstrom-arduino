@@ -8,7 +8,7 @@
 # BSP
 #
 
-KLST_SHEEP.name=Klangstrom Board KLST_SHEEP(STM32H743VI)
+KLST_SHEEP.name=Klangstrom Board KLST_SHEEP (STM32H743VI)
 
 KLST_SHEEP.build.board=KLST_SHEEP
 KLST_SHEEP.build.variant=KLST_SHEEP
