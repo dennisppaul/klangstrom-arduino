@@ -37,6 +37,8 @@ void setup() {
     klst_enable_cycle_counter();
 }
 
+void loop() {}
+
 void beat(uint32_t pBeat) {
     klangstrom::led_toggle(LED_00);
     mVCO.set_frequency(55 * random(1, 8));

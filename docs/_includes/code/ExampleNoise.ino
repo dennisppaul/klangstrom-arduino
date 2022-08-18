@@ -24,6 +24,8 @@ void audioblock(SIGNAL_TYPE* pOutputLeft, SIGNAL_TYPE* pOutputRight, SIGNAL_TYPE
     mDAC.process_frame(pOutputLeft, pOutputRight);
 }
 
+void loop() {}
+
 void handle_key_pressed(int key) {
     switch (key) {
         case '1':

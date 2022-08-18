@@ -55,6 +55,8 @@ void setup() {
     beats_per_minute(480);
 }
 
+void loop() {}
+
 void draw_files_list() {
     for (uint16_t i = 0; i < mFiles.size(); i++) {
         if (i != mTextSelected) {

@@ -29,6 +29,8 @@ void setup() {
     Strom::connect(mTrigger, StromNodeTrigger::CH_OUT_TRIGGER_00, mNote, StromNodeNote::CH_IN_TRIGGER);
 }
 
+void loop() {}
+
 void beat(uint32_t pBeat) {
     STROM_LOG("--- PROCESS   ---");
     Strom::update(mTrigger);

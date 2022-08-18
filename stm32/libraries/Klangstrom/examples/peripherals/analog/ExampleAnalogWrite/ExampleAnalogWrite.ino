@@ -17,6 +17,8 @@ void setup() {
     beats_per_minute(100 * 60);  // sample at 100Hz
 }
 
+void loop() {}
+
 void beat(uint32_t pBeat) {
     LED(LED_00, LED_TOGGLE);
 

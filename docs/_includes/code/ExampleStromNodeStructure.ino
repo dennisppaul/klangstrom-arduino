@@ -17,6 +17,8 @@ void setup() {
                           mNote, strom::StromNodeNote::CH_IN_TRIGGER);
 }
 
+void loop() {}
+
 void beat(uint32_t pBeat) {
     STROM_LOG("--- PROCESS   ---");
     strom::Strom::update(mTrigger);

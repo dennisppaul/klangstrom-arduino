@@ -15,6 +15,8 @@ void setup() {
     usb_device_init();
 }
 
+void loop() {}
+
 void event_receive(const uint8_t event, const float* data) {
     switch (event) {
         case EVENT_ENCODER_BUTTON_PRESSED:

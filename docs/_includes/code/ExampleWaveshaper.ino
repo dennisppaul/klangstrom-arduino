@@ -52,6 +52,8 @@ void setup() {
     mVCO02.set_amplitude(0.85);
 }
 
+void loop() {}
+
 void audioblock(SIGNAL_TYPE* pOutputLeft, SIGNAL_TYPE* pOutputRight, SIGNAL_TYPE* pInputLeft, SIGNAL_TYPE* pInputRight) {
     mDAC.process_frame(pOutputLeft, pOutputRight);
 }

@@ -33,6 +33,8 @@ void setup() {
     beats_per_minute(120 * 6);
 }
 
+void loop() {}
+
 void set_frequency(uint8_t pOffset) {
     for (uint8_t i = 0; i < NUM_OF_OSC; ++i) {
         mOSC[i].set_frequency(BASE_FREQ * (i + pOffset + FREQ_OFFSET));

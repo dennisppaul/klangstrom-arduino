@@ -40,6 +40,8 @@ void event_receive(const uint8_t event, const float* data) {
     }
 }
 
+void loop() {}
+
 void receive_midi_note_on(uint8_t channel, uint8_t note, uint8_t velocity) {
     led(LED_02, true);
 }

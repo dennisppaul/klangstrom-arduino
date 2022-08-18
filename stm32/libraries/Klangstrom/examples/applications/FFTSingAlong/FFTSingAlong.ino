@@ -35,6 +35,8 @@ void setup() {
     beats_per_minute(480);
 }
 
+void loop() {}
+
 void beat(uint32_t pBeat) {
     mFFT.perform_analysis();
     float mFrequency = mFFT.get_frequency_gaussian_interpolation();

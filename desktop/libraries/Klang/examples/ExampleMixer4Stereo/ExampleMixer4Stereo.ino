@@ -52,6 +52,8 @@ void setup() {
     mDAC.set_stereo(true);
 }
 
+void loop() {}
+
 void event_receive(const EVENT_TYPE event, const float* data) {
     switch (event) {
         case EVENT_MOUSE_MOVED:

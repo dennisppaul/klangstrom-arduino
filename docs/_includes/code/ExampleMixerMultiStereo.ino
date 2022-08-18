@@ -46,6 +46,8 @@ void setup() {
     beats_per_minute(480);
 }
 
+void loop() {}
+
 void beat(uint32_t pBeat) {
     for (uint8_t i = 0; i < NUM_OF_OSC; ++i) {
         fTraveller[i].pan += fTraveller[i].speed * fTraveller[i].direction;

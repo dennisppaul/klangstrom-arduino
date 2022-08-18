@@ -49,6 +49,8 @@ void setup() {
     mOscD.set_waveform(NodeVCOWavetable::WAVEFORM::SINE);
 }
 
+void loop() {}
+
 void event_receive(const EVENT_TYPE event, const float* data) {
     switch (event) {
         case EVENT_MOUSE_MOVED:

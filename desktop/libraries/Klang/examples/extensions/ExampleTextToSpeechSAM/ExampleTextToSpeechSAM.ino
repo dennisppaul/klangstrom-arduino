@@ -22,6 +22,8 @@ void setup() {
     mTTS.speak("/HAA5RGLOW MAY5N NAA5RMEY4 IHSD \x9b\x9b\0", true);
 }
 
+void loop() {}
+
 void audioblock(SIGNAL_TYPE* pOutputLeft, SIGNAL_TYPE* pOutputRight, SIGNAL_TYPE* pInputLeft, SIGNAL_TYPE* pInputRight) {
     mDAC.process_frame(pOutputLeft, pOutputRight);
 }

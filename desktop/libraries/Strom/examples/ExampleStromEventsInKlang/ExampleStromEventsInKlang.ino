@@ -64,6 +64,8 @@ void setup() {
                           mNote, strom::StromNodeNote::CH_IN_TRIGGER);
 }
 
+void loop() {}
+
 void beat(uint32_t pBeat) {
     strom::Strom::update(mTrigger);
     if (pBeat == 8) {

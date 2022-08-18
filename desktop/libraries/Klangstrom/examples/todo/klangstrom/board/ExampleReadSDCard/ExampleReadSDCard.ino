@@ -101,3 +101,6 @@ void setup() {
     // list all files on card with date and size
     root.ls(LS_R | LS_DATE | LS_SIZE);
 }
+
+void loop() {}
+

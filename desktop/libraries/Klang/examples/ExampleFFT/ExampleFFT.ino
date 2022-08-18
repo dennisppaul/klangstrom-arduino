@@ -55,6 +55,8 @@ void setup() {
     Klang::unlock();
 }
 
+void loop() {}
+
 void beat(uint32_t pBeat) {
     if (!mFFTAnalyseInline) {
         mFFT.perform_analysis();  // perform analysis manually if inline analysis is disabled
