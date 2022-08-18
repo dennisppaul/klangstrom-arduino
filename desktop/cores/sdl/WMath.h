@@ -19,6 +19,8 @@
 #ifndef _WIRING_MATH_
 #define _WIRING_MATH_
 
+#include <cstdint>
+
 extern long random(long) ;
 extern long random(long, long) ;
 extern void randomSeed(uint32_t dwSeed) ;

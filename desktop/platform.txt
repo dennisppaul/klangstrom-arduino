@@ -75,10 +75,10 @@ recipe.c.combine.pattern="{compiler.path}{compiler.c.linker.cmd}" {object_files}
 compiler.execpath=sketch-exec
 compiler.copy.macosx={compiler.execpath}/copy-sketch-exec.macos.sh
 compiler.copy.windows=
-compiler.copy.linux=
+compiler.copy.linux={compiler.execpath}/copy-sketch-exec.linux.sh
 compiler.exec.macosx={compiler.execpath}/sketch-exec.sh
 compiler.exec.windows=
-compiler.exec.linux=
+compiler.exec.linux={compiler.execpath}/sketch-exec.sh
 recipe.hooks.linking.postlink.1.pattern="{build.core.path}/../../{compiler.copy}" "{build.core.path}/../../{compiler.exec}"
 
 ###################################################################################################
