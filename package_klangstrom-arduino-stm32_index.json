@@ -3,23 +3,23 @@
     {
       "name": "klangstrom-arduino",
       "websiteURL": "https://github.com/dennisppaul/klangstrom-arduino",
-      "maintainer": "Dennis P Paul",
+      "maintainer": "Dennis P Paul + Jacob Remin",
       "email": "hello@dennisppaul.de",
       "help": {
-        "online": "http://klangstrom-for-arduino.dennisppaul.de/"
+        "online": "https://klangstrom-for-arduino.dennisppaul.de/"
       },
       "platforms": [
         {
-          "name": "Klangstrom for Arduino",
+          "name": "Klangstrom (Boards)",
           "architecture": "stm32",
           "version": "0.0.3",
           "category": "Contributed",
           "url": "https://github.com/dennisppaul/klangstrom-arduino/raw/release/klangstrom-arduino-stm32-0.0.3.tar.bz2",
           "archiveFileName": "klangstrom-arduino-stm32-0.0.3.tar.bz2",
-          "checksum": "SHA-256:11c9ade340a3b64fc485af06e83d38abd7606140e3b6eeff5e73866b6d6f27c0",
-          "size": "5484495",
+          "checksum": "SHA-256:555412c7f9e3584e67f88d097de9607f9fab11ae4bf2d1d0dcae78d100efec27",
+          "size": "5509383",
           "boards": [
-            {"name": "Klangstrom (STM32)"}
+            {"name": "Klangstrom (Boards)"}
           ],
           "toolsDependencies": [
             {
