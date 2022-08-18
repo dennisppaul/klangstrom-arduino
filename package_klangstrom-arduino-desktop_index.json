@@ -19,7 +19,7 @@
           "checksum": "SHA-256:9425cb3e2ab4eb94998df8a58159e95a4e3d705d0e1959d193b32b4ff0fc28d5",
           "size": "7374629",
           "boards": [
-            {"name": "Klangstrom (Simulator)"}
+            {"name": "Klangstrom (Desktop Simulator)"}
           ]
         }
       ]

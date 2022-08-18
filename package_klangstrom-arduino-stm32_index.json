@@ -19,7 +19,9 @@
           "checksum": "SHA-256:555412c7f9e3584e67f88d097de9607f9fab11ae4bf2d1d0dcae78d100efec27",
           "size": "5509383",
           "boards": [
-            {"name": "Klangstrom (Boards)"}
+            {"name": "Klangstrom Board KLST_SHEEP (STM32H743VI)"},
+            {"name": "Klangstrom Board KLST_TINY (STM32F446RET)"},
+            {"name": "Klangstrom Board KLST_CORE (STM32H743II)"}
           ],
           "toolsDependencies": [
             {
