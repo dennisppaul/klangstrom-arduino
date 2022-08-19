@@ -22,14 +22,32 @@ alternatively a local development version can be installed by following the step
 - on *macOS* if *Xcode* is not installed, it might be necessary to install the *clang/clang++* compiler. in order to do so, open *Terminal* application ( located in `Applications` > `Utilities` ) and run `xcode-select --install`  
 - download + unpack [current snapshot](https://github.com/dennisppaul/klangstrom-arduino/archive/refs/heads/main.zip) or clone [repository](https://klangstrom-for-arduino.dennisppaul.de). ( note, an unstable development version is available in a [private repository](https://github.com/interaktion-und-raum/klangstrom) by invitation only. )
 - rename folder to `klangstrom`
-- move `klangstrom` folder to the Arduino’s `hardware` folder ( e.g on MacOS `~/Documents/Arduino/hardware/` )
+- move `klangstrom` folder to the Arduino’s `hardware` folder ( e.g on macOS `{$HOME}/Documents/Arduino/hardware/` )
 - (re)start Arduino
 
-### Default Location of `hardware` Folder on MacOS and Windows
+### Default Location of `hardware` Folder on macOS and Windows
 
-    Documents
+the `hardware` is located in the same folder as the `library` folder and the sketches. on macOS and Windows it is organized as follows:
+
+```
+    {$HOME}
+    └── Documents
+        └── Arduino
+            ├── hardware
+            │   └── klangstrom
+            └── libraries
+                 └── ...
+```
+
+on Linux it is, depending on the installation, e.g organized as follows:
+
+```
+    {$HOME}
     └── Arduino
         ├── hardware
         │   └── klangstrom
         └── libraries
              └── ...
+```
+
+examples for the `HOME` placeholder can be e.g `/home/example_user` on Linux or `/Users/example_user` on macOS.
