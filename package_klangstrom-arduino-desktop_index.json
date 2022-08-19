@@ -16,8 +16,8 @@
           "category": "Contributed",
           "url": "https://github.com/dennisppaul/klangstrom-arduino/raw/release/klangstrom-arduino-desktop-0.0.3.tar.bz2",
           "archiveFileName": "klangstrom-arduino-desktop-0.0.3.tar.bz2",
-          "checksum": "SHA-256:9425cb3e2ab4eb94998df8a58159e95a4e3d705d0e1959d193b32b4ff0fc28d5",
-          "size": "7374629",
+          "checksum": "SHA-256:d0be5cd4a2bc04a10038fdb9e96bffd92ea8c1d25d113a6dba0d962bfcd09330",
+          "size": "7374539",
           "boards": [
             {"name": "Klangstrom (Desktop Simulator)"}
           ]
