@@ -1,0 +1,28 @@
+{
+  "packages": [
+    {
+      "name": "klangstrom-arduino",
+      "websiteURL": "https://github.com/dennisppaul/klangstrom-arduino",
+      "maintainer": "Dennis P Paul + Jacob Remin",
+      "email": "hello@dennisppaul.de",
+      "help": {
+        "online": "https://klangstrom-for-arduino.dennisppaul.de/"
+      },
+      "platforms": [
+        {
+          "name": "Klangstrom (Simulator)",
+          "architecture": "desktop",
+          "version": "0.0.3",
+          "category": "Contributed",
+          "url": "https://github.com/dennisppaul/klangstrom-arduino/raw/release/klangstrom-arduino-desktop-0.0.3.tar.bz2",
+          "archiveFileName": "klangstrom-arduino-desktop-0.0.3.tar.bz2",
+          "checksum": "SHA-256:{{CHECKSUM}}",
+          "size": "{{SIZE}}",
+          "boards": [
+            {"name": "Klangstrom (Desktop Simulator)"}
+          ]
+        }
+      ]
+    }
+  ]
+}
