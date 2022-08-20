@@ -51,3 +51,7 @@ on Linux it is, depending on the installation, e.g organized as follows:
 ```
 
 examples for the `HOME` placeholder can be e.g `/home/example_user` on Linux or `/Users/example_user` on macOS.
+
+### Simulator on Windows + Linux
+
+the simulator currently only works reliably macOS. it is not working on Windows yet. on Linux systems it should work ( tested under *Ubuntu 20.04 LTS* ). in case of failure it sometimes works to install the SDL library via `apt` with `sudo apt install libsdl2-dev`.
