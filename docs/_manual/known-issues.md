@@ -9,10 +9,8 @@ index: 666
 
 ## Software
 
-### Klangstrom 
-
-- desktop simulator (`SDL`) currently only works in MacOS
-- desktop simulator (`SDL`) lacks most arduino functions
+- *Desktop Emulator* currently only works on *macOS* and partly on *Linux*
+- *Desktop Emulator* lacks most Arduino functions
 
 ## Hardware
 

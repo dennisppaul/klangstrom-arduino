@@ -40,7 +40,7 @@ KLST_SHEEP (v0.1) is a hand-held-sized development board with a TFT-Display, 2 p
 | 27 | USB-B micro + PWR | USB port for connecting board as *USB device*. can also be used to program and power the board |
 
 <!--
-### Pin Map
+## Pin Map
 
 |     |     | DOMAIN                 | |                 DOMAIN |      |      |
 |----:|:----|:-----------------------|-|-----------------------:|-----:|:-----|
@@ -55,6 +55,29 @@ KLST_SHEEP (v0.1) is a hand-held-sized development board with a TFT-Display, 2 p
 | 5V  | GND | **PWR**                | |              **INPUT** | L    | R    |
 | 3V3 | GND |                        | |             **OUTPUT** | L    | R    |
 -->
+
+## Debugging
+
+*KLST_SHEEP* features a dedicated serial port for debugging which is connected to the *STLINK-V3* programmer. once connected to a computer the programmer creates a virtual serial port ( e.g on *macOS* it might look like this `/dev/tty.usbmodemXXXXXXX` ).
+
+this port can be used e.g to exchange debug information with a *USB Host* e.g a computer running the *Arduino* application.
+
+the example program below can be used to test the serial port:
+
+```
+#include "Klangstrom.h"
+
+void setup() {
+    Serial.begin(115200);
+}
+
+void loop() {
+    Serial.println(".");
+    delay(1000);
+}
+```
+
+the 2 UART ( serial ) ports as well as the *USB Device* port can be used for other applications in parallel.
 
 ## Feature List
 

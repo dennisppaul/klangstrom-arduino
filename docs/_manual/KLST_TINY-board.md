@@ -38,7 +38,7 @@ KLST_TINY (v0.1) is a pocket-calculator-sized development board with 3 push-butt
 | 25 | programmer button | sends board into DFU mode ( LEDs blink in pattern ) |
 | 26 | USB-A | USB port for connecting USB Devices to board as *USB host* e.g computer mouse or keyboard |
 
-### Pin Map
+## Pin Map
 
 ![KLST_TINY--schematics--pin-map]({{ site.baseurl }}{% link assets/KLST_TINY--schematics--pin-map.png %})
 
@@ -73,6 +73,33 @@ KLST_TINY (v0.1) is a pocket-calculator-sized development board with 3 push-butt
 - 1× JTAG/SWD interface ( 10-pin )
 - programmer + reset + boot flash buttons
 - 4× Mounting Holes
+
+## Debugging
+
+`KLST_TINY` can make use of the *USB Device* ( labeled `DEVICE+PWR` ) connector to create a virtual serial port (CDC). this port can be used e.g to exchange debug information with a *USB Host* e.g a computer running the *Arduino* application.
+
+in order to activate the port the following configuration must be selected from the menu in the *Arduino* application:
+
+- from `Tools > U(S)ART support:` select `"Enable (generic 'Serial')"`
+- from `Tools > USB support (if available):` select `"CDC (generic 'Serial' supersede U(S)ART)"`
+- from `Tools > USB speed (if available):` select `"Low/Full Speed"`
+
+the example program below can be used to test the serial port:
+
+```
+#include "Klangstrom.h"
+
+void setup() {
+    Serial.begin(115200);
+}
+
+void loop() {
+    Serial.println(".");
+    delay(1000);
+}
+```
+
+after uploading the program `KLST_TINY` should appear as a virtual serial port ( e.g on *macOS* it might look like this `‌/dev/tty.usbmodemXXXXXXXXXXXXX` ).
 
 ## Errata
 
