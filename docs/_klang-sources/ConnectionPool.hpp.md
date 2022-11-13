@@ -2,7 +2,7 @@
 layout: libdoc
 title: ConnectionPool.hpp
 permalink: /ConnectionPool.hpp/
-index: 26
+index: 30
 ---
 
 ```c

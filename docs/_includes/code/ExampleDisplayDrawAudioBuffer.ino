@@ -11,15 +11,17 @@ NodeVCOFunction mVCO;
 NodeDAC         mDAC;
 
 KlangstromDisplayDrawBuffer mDrawBuffer(32);
+KlangstromDisplay*          Display;
 
 void setup() {
-    Display.begin();
-    Display.background(0, 0, 0);
-    Display.color(255, 255, 255);
-    Display.clear();
+    Display = KlangstromDisplay::create();
+    Display->begin();
+    Display->background(0, 0, 0);
+    Display->color(255, 255, 255);
+    Display->clear();
 
-    Display.textFont(&Font_5x8);
-    Display.text(30, 30, "DRAW AUDIO BUFFER");
+    Display->textFont(&Font_5x8);
+    Display->text(30, 30, "DRAW AUDIO BUFFER");
 
     mDrawBuffer.width         = 128;
     mDrawBuffer.height        = 64;

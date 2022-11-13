@@ -46,9 +46,9 @@ namespace klangstrom {
         void BSP_character(uint16_t x, uint16_t y, char ch, const uint16_t foreground_color, const uint16_t background_color);
         void BSP_block(uint16_t x, uint16_t y, uint16_t w, uint16_t h, const uint16_t *data);
         
-		void callback();
-
         /* --- plattform specific --- */
+
+		void callback();
 
         void ILI9341_Select() {}
         void ILI9341_Unselect() {}

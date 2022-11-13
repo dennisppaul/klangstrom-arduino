@@ -2,7 +2,7 @@
 layout: libdoc
 title: Connection.cpp
 permalink: /Connection.cpp/
-index: 24
+index: 28
 ---
 
 ```c

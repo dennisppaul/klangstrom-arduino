@@ -2,7 +2,7 @@
 layout: libdoc
 title: NodePatch.hpp
 permalink: /NodePatch.hpp/
-index: 73
+index: 77
 ---
 
 ```c

@@ -65,3 +65,5 @@ void setup() {
     }
     Card.close();
 }
+
+void loop() {}

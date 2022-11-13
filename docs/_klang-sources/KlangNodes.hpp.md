@@ -2,7 +2,7 @@
 layout: libdoc
 title: KlangNodes.hpp
 permalink: /KlangNodes.hpp/
-index: 39
+index: 43
 ---
 
 ```c
@@ -40,6 +40,7 @@ index: 39
 #include "NodeDelay.hpp"
 #include "NodeDistortion.hpp"
 #include "NodeEnvelope.hpp"
+#include "NodeVowelFormantFilter.hpp"
 #include "NodeFFT.hpp"
 #include "NodeKernel.hpp"
 #include "NodeKernelBlock.hpp"

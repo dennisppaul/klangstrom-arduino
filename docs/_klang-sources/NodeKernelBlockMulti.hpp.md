@@ -2,7 +2,7 @@
 layout: libdoc
 title: NodeKernelBlockMulti.hpp
 permalink: /NodeKernelBlockMulti.hpp/
-index: 59
+index: 63
 ---
 
 ```c

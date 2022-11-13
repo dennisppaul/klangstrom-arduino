@@ -2,7 +2,7 @@
 layout: libdoc
 title: NodeVCOFunction.hpp
 permalink: /NodeVCOFunction.hpp/
-index: 87
+index: 92
 ---
 
 ```c

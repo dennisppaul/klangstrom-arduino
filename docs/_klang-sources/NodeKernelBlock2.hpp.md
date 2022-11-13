@@ -2,7 +2,7 @@
 layout: libdoc
 title: NodeKernelBlock2.hpp
 permalink: /NodeKernelBlock2.hpp/
-index: 58
+index: 62
 ---
 
 ```c

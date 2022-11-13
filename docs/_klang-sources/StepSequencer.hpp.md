@@ -2,7 +2,7 @@
 layout: libdoc
 title: StepSequencer.hpp
 permalink: /StepSequencer.hpp/
-index: 97
+index: 104
 ---
 
 ```c

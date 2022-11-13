@@ -31,6 +31,7 @@
 #ifndef NodeVCFLowPass_hpp
 #define NodeVCFLowPass_hpp
 
+#include "KlangMath.hpp"
 #include "NodeVCF.hpp"
 
 namespace klang {

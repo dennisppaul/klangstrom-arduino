@@ -2,7 +2,7 @@
 layout: libdoc
 title: NodeVCFLowPass.hpp
 permalink: /NodeVCFLowPass.hpp/
-index: 84
+index: 89
 ---
 
 ```c
@@ -39,6 +39,7 @@ index: 84
 #ifndef NodeVCFLowPass_hpp
 #define NodeVCFLowPass_hpp
 
+#include "KlangMath.hpp"
 #include "NodeVCF.hpp"
 
 namespace klang {

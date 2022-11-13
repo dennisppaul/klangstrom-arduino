@@ -128,9 +128,17 @@ namespace klangstrom {
             }
         }
 
+         void draw_buffer(KlangstromDisplay* g, bool pClearBackground = true) {
+            draw_frame(*g);
+        }
+
         void draw_frame(KlangstromDisplay& g) {
             g.rect(x, y, width, height + 1, false);
             g.line(x, y, x, y + height);
+        }
+
+        void draw_frame(KlangstromDisplay* g) {
+            draw_frame(*g);
         }
 
         uint16_t buffer_size() {

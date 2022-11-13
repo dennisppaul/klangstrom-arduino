@@ -2,7 +2,7 @@
 layout: libdoc
 title: NodePhaser.hpp
 permalink: /NodePhaser.hpp/
-index: 75
+index: 79
 ---
 
 ```c

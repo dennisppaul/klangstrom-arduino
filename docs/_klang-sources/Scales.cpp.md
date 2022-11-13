@@ -2,7 +2,7 @@
 layout: libdoc
 title: Scales.cpp
 permalink: /Scales.cpp/
-index: 95
+index: 101
 ---
 
 ```c

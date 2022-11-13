@@ -32,7 +32,11 @@ __attribute__((constructor(101))) void premain()
 /*
  * \brief Main entry point of Arduino application
  */
+#ifdef USE_XCODE_ENVIRONMENT
+int __main(void)
+#else
 int main(void)
+#endif
 {
 //   initVariant();
 // 
