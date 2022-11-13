@@ -19,7 +19,7 @@
 
 #include "KlangstromDefines.hpp"
 
-#if (KLST_ARCH==KLST_ARCH_MCU) // @TODO( probably better test against specific board KLST_PANDA might has a different codec )
+#if (KLST_ARCH==KLST_ARCH_MCU) // @TODO( probably better test against specific board KLST_PANDA might have a different codec )
 
 #include "AudioCodecWM8731.h"
 
