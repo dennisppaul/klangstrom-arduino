@@ -55,3 +55,12 @@ examples for the `HOME` placeholder can be e.g `/home/example_user` on Linux or 
 ### Simulator on Windows + Linux
 
 the simulator currently only works reliably macOS. it is not working on Windows yet. on Linux systems it should work ( tested under *Ubuntu 20.04 LTS* ). in case of failure it sometimes works to install the SDL library via `apt` with `sudo apt install libsdl2-dev`.
+
+### Installing *STM32CubeProgrammer* on *macOS*
+
+occasionally the *STM32CubeProgrammer* installer application fails to start properly. below is a set of instructions that show how to run the installer from the command line. 
+
+- download most recent version of *STM32CubeProgrammer* from https://www.st.com/en/development-tools/stm32cubeprog.html ( e.g version `2.11.0` )
+- unzip downloaded file in download folder ( e.g `en.stm32cubeprg-mac_v2-11-0.zip` )
+- open command line interface (CLI) ( e.g to use `Terminal.app` go to `Finder`, open *Utilities* folder via menu ( `Go > Utilities` ) or by pressing `CMD+SHIFT+U`, and start `Terminal.app` )
+- run installer from CLI ( e.g `~/Downloads/en.stm32cubeprg-mac_v2-11-0/SetupSTM32CubeProgrammer-2.11.0.app/Contents/MacOs/SetupSTM32CubeProgrammer-2_11_0_macos` )
