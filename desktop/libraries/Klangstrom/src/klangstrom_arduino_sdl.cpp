@@ -19,7 +19,7 @@
 
 #include "KlangstromDefines.hpp"
 
-#if (KLST_ARCH==KLST_ARCH_DESKTOP)
+#if (KLST_ARCH == KLST_ARCH_DESKTOP)
 
 #define KLST_SDL_USE_AUDIO_INPUT
 #define KLST_SDL_INITIALIZE_BEAT
@@ -50,11 +50,12 @@
 #include "KlangstromApplicationArduino.h"
 #include "klangstrom_arduino_debug.h"
 #include "klangstrom_arduino_proxy_encoder.h"
+#include "klangstrom_arduino_proxy_serial.h"
 #include "klangstrom_arduino_sdl.h"
 
 /* KLST -------------------------------------------------------------------------------- */
 
-extern KLST_Simulator     mSimulator;
+extern KLST_Simulator mSimulator;
 
 #define Q(x)       #x
 #define QUOTE(x)   Q(x)
@@ -69,7 +70,7 @@ extern KLST_Simulator     mSimulator;
 /* KLST -------------------------------------------------------------------------------- */
 
 float clamp(float pValue) {
-	return pValue > 1.0 ? 1.0 : (pValue < -1.0 ? -1.0 : pValue);
+    return pValue > 1.0 ? 1.0 : (pValue < -1.0 ? -1.0 : pValue);
 }
 
 float FLOAT_32(uint8_t *pBytes, uint32_t pOffset) {
@@ -137,35 +138,44 @@ static void loop_encoders();
 
 #ifdef KLST_SDL_HAS_DISPLAY
 
-klangstrom::KlangstromCallback* mDisplayEventListener = nullptr;
+klangstrom::KlangstromCallback *mDisplayEventListener = nullptr;
 
-void registerKlangstromDisplayCallback(klangstrom::KlangstromCallback* pDisplayEventListener) {
-	mDisplayEventListener = pDisplayEventListener;
+void registerKlangstromDisplayCallback(klangstrom::KlangstromCallback *pDisplayEventListener) {
+    mDisplayEventListener = pDisplayEventListener;
 }
 
 void draw_klangstrom_display() {
-	if (mDisplayEventListener != nullptr) {
-		mDisplayEventListener->callback();
-	}
+    if (mDisplayEventListener != nullptr) {
+        mDisplayEventListener->callback();
+    }
 }
 
 uint16_t getSDLRendererWidth() {
-	return SCREEN_WIDTH;
+    return SCREEN_WIDTH;
 }
 
 uint16_t getSDLRendererHeight() {
-	return SCREEN_HEIGHT;
+    return SCREEN_HEIGHT;
 }
 
-SDL_Renderer* getSDLRenderer() {
-	return gRenderer;
+SDL_Renderer *getSDLRenderer() {
+    return gRenderer;
 }
 
-#endif 
+#endif
 
 /* KLST -------------------------------------------------------------------------------- */
 
 void init_main() {
+    for (int i = 0; i < KLANG_SAMPLES_PER_AUDIO_BLOCK; i++) {
+        mOutputBufferLeft[i]                                               = 0;
+        mOutputBufferRight[i]                                              = 0;
+        mInternalAudioOutputBufferLeft[i]                                  = 0;
+        mInternalAudioOutputBufferRight[i]                                 = 0;
+        mInternalAudioOutputBufferLeft[i + KLANG_SAMPLES_PER_AUDIO_BLOCK]  = 0;
+        mInternalAudioOutputBufferRight[i + KLANG_SAMPLES_PER_AUDIO_BLOCK] = 0;
+    }
+
     init_SDL();
     init_renderer();
     init_app();
@@ -453,8 +463,8 @@ void draw_capslock() {
 }
 
 void draw_encoders() {
-	static const int16_t mEncoderSpacing = GUI_ELEMENT_WIDTH + GUI_UNIT_SPACING;
-    static const int16_t mHeight = GUI_UNIT_HEIGHT;
+    static const int16_t mEncoderSpacing = GUI_ELEMENT_WIDTH + GUI_UNIT_SPACING;
+    static const int16_t mHeight         = GUI_UNIT_HEIGHT;
     for (uint8_t i = 0; i < NUMBER_OF_ENCODERS; i++) {
         KlangstromArduinoProxyEncoder &e = mEncoders[i];
         e.dimensions.x                   = GUI_START_X + i * mEncoderSpacing;
@@ -468,18 +478,18 @@ void draw_encoders() {
 }
 
 uint16_t getKlangstromDisplayPosX() {
-	static const int16_t mSpacing = GUI_ELEMENT_WIDTH + GUI_UNIT_SPACING;
+    static const int16_t mSpacing = GUI_ELEMENT_WIDTH + GUI_UNIT_SPACING;
     return GUI_START_X + mSpacing * 13;
 }
 
 uint16_t getKlangstromDisplayPosY() {
-	static const int16_t mSpacing = GUI_UNIT_HEIGHT + GUI_UNIT_SPACING;
+    static const int16_t mSpacing = GUI_UNIT_HEIGHT + GUI_UNIT_SPACING;
     return GUI_START_Y + mSpacing * 2;
 }
 
 void draw_LEDs() {
-    static const int16_t mWidth   = GUI_UNIT_WIDTH;
-    static const int16_t mHeight  = GUI_UNIT_HEIGHT;
+    static const int16_t mWidth      = GUI_UNIT_WIDTH;
+    static const int16_t mHeight     = GUI_UNIT_HEIGHT;
     static const int16_t mLEDSpacing = mWidth + GUI_UNIT_SPACING;
     for (uint8_t i = 0; i < NUMBER_OF_LEDS; i++) {
         SDL_Rect r;
@@ -811,7 +821,36 @@ void shutdown_main() {
     SDL_Quit();
 }
 
+void klangstrom_arduino_sim_transmit_serial(int pPort, int pData) {
 #ifdef KLST_SDL_USE_OSC
+#ifdef DEBUG_OSC
+    KLANG_LOG("+++ send OSC: %i, %i", pPort, pData);
+#endif
+    char                      buffer[OSC_TRANSMIT_OUTPUT_BUFFER_SIZE];
+    osc::OutboundPacketStream p(buffer, OSC_TRANSMIT_OUTPUT_BUFFER_SIZE);
+    p << osc::BeginBundleImmediate
+      << osc::BeginMessage(KLANG_OSC_SERIAL)
+      << pPort
+      << pData
+      << osc::EndMessage
+      << osc::EndBundle;
+    mTransmitSocket->Send(p.Data(), p.Size());
+#endif
+}
+
+#ifdef KLST_SDL_USE_OSC
+
+void process_KLANGSTROM_OSC_SERIAL(const osc::ReceivedMessage &msg) {
+#ifdef DEBUG_OSC
+    KLANG_LOG("@sdlApp KLANG_OSC_SERIAL: %s, %d (%s)", msg.AddressPattern(), msg.ArgumentCount(), msg.TypeTags());
+#endif
+    osc::ReceivedMessageArgumentStream args = msg.ArgumentStream();
+    int                                mSerialPort;
+    int                                mSerialData;
+    args >> mSerialPort >> mSerialData >> osc::EndMessage;
+    Serial.recv(mSerialData);
+    serialEvent();
+}
 
 void process_KLANG_OSC_CMD(const osc::ReceivedMessage &msg) {
 #ifdef DEBUG_OSC
@@ -890,6 +929,8 @@ protected:
                 process_KLANG_OSC_DATA(msg);
             } else if (addr_pattern_equals(msg, KLANG_OSC_MIDI_IN)) {
                 process_KLANG_OSC_MIDI_IN(msg);
+            } else if (addr_pattern_equals(msg, KLANG_OSC_SERIAL)) {
+                process_KLANGSTROM_OSC_SERIAL(msg);
             } else if (addr_pattern_equals(msg, KLANG_OSC_SIM)) {
                 mSimulator.process_receive(msg);
 #ifdef DEBUG_OSC
@@ -1066,4 +1107,4 @@ void initVariant() {
 #endif
 }
 
-#endif // (KLST_ARCH==KLST_ARCH_DESKTOP)
+#endif  // (KLST_ARCH==KLST_ARCH_DESKTOP)

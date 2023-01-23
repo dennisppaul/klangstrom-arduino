@@ -177,11 +177,12 @@ namespace klangstrom {
  * this block defines constants for OSC communications
  */
 namespace klangstrom {
-    static const char KLANG_OSC_CMD[]      = "/klang/command";
-    static const char KLANG_OSC_DATA[]     = "/klang/data";
-    static const char KLANG_OSC_MIDI_IN[]  = "/klang/midi_in";
-    static const char KLANG_OSC_MIDI_OUT[] = "/klang/midi_out";
-    static const char KLANG_OSC_SIM[]      = "/klang/sim";
+    static const char KLANG_OSC_CMD[]      = "/klangstrom/command";
+    static const char KLANG_OSC_DATA[]     = "/klangstrom/data";
+    static const char KLANG_OSC_MIDI_IN[]  = "/klangstrom/midi_in";
+    static const char KLANG_OSC_MIDI_OUT[] = "/klangstrom/midi_out";
+    static const char KLANG_OSC_SIM[]      = "/klangstrom/sim";
+    static const char KLANG_OSC_SERIAL[]   = "/klangstrom/serial";
 }  // namespace klangstrom
 
 #ifndef KLANG_OSC_TRANSMIT_ADDRESS

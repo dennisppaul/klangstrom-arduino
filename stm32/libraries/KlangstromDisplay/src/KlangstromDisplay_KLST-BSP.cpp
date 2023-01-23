@@ -367,8 +367,10 @@ static void ILI9341_DrawPixel(uint16_t x, uint16_t y, uint16_t color) {
 }
 
 static void ILI9341_WriteChar(uint16_t x, uint16_t y, char ch, KlangstromDisplayFont font, uint16_t color, uint16_t bgcolor) {
+    if (ch < 32 || ch > 126) {
+        return;
+    }
     uint32_t i, b, j;
-
     ILI9341_Select();
     ILI9341_SetAddressWindow(x, y, x + font.width - 1, y + font.height - 1);
     for (i = 0; i < font.height; i++) {

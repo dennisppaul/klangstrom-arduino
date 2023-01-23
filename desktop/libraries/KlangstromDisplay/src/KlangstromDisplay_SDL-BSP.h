@@ -17,8 +17,8 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _KLANGSTROMDISPLAY_SDL_BSP_H_
-#define _KLANGSTROMDISPLAY_SDL_BSP_H_
+#ifndef _KLANGSTROM_DISPLAY_SDL_BSP_H_
+#define _KLANGSTROM_DISPLAY_SDL_BSP_H_
 
 #include <SDL.h>
 #include <stdio.h>
@@ -81,4 +81,4 @@ namespace klangstrom {
     };
 }  // namespace klangstrom
 
-#endif  // _KLANGSTROMDISPLAY_SDL_BSP_H_
+#endif  // _KLANGSTROM_DISPLAY_SDL_BSP_H_

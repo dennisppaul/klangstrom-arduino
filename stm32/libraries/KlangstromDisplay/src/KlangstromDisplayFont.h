@@ -17,8 +17,8 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef klangstrom_display_font_h
-#define klangstrom_display_font_h
+#ifndef _KLANGSTROM_DISPLAY_FONT_H_
+#define _KLANGSTROM_DISPLAY_FONT_H_
 
 #include <stdint.h>
 
@@ -33,4 +33,4 @@ typedef struct {
     const uint16_t *data;
 } KlangstromDisplayFont;
 
-#endif  // klangstrom_display_font_h
+#endif  // _KLANGSTROM_DISPLAY_FONT_H_

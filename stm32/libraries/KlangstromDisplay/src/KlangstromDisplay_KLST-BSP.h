@@ -17,8 +17,8 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef klangstrom_display_bsp_klst_h
-#define klangstrom_display_bsp_klst_h
+#ifndef _KLANGSTROM_DISPLAY_KLST_BSP_H_
+#define _KLANGSTROM_DISPLAY_KLST_BSP_H_
 
 #include "KlangstromDisplay.h"
 
@@ -38,4 +38,4 @@ namespace klangstrom {
     };
 }  // namespace klangstrom
 
-#endif  // klangstrom_display_bsp_klst_h
+#endif  // _KLANGSTROM_DISPLAY_KLST_BSP_H_

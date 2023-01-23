@@ -17,8 +17,8 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef klangstrom_display_draw_sampler_h
-#define klangstrom_display_draw_sampler_h
+#ifndef _KLANGSTROM_DISPLAY_DRAW_SAMPLER_H_
+#define _KLANGSTROM_DISPLAY_DRAW_SAMPLER_H_
 
 #include <vector>
 
@@ -68,4 +68,4 @@ namespace klangstrom {
     };
 }  // namespace klangstrom
 
-#endif  // klangstrom_display_draw_sampler_h
+#endif  // _KLANGSTROM_DISPLAY_DRAW_SAMPLER_H_

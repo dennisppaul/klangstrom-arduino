@@ -17,6 +17,9 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#ifndef _KLANGSTROM_DISPLAY_FONT_5X8_H_
+#define _KLANGSTROM_DISPLAY_FONT_5X8_H_
+
 #include "KlangstromDisplayFont.h"
 
 static const uint16_t Font_5x8_data[] = {
@@ -117,3 +120,5 @@ static const uint16_t Font_5x8_data[] = {
     0x0000, 0x0000, 0x0000, 0x6000, 0x3000, 0x0000, 0x0000, 0x0000, /* ~ */
 };
 KlangstromDisplayFont Font_5x8 = {5, 8, Font_5x8_data};
+
+#endif  // _KLANGSTROM_DISPLAY_FONT_5X8_H_

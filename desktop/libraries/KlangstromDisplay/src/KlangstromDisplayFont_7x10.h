@@ -17,6 +17,9 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#ifndef _KLANGSTROM_DISPLAY_FONT_7X10_H_
+#define _KLANGSTROM_DISPLAY_FONT_7X10_H_
+
 #include "KlangstromDisplayFont.h"
 
 static const uint16_t Font7x10[] = {
@@ -118,3 +121,5 @@ static const uint16_t Font7x10[] = {
 };
 
 KlangstromDisplayFont Font_7x10 = {7, 10, Font7x10};
+
+#endif  // _KLANGSTROM_DISPLAY_FONT_7X10_H_

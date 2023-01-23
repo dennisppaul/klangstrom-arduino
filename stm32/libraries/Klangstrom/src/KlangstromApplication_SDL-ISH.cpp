@@ -35,6 +35,8 @@ using namespace std;
 
 extern KLST_Simulator mSimulator;
 
+WEAK void serialEvent() {} // @TODO(check location of this function)
+
 /* ----------------------------------------------------------------------------------------------------- */
 
 void klangstrom::begin_serial_debug(bool pWaitForSerial, uint32_t pBaudRate) { Serial.begin(115200); }

@@ -21,7 +21,7 @@
 
 #include "KlangstromDefines.hpp"
 
-#if (KLST_ARCH==KLST_ARCH_DESKTOP)
+#if (KLST_ARCH == KLST_ARCH_DESKTOP)
 
 #include "KlangstromDisplay_SDL-BSP.h"
 #include "klangstrom_arduino_sdl.h"
@@ -31,7 +31,7 @@
 #endif
 
 void klangstrom::KlangstromDisplay_SDL_BSP::callback() {
-	draw();
+    draw();
 }
 
 void klangstrom::KlangstromDisplay_SDL_BSP::BSP_init() {
@@ -41,9 +41,9 @@ void klangstrom::KlangstromDisplay_SDL_BSP::BSP_init() {
                                  SDL_PIXELFORMAT_ARGB8888,
                                  SDL_TEXTUREACCESS_STREAMING,
                                  mScreenWidth, mScreenHeight);
-	registerKlangstromDisplayCallback(this);
-// 	set_position(getSDLRendererWidth() / 2 - width() / 2, getSDLRendererHeight() / 2 -height() / 2);
-	set_position(getKlangstromDisplayPosX(), getKlangstromDisplayPosY());
+    registerKlangstromDisplayCallback(this);
+    // 	set_position(getSDLRendererWidth() / 2 - width() / 2, getSDLRendererHeight() / 2 -height() / 2);
+    set_position(getKlangstromDisplayPosX(), getKlangstromDisplayPosY());
 }
 
 void klangstrom::KlangstromDisplay_SDL_BSP::draw() {
@@ -179,6 +179,9 @@ void klangstrom::KlangstromDisplay_SDL_BSP::BSP_rect(uint16_t x, uint16_t y, uin
 }
 
 void klangstrom::KlangstromDisplay_SDL_BSP::BSP_character(uint16_t x, uint16_t y, char ch, const uint16_t foreground_color, const uint16_t background_color) {
+    if (ch < 32 || ch > 126) {
+        return;
+    }
     if (font != nullptr) {
         uint32_t i, b, j;
         // ILI9341_SetAddressWindow(x, y, x+font->width-1, y+font->height-1);
@@ -233,5 +236,5 @@ void klangstrom::KlangstromDisplay_SDL_BSP::ILI9341_WriteData(uint8_t *buff, siz
     }
 }
 
-#endif // (KLST_ARCH==KLST_ARCH_DESKTOP)
-#endif // __cplusplus
+#endif  // (KLST_ARCH==KLST_ARCH_DESKTOP)
+#endif  // __cplusplus

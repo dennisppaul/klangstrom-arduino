@@ -22,17 +22,15 @@
 
 #include <vector>
 
+#include "KLST_Simulator.h"
+#include "KlangstromApplicationInterface.h"
+#include "KlangstromCallback.h"
 #include "KlangstromDefines.hpp"
 #include "KlangstromDefinesArduino.h"
-#include "KlangstromApplicationInterface.h"
-#include "KLST_Simulator.h"
-#include "KlangstromCallback.h"
-
 #include "SDL_render.h"
 
-
-const uint16_t SCREEN_WIDTH = 1024;
-const uint16_t SCREEN_HEIGHT = 768;
+const uint16_t SCREEN_WIDTH                    = 1024;
+const uint16_t SCREEN_HEIGHT                   = 768;
 const uint16_t OSC_TRANSMIT_OUTPUT_BUFFER_SIZE = 1024;
 
 //@todo maybe merge this into `KLST_SDL-adapter.h`
@@ -81,9 +79,11 @@ uint16_t getKlangstromDisplayPosY();
 
 /* klang::KlangApplicationInterface */
 
-void klangstrom_arduino_event_transmit(EVENT_TYPE pEvent, float *data);
+void klangstrom_arduino_event_transmit(EVENT_TYPE pEvent, float* data);
 void klangstrom_arduino_data_transmit(const uint8_t pSender, uint8_t* pData, uint8_t pDataLength);
-void klangstrom_arduino_sim_transmit(std::vector<float> &pData);
+void klangstrom_arduino_sim_transmit(std::vector<float>& pData);
+
+/* serial */
+void klangstrom_arduino_sim_transmit_serial(int pPort, int pData);
 
 #endif /* klangstrom_arduino_sdl_h */
- 

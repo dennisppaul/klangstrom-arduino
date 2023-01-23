@@ -17,8 +17,8 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _KLANGSTROMDISPLAY_H_
-#define _KLANGSTROMDISPLAY_H_
+#ifndef _KLANGSTROM_DISPLAY_H_
+#define _KLANGSTROM_DISPLAY_H_
 
 // @TODO(#featurerequest, "add option to draw transparent text ( aka no background color drawing in char )")
 
@@ -250,6 +250,22 @@ namespace klangstrom {
                     str++;
                 }
             }
+        }        
+        
+        void character(uint16_t x, uint16_t y, const char c) {
+            if (font) {
+                const uint16_t mForegroundColor = get_color_16i();
+                const uint16_t mBackgroundColor = get_background_16i();
+                if (x + font->width >= width()) {
+                    x = 0;
+                    y += font->height;
+                    if (y + font->height >= height()) {
+                        return;
+                    }
+                }
+                BSP_character(x, y, c, mForegroundColor, mBackgroundColor);
+                x += font->width;
+            }
         }
 
         void image(uint16_t x, uint16_t y, uint16_t w, uint16_t h, const uint16_t *data) {
@@ -389,4 +405,4 @@ namespace klangstrom {
 // extern klangstrom::KlangstromDisplay *DisplayPtr;
 // #define Display (*DisplayPtr)
 
-#endif  // _KLANGSTROMDISPLAY_H_
+#endif  // _KLANGSTROM_DISPLAY_H_

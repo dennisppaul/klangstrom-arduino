@@ -17,8 +17,8 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef klangstrom_display_draw_buffer_h
-#define klangstrom_display_draw_buffer_h
+#ifndef _KLANGSTROM_DISPLAY_DRAW_BUFFER_H_
+#define _KLANGSTROM_DISPLAY_DRAW_BUFFER_H_
 
 #include <vector>
 
@@ -128,7 +128,7 @@ namespace klangstrom {
             }
         }
 
-         void draw_buffer(KlangstromDisplay* g, bool pClearBackground = true) {
+        void draw_buffer(KlangstromDisplay* g, bool pClearBackground = true) {
             draw_frame(*g);
         }
 
@@ -157,4 +157,4 @@ namespace klangstrom {
     };
 }  // namespace klangstrom
 
-#endif  // klangstrom_display_draw_buffer_h
+#endif  // _KLANGSTROM_DISPLAY_DRAW_BUFFER_H_
