@@ -30,6 +30,7 @@ void draw_primitves() {
 
     Display->textFont(&Font_7x10);
     Display->text(10, y += 10, "FONT 7x10 ( Hamburgefonts )");
+    Display->text_scaled(10, y += 40, 4, "123");
 
     /* fonts can be created with the image generator tool */
 

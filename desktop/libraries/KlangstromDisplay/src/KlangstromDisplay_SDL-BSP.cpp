@@ -206,6 +206,26 @@ void klangstrom::KlangstromDisplay_SDL_BSP::BSP_character(uint16_t x, uint16_t y
     }
 }
 
+void klangstrom::KlangstromDisplay_SDL_BSP::BSP_character_scaled(uint16_t x, uint16_t y, uint8_t scale, char ch, const uint16_t foreground_color, const uint16_t background_color) {
+    if (scale == 1) {
+        BSP_character(x, y, ch, foreground_color, background_color);
+        return;
+    }
+    if (ch < 32 || ch > 126) {
+        return;
+    }
+    if (font != nullptr) {
+        uint32_t i, b, j;
+        for (i = 0; i < font->height; i++) {
+            b = font->data[(ch - 32) * font->height + i];
+            for (j = 0; j < font->width; j++) {
+                uint16_t mColor = ((b << j) & 0x8000) ? foreground_color : background_color;
+                BSP_rect_fill(x + j * scale, y + i * scale, scale, scale, mColor);
+            }
+        }
+    }
+}
+
 void klangstrom::KlangstromDisplay_SDL_BSP::BSP_block(uint16_t x, uint16_t y, uint16_t w, uint16_t h, const uint16_t *data) {
     ILI9341_Select();
     ILI9341_SetAddressWindow(x, y, x + w - 1, y + h - 1);

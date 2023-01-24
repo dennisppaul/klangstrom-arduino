@@ -16,27 +16,27 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
- 
+
 #include "KlangstromDefines.hpp"
 
-#if (KLST_ARCH==KLST_ARCH_MCU)
+#if (KLST_ARCH == KLST_ARCH_MCU)
 
 #include <stdbool.h>
 
-#include "KlangstromDisplay_KLST-BSP.h"
 #include "Arduino.h"
+#include "KlangstromDisplay_KLST-BSP.h"
 
 #if defined(KLST_BOARD_KLST_TINY)
-  #include "stm32f4xx.h"
-  #include "stm32f4xx_hal.h"
+#include "stm32f4xx.h"
+#include "stm32f4xx_hal.h"
 #elif defined(KLST_BOARD_KLST_CORE)
-  #include "stm32h7xx.h"
-  #include "stm32h7xx_hal.h"
+#include "stm32h7xx.h"
+#include "stm32h7xx_hal.h"
 #elif defined(KLST_BOARD_KLST_SHEEP)
-  #include "stm32h7xx.h"
-  #include "stm32h7xx_hal.h"
+#include "stm32h7xx.h"
+#include "stm32h7xx_hal.h"
 #else
-  #warning @KlangstromDisplay_KLST-BSP architecture not supported
+#warning @KlangstromDisplay_KLST-BSP architecture not supported
 #endif
 
 #define ILI9341_USE_OLD_DRIVER  // also commented out DMA in `main.c`
@@ -584,11 +584,31 @@ void klangstrom::KlangstromDisplay_KLST_BSP::BSP_character(uint16_t x, uint16_t 
     ILI9341_WriteChar(x, y, ch, *font, foreground_color, background_color);
 }
 
+void klangstrom::KlangstromDisplay_KLST_BSP::BSP_character_scaled(uint16_t x, uint16_t y, uint8_t scale, char ch, const uint16_t foreground_color, const uint16_t background_color) {
+    if (scale == 1) {
+        BSP_character(x, y, ch, foreground_color, background_color);
+        return;
+    }
+    if (ch < 32 || ch > 126) {
+        return;
+    }
+    if (font != nullptr) {
+        uint32_t i, b, j;
+        for (i = 0; i < font->height; i++) {
+            b = font->data[(ch - 32) * font->height + i];
+            for (j = 0; j < font->width; j++) {
+                uint16_t mColor = ((b << j) & 0x8000) ? foreground_color : background_color;
+                BSP_rect_fill(x + j * scale, y + i * scale, scale, scale, mColor);
+            }
+        }
+    }
+}
+
 void klangstrom::KlangstromDisplay_KLST_BSP::BSP_block(uint16_t x, uint16_t y, uint16_t w, uint16_t h, const uint16_t* data) {
     ILI9341_DrawImage(x, y, w, h, data);
 }
 
-#else // ILI9341_USE_OLD_DRIVER
+#else  // ILI9341_USE_OLD_DRIVER
 
 /* --- BSP --- */
 
@@ -604,7 +624,7 @@ extern SPI_HandleTypeDef hspi3;
 #define ILI9341_DC_Pin        GPIO_PIN_0
 #define ILI9341_DC_GPIO_Port  GPIOD
 
-ili9341_t*                             _lcd;
+ili9341_t* _lcd;
 
 void klangstrom::KlangstromDisplay_KLST_BSP::BSP_init() {
     _lcd = ili9341_new(
@@ -655,6 +675,6 @@ void klangstrom::KlangstromDisplay_KLST_BSP::BSP_character(uint16_t x, uint16_t 
 void klangstrom::KlangstromDisplay_KLST_BSP::BSP_block(uint16_t x, uint16_t y, uint16_t w, uint16_t h, const uint16_t* data) {
     // ILI9341_DrawImage(x, y, w, h, data);
 }
-#endif // ILI9341_USE_OLD_DRIVER
+#endif  // ILI9341_USE_OLD_DRIVER
 
-#endif // (KLST_ARCH==KLST_ARCH_MCU)
+#endif  // (KLST_ARCH==KLST_ARCH_MCU)

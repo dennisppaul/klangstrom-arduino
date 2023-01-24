@@ -791,6 +791,7 @@ const char *get_board_name(uint8_t pBoardID) {
 
 void init_SDL() {
     KLANG_LOG("++++++++++++++++++++++++++++++++++++++++++++++++++");
+    KLANG_LOG("+++                                            +++");
     KLANG_LOG("+++ @Klang_SDL                                 +++");
     KLANG_LOG("+++ KLANG_AUDIO_RATE              : %i      +++", KLANG_AUDIO_RATE);
 #ifdef KLANG_AUDIO_BLOCKS

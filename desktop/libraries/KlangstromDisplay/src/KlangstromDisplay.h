@@ -52,15 +52,14 @@ namespace klangstrom {
     };
 
     class KlangstromDisplay {
-    
-	#ifndef _swap_uint16_t
-	#define _swap_uint16_t(a, b) \
-		{                        \
-			uint16_t t = a;      \
-			a          = b;      \
-			b          = t;      \
-		}
-	#endif
+#ifndef _swap_uint16_t
+#define _swap_uint16_t(a, b) \
+    {                        \
+        uint16_t t = a;      \
+        a          = b;      \
+        b          = t;      \
+    }
+#endif
 
     protected:
         Color                  mColorForeground;
@@ -71,8 +70,8 @@ namespace klangstrom {
         const uint16_t mScreenHeight = 320;
 
     public:
-        static KlangstromDisplay* create();
-    
+        static KlangstromDisplay *create();
+
         KlangstromDisplay() {
             mColorForeground.r = 255;
             mColorForeground.g = 255;
@@ -135,16 +134,17 @@ namespace klangstrom {
 
         /* --- platform specific implementation --- */
 
-        virtual void BSP_init()                                                                                                       = 0;
-        virtual void BSP_set_pixel(const uint16_t x, const uint16_t y, const uint16_t color)                                          = 0;
-        virtual void BSP_clear_background()                                                                                           = 0;
-        virtual void BSP_line_vertical(uint16_t x0, uint16_t y0, uint16_t h, const uint16_t color)                                    = 0;
-        virtual void BSP_line_horizontal(uint16_t x0, uint16_t y0, uint16_t w, const uint16_t color)                                  = 0;
-        virtual void BSP_line(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1, const uint16_t color)                               = 0;
-        virtual void BSP_rect_fill(uint16_t x, uint16_t y, uint16_t w, uint16_t h, const uint16_t color)                              = 0;
-        virtual void BSP_rect(uint16_t x, uint16_t y, uint16_t w, uint16_t h, const uint16_t color)                                   = 0;
-        virtual void BSP_character(uint16_t x, uint16_t y, char ch, const uint16_t foreground_color, const uint16_t background_color) = 0;
-        virtual void BSP_block(uint16_t x, uint16_t y, uint16_t w, uint16_t h, const uint16_t *data)                                  = 0;
+        virtual void BSP_init()                                                                                                                             = 0;
+        virtual void BSP_set_pixel(const uint16_t x, const uint16_t y, const uint16_t color)                                                                = 0;
+        virtual void BSP_clear_background()                                                                                                                 = 0;
+        virtual void BSP_line_vertical(uint16_t x0, uint16_t y0, uint16_t h, const uint16_t color)                                                          = 0;
+        virtual void BSP_line_horizontal(uint16_t x0, uint16_t y0, uint16_t w, const uint16_t color)                                                        = 0;
+        virtual void BSP_line(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1, const uint16_t color)                                                     = 0;
+        virtual void BSP_rect_fill(uint16_t x, uint16_t y, uint16_t w, uint16_t h, const uint16_t color)                                                    = 0;
+        virtual void BSP_rect(uint16_t x, uint16_t y, uint16_t w, uint16_t h, const uint16_t color)                                                         = 0;
+        virtual void BSP_character(uint16_t x, uint16_t y, char ch, const uint16_t foreground_color, const uint16_t background_color)                       = 0;
+        virtual void BSP_character_scaled(uint16_t x, uint16_t y, uint8_t scale, char ch, const uint16_t foreground_color, const uint16_t background_color) = 0;
+        virtual void BSP_block(uint16_t x, uint16_t y, uint16_t w, uint16_t h, const uint16_t *data)                                                        = 0;
 
         /* --- shared draw methods --- */
 
@@ -229,12 +229,13 @@ namespace klangstrom {
         }
 
         void text(uint16_t x, uint16_t y, const char *str) {
+            const uint16_t xx = x;
             if (font) {
                 const uint16_t mForegroundColor = get_color_16i();
                 const uint16_t mBackgroundColor = get_background_16i();
                 while (*str) {
                     if (x + font->width >= width()) {
-                        x = 0;
+                        x = xx;
                         y += font->height;
                         if (y + font->height >= height()) {
                             break;
@@ -250,8 +251,34 @@ namespace klangstrom {
                     str++;
                 }
             }
-        }        
-        
+        }
+
+        void text_scaled(uint16_t x, uint16_t y, uint8_t scale, const char *str) {
+            if (font) {
+                const uint16_t mForegroundColor  = get_color_16i();
+                const uint16_t mBackgroundColor  = get_background_16i();
+                const uint16_t mScaledFontHeight = font->height * scale;
+                const uint16_t mScaledFontWidth  = font->width * scale;
+                while (*str) {
+                    if (x + mScaledFontWidth >= width()) {
+                        x = 0;
+                        y += mScaledFontHeight;
+                        if (y + mScaledFontHeight >= height()) {
+                            break;
+                        }
+                        if (*str == ' ') {
+                            // skip spaces in the beginning of the new line
+                            str++;
+                            continue;
+                        }
+                    }
+                    BSP_character_scaled(x, y, scale, *str, mForegroundColor, mBackgroundColor);
+                    x += mScaledFontWidth;
+                    str++;
+                }
+            }
+        }
+
         void character(uint16_t x, uint16_t y, const char c) {
             if (font) {
                 const uint16_t mForegroundColor = get_color_16i();
