@@ -46,7 +46,7 @@ unsigned char phonemeLengthOutput[60]; //tab47416
 // contains the final soundbuffer
 int bufferpos=0;
 //char *buffer = nullptr; // TODO see `Init()`
-extern char *buffer;
+extern char *SAM_buffer;
 
 
 void SetInput(char *_input)
@@ -65,7 +65,7 @@ void SetMouth(unsigned char _mouth) {mouth = _mouth;}
 void SetThroat(unsigned char _throat) {throat = _throat;}
 void EnableSingmode() {singmode = 1;}
 void DisableSingmode() {singmode = 0;}
-char* GetBuffer(){return buffer;}
+char* GetBuffer(){return SAM_buffer;}
 int GetBufferLength(){return bufferpos;}
 
 void Init(void);

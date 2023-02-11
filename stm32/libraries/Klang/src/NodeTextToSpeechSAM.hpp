@@ -39,7 +39,8 @@
 
 using namespace std;
 
-extern char* buffer;
+extern char*    SAM_buffer;
+extern uint32_t SAM_buffer_max_length;
 
 namespace klang {
     class NodeTextToSpeechSAM : public Node {
@@ -50,15 +51,23 @@ namespace klang {
         NodeTextToSpeechSAM() : NodeTextToSpeechSAM(65536) {}
 
         NodeTextToSpeechSAM(uint32_t pBufferLength) {
-            buffer = new char[pBufferLength];
-            set_pitch(64);
-            set_throat(128);
-            set_speed(72);
-            set_mouth(128);
+            SAM_buffer            = new char[pBufferLength];
+            SAM_buffer_max_length = pBufferLength;
+            fAllocatedBuffer      = true;
+            setDefaults();
+        }
+
+        NodeTextToSpeechSAM(char* pBuffer, uint32_t pBufferLength) {
+            SAM_buffer            = pBuffer;
+            SAM_buffer_max_length = pBufferLength;
+            fAllocatedBuffer      = false;
+            setDefaults();
         }
 
         ~NodeTextToSpeechSAM() {
-            delete[] buffer;
+            if (fAllocatedBuffer) {
+                delete[] SAM_buffer;
+            }
         }
 
         bool connect(Connection* pConnection, CHANNEL_ID pInChannel) { return false; }
@@ -152,8 +161,16 @@ namespace klang {
         uint8_t mMouth;
         uint8_t mSpeed;
 
-        uint32_t mCounter      = 0;
-        bool     mDoneSpeaking = false;
+        uint32_t mCounter         = 0;
+        bool     mDoneSpeaking    = false;
+        bool     fAllocatedBuffer = false;
+
+        void setDefaults() {
+            set_pitch(64);
+            set_throat(128);
+            set_speed(72);
+            set_mouth(128);
+        }
     };
 }  // namespace klang
 
