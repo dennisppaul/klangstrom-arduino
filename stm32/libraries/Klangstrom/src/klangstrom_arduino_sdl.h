@@ -22,7 +22,7 @@
 
 #include <vector>
 
-#include "KLST_Simulator.h"
+#include "KLST_Emulator.h"
 #include "KlangstromApplicationInterface.h"
 #include "KlangstromCallback.h"
 #include "KlangstromDefines.hpp"
@@ -84,6 +84,6 @@ void klangstrom_arduino_data_transmit(const uint8_t pSender, uint8_t* pData, uin
 void klangstrom_arduino_sim_transmit(std::vector<float>& pData);
 
 /* serial */
-void klangstrom_arduino_sim_transmit_serial(int pPort, int pData);
+void klangstrom_arduino_emu_transmit_serial(int pPort, int pData);
 
 #endif /* klangstrom_arduino_sdl_h */

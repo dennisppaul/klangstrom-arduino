@@ -19,13 +19,13 @@
 
 #include "KlangstromDefines.hpp"
 
-#if (KLST_ARCH==KLST_ARCH_DESKTOP)
-
-#include "KLST_SDL-adapter.h"
+#if (KLST_ARCH == KLST_ARCH_DESKTOP)
 
 #include <chrono>
 
 #include "Arduino.h"
+#include "KlangstromApplicationArduino.h"
+#include "KLST_SDL-adapter.h"
 #include "KlangstromApplicationArduino.h"
 #include "KlangstromApplicationInterface_SDL-ISH.h"
 #include "KlangstromDefinesArduino.h"
@@ -33,15 +33,16 @@
 
 using namespace std;
 
-extern KLST_Simulator mSimulator;
+extern KLST_Emulator mEmulator;
 
-WEAK void serialEvent() {} // @TODO(check location of this function)
+WEAK void serialEvent() {}  // @TODO(check location of this function)
 
 /* ----------------------------------------------------------------------------------------------------- */
 
 void klangstrom::begin_serial_debug(bool pWaitForSerial, uint32_t pBaudRate) { Serial.begin(115200); }
 
-void klangstrom::option(uint8_t pOption, float pValue) {}
+void  klangstrom::option(uint8_t pOption, float pValue) {}
+float klangstrom::get_option(uint8_t pOption) { return -1.0; }
 
 void klangstrom::beats_per_minute(float pBPM) { klangstrom_arduino_beats_per_minute(pBPM); }
 
@@ -50,23 +51,23 @@ void klangstrom::beats_per_minute_ms(uint32_t pMicroSeconds) { klangstrom_arduin
 void klangstrom::LED(uint16_t pLED, uint8_t pState) {
     switch (pState) {
         case LED_ON:
-            mSimulator.led(pLED, pState);
+            mEmulator.led(pLED, pState);
             break;
         case LED_OFF:
-            mSimulator.led(pLED, pState);
+            mEmulator.led(pLED, pState);
             break;
         case LED_TOGGLE:
-            mSimulator.led_toggle(pLED);
+            mEmulator.led_toggle(pLED);
             break;
     }
 }
 
 void klangstrom::led(uint16_t pLED, bool pState) {
-    mSimulator.led(pLED, pState);
+    mEmulator.led(pLED, pState);
 }
 
 void klangstrom::led_toggle(uint16_t pLED) {
-    mSimulator.led_toggle(pLED);
+    mEmulator.led_toggle(pLED);
 }
 
 bool klangstrom::button_state(uint8_t pButton) { return false; }
@@ -83,5 +84,4 @@ uint16_t klangstrom::adc(uint8_t pADC) { return 0; }  // @todo(implement ADC)
 
 void klangstrom::dac(uint8_t pDAC, uint16_t pValue) {}  // @todo(implement DAC)
 
-
-#endif // (KLST_ARCH==KLST_ARCH_DESKTOP)
+#endif  // (KLST_ARCH==KLST_ARCH_DESKTOP)

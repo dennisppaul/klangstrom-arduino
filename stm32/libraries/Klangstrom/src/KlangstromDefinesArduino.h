@@ -23,7 +23,7 @@
 #include <stdint.h>
 
 #ifndef WEAK
-#define WEAK __attribute__ ((weak))
+#define WEAK __attribute__((weak))
 #endif
 
 /* compatibility */
@@ -62,7 +62,7 @@ typedef float SIGNAL_TYPE;
 
 /* UIDs */
 
-#define KLST_NUM_OF_U_ID (1 + 10 + 5)
+#define KLST_NUM_OF_U_ID (1 + 10 + 5 + 10)
 static const int16_t  KLST_NO_ID                     = -1;
 static const uint32_t KLST_U_ID[KLST_NUM_OF_U_ID][3] = {
     {0x00000000, 0x00000000, 0x00000000},  // NO BOARD
@@ -81,18 +81,28 @@ static const uint32_t KLST_U_ID[KLST_NUM_OF_U_ID][3] = {
     {0x00190031, 0xFFFFFFFF, 0x00002FC2},  // KLST_CORE_13
     {0x0019002C, 0xFFFFFFFF, 0x00002F9A},  // KLST_CORE_14
     {0x001A0025, 0xFFFFFFFF, 0x0000302E},  // KLST_CORE_15
+    {0x001B003E, 0xFFFFFFFF, 0x00003037},  // KLST_SHEEP_16
+    {0x00470024, 0xFFFFFFFF, 0x00003029},  // KLST_SHEEP_17
+    {0x001A003F, 0xFFFFFFFF, 0x00002F81},  // KLST_SHEEP_18
+    {0x00000000, 0x00000000, 0x00000000},  // KLST_SHEEP_19
+    {0x0046001D, 0xFFFFFFFF, 0x00003093},  // KLST_SHEEP_20
+    {0x00300045, 0xFFFFFFFF, 0x00003013},  // KLST_SHEEP_21
+    {0x002E0028, 0xFFFFFFFF, 0x00003057},  // KLST_SHEEP_22
+    {0x002E0022, 0xFFFFFFFF, 0x00002FE8},  // KLST_SHEEP_23
+    {0x001A003D, 0xFFFFFFFF, 0x00003031},  // KLST_SHEEP_24
+    {0x00300040, 0xFFFFFFFF, 0x00003073},  // KLST_SHEEP_25
 };
 
 /* Klanstrong Defines ( redefined for C context ) */
 
 #ifndef LED_OFF
-#define LED_OFF     0
+#define LED_OFF 0
 #endif
 #ifndef LED_ON
-#define LED_ON      1
+#define LED_ON 1
 #endif
 #ifndef LED_TOGGLE
-#define LED_TOGGLE  2
+#define LED_TOGGLE 2
 #endif
 
 /* DEBUGGING */

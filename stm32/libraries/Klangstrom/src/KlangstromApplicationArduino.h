@@ -20,7 +20,7 @@
 #ifndef KlangstromApplicationArduino_h
 #define KlangstromApplicationArduino_h
 
-/* --- application-related callback functions --- 
+/* --- application-related callback functions ---
  *
  * implemented in applicaton
  *
@@ -32,15 +32,26 @@
 
 #include "KlangstromDefines.hpp"
 #include "KlangstromDefinesArduino.h"
+#include "KlangstromEvents.h"
 
+WEAK void configure();
 WEAK void setup();
 WEAK void loop();
 WEAK void beat(uint32_t pBeat);
-WEAK void event_receive(const EVENT_TYPE event, const float* data); // @todo(as cool as it is to use *raw* arrays, consider using `std::array<float, ?>`)
-WEAK void data_receive(const uint8_t receiver, uint8_t* data, uint8_t length);
 
 WEAK void audioblock(SIGNAL_TYPE* pLeftTX, SIGNAL_TYPE* pRightTX, SIGNAL_TYPE* pLeftRX, SIGNAL_TYPE* pRightRX);
+WEAK void event_receive(const EVENT_TYPE event, const void* data);
 
-#endif // __cplusplus
+#endif  // __cplusplus
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+WEAK void data_receive(const uint8_t receiver, uint8_t* data, uint8_t length);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* KlangstromApplicationArduino_h */

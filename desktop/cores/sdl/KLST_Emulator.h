@@ -1,5 +1,5 @@
-#ifndef KSLT_simulator_h
-#define KSLT_simulator_h
+#ifndef KSLT_emulator_h
+#define KSLT_emulator_h
 
 #include <vector>
 #include "osc/OscReceivedElements.h"
@@ -9,7 +9,7 @@
 #include "Arduino.h"
 #include "KLST_SDL-adapter.h"
 
-class KLST_Simulator {
+class KLST_Emulator {
 
     const static uint8_t    KLST_OSC_SIM_DIGITAL_READ   = 0xF0; 
     const static uint8_t    KLST_OSC_SIM_DIGITAL_WRITE  = 0xF1;
@@ -33,4 +33,4 @@ private:
     bool str_equals(const char *pStringA, const char *pStringB);
     void emit_message_error(const char *pMessage, const char *pTypeTag, const osc::ReceivedMessage &msg);
 };
-#endif /* KSLT_simulator_h */
+#endif /* KSLT_emulator_h */

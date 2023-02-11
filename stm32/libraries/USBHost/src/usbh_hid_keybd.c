@@ -414,16 +414,16 @@ static USBH_StatusTypeDef USBH_HID_KeybdDecode(USBH_HandleTypeDef *phost)
   * @param  info: Keyboard information
   * @retval ASCII code
   */
-uint8_t USBH_HID_GetASCIICode(HID_KEYBD_Info_TypeDef *info)
+uint8_t USBH_HID_GetASCIICode(HID_KEYBD_Info_TypeDef *info, uint8_t index)
 {
   uint8_t   output;
   if ((info->lshift == 1U) || (info->rshift))
   {
-    output =  HID_KEYBRD_ShiftKey[HID_KEYBRD_Codes[info->keys[0]]];
+    output =  HID_KEYBRD_ShiftKey[HID_KEYBRD_Codes[info->keys[index]]];
   }
   else
   {
-    output =  HID_KEYBRD_Key[HID_KEYBRD_Codes[info->keys[0]]];
+    output =  HID_KEYBRD_Key[HID_KEYBRD_Codes[info->keys[index]]];
   }
   return output;
 }

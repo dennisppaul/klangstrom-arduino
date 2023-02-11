@@ -6,7 +6,7 @@
 //
 
 #include "klangstrom_arduino_proxy_serial.h"
-extern void klangstrom_arduino_sim_transmit_serial(int pPort, int pData);
+extern void klangstrom_arduino_emu_transmit_serial(int pPort, int pData);
 
 #include <stdarg.h>
 
@@ -74,7 +74,7 @@ size_t SerialProxy::write(uint8_t c) {
     KLST_LOG_APS("<write>");
     KLST_LOG_APS("char");
     // KLST_CONSOLE("%c", c);
-    klangstrom_arduino_sim_transmit_serial(SERIAL_PORT_ID, c);
+    klangstrom_arduino_emu_transmit_serial(SERIAL_PORT_ID, c);
     return 0;
 }
 

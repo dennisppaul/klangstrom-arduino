@@ -7,47 +7,46 @@
 using namespace klangstrom;
 
 static const uint32_t fWait = 100;
-KlangstromDisplay*    Display;
+KlangstromDisplay&    Display = KlangstromDisplay::create();
 uint8_t               fNumber = 0;
 
 void draw_primitves() {
     uint16_t x = 10;
     uint16_t y = 10;
 
-    Display->textFont(&Font_5x8);
-    Display->text(10, y, "Friends");
+    Display.textFont(&Font_5x8);
+    Display.text(x, y, "Friends");
     y += 8;
 
-    Display->textFont(&Font_7x9);
-    Display->text(10, y, "with");
+    Display.textFont(&Font_7x9);
+    Display.text(x, y, "with");
     y += 9;
 
-    Display->textFont(&Font_7x10);
-    Display->text(10, y, "Technology");
+    Display.textFont(&Font_7x10);
+    Display.text(x, y, "Technology");
     y += 10;
 
-    Display->text_scaled(10, y, 4, "23");
+    Display.text_scaled(x, y, 4, "23");
     y += 10 * 4;
 
-    Display->text_scaled(10, y, 8, "=");
+    Display.text_scaled(x, y, 8, "=");
     y += 10 * 8;
 
-    Display->textFont(&Font_7x9);
+    Display.textFont(&Font_7x9);
     fNumber++;
     fNumber %= 100;
     String s = String(fNumber);
-    Display->text_scaled(10, y, 12, s.c_str());
+    Display.text_scaled(x, y, 12, s.c_str());
 }
 
 void setup() {
-    Display = KlangstromDisplay::create();
-    Display->begin();
+    Display.begin();
 }
 
 void draw_screen(uint8_t r0, uint8_t g0, uint8_t b0, uint8_t r1, uint8_t g1, uint8_t b1) {
-    Display->background(r0, g0, b0);
-    Display->clear();
-    Display->color(r1, g1, b1);
+    Display.background(r0, g0, b0);
+    Display.clear();
+    Display.color(r1, g1, b1);
     draw_primitves();
 }
 

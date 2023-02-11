@@ -70,7 +70,11 @@ namespace klangstrom {
         const uint16_t mScreenHeight = 320;
 
     public:
-        static KlangstromDisplay *create();
+        static KlangstromDisplay *create_ptr();
+        static KlangstromDisplay &create() {
+            KlangstromDisplay *mDisplay = create_ptr();
+            return *mDisplay;
+        }
 
         KlangstromDisplay() {
             mColorForeground.r = 255;

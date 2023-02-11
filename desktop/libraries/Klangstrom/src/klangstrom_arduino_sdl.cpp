@@ -55,7 +55,7 @@
 
 /* KLST -------------------------------------------------------------------------------- */
 
-extern KLST_Simulator mSimulator;
+extern KLST_Emulator mEmulator;
 
 #define Q(x)       #x
 #define QUOTE(x)   Q(x)
@@ -293,12 +293,14 @@ static void handle_key_pressed(SDL_Event &e) {
             // const float data[1] = {(float)(SDL_GetScancodeName((SDL_Scancode)mKey)[0])};
             // event_receive(EVENT_KEY_PRESSED, data);
             /* @TODO("dirty hack … this needs to be handle differently") */
+
+            // @TODO(change to process multiple keys)
             EventKeyboard e;
-            e.key = (float)(SDL_GetScancodeName((SDL_Scancode)mKey)[0]);
+            e.keys[0] = SDL_GetScancodeName((SDL_Scancode)mKey)[0];
             if ((SDL_Scancode)mKey == SDL_SCANCODE_SPACE) {
-                e.key = ' ';
+                e.keys[0] = ' ';
             }
-            event_receive(EVENT_KEY_PRESSED, (float *)(&e));
+            event_receive(EVENT_KEY_PRESSED, &e);
 #ifdef DEBUG_PRINT_EVENTS
             KLANG_LOG("key pressed: %c", SDL_GetScancodeName((SDL_Scancode)mKey)[0]);
 #endif
@@ -318,11 +320,11 @@ static void handle_key_released(SDL_Event &e) {
             // event_receive(EVENT_KEY_RELEASED, data);
             /* @TODO("dirty hack … this needs to be handle differently") */
             EventKeyboard e;
-            e.key = (float)(SDL_GetScancodeName((SDL_Scancode)mKey)[0]);
+            e.keys[0] = (float)(SDL_GetScancodeName((SDL_Scancode)mKey)[0]);
             if ((SDL_Scancode)mKey == SDL_SCANCODE_SPACE) {
-                e.key = ' ';
+                e.keys[0] = ' ';
             }
-            event_receive(EVENT_KEY_RELEASED, (float *)(&e));
+            event_receive(EVENT_KEY_RELEASED, &e);
 #ifdef DEBUG_PRINT_EVENTS
             KLANG_LOG("key released: %c", SDL_GetScancodeName((SDL_Scancode)mKey)[0]);
 #endif
@@ -342,18 +344,24 @@ static void loop_encoders() {
     }
 }
 
-float fMousePreviousX = 0.0f;
-float fMousePreviousY = 0.0f;
+int fMousePreviousX = 0;
+int fMousePreviousY = 0;
 
 void handle_mouse_event(uint8_t event, int x, int y, int button) {
     EventMouse e;
-    e.x             = (float)x / SCREEN_WIDTH;
-    e.y             = (float)y / SCREEN_HEIGHT;
-    e.x_delta       = e.x - fMousePreviousX;
-    e.y_delta       = e.y - fMousePreviousY;
-    fMousePreviousX = e.x;
-    fMousePreviousY = e.y;
-    event_receive(event, (float *)(&e));
+    // @TODO(this is not aligned with the mouse events in `USBHost`)
+    // e.x             = (float)x / SCREEN_WIDTH;
+    // e.y             = (float)y / SCREEN_HEIGHT;
+    // e.x_delta       = e.x - fMousePreviousX;
+    // e.y_delta       = e.y - fMousePreviousY;
+    e.x             = x - fMousePreviousX;
+    e.y             = y - fMousePreviousY;
+    fMousePreviousX = x;
+    fMousePreviousY = y;
+    e.LEFT          = (button != MOUSE_BUTTON_NONE);  // @TODO this only works for left button
+    e.MIDDLE        = false;
+    e.RIGHT         = false;
+    event_receive(event, &e);
 }
 
 void loop_event() {
@@ -373,16 +381,16 @@ void loop_event() {
             // @note(treats all mouse buttons  left mouse button)
             if (e.type == SDL_MOUSEBUTTONDOWN) {
                 mMouseButtonPressed = true;
-                handle_mouse_event(EVENT_MOUSE_PRESSED, x, y, LEFT);
+                handle_mouse_event(EVENT_MOUSE_PRESSED, x, y, MOUSE_BUTTON_LEFT);
             } else if (e.type == SDL_MOUSEBUTTONUP) {
                 mMouseButtonPressed = false;
-                handle_mouse_event(EVENT_MOUSE_RELEASED, x, y, LEFT);
+                handle_mouse_event(EVENT_MOUSE_RELEASED, x, y, MOUSE_BUTTON_LEFT);
             }
             if (e.type == SDL_MOUSEMOTION) {
                 if (mMouseButtonPressed) {
-                    handle_mouse_event(EVENT_MOUSE_DRAGGED, x, y, LEFT);
+                    handle_mouse_event(EVENT_MOUSE_DRAGGED, x, y, MOUSE_BUTTON_LEFT);
                 } else {
-                    handle_mouse_event(EVENT_MOUSE_MOVED, x, y, NONE);
+                    handle_mouse_event(EVENT_MOUSE_MOVED, x, y, MOUSE_BUTTON_NONE);
                 }
             }
         }
@@ -497,7 +505,7 @@ void draw_LEDs() {
         r.y = GUI_START_Y;
         r.w = mWidth;
         r.h = mHeight;
-        if (mSimulator.getLEDs()[i]) {
+        if (mEmulator.getLEDs()[i]) {
             SDL_SetRenderDrawColor(gRenderer, 0xFF, 0x00, 0x00, 0xFF);
             SDL_RenderFillRect(gRenderer, &r);
         }
@@ -774,13 +782,13 @@ void init_renderer() {
 
 const char *get_board_name(uint8_t pBoardID) {
     switch (pBoardID) {
-        case KLANG_BOARD_SIMULATOR_KLST_CORE:
+        case KLANG_BOARD_EMULATOR_KLST_CORE:
             return "KLST_CORE ";
             break;
-        case KLANG_BOARD_SIMULATOR_KLST_TINY:
+        case KLANG_BOARD_EMULATOR_KLST_TINY:
             return "KLST_TINY ";
             break;
-        case KLANG_BOARD_SIMULATOR_KLST_SHEEP:
+        case KLANG_BOARD_EMULATOR_KLST_SHEEP:
             return "KLST_SHEEP";
             break;
         default:
@@ -806,7 +814,7 @@ void init_SDL() {
     KLANG_LOG("+++ KLANG_OSC_TRANSMIT_PORT       : %i", KLANG_OSC_TRANSMIT_PORT);
     KLANG_LOG("+++ KLANG_OSC_RECEIVE_PORT        : %i", KLANG_OSC_RECEIVE_PORT);
 #endif
-    KLANG_LOG("+++ KLANG_BOARD_SIMULATOR         : %s +++", get_board_name(KLANG_BOARD_SIMULATOR));
+    KLANG_LOG("+++ KLANG_BOARD_EMULATOR         : %s +++", get_board_name(KLANG_BOARD_EMULATOR));
     KLANG_LOG("+++                                            +++");
     KLANG_LOG("++++++++++++++++++++++++++++++++++++++++++++++++++");
 
@@ -822,7 +830,7 @@ void shutdown_main() {
     SDL_Quit();
 }
 
-void klangstrom_arduino_sim_transmit_serial(int pPort, int pData) {
+void klangstrom_arduino_emu_transmit_serial(int pPort, int pData) {
 #ifdef KLST_SDL_USE_OSC
 #ifdef DEBUG_OSC
     KLANG_LOG("+++ send OSC: %i, %i", pPort, pData);
@@ -896,14 +904,14 @@ void process_KLANG_OSC_MIDI_IN(const osc::ReceivedMessage &msg) {
         osc::ReceivedMessage::const_iterator arg = msg.ArgumentsBegin();
         mMidiInEvent                             = (EVENT_TYPE)arg->AsInt32();
         if (msg.ArgumentCount() > 1) {
-            float   mData[msg.ArgumentCount() - 1];
+            uint8_t mData[msg.ArgumentCount() - 1];
             uint8_t i = 0;
             for (osc::ReceivedMessage::const_iterator args = msg.ArgumentsBegin();
                  args != msg.ArgumentsEnd(); ++args) {
                 if (i == 0) {
                     args++;
                 }
-                mData[i] = (float)args->AsInt32();
+                mData[i] = args->AsInt32();
                 i++;
             }
             event_receive(mMidiInEvent, mData);
@@ -933,7 +941,7 @@ protected:
             } else if (addr_pattern_equals(msg, KLANG_OSC_SERIAL)) {
                 process_KLANGSTROM_OSC_SERIAL(msg);
             } else if (addr_pattern_equals(msg, KLANG_OSC_SIM)) {
-                mSimulator.process_receive(msg);
+                mEmulator.process_receive(msg);
 #ifdef DEBUG_OSC
             } else {
                 KLANG_LOG("@sdlApp onReceive: %s, %d", msg.AddressPattern(), msg.ArgumentCount());

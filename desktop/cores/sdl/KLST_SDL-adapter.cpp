@@ -10,7 +10,7 @@
 #include "Arduino.h"
 #include "KLST_SDL-includes.h"
 #include "KLST_SDL-adapter.h"
-#include "KLST_Simulator.h"
+#include "KLST_Emulator.h"
 
 using namespace std;
 
@@ -20,15 +20,15 @@ using namespace std;
 #define KLST_LOG_AP(...)
 #endif
 
-KLST_Simulator mSimulator;
+KLST_Emulator mEmulator;
 
 int digitalRead(uint32_t pPin) {
-    return mSimulator.digitalRead(pPin);
+    return mEmulator.digitalRead(pPin);
 }
 
 void digitalWrite(uint32_t pPin, uint32_t pValue) {
     KLST_LOG_AP("<digitalWrite(%i << %i)> " << pPin << ", " << pValue);
-    mSimulator.digitalWrite(pPin, pValue);
+    mEmulator.digitalWrite(pPin, pValue);
 }
 
 void pinMode(uint32_t pPin, uint32_t pMode) {

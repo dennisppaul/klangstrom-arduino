@@ -21,14 +21,14 @@
 
 #if (KLST_ARCH==KLST_ARCH_DESKTOP)
 
-#include "KLST_Simulator.h"
+#include "KLST_Emulator.h"
 #include "klangstrom_arduino_sdl.h"
 #include "KlangstromEvents.h"
 #include "KlangstromApplicationArduino.h"
 
 using namespace klangstrom;
 
-void KLST_Simulator::led(uint8_t pLED, bool pState) {
+void KLST_Emulator::led(uint8_t pLED, bool pState) {
 	const uint8_t mLED = pLED - LED_00; 
 	const uint8_t mID = (mLED >= NUMBER_OF_LEDS) ? (NUMBER_OF_LEDS-1) : mLED;
 	mLEDs[mID] = pState;
@@ -40,19 +40,19 @@ void KLST_Simulator::led(uint8_t pLED, bool pState) {
 	klangstrom_arduino_sim_transmit(mData);
 }
 
-void KLST_Simulator::led_toggle(uint8_t pLED) {
+void KLST_Emulator::led_toggle(uint8_t pLED) {
 	const uint8_t mLED = pLED - LED_00; 
 	const uint8_t mID = (mLED >= NUMBER_OF_LEDS) ? (NUMBER_OF_LEDS-1) : mLED;
 	const bool mState = !mLEDs[mID]; 
 	led(pLED, mState);
 }
 
-int KLST_Simulator::digitalRead(uint32_t pPin) {  
+int KLST_Emulator::digitalRead(uint32_t pPin) {  
 	uint8_t mID = (pPin >= NUMBER_OF_PINS) ? (NUMBER_OF_PINS-1) : pPin;
 	return mPins[mID];
 }
 
-void KLST_Simulator::digitalWrite(uint32_t pPin, int8_t pValue) {
+void KLST_Emulator::digitalWrite(uint32_t pPin, int8_t pValue) {
 	uint8_t mID = (pPin >= NUMBER_OF_PINS) ? (NUMBER_OF_PINS-1) : pPin;
 	mPins[mID] = pValue;
 
@@ -63,7 +63,7 @@ void KLST_Simulator::digitalWrite(uint32_t pPin, int8_t pValue) {
 	klangstrom_arduino_sim_transmit(mData);
 }
 
-void KLST_Simulator::process_receive(const osc::ReceivedMessage &msg) {
+void KLST_Emulator::process_receive(const osc::ReceivedMessage &msg) {
 	/**
 	 * typetag has to start with a single integer ( message type `KLST_OSC_SIM_` ) 
 	 * followed by one or more floats ( date ).
@@ -121,21 +121,21 @@ void KLST_Simulator::process_receive(const osc::ReceivedMessage &msg) {
 	}   
 }
 
-bool* KLST_Simulator::getLEDs() {
+bool* KLST_Emulator::getLEDs() {
 	return mLEDs;
 }
 
-bool KLST_Simulator::str_begins_with(const char *pre, const char *str) {
+bool KLST_Emulator::str_begins_with(const char *pre, const char *str) {
 	size_t lenpre = strlen(pre),
 		lenstr = strlen(str);
 	return lenstr < lenpre ? false : memcmp(pre, str, lenpre) == 0;
 }
 
-bool KLST_Simulator::str_equals(const char *pStringA, const char *pStringB) {
+bool KLST_Emulator::str_equals(const char *pStringA, const char *pStringB) {
 	return (strcmp(pStringA, pStringB) == 0);
 }
 
-void KLST_Simulator::emit_message_error(const char *pMessage, const char *pTypeTag, const osc::ReceivedMessage &msg) {
+void KLST_Emulator::emit_message_error(const char *pMessage, const char *pTypeTag, const osc::ReceivedMessage &msg) {
 	KLST_LOG.print("+++ ERROR / ");
 	KLST_LOG.print("+++ malformed OSC message: ");
 	KLST_LOG.print(pMessage);

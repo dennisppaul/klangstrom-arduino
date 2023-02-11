@@ -19,7 +19,7 @@
 
 #include "KlangstromDefines.hpp"
 
-#if (KLST_ARCH==KLST_ARCH_MCU)
+#if (KLST_ARCH == KLST_ARCH_MCU)
 
 #include "Arduino.h"
 #include "KlangstromApplicationArduino.h"
@@ -40,6 +40,7 @@ void initVariant() {
     registerCoreCallback(&klangstrom_callback);
     // Serial2.begin(115200);
     // Serial2.println("pre_setup");
+    configure();
     KLST_ISH_pre_setup();
 }
 
@@ -284,14 +285,14 @@ void KLST_ISH_handle_encoder_rotations() {
     if (mEncoder_00TickCountPrevious != mEncoder_00TickCountCurrent) {
         EventEncoder e;
         e.index          = ENCODER_00;
-        e.ticks          = (float)mEncoder_00TickCountCurrent;
-        e.previous_ticks = (float)mEncoder_00TickCountPrevious;
+        e.ticks          = mEncoder_00TickCountCurrent;
+        e.previous_ticks = mEncoder_00TickCountPrevious;
         e.delta          = e.ticks - e.previous_ticks;
 #ifdef KLST_ENCODERS_OMIT_ROTATION_EVENTS
         mEncoder_00ToggleOmitEvent = !mEncoder_00ToggleOmitEvent;
         if (mEncoder_00ToggleOmitEvent) {
 #endif
-            event_receive(EVENT_ENCODER_ROTATED, (float*)(&e));
+            event_receive(EVENT_ENCODER_ROTATED, &e);
 #ifdef KLST_ENCODERS_OMIT_ROTATION_EVENTS
         }
 #endif
@@ -302,14 +303,14 @@ void KLST_ISH_handle_encoder_rotations() {
     if (mEncoder_01TickCountPrevious != mEncoder_01TickCountCurrent) {
         EventEncoder e;
         e.index          = ENCODER_01;
-        e.ticks          = (float)mEncoder_01TickCountCurrent;
-        e.previous_ticks = (float)mEncoder_01TickCountPrevious;
+        e.ticks          = mEncoder_01TickCountCurrent;
+        e.previous_ticks = mEncoder_01TickCountPrevious;
         e.delta          = e.ticks - e.previous_ticks;
 #ifdef KLST_ENCODERS_OMIT_ROTATION_EVENTS
         mEncoder_01ToggleOmitEvent = !mEncoder_01ToggleOmitEvent;
         if (mEncoder_01ToggleOmitEvent) {
 #endif
-            event_receive(EVENT_ENCODER_ROTATED, (float*)(&e));
+            event_receive(EVENT_ENCODER_ROTATED, &e);
 #ifdef KLST_ENCODERS_OMIT_ROTATION_EVENTS
         }
 #endif
@@ -321,14 +322,14 @@ void KLST_ISH_handle_encoder_rotations() {
     if (mEncoder_02TickCountPrevious != mEncoder_02TickCountCurrent) {
         EventEncoder e;
         e.index          = ENCODER_02;
-        e.ticks          = (float)mEncoder_02TickCountCurrent;
-        e.previous_ticks = (float)mEncoder_02TickCountPrevious;
+        e.ticks          = mEncoder_02TickCountCurrent;
+        e.previous_ticks = mEncoder_02TickCountPrevious;
         e.delta          = e.ticks - e.previous_ticks;
 #ifdef KLST_ENCODERS_OMIT_ROTATION_EVENTS
         mEncoder_02ToggleOmitEvent = !mEncoder_02ToggleOmitEvent;
         if (mEncoder_02ToggleOmitEvent) {
 #endif
-            event_receive(EVENT_ENCODER_ROTATED, (float*)(&e));
+            event_receive(EVENT_ENCODER_ROTATED, &e);
 #ifdef KLST_ENCODERS_OMIT_ROTATION_EVENTS
         }
 #endif
@@ -343,9 +344,9 @@ void KLST_ISH_handle_encoder_buttons() {
         EventEncoder e;
         e.index = ENCODER_00;
         if (mENCODER_00ButtonState) {
-            event_receive(EVENT_ENCODER_BUTTON_RELEASED, (float*)(&e));
+            event_receive(EVENT_ENCODER_BUTTON_RELEASED, &e);
         } else {
-            event_receive(EVENT_ENCODER_BUTTON_PRESSED, (float*)(&e));
+            event_receive(EVENT_ENCODER_BUTTON_PRESSED, &e);
         }
         mEncoder_00ButtonState = mENCODER_00ButtonState;
     }
@@ -354,9 +355,9 @@ void KLST_ISH_handle_encoder_buttons() {
         EventEncoder e;
         e.index = ENCODER_01;
         if (mENCODER_01ButtonState) {
-            event_receive(EVENT_ENCODER_BUTTON_RELEASED, (float*)(&e));
+            event_receive(EVENT_ENCODER_BUTTON_RELEASED, &e);
         } else {
-            event_receive(EVENT_ENCODER_BUTTON_PRESSED, (float*)(&e));
+            event_receive(EVENT_ENCODER_BUTTON_PRESSED, &e);
         }
         mEncoder_01ButtonState = mENCODER_01ButtonState;
     }
@@ -366,9 +367,9 @@ void KLST_ISH_handle_encoder_buttons() {
         EventEncoder e;
         e.index = ENCODER_02;
         if (mENCODER_02ButtonState) {
-            event_receive(EVENT_ENCODER_BUTTON_RELEASED, (float*)(&e));
+            event_receive(EVENT_ENCODER_BUTTON_RELEASED, &e);
         } else {
-            event_receive(EVENT_ENCODER_BUTTON_PRESSED, (float*)(&e));
+            event_receive(EVENT_ENCODER_BUTTON_PRESSED, &e);
         }
         mEncoder_02ButtonState = mENCODER_02ButtonState;
     }
@@ -624,6 +625,32 @@ void klangstrom::option(uint8_t pOption, float pValue) {
     }
 }
 
+float klangstrom::get_option(uint8_t pOption) {
+    switch (pOption) {
+        case KLST_OPTION_AUDIO_INPUT:
+            return mKLSTAudioLine;
+        case KLST_OPTION_ENCODERS:
+            return mKLSTOptionEnableEncoders;
+        case KLST_OPTION_SERIAL_PORTS:
+            return mKLSTOptionEnableSerialPorts;
+        case KLST_OPTION_BEAT:
+            return mKLSTOptionEnableBeat;
+        case KLST_OPTION_PROGRAMMER_BUTTON:
+            return mKLSTOptionEnableProgrammerButton;
+        case KLST_OPTION_ENABLE_AUDIO_INPUT:
+            return mKLSTOptionEnableAudioInput;
+        case KLST_OPTION_HEADPHONE_OUTPUT_VOLUME:
+            return mKLSTOptionHeadphoneOutputVolume;
+        case KLST_OPTION_SERIAL_00_BAUD_RATE:
+            return mKLSTOptionSerial00BaudRate;
+        case KLST_OPTION_SERIAL_01_BAUD_RATE:
+            return mKLSTOptionSerial01BaudRate;
+        case KLST_OPTION_SERIAL_02_BAUD_RATE:
+            return mKLSTOptionSerial02BaudRate;
+    }
+    return -1.0;
+}
+
 void klangstrom::LED(uint16_t pLED, uint8_t pState) {
     switch (pState) {
         case LED_OFF:
@@ -724,5 +751,4 @@ char* klangstrom::U_ID() {
 
 #endif  // __cplusplus
 
-#endif // (KLST_ARCH==KLST_ARCH_MCU)
-
+#endif  // (KLST_ARCH==KLST_ARCH_MCU)

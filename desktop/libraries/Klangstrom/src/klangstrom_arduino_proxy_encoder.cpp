@@ -21,6 +21,7 @@
 
 #if (KLST_ARCH==KLST_ARCH_DESKTOP)
 
+#include "Klangstrom.h"
 #include "klangstrom_arduino_proxy_encoder.h"
 #include "KlangstromEvents.h" 
 #include "KlangstromApplicationArduino.h" 
@@ -73,22 +74,22 @@ void KlangstromArduinoProxyEncoder::update(bool pFlagged) {
 		fMoved        = ticks - previous_ticks;
 		fMovedCounter = MOVED_COUNTER;
 		EventEncoder e;
-		e.index          = (float)(ID - ENCODER_00);
-		e.ticks          = (float)ticks;
-		e.previous_ticks = (float)previous_ticks;
+		e.index          = ID - ENCODER_00;
+		e.ticks          = ticks;
+		e.previous_ticks = previous_ticks;
 		e.delta          = e.ticks - e.previous_ticks;
-		event_receive(EVENT_ENCODER_ROTATED, (float *)(&e));
+		event_receive(EVENT_ENCODER_ROTATED, &e);
 	}
 	if (button_pressed != previous_button_pressed) {
 		EventEncoder e;
-		e.index          = (float)(ID - ENCODER_00);
-		e.ticks          = (float)ticks;
-		e.previous_ticks = (float)previous_ticks;
+		e.index          = ID - ENCODER_00;
+		e.ticks          = ticks;
+		e.previous_ticks = previous_ticks;
 		e.delta          = e.ticks - e.previous_ticks;
 		if (button_pressed) {
-			event_receive(EVENT_ENCODER_BUTTON_PRESSED, (float *)(&e));
+			event_receive(EVENT_ENCODER_BUTTON_PRESSED, &e);
 		} else {
-			event_receive(EVENT_ENCODER_BUTTON_RELEASED, (float *)(&e));
+			event_receive(EVENT_ENCODER_BUTTON_RELEASED, &e);
 		}
 	}
 	previous_button_pressed = button_pressed;

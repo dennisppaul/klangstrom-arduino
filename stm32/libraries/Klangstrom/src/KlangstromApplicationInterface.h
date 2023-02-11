@@ -23,7 +23,7 @@
 #ifdef __cplusplus
 #include "KlangstromDefines.hpp"
 #include "KlangstromEvents.h"
-#endif // __cplusplus
+#endif  // __cplusplus
 #include "KlangstromDefinesArduino.h"
 
 /* --------------------------------------------------------------------------------------------- */
@@ -45,11 +45,12 @@ namespace klangstrom {
     void     led(uint16_t pLED, bool pState);
     void     led_toggle(uint16_t pLED);
     void     option(uint8_t pOption, float pValue);
+    float    get_option(uint8_t pOption);
     bool     pin_state(uint8_t pButton);
     uint16_t adc(uint8_t pADC);
     void     dac(uint8_t pDAC, uint16_t pValue);
 };  // namespace klangstrom
 
-#endif // __cplusplus
+#endif  // __cplusplus
 
 #endif /* KlangstromApplicationInterface_h */
