@@ -20,8 +20,8 @@ void setup() {
     Klang::connect(mADSR, Node::CH_OUT_SIGNAL, mDAC, NodeDAC::CH_IN_SIGNAL_LEFT);
 }
 
-void audioblock(SIGNAL_TYPE* pOutputLeft, SIGNAL_TYPE* pOutputRight, SIGNAL_TYPE* pInputLeft, SIGNAL_TYPE* pInputRight) {
-    mDAC.process_frame(pOutputLeft, pOutputRight);
+void audioblock(float** input_signal, float** output_signal) {
+    mDAC.process_frame(output_signal[LEFT], output_signal[RIGHT]);
 }
 
 void loop() {}
@@ -50,13 +50,13 @@ void handle_encoder_pressed(int index) {
     mADSR.start();
 }
 
-void event_receive(const EVENT_TYPE event, const float* data) {
+void event_receive(const EVENT_TYPE event, const void* data) {
     switch (event) {
         case EVENT_ENCODER_BUTTON_PRESSED:
             handle_encoder_pressed(encoder_event(data).index);
             break;
         case EVENT_KEY_PRESSED:
-            handle_key_pressed(keyboard_event(data).key);
+            handle_key_pressed(keyboard_event(data).keys[0]);
             break;
         case EVENT_ENCODER_BUTTON_RELEASED:
         case EVENT_KEY_RELEASED:

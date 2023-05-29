@@ -2,7 +2,7 @@
  * Klangstrom
  *
  * This file is part of the *wellen* library (https://github.com/dennisppaul/wellen).
- * Copyright (c) 2022 Dennis P Paul.
+ * Copyright (c) 2023 Dennis P Paul.
  *
  * This library is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -76,10 +76,18 @@ extern SPI_HandleTypeDef ILI9341_SPI_PORT;
 #define SPI_MIN_TIMEOUT 100
 unsigned char burst_buffer[BURST_MAX_SIZE];
 
+/* screen dimension and orientation */
+
+#define ILI9341_UNDEFINED -1
+static int16_t ILI9341_WIDTH    = ILI9341_UNDEFINED;
+static int16_t ILI9341_HEIGHT   = ILI9341_UNDEFINED;
+static int16_t ILI9341_ROTATION = ILI9341_UNDEFINED;
+
 // default orientation
-#define ILI9341_WIDTH    240
-#define ILI9341_HEIGHT   320
-#define ILI9341_ROTATION (ILI9341_MADCTL_MX | ILI9341_MADCTL_BGR)
+// #define ILI9341_WIDTH    240
+// #define ILI9341_HEIGHT   320
+// #define ILI9341_ROTATION (ILI9341_MADCTL_MX | ILI9341_MADCTL_BGR)
+// #define ILI9341_ROTATION (ILI9341_MADCTL_MX | ILI9341_MADCTL_MY | ILI9341_MADCTL_MV | ILI9341_MADCTL_BGR)
 
 // rotate right
 /*
@@ -104,7 +112,8 @@ unsigned char burst_buffer[BURST_MAX_SIZE];
 
 /****************************/
 
-static void ILI9341_Select() {
+static void
+ILI9341_Select() {
     // @TODO(move HAL reference to `KlangstromDisplay_KLST_BSP_SHEEP`)
     HAL_GPIO_WritePin(ILI9341_CS_GPIO_Port, ILI9341_CS_Pin, GPIO_PIN_RESET);
 }
@@ -196,7 +205,16 @@ static void ILI9341_Draw_Colour_Burst(uint16_t Colour, uint32_t Size) {
     ILI9341_Unselect();
 }
 
-static void ILI9341_Init() {
+#include "KlangstromApplicationInterface.h"
+
+static void ILI9341_Init(int16_t width, int16_t height) {
+    ILI9341_WIDTH  = width;
+    ILI9341_HEIGHT = height;
+    if ((klangstrom::ID() == 21) || (klangstrom::ID() == 22)) {
+        ILI9341_ROTATION = (ILI9341_MADCTL_MX | ILI9341_MADCTL_MY | ILI9341_MADCTL_MV | ILI9341_MADCTL_BGR);
+    } else {
+        ILI9341_ROTATION = (ILI9341_MADCTL_MX | ILI9341_MADCTL_BGR);
+    }
     ILI9341_Select();
     ILI9341_Reset();
 
@@ -344,7 +362,7 @@ static void ILI9341_Init() {
     // MADCTL
     ILI9341_WriteCommand(0x36);
     {
-        uint8_t data[] = {ILI9341_ROTATION};
+        uint8_t data[] = {(uint8_t)ILI9341_ROTATION};
         ILI9341_WriteData(data, sizeof(data));
     }
 
@@ -464,7 +482,7 @@ static void ILI9341_DrawImage(uint16_t x, uint16_t y, uint16_t w, uint16_t h, co
 /* --- BSP --- */
 
 void klangstrom::KlangstromDisplay_KLST_BSP::BSP_init() {
-    ILI9341_Init();
+    ILI9341_Init(240, 320);
 }
 
 void klangstrom::KlangstromDisplay_KLST_BSP::BSP_set_pixel(const uint16_t x, const uint16_t y, const uint16_t color) {

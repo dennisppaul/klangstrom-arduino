@@ -35,11 +35,11 @@
 namespace klang {
     class NodeAdd : public NodeKernel {
     public:
-        void set_value(SIGNAL_TYPE pValue) {
+        void set_value(float pValue) {
             mValue = pValue;
         }
 
-        SIGNAL_TYPE get_value() {
+        float get_value() {
             return mValue;
         }
 
@@ -52,12 +52,12 @@ namespace klang {
         }
 
     protected:
-        SIGNAL_TYPE kernel(const SIGNAL_TYPE s) {
+        float kernel(const float s) {
             return s + mValue;
         }
 
     private:
-        SIGNAL_TYPE mValue = 0.0;
+        float mValue = 0.0;
     };
 }  // namespace klang
 

@@ -1,3 +1,5 @@
+#ifdef USE_USBHOST
+
 /**
   ******************************************************************************
   * @file    usbh_hid_mouse.c
@@ -274,3 +276,5 @@ static USBH_StatusTypeDef USBH_HID_MouseDecode(USBH_HandleTypeDef *phost)
   * @}
   */
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
+
+#endif // USE_USBHOST

@@ -8,13 +8,13 @@
 using namespace klang;
 using namespace klangstrom;
 
-NodeDAC             mDAC;
-NodeVCOWavetable    mOsc;
-NodeADSR            mADSR;
+NodeDAC          mDAC;
+NodeVCOWavetable mOsc;
+NodeADSR         mADSR;
 
-void setup()  {
-    Klang::connect(mOsc,    Node::CH_OUT_SIGNAL,  mADSR,   Node::CH_IN_SIGNAL);
-    Klang::connect(mADSR,   Node::CH_OUT_SIGNAL,  mDAC,    NodeDAC::CH_IN_SIGNAL_LEFT);
+void setup() {
+    Klang::connect(mOsc, Node::CH_OUT_SIGNAL, mADSR, Node::CH_IN_SIGNAL);
+    Klang::connect(mADSR, Node::CH_OUT_SIGNAL, mDAC, NodeDAC::CH_IN_SIGNAL_LEFT);
 
     mOsc.set_frequency(DEFAULT_FREQUENCY * 2);
     mOsc.set_amplitude(0.5);
@@ -28,11 +28,11 @@ void setup()  {
 
 void loop() {}
 
-void audioblock(SIGNAL_TYPE* pOutputLeft, SIGNAL_TYPE* pOutputRight, SIGNAL_TYPE* pInputLeft, SIGNAL_TYPE* pInputRight)  {
+void audioblock(SIGNAL_TYPE* pOutputLeft, SIGNAL_TYPE* pOutputRight, SIGNAL_TYPE* pInputLeft, SIGNAL_TYPE* pInputRight) {
     mDAC.process_frame(pOutputLeft, pOutputRight);
 }
 
-void event_receive(const EVENT_TYPE event, const float* data)  {
+void event_receive(const EVENT_TYPE event, const void* data) {
     switch (event) {
         case EVENT_MOUSE_PRESSED:
         case EVENT_KEY_PRESSED:
@@ -64,7 +64,7 @@ void event_receive(const EVENT_TYPE event, const float* data)  {
     }
 }
 
-void midi_note_on(const float* data) {
+void midi_note_on(const void* data) {
     const float mFrequency = KlangMath::note_to_frequency(data[NOTE]);
     const float mAmplitude = data[VELOCITY] / 127.0;
     mOsc.set_frequency(mFrequency);

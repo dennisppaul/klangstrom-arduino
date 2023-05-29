@@ -93,7 +93,7 @@ namespace klang {
         }
 
     protected:
-        void kernel(SIGNAL_TYPE* s) {
+        void kernel(float* s) {
             float               lfo, out;
             std::complex<float> outc;
             for (uint16_t i = 0; i < KLANG_SAMPLES_PER_AUDIO_BLOCK; i++) {

@@ -2,7 +2,7 @@
 layout: libdoc
 title: Connection.hpp
 permalink: /Connection.hpp/
-index: 29
+index: 25
 ---
 
 ```c
@@ -48,7 +48,7 @@ namespace klang {
         Node&      input_node;
         CHANNEL_ID input_channel_id;
 
-        void update(SIGNAL_TYPE* pAudioBlock);
+        void update(float* pAudioBlock);
         void update(AUDIO_BLOCK_ID pAudioBlockID);
 
         static void reset();

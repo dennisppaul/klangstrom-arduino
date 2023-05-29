@@ -1,6 +1,7 @@
+#ifdef USE_USBHOST
+
 #include "USBHost_BSP_inc.h"
 
-#ifdef USE_USBHOST
 #if defined(KLST_BOARD_KLST_SHEEP) || defined(KLST_BOARD_KLST_CORE)
 
 #define USB_HOST__Pin GPIO_PIN_14

@@ -61,17 +61,17 @@ namespace klang {
             return false;
         }
 
-        void update(CHANNEL_ID pChannel, SIGNAL_TYPE* pAudioBlock) {
+        void update(CHANNEL_ID pChannel, float* pAudioBlock) {
             if (is_not_updated()) {
                 for (uint8_t i = 0; i < NUM_CH_IN; i++) {
                     mBlocks_IN[i]           = AudioBlockPool::instance().request();
-                    SIGNAL_TYPE* mBlockData = AudioBlockPool::instance().data(mBlocks_IN[i]);
+                    float* mBlockData = AudioBlockPool::instance().data(mBlocks_IN[i]);
                     output(i).update(Node::CH_IN_SIGNAL, mBlockData);
                 }
                 flag_updated();
             }
             if (pChannel < NUM_CH_OUT) {
-                SIGNAL_TYPE* mBlockData = AudioBlockPool::instance().data(mBlocks_IN[pChannel]);
+                float* mBlockData = AudioBlockPool::instance().data(mBlocks_IN[pChannel]);
                 for (uint16_t i = 0; i < KLANG_SAMPLES_PER_AUDIO_BLOCK; i++) {
                     pAudioBlock[i] = mBlockData[i];
                 }

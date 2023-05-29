@@ -2,7 +2,7 @@
  * Klangstrom
  *
  * This file is part of the *wellen* library (https://github.com/dennisppaul/wellen).
- * Copyright (c) 2022 Dennis P Paul.
+ * Copyright (c) 2023 Dennis P Paul.
  *
  * This library is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,8 +34,9 @@ const uint16_t SCREEN_HEIGHT                   = 768;
 const uint16_t OSC_TRANSMIT_OUTPUT_BUFFER_SIZE = 1024;
 
 //@todo maybe merge this into `KLST_SDL-adapter.h`
-void klangstrom_arduino_beats_per_minute(float pBPM);
-void klangstrom_arduino_beats_per_minute_ms(uint32_t pMicroSeconds);
+void klangstrom_arduino_beats_per_minute(float BPM);
+void klangstrom_arduino_beats_per_minute_ms(uint32_t micro_seconds);
+bool get_encoder_button_state(uint8_t encoder);
 
 void init_main();
 
@@ -80,7 +81,7 @@ uint16_t getKlangstromDisplayPosY();
 /* klang::KlangApplicationInterface */
 
 void klangstrom_arduino_event_transmit(EVENT_TYPE pEvent, float* data);
-void klangstrom_arduino_data_transmit(const uint8_t pSender, uint8_t* pData, uint8_t pDataLength);
+void klangstrom_arduino_data_transmit(const uint8_t sender, uint8_t* data, uint16_t length);
 void klangstrom_arduino_sim_transmit(std::vector<float>& pData);
 
 /* serial */

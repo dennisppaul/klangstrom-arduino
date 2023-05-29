@@ -46,8 +46,8 @@ void setup() {
 
 void loop() {}
 
-void audioblock(SIGNAL_TYPE* pOutputLeft, SIGNAL_TYPE* pOutputRight, SIGNAL_TYPE* pInputLeft, SIGNAL_TYPE* pInputRight) {
-    mDAC.process_frame(pOutputLeft, pOutputRight);
+void audioblock(float** input_signal, float** output_signal) {
+    mDAC.process_frame(output_signal[LEFT], output_signal[RIGHT]);
 }
 
 void beat(uint32_t pBeat) {
@@ -86,10 +86,10 @@ void handle_keyboard_event(char key) {
     }
 }
 
-void event_receive(const EVENT_TYPE event, const float* data) {
+void event_receive(const EVENT_TYPE event, const void* data) {
     switch (event) {
         case EVENT_KEY_PRESSED:
-            handle_keyboard_event(keyboard_event(data).key);
+            handle_keyboard_event(keyboard_event(data).keys[0]);
             break;
         case EVENT_MOUSE_MOVED:
             mCompressor.set_parameter(NodeCompressor::PARAM_RATIO, (int)(mouse_event(data).x * 14.0) + 2);

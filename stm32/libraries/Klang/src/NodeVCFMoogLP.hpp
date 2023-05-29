@@ -85,7 +85,7 @@ namespace klang {
         float in3  = 0;
         float in4  = 0;
 
-        SIGNAL_TYPE process(SIGNAL_TYPE input) {
+        float process(float input) {
             // fc  = cutoff, nearly linear [0,1] -> [0, fs/2]
             // res = resonance [0, 1] -> [no resonance, self-oscillation]
             const float f  = mCutoff * 1.16f;

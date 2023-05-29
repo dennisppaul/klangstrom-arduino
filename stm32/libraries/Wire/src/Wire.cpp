@@ -117,6 +117,10 @@ void TwoWire::end(void)
 void TwoWire::setClock(uint32_t frequency)
 {
   i2c_setTiming(&_i2c, frequency);
+  if (_i2c.isMaster == 0) {
+    i2c_attachSlaveTxEvent(&_i2c, onRequestService);
+    i2c_attachSlaveRxEvent(&_i2c, onReceiveService);
+  }
 }
 
 uint8_t TwoWire::requestFrom(uint8_t address, uint8_t quantity, uint32_t iaddress, uint8_t isize, uint8_t sendStop)
@@ -434,13 +438,13 @@ void TwoWire::onRequestService(i2c_t *obj)
 }
 
 // sets function called on slave write
-void TwoWire::onReceive(void (*function)(int))
+void TwoWire::onReceive(cb_function_receive_t function)
 {
   user_onReceive = function;
 }
 
 // sets function called on slave read
-void TwoWire::onRequest(void (*function)(void))
+void TwoWire::onRequest(cb_function_request_t function)
 {
   user_onRequest = function;
 }

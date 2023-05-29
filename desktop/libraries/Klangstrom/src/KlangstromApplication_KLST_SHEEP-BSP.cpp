@@ -2,7 +2,7 @@
  * Klangstrom
  *
  * This file is part of the *wellen* library (https://github.com/dennisppaul/wellen).
- * Copyright (c) 2022 Dennis P Paul.
+ * Copyright (c) 2023 Dennis P Paul.
  *
  * This library is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,6 +22,8 @@
  */
 
 #if defined(KLST_BOARD_KLST_SHEEP)
+
+#define KLST_BOARD_KLST_SHEEP__CLEAR_SCREEN_ON_STARTUP
 
 #include "Arduino.h"
 #include "AudioCodecWM8731.h"
@@ -46,17 +48,10 @@ extern SPI_HandleTypeDef hspi3;
 extern TIM_HandleTypeDef htim1;
 extern TIM_HandleTypeDef htim2;
 
-/* ----------------------------------------------------------------------------------------------------------------- */
-/* ERROR HANDLING                                                                                                    */
-/* ----------------------------------------------------------------------------------------------------------------- */
+#include "KlangstromApplicationInterface.h"
 
-uint8_t mErrorCode = KLST_ERROR_CODE_NO_ERROR;
-uint8_t KLST_BSP_error_code() {
-    return mErrorCode;
-}
-
-void KLST_BSP_init_LEDs() {
-    const static int mLEDs[KLST_NUM_LEDS] = {
+int klangstrom::get_LED_pin(uint16_t index) {
+    const static int KLST_BOARD_LEDs[KLST_NUM_LEDS] = {
         LED_00,
         LED_01,
         LED_02,
@@ -73,11 +68,37 @@ void KLST_BSP_init_LEDs() {
         LED_13,
         LED_14,
         LED_15};
-    /* LEDs */
-    for (uint8_t i = 0; i < KLST_NUM_LEDS; i++) {
-        pinMode(mLEDs[i], OUTPUT);
+    if (index >= 0 && index < KLST_NUM_LEDS) {
+        return KLST_BOARD_LEDs[index];
+    }
+    return -1;
+}
+
+/* ----------------------------------------------------------------------------------------------------------------- */
+/* ERROR HANDLING                                                                                                    */
+/* ----------------------------------------------------------------------------------------------------------------- */
+
+uint8_t mErrorCode = KLST_ERROR_CODE_NO_ERROR;
+uint8_t KLST_BSP_error_code() {
+    return mErrorCode;
+}
+
+void KLST_BSP_init_LEDs() {
+    for (uint16_t i = 0; i < KLST_NUM_LEDS; i++) {
+        pinMode(klangstrom::get_LED_pin(i), OUTPUT);
     }
 }
+
+#ifdef KLST_BOARD_KLST_SHEEP__CLEAR_SCREEN_ON_STARTUP
+#include "KlangstromDisplay.h"
+void KLST_clear_display() {
+    klangstrom::KlangstromDisplay *mDisplay = klangstrom::KlangstromDisplay::create_ptr();
+    mDisplay->begin();
+    mDisplay->background(0, 0, 0);
+    mDisplay->clear();
+    klangstrom::KlangstromDisplay::release(mDisplay);
+}
+#endif
 
 void KLST_BSP_init_peripherals() {
     MX_GPIO_Init();
@@ -85,6 +106,9 @@ void KLST_BSP_init_peripherals() {
     MX_I2C1_Init();
     MX_SAI1_Init();
     MX_SPI3_Init();
+#ifdef KLST_BOARD_KLST_SHEEP__CLEAR_SCREEN_ON_STARTUP
+    KLST_clear_display();
+#endif
 }
 
 /* ----------------------------------------------------------------------------------------------------------------- */

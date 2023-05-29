@@ -1,5 +1,26 @@
 # Klangstrom for Arduino / Release Notes
 
+## 0.0.3 (20230529)
+
+- added `configure` to set options before `setup`
+- added `get_option` to read back options
+- added MIDI parser to parse raw byte streams ( e.g from serial )
+- `USBHost` + `USBDevice` now have configurable callbacks ( e.g `key_pressed`, `key_released` )
+- `KlangstromDisplay` now has a terminal-style view
+- `KlangstromDisplay` can now scale fonts
+- emulator can now receive emulated (UART) serial data via OSC
+- renamed *simulator* to *emulator*
+- removed *TinyUSB* library
+- added `TaskScheduler`
+- simplified `audioblock` to `void audioblock(float** input_signal, float** output_signal)` so that it can now handle varying number of channels
+- added `KlangWellen` a simplfied DSP library ( inspired by Processing.org library [Wellen](http://github.com/dennisppaul/wellen) )
+- added `DaisyDSP` a comprehensive DSP library
+- SAM can now run in multiple instances
+- improved encoder performance
+- added many new examples
+- cleaned up examples ( WIP )
+- changed `SIGNAL_TYPE` to `float`
+
 ## 0.0.2 (20220318)
 
 - added writing to file in SD Card library

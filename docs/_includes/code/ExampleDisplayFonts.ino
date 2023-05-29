@@ -6,7 +6,7 @@
 
 using namespace klangstrom;
 
-static const uint32_t fWait = 100;
+static const uint32_t fWait   = 100;
 KlangstromDisplay&    Display = KlangstromDisplay::create();
 uint8_t               fNumber = 0;
 

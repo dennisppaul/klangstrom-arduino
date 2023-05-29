@@ -2,7 +2,7 @@
 layout: libdoc
 title: KlangMath.hpp
 permalink: /KlangMath.hpp/
-index: 40
+index: 36
 ---
 
 ```c
@@ -164,15 +164,15 @@ namespace klang {
             return (uint16_t)pValue;
         }
 
-        static SIGNAL_TYPE clamp(SIGNAL_TYPE pValue, SIGNAL_TYPE pMin, SIGNAL_TYPE pMax) {
+        static float clamp(float pValue, float pMin, float pMax) {
             return pValue > pMax ? pMax : (pValue < pMin ? pMin : pValue);
         }
 
-        static SIGNAL_TYPE clamp(SIGNAL_TYPE pValue) {
+        static float clamp(float pValue) {
             return pValue > SIGNAL_MAX ? SIGNAL_MAX : (pValue < SIGNAL_MIN ? SIGNAL_MIN : pValue);
         }
 
-        static SIGNAL_TYPE clamp(uint8_t pValue, uint8_t pMin, uint8_t pMax) {
+        static float clamp(uint8_t pValue, uint8_t pMin, uint8_t pMax) {
             return pValue > pMax ? pMax : (pValue < pMin ? pMin : pValue);
         }
 
@@ -180,7 +180,7 @@ namespace klang {
             return pValue > 127 ? 127 : pValue;
         }
 
-        static SIGNAL_TYPE clamp_signal(SIGNAL_TYPE pValue) {
+        static float clamp_signal(float pValue) {
             return pValue > SIGNAL_MAX ? SIGNAL_MAX : (pValue < SIGNAL_MIN ? SIGNAL_MIN : pValue);
         }
 

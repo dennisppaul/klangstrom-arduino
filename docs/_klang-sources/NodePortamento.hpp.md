@@ -2,7 +2,7 @@
 layout: libdoc
 title: NodePortamento.hpp
 permalink: /NodePortamento.hpp/
-index: 81
+index: 77
 ---
 
 ```c
@@ -95,7 +95,7 @@ namespace klang {
             mSpeed = pSpeed / KLANG_AUDIO_RATE_UINT16;
         }
 
-        void update(CHANNEL_ID pChannel, SIGNAL_TYPE* pAudioBlock) {
+        void update(CHANNEL_ID pChannel, float* pAudioBlock) {
             if (is_not_updated()) {
                 mBlock_VALUE = AudioBlockPool::NO_ID;
                 if (mConnection_CH_IN_VALUE != nullptr) {
@@ -110,13 +110,13 @@ namespace klang {
                 flag_updated();
             }
             if (pChannel == CH_OUT_VALUE) {
-                SIGNAL_TYPE* mBlockData_FREQ;
+                float* mBlockData_FREQ;
                 if (mBlock_VALUE != AudioBlockPool::NO_ID) {
                     mBlockData_FREQ = AudioBlockPool::instance().data(mBlock_VALUE);
                 } else {
                     mBlockData_FREQ = NULL;
                 }
-                SIGNAL_TYPE* mBlockData_SPEED;
+                float* mBlockData_SPEED;
                 if (mBlock_SPEED != AudioBlockPool::NO_ID) {
                     mBlockData_SPEED = AudioBlockPool::instance().data(mBlock_SPEED);
                 } else {
@@ -164,9 +164,9 @@ namespace klang {
         Connection* mConnection_CH_IN_SPEED = nullptr;
 
         bool        mDirty        = false;
-        SIGNAL_TYPE mSpeed        = 0.0;
-        SIGNAL_TYPE mValueCurrent = 0.0;
-        SIGNAL_TYPE mValueDesired = 0.0;
+        float mSpeed        = 0.0;
+        float mValueCurrent = 0.0;
+        float mValueDesired = 0.0;
     };
 }  // namespace klang
 

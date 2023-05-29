@@ -42,7 +42,7 @@ namespace klang {
     using SampleBufferUI16 = SampleBufferT<uint16_t>;
     using SampleBufferI16  = SampleBufferT<int16_t>;
     using SampleBufferF32  = SampleBufferT<float>;
-    using SampleBuffer     = SampleBufferT<SIGNAL_TYPE>;
+    using SampleBuffer     = SampleBufferT<float>;
 
 }  // namespace klang
 

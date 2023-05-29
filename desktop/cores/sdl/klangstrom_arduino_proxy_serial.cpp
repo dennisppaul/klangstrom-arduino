@@ -21,22 +21,22 @@ extern void klangstrom_arduino_emu_transmit_serial(int pPort, int pData);
 #endif
 #endif
 
-#define PRINT_ARDUINO_PROXY_SERIAL
+// #define PRINT_ARDUINO_PROXY_SERIAL
 
 #ifdef PRINT_ARDUINO_PROXY_SERIAL
-#define KLST_CONSOLE(...)    \
-    if (mIsInitialized) {    \
-        printf(__VA_ARGS__); \
+#define KLST_SERIAL_PROXY_CONSOLE(...) \
+    if (mIsInitialized) {              \
+        printf(__VA_ARGS__);           \
     }
-#define KLST_CONSOLE_LN(...) \
-    if (mIsInitialized) {    \
-        printf("> "); \
-        printf(__VA_ARGS__); \
-        printf(KLANG_NL);    \
+#define KLST_SERIAL_PROXY_CONSOLE_LN(...) \
+    if (mIsInitialized) {                 \
+        printf("> ");                     \
+        printf(__VA_ARGS__);              \
+        printf(KLANG_NL);                 \
     }
 #else
-#define KLST_CONSOLE(...)
-#define KLST_CONSOLE_LN(...)
+#define KLST_SERIAL_PROXY_CONSOLE(...)
+#define KLST_SERIAL_PROXY_CONSOLE_LN(...)
 #endif
 
 // #define DEBUG_ARDUINO_PROXY_SERIAL
@@ -73,7 +73,8 @@ void SerialProxy::begin(unsigned long pBaud) {
 size_t SerialProxy::write(uint8_t c) {
     KLST_LOG_APS("<write>");
     KLST_LOG_APS("char");
-    // KLST_CONSOLE("%c", c);
+    KLST_SERIAL_PROXY_CONSOLE("%c", c);
+    cout << c << std::flush;
     klangstrom_arduino_emu_transmit_serial(SERIAL_PORT_ID, c);
     return 0;
 }
@@ -114,7 +115,7 @@ size_t SerialProxy::print(const __FlashStringHelper *) {
 size_t SerialProxy::print(const String &s) {
     KLST_LOG_APS("<print>");
     KLST_LOG_APS("<String>");
-    KLST_CONSOLE("%s", s.c_str());
+    KLST_SERIAL_PROXY_CONSOLE("%s", s.c_str());
     char mBuffer[F_CHAR_BUFFER_SIZE];
     int  mNumChars = snprintf(mBuffer, F_CHAR_BUFFER_SIZE, "%s", s.c_str());
     write(mBuffer, mNumChars);
@@ -124,7 +125,7 @@ size_t SerialProxy::print(const String &s) {
 size_t SerialProxy::print(const char c[]) {
     KLST_LOG_APS("<print>");
     KLST_LOG_APS("<char[]>");
-    KLST_CONSOLE("%s", c);
+    KLST_SERIAL_PROXY_CONSOLE("%s", c);
     char mBuffer[F_CHAR_BUFFER_SIZE];
     int  mNumChars = snprintf(mBuffer, F_CHAR_BUFFER_SIZE, "%s", c);
     write(mBuffer, mNumChars);
@@ -134,25 +135,26 @@ size_t SerialProxy::print(const char c[]) {
 size_t SerialProxy::print(char c) {
     KLST_LOG_APS("<print>");
     KLST_LOG_APS("<char>");
-    KLST_CONSOLE("%c", c);
+    KLST_SERIAL_PROXY_CONSOLE("%c", c);
     write(c);
     return 1;
 }
 
 size_t SerialProxy::print(unsigned char c, int) {
-    KLST_LOG_APS("<print>");
-    KLST_LOG_APS("<unsigned char, int>");
-    KLST_CONSOLE("%c", c);
-    char mBuffer[F_CHAR_BUFFER_SIZE];
-    int  mNumChars = snprintf(mBuffer, F_CHAR_BUFFER_SIZE, "%c", c);
-    write(mBuffer, mNumChars);
-    return mNumChars;
+    // KLST_LOG_APS("<print>");
+    // KLST_LOG_APS("<unsigned char, int>");
+    // KLST_SERIAL_PROXY_CONSOLE("%c", c);
+    // char mBuffer[F_CHAR_BUFFER_SIZE];
+    // int  mNumChars = snprintf(mBuffer, F_CHAR_BUFFER_SIZE, "%c", (int)c);
+    // write(mBuffer, mNumChars);
+    // return mNumChars;
+    return print((int)c);
 }
 
 size_t SerialProxy::print(int i, int) {
     KLST_LOG_APS("<print>");
     KLST_LOG_APS("<int>");
-    KLST_CONSOLE("%i", i);
+    KLST_SERIAL_PROXY_CONSOLE("%i", i);
     char mBuffer[F_CHAR_BUFFER_SIZE];
     int  mNumChars = snprintf(mBuffer, F_CHAR_BUFFER_SIZE, "%i", i);
     write(mBuffer, mNumChars);
@@ -162,7 +164,7 @@ size_t SerialProxy::print(int i, int) {
 size_t SerialProxy::print(unsigned int i, int) {
     KLST_LOG_APS("<print>");
     KLST_LOG_APS("<unsigned int>");
-    KLST_CONSOLE("%i", i);
+    KLST_SERIAL_PROXY_CONSOLE("%i", i);
     char mBuffer[F_CHAR_BUFFER_SIZE];
     int  mNumChars = snprintf(mBuffer, F_CHAR_BUFFER_SIZE, "%i", i);
     write(mBuffer, mNumChars);
@@ -172,7 +174,7 @@ size_t SerialProxy::print(unsigned int i, int) {
 size_t SerialProxy::print(long l, int) {
     KLST_LOG_APS("<print>");
     KLST_LOG_APS("<long>");
-    KLST_CONSOLE("%ld", l);
+    KLST_SERIAL_PROXY_CONSOLE("%ld", l);
     char mBuffer[F_CHAR_BUFFER_SIZE];
     int  mNumChars = snprintf(mBuffer, F_CHAR_BUFFER_SIZE, "%ld", l);
     write(mBuffer, mNumChars);
@@ -182,7 +184,7 @@ size_t SerialProxy::print(long l, int) {
 size_t SerialProxy::print(unsigned long l, int) {
     KLST_LOG_APS("<print>");
     KLST_LOG_APS("<long, int>");
-    KLST_CONSOLE("%lu", l);
+    KLST_SERIAL_PROXY_CONSOLE("%lu", l);
     char mBuffer[F_CHAR_BUFFER_SIZE];
     int  mNumChars = snprintf(mBuffer, F_CHAR_BUFFER_SIZE, "%lu", l);
     write(mBuffer, mNumChars);
@@ -192,7 +194,7 @@ size_t SerialProxy::print(unsigned long l, int) {
 size_t SerialProxy::print(double d, int) {
     KLST_LOG_APS("<print>");
     KLST_LOG_APS("<double>");
-    KLST_CONSOLE("%lf", d);
+    KLST_SERIAL_PROXY_CONSOLE("%lf", d);
     char mBuffer[F_CHAR_BUFFER_SIZE];
     int  mNumChars = snprintf(mBuffer, F_CHAR_BUFFER_SIZE, "%lf", d);
     write(mBuffer, mNumChars);
@@ -202,7 +204,7 @@ size_t SerialProxy::print(double d, int) {
 size_t SerialProxy::println(const __FlashStringHelper *) {
     KLST_LOG_APS("<println>");
     KLST_LOG_APS("<FlashString>");
-    KLST_CONSOLE_LN("__FlashStringHelper");
+    KLST_SERIAL_PROXY_CONSOLE_LN("__FlashStringHelper");
     return 0;
 }
 
@@ -215,7 +217,7 @@ size_t SerialProxy::println(const String &s) {
 size_t SerialProxy::println(const char c[]) {
     KLST_LOG_APS("<println>");
     KLST_LOG_APS("char*");
-    KLST_CONSOLE_LN("%s", c);
+    KLST_SERIAL_PROXY_CONSOLE_LN("%s", c);
     char mBuffer[F_CHAR_BUFFER_SIZE];
     int  mNumChars = snprintf(mBuffer, F_CHAR_BUFFER_SIZE, "%s%s", c, F_NEWLINE);
     write(mBuffer, mNumChars);
@@ -225,7 +227,7 @@ size_t SerialProxy::println(const char c[]) {
 size_t SerialProxy::println(char c) {
     KLST_LOG_APS("<println>");
     KLST_LOG_APS("char");
-    KLST_CONSOLE_LN("%c", c);
+    KLST_SERIAL_PROXY_CONSOLE_LN("%c", c);
     char mBuffer[F_CHAR_BUFFER_SIZE];
     int  mNumChars = snprintf(mBuffer, F_CHAR_BUFFER_SIZE, "%c%s", c, F_NEWLINE);
     write(mBuffer, mNumChars);
@@ -233,19 +235,20 @@ size_t SerialProxy::println(char c) {
 }
 
 size_t SerialProxy::println(unsigned char c, int i) {
-    KLST_LOG_APS("<println>");
-    KLST_LOG_APS("unsigned char");
-    KLST_CONSOLE_LN("%c", c);
-    char mBuffer[F_CHAR_BUFFER_SIZE];
-    int  mNumChars = snprintf(mBuffer, F_CHAR_BUFFER_SIZE, "%c%s", c, F_NEWLINE);
-    write(mBuffer, mNumChars);
-    return mNumChars;
+    // KLST_LOG_APS("<println>");
+    // KLST_LOG_APS("unsigned char");
+    // KLST_SERIAL_PROXY_CONSOLE_LN("%c", c);
+    // char mBuffer[F_CHAR_BUFFER_SIZE];
+    // int  mNumChars = snprintf(mBuffer, F_CHAR_BUFFER_SIZE, "%c%s", c, F_NEWLINE);
+    // write(mBuffer, mNumChars);
+    // return mNumChars;
+    return println((int)c, i);
 }
 
 size_t SerialProxy::println(int i, int) {
     KLST_LOG_APS("<println>");
     KLST_LOG_APS("int");
-    KLST_CONSOLE_LN("%i", i);
+    KLST_SERIAL_PROXY_CONSOLE_LN("%i", i);
     char mBuffer[F_CHAR_BUFFER_SIZE];
     int  mNumChars = snprintf(mBuffer, F_CHAR_BUFFER_SIZE, "%i%s", i, F_NEWLINE);
     write(mBuffer, mNumChars);
@@ -255,7 +258,7 @@ size_t SerialProxy::println(int i, int) {
 size_t SerialProxy::println(unsigned int i, int) {
     KLST_LOG_APS("<println>");
     KLST_LOG_APS("unsigned int");
-    KLST_CONSOLE_LN("%i", i);
+    KLST_SERIAL_PROXY_CONSOLE_LN("%i", i);
     char mBuffer[F_CHAR_BUFFER_SIZE];
     int  mNumChars = snprintf(mBuffer, F_CHAR_BUFFER_SIZE, "%i%s", i, F_NEWLINE);
     write(mBuffer, mNumChars);
@@ -265,7 +268,7 @@ size_t SerialProxy::println(unsigned int i, int) {
 size_t SerialProxy::println(long l, int) {
     KLST_LOG_APS("<println>");
     KLST_LOG_APS("long");
-    KLST_CONSOLE_LN("%ld", l);
+    KLST_SERIAL_PROXY_CONSOLE_LN("%ld", l);
     char mBuffer[F_CHAR_BUFFER_SIZE];
     int  mNumChars = snprintf(mBuffer, F_CHAR_BUFFER_SIZE, "%ld%s", l, F_NEWLINE);
     write(mBuffer, mNumChars);
@@ -275,7 +278,7 @@ size_t SerialProxy::println(long l, int) {
 size_t SerialProxy::println(unsigned long l, int) {
     KLST_LOG_APS("<println>");
     KLST_LOG_APS("unsigned long");
-    KLST_CONSOLE_LN("%lu", l);
+    KLST_SERIAL_PROXY_CONSOLE_LN("%lu", l);
     char mBuffer[F_CHAR_BUFFER_SIZE];
     int  mNumChars = snprintf(mBuffer, F_CHAR_BUFFER_SIZE, "%lu%s", l, F_NEWLINE);
     write(mBuffer, mNumChars);
@@ -285,7 +288,7 @@ size_t SerialProxy::println(unsigned long l, int) {
 size_t SerialProxy::println(double d, int) {
     KLST_LOG_APS("<println>");
     KLST_LOG_APS("double");
-    KLST_CONSOLE_LN("%lf", d);
+    KLST_SERIAL_PROXY_CONSOLE_LN("%lf", d);
     char mBuffer[F_CHAR_BUFFER_SIZE];
     int  mNumChars = snprintf(mBuffer, F_CHAR_BUFFER_SIZE, "%lf%s", d, F_NEWLINE);
     write(mBuffer, mNumChars);
@@ -294,7 +297,7 @@ size_t SerialProxy::println(double d, int) {
 
 size_t SerialProxy::println(void) {
     KLST_LOG_APS("<println>");
-    KLST_CONSOLE_LN("");
+    KLST_SERIAL_PROXY_CONSOLE_LN("");
     char mBuffer[F_CHAR_BUFFER_SIZE];
     int  mNumChars = snprintf(mBuffer, F_CHAR_BUFFER_SIZE, "%s", F_NEWLINE);
     write(mBuffer, mNumChars);

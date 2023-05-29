@@ -2,7 +2,7 @@
 layout: libdoc
 title: NodeFFT.hpp
 permalink: /NodeFFT.hpp/
-index: 59
+index: 55
 ---
 
 ```c
@@ -100,11 +100,11 @@ namespace klang {
         }
 
         void process_frame() {
-            SIGNAL_TYPE mBuffer[KLANG_SAMPLES_PER_AUDIO_BLOCK];
+            float mBuffer[KLANG_SAMPLES_PER_AUDIO_BLOCK];
             update(Node::CH_IN_SIGNAL, mBuffer);
         }
 
-        void update(SIGNAL_TYPE* pAudioBlock) {
+        void update(float* pAudioBlock) {
             std::copy_n(pAudioBlock, KLANG_SAMPLES_PER_AUDIO_BLOCK,
                         mInputBuffer + mSampleBufferPointer * KLANG_SAMPLES_PER_AUDIO_BLOCK);
             // for (uint16_t i = 0; i < KLANG_SAMPLES_PER_AUDIO_BLOCK; i++) {
@@ -119,7 +119,7 @@ namespace klang {
             }
         }
 
-        void update(CHANNEL_ID pChannel, SIGNAL_TYPE* pAudioBlock) {
+        void update(CHANNEL_ID pChannel, float* pAudioBlock) {
             if (is_not_updated()) {
                 if (mConnection_CH_IN_SIGNAL != nullptr) {
                     mConnection_CH_IN_SIGNAL->update(pAudioBlock);

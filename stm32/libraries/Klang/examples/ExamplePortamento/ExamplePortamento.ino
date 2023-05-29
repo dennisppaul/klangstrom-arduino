@@ -33,11 +33,11 @@ void setup() {
 
 void loop() {}
 
-void audioblock(SIGNAL_TYPE* pOutputLeft, SIGNAL_TYPE* pOutputRight, SIGNAL_TYPE* pInputLeft, SIGNAL_TYPE* pInputRight) {
-    mDAC.process_frame(pOutputLeft, pOutputRight);
+void audioblock(float** input_signal, float** output_signal) {
+    mDAC.process_frame(output_signal[LEFT], output_signal[RIGHT]);
 }
 
-void event_receive(const EVENT_TYPE event, const float* data) {
+void event_receive(const EVENT_TYPE event, const void* data) {
     switch (event) {
         case EVENT_MOUSE_MOVED:
             mPortamento.set_speed(mouse_event(data).x * 10);

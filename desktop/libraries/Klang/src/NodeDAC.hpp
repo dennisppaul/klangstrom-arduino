@@ -76,7 +76,7 @@ namespace klang {
             return false;
         }
 
-        void process_frame(SIGNAL_TYPE* mLeftBlock, SIGNAL_TYPE* mRightBlock) {
+        void process_frame(float* mLeftBlock, float* mRightBlock) {
             //@TODO("move mono/stereo switch to method (+set_value)")
             Klang::instance().frame_begin();
             if (!Klang::instance().islocked() || (mConnection_CH_IN_LEFT == nullptr && mConnection_CH_IN_RIGHT == nullptr)) {
@@ -91,8 +91,8 @@ namespace klang {
                     std::copy(mLeftBlock, mLeftBlock + KLANG_SAMPLES_PER_AUDIO_BLOCK, mRightBlock);
                 }
             } else {
-                memset(mLeftBlock, 0.0, KLANG_SAMPLES_PER_AUDIO_BLOCK * sizeof(SIGNAL_TYPE));
-                memset(mRightBlock, 0.0, KLANG_SAMPLES_PER_AUDIO_BLOCK * sizeof(SIGNAL_TYPE));
+                memset(mLeftBlock, 0.0, KLANG_SAMPLES_PER_AUDIO_BLOCK * sizeof(float));
+                memset(mRightBlock, 0.0, KLANG_SAMPLES_PER_AUDIO_BLOCK * sizeof(float));
 #ifdef DEBUG_DAC
                 KLANG_LOG("@NodeDAC synthesizer is locked");
 #endif
@@ -100,7 +100,7 @@ namespace klang {
             Klang::instance().frame_end();
         }
 
-        void update(CHANNEL_ID pChannel, SIGNAL_TYPE* pAudioBlock) {
+        void update(CHANNEL_ID pChannel, float* pAudioBlock) {
             /* the method `process_frame` is preferred over this method as it writes directly into the incoming buffers */
             if (is_not_updated()) {
                 mBlock_LEFT = AudioBlockPool::NO_ID;
@@ -117,7 +117,7 @@ namespace klang {
             }
             if (pChannel == CH_OUT_SIGNAL_LEFT) {
                 if (mBlock_LEFT != AudioBlockPool::NO_ID) {
-                    SIGNAL_TYPE* mBlockData_LEFT = AudioBlockPool::instance().data(mBlock_LEFT);
+                    float* mBlockData_LEFT = AudioBlockPool::instance().data(mBlock_LEFT);
                     for (uint16_t i = 0; i < KLANG_SAMPLES_PER_AUDIO_BLOCK; i++) {
                         pAudioBlock[i] = mBlockData_LEFT[i];
                     }
@@ -126,7 +126,7 @@ namespace klang {
             if (pChannel == CH_OUT_SIGNAL_RIGHT) {
                 // @TODO("could copy left channel to right channel if right is not connected. similar to option in `process_frame`. maybe there is a global option to have DAC automatically copy mono to stereo")
                 if (mBlock_RIGHT != AudioBlockPool::NO_ID) {
-                    SIGNAL_TYPE* mBlockData_RIGHT = AudioBlockPool::instance().data(mBlock_RIGHT);
+                    float* mBlockData_RIGHT = AudioBlockPool::instance().data(mBlock_RIGHT);
                     for (uint16_t i = 0; i < KLANG_SAMPLES_PER_AUDIO_BLOCK; i++) {
                         pAudioBlock[i] = mBlockData_RIGHT[i];
                     }

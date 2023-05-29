@@ -95,7 +95,7 @@ namespace klang {
         ~NodeMutableInstrumentsClouds() {
         }
 
-        void kernel(vector<SIGNAL_TYPE*>& pOutputSignals, vector<SIGNAL_TYPE*>& pInputSignals) {
+        void kernel(vector<float*>& pOutputSignals, vector<float*>& pInputSignals) {
             // if (pInputSignals[CH_IN_SIGNAL_LEFT] == nullptr && pInputSignals[CH_IN_SIGNAL_RIGHT] == nullptr) {
             //     return;
             // }
@@ -110,10 +110,10 @@ namespace klang {
             //     mInSignalRight = pInputSignals[CH_IN_SIGNAL_RIGHT];
             // }
 
-            SIGNAL_TYPE* mInSignalLeft   = pInputSignals[CH_IN_SIGNAL_LEFT];
-            SIGNAL_TYPE* mInSignalRight  = pInputSignals[CH_IN_SIGNAL_RIGHT];
-            SIGNAL_TYPE* mOutSignalLeft  = pOutputSignals[CH_OUT_SIGNAL_LEFT];
-            SIGNAL_TYPE* mOutSignalRight = pOutputSignals[CH_OUT_SIGNAL_RIGHT];
+            float* mInSignalLeft   = pInputSignals[CH_IN_SIGNAL_LEFT];
+            float* mInSignalRight  = pInputSignals[CH_IN_SIGNAL_RIGHT];
+            float* mOutSignalLeft  = pOutputSignals[CH_OUT_SIGNAL_LEFT];
+            float* mOutSignalRight = pOutputSignals[CH_OUT_SIGNAL_RIGHT];
 
             uint8_t mIterations = 0;
             do {

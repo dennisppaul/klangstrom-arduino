@@ -58,7 +58,7 @@ void loop() {
     delay(10);
 }
 
-void event_receive(const uint8_t event, const float* data) {
+void event_receive(const EVENT_TYPE event, const void* data) {
     print_encoder_state(event, data);
 
     switch (event) {

@@ -2,7 +2,7 @@
  * Klangstrom
  *
  * This file is part of the *wellen* library (https://github.com/dennisppaul/wellen).
- * Copyright (c) 2022 Dennis P Paul.
+ * Copyright (c) 2023 Dennis P Paul.
  *
  * This library is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,23 +32,42 @@
 
 #ifdef __cplusplus
 
+typedef void (*CallbackType1_UI8)(const uint8_t);
+typedef void (*CallbackType2_UI8_VOIDPTR)(const uint8_t, const void*);
+typedef void (*CallbackType3_UI8_I16_I16)(const uint8_t, const int16_t, const int16_t);
+typedef void (*CallbackType2_FLOATPTRPTR_FLOATPTRPTR)(float**, float**);
+
 namespace klangstrom {
-    void     beats_per_minute(float pBPM);
-    void     beats_per_minute_ms(uint32_t pMicroSeconds);
-    void     begin_serial_debug(bool pWaitForSerial = false, uint32_t pBaudRate = 115200);
-    bool     button_state(uint8_t pButton);
-    void     data_transmit(const uint8_t pTransmitter, uint8_t* pData, uint8_t pDataLength);
-    void     event_transmit(EVENT_TYPE pEvent, float* pPayload);
+
+    void register_encoder_rotated(CallbackType3_UI8_I16_I16 callback);
+    void call_encoder_rotated(const uint8_t index, const int16_t ticks, const int16_t delta);
+    void register_encoder_pressed(CallbackType1_UI8 callback);
+    void call_encoder_pressed(const uint8_t index);
+    void register_encoder_released(CallbackType1_UI8 callback);
+    void call_encoder_released(const uint8_t index);
+    void register_encoder_event_receive(CallbackType2_UI8_VOIDPTR callback);
+    void call_encoder_event_receive(const uint8_t event, const void* data);
+    void register_audioblock(CallbackType2_FLOATPTRPTR_FLOATPTRPTR callback);
+    void call_audioblock(float** input_buffer, float** output_buffer);
+
+    void     beats_per_minute(float BPM);
+    void     beats_per_minute_ms(uint32_t micro_seconds);
+    void     begin_serial_debug(bool wait_for_serial = false, uint32_t baud_rate = 115200);
+    bool     button_state(uint8_t button);
+    void     data_transmit(const uint8_t sender, uint8_t* data, uint16_t length);
+    void     event_transmit(EVENT_TYPE event, float* payload);
     int16_t  ID();
     char*    U_ID();
-    void     LED(uint16_t pLED, uint8_t pState);
-    void     led(uint16_t pLED, bool pState);
-    void     led_toggle(uint16_t pLED);
-    void     option(uint8_t pOption, float pValue);
-    float    get_option(uint8_t pOption);
-    bool     pin_state(uint8_t pButton);
-    uint16_t adc(uint8_t pADC);
-    void     dac(uint8_t pDAC, uint16_t pValue);
+    void     LED(uint16_t pin, uint8_t state);
+    int      get_LED_pin(uint16_t index);
+    void     option(uint8_t option, float value);
+    float    get_option(uint8_t option);
+    bool     pin_state(uint8_t button);
+    uint16_t ADC(uint8_t ADC);
+    void     DAC(uint8_t DAC, uint16_t value);
+    uint32_t query_available_memory_block();
+    uint8_t  get_input_channels();
+    uint8_t  get_output_channels();
 };  // namespace klangstrom
 
 #endif  // __cplusplus

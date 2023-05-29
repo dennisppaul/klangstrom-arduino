@@ -130,7 +130,7 @@ namespace klang {
             }
         }
 
-        void update(CHANNEL_ID pChannel, SIGNAL_TYPE* pAudioBlock) {
+        void update(CHANNEL_ID pChannel, float* pAudioBlock) {
             /*
              *
              * |----->|-->|   |-->|
@@ -158,7 +158,7 @@ namespace klang {
                 if (mConnection_CH_IN_TRIGGER != nullptr) {
                     mBlock_TRIGGER = AudioBlockPool::instance().request();
                     mConnection_CH_IN_TRIGGER->update(mBlock_TRIGGER);
-                    SIGNAL_TYPE* mBlockData_TRIGGER = AudioBlockPool::instance().data(mBlock_TRIGGER);
+                    float* mBlockData_TRIGGER = AudioBlockPool::instance().data(mBlock_TRIGGER);
                     for (uint16_t i = 0; i < KLANG_SAMPLES_PER_AUDIO_BLOCK; i++) {
                         const float mCurrentSample = mBlockData_TRIGGER[i];
                         mBlockData_TRIGGER[i]      = evaluateEdge(mPreviousSample, mCurrentSample);
@@ -170,13 +170,13 @@ namespace klang {
 
             if (pChannel == CH_OUT_SIGNAL) {
                 const bool   mHasTriggerSignal  = (mBlock_TRIGGER != AudioBlockPool::NO_ID);
-                SIGNAL_TYPE* mBlockData_TRIGGER = nullptr;
+                float* mBlockData_TRIGGER = nullptr;
                 if (mHasTriggerSignal) {
                     mBlockData_TRIGGER = AudioBlockPool::instance().data(mBlock_TRIGGER);
                 }
                 for (uint16_t i = 0; i < KLANG_SAMPLES_PER_AUDIO_BLOCK; i++) {
                     if (mHasTriggerSignal) {
-                        const SIGNAL_TYPE mTriggerState = mBlockData_TRIGGER[i];
+                        const float mTriggerState = mBlockData_TRIGGER[i];
                         if (mTriggerState == RAMP_RISING_EDGE) {
                             start();
                         } else if (mTriggerState == RAMP_FALLING_EDGE) {
@@ -189,7 +189,7 @@ namespace klang {
             } else if (pChannel == CH_OUT_TRIGGER) {
                 const bool mHasTriggerSignal = (mBlock_TRIGGER != AudioBlockPool::NO_ID);
                 if (mHasTriggerSignal) {
-                    SIGNAL_TYPE* mBlockData_TRIGGER = AudioBlockPool::instance().data(mBlock_TRIGGER);
+                    float* mBlockData_TRIGGER = AudioBlockPool::instance().data(mBlock_TRIGGER);
                     KLANG_COPY_AUDIO_BUFFER(pAudioBlock, mBlockData_TRIGGER);
                 } else {
                     KLANG_FILL_AUDIO_BUFFER(pAudioBlock, 0.0);
@@ -203,18 +203,18 @@ namespace klang {
 
         AUDIO_BLOCK_ID mBlock_TRIGGER = AudioBlockPool::NO_ID;
 
-        static constexpr SIGNAL_TYPE RAMP_NO_EDGE                = 0.0;
-        static constexpr SIGNAL_TYPE RAMP_RISING_EDGE            = 1.0;
-        static constexpr SIGNAL_TYPE RAMP_FALLING_EDGE           = -1.0;
+        static constexpr float RAMP_NO_EDGE                = 0.0;
+        static constexpr float RAMP_RISING_EDGE            = 1.0;
+        static constexpr float RAMP_FALLING_EDGE           = -1.0;
         static constexpr float       mThreshold                  = 0.0;  // @todo(could be made configurable)
         static constexpr float       M_TIME_SCALE                = 1000;
         static constexpr float       KLANG_AUDIO_RATE_UINT16_INV = 1.0 / KLANG_AUDIO_RATE_UINT16;
 
-        SIGNAL_TYPE mAttack         = 0.01f;
-        SIGNAL_TYPE mDecay          = 0.05f;
-        SIGNAL_TYPE mSustain        = 0.5f;
-        SIGNAL_TYPE mRelease        = 0.25f;
-        SIGNAL_TYPE mPreviousSample = mThreshold;
+        float mAttack         = 0.01f;
+        float mDecay          = 0.05f;
+        float mSustain        = 0.5f;
+        float mRelease        = 0.25f;
+        float mPreviousSample = mThreshold;
 
         enum class ENVELOPE_STATE {
             IDLE,
@@ -230,7 +230,7 @@ namespace klang {
         float mDelta         = 0.0f;
         bool  mNoInputSignal = true;
 
-        const SIGNAL_TYPE evaluateEdge(const SIGNAL_TYPE pPreviousSample, const SIGNAL_TYPE pCurrentSample) {
+        const float evaluateEdge(const float pPreviousSample, const float pCurrentSample) {
             if ((pPreviousSample < mThreshold) && (pCurrentSample > mThreshold)) {
                 return RAMP_RISING_EDGE;
             } else if ((pPreviousSample > mThreshold) && (pCurrentSample < mThreshold)) {

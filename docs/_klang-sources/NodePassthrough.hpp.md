@@ -2,7 +2,7 @@
 layout: libdoc
 title: NodePassthrough.hpp
 permalink: /NodePassthrough.hpp/
-index: 76
+index: 72
 ---
 
 ```c
@@ -61,7 +61,7 @@ namespace klang {
             return false;
         }
 
-        void update(CHANNEL_ID pChannel, SIGNAL_TYPE* pAudioBlock) {
+        void update(CHANNEL_ID pChannel, float* pAudioBlock) {
             if (is_not_updated()) {
                 if (mConnection_CH_IN_SIGNAL != nullptr) {
                     mConnection_CH_IN_SIGNAL->update(pAudioBlock);

@@ -129,14 +129,25 @@ namespace klang {
             speak(s);
         }
 
+        void speak_from_buffer() {
+            mDoneSpeaking = false;
+            mCounter      = 0;
+        }
+
+        void speak_buffer(string pText, bool pUsePhonemes = false) {
+            speak(pText, pUsePhonemes);
+            mDoneSpeaking = true;
+            mCounter      = get_used_buffer_length() - 1;
+        }
+
         uint32_t get_used_buffer_length() {
             return GetBufferLength() / 50;
         }
 
-        void update(CHANNEL_ID pChannel, SIGNAL_TYPE* pAudioBlock) {
+        void update(CHANNEL_ID pChannel, float* pAudioBlock) {
             if (pChannel == CH_OUT_SIGNAL) {
                 uint8_t*       mBuffer       = (uint8_t*)GetBuffer();
-                const uint32_t mBufferLength = GetBufferLength() / 50;
+                const uint32_t mBufferLength = get_used_buffer_length();
                 for (uint16_t i = 0; i < KLANG_SAMPLES_PER_AUDIO_BLOCK; i += 2) {
                     if (!mDoneSpeaking && mBufferLength > 0) {
                         pAudioBlock[i] = mBuffer[mCounter] / 255.0 * 2.0 - 1.0;

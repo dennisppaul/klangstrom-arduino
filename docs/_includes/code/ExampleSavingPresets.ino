@@ -54,7 +54,7 @@ void loop() {
     Serial.println();
 }
 
-void event_receive(const uint8_t event, const float* data) {
+void event_receive(const EVENT_TYPE event, const void* data) {
     if (event == EVENT_ENCODER_BUTTON_PRESSED) {
         if (data[INDEX] == ENCODER_00) {
             serial_debug.println("write presets 0");
@@ -81,7 +81,7 @@ void event_receive(const uint8_t event, const float* data) {
     }
 }
 
-void audioblock(SIGNAL_TYPE* pOutputLeft, SIGNAL_TYPE* pOutputRight,
-                SIGNAL_TYPE* pInputLeft, SIGNAL_TYPE* pInputRight) {
-    mDAC.process_frame(pOutputLeft, pOutputRight);
+void audioblock(float* output_signal[LEFT], float* output_signal[RIGHT],
+                float* input_signal[LEFT], float* input_signal[RIGHT]) {
+    mDAC.process_frame(output_signal[LEFT], output_signal[RIGHT]);
 }

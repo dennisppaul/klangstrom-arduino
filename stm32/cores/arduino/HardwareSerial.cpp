@@ -132,12 +132,14 @@ HardwareSerial::HardwareSerial(void *peripheral, HalfDuplexMode_t halfDuplex)
   // If Serial is defined in variant set
   // the Rx/Tx pins for com port if defined
 #if defined(Serial) && defined(PIN_SERIAL_TX)
+#if !defined(USBCON) || defined(USBD_USE_CDC) && defined(DISABLE_GENERIC_SERIALUSB)
   if ((void *)this == (void *)&Serial) {
 #if defined(PIN_SERIAL_RX)
     setRx(PIN_SERIAL_RX);
 #endif
     setTx(PIN_SERIAL_TX);
   } else
+#endif
 #endif
 #if defined(PIN_SERIAL1_TX) && defined(USART1_BASE)
     if (peripheral == USART1) {
@@ -265,11 +267,22 @@ HardwareSerial::HardwareSerial(void *peripheral, HalfDuplexMode_t halfDuplex)
                             setTx(PIN_SERIALLP2_TX);
                           } else
 #endif
-                            // else get the pins of the first peripheral occurrence in PinMap
-                          {
-                            _serial.pin_rx = pinmap_pin(peripheral, PinMap_UART_RX);
-                            _serial.pin_tx = pinmap_pin(peripheral, PinMap_UART_TX);
-                          }
+#if defined(PIN_SERIAL_TX)
+                            // If PIN_SERIAL_TX is defined but Serial is mapped on other peripheral
+                            // (usually SerialUSB) use the pins defined for specified peripheral
+                            // instead of the first one found
+                            if ((pinmap_peripheral(digitalPinToPinName(PIN_SERIAL_TX), PinMap_UART_TX) == peripheral)) {
+#if defined(PIN_SERIAL_RX)
+                              setRx(PIN_SERIAL_RX);
+#endif
+                              setTx(PIN_SERIAL_TX);
+                            } else
+#endif
+                            {
+                              // else get the pins of the first peripheral occurrence in PinMap
+                              _serial.pin_rx = pinmap_pin(peripheral, PinMap_UART_RX);
+                              _serial.pin_tx = pinmap_pin(peripheral, PinMap_UART_TX);
+                            }
   if (halfDuplex == HALF_DUPLEX_ENABLED) {
     _serial.pin_rx = NC;
   }

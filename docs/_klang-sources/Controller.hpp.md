@@ -2,7 +2,7 @@
 layout: libdoc
 title: Controller.hpp
 permalink: /Controller.hpp/
-index: 31
+index: 27
 ---
 
 ```c
@@ -257,7 +257,7 @@ namespace klang {
             }
         }
 
-        void process_frame_output(SIGNAL_TYPE* pLeft, SIGNAL_TYPE* pRight) {
+        void process_frame_output(float* pLeft, float* pRight) {
             if (!Klang::islocked() && mOutputNode != nullptr) {
                 mOutputNode->process_frame(pLeft, pRight);
             } else {
@@ -268,7 +268,7 @@ namespace klang {
             }
         }
 
-        void process_frame_input(SIGNAL_TYPE* pLeft, SIGNAL_TYPE* pRight) {
+        void process_frame_input(float* pLeft, float* pRight) {
             //            KLANG_LOG("Klang::islocked(): %i", Klang::islocked());
             if (!Klang::islocked() && mInputNode != nullptr) {
                 mInputNode->process_frame(pLeft, pRight);

@@ -2,7 +2,7 @@
 layout: libdoc
 title: KlangTypes.hpp
 permalink: /KlangTypes.hpp/
-index: 44
+index: 40
 ---
 
 ```c

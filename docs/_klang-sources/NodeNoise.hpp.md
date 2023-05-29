@@ -2,7 +2,7 @@
 layout: libdoc
 title: NodeNoise.hpp
 permalink: /NodeNoise.hpp/
-index: 75
+index: 71
 ---
 
 ```c
@@ -54,7 +54,7 @@ namespace klang {
 
         bool disconnect(CHANNEL_ID pInChannel) { return false; }
 
-        void update(CHANNEL_ID pChannel, SIGNAL_TYPE* pAudioBlock) {
+        void update(CHANNEL_ID pChannel, float* pAudioBlock) {
             if (pChannel == CH_OUT_SIGNAL) {
                 switch (mType) {
                     case RANDOM:
@@ -71,11 +71,11 @@ namespace klang {
             }
         }
 
-        void set_stride(SIGNAL_TYPE pStride) {
+        void set_stride(float pStride) {
             mStride = pStride;
         }
 
-        SIGNAL_TYPE get_stride() {
+        float get_stride() {
             return mStride;
         }
 
@@ -100,7 +100,7 @@ namespace klang {
 
     private:
         float       mStrideCounter = 0.0;
-        SIGNAL_TYPE mStride        = 0.01;
+        float mStride        = 0.01;
         TYPE        mType          = RANDOM;
     };
 }  // namespace klang

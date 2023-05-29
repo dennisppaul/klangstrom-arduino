@@ -2,7 +2,7 @@
  * Klangstrom
  *
  * This file is part of the *wellen* library (https://github.com/dennisppaul/wellen).
- * Copyright (c) 2022 Dennis P Paul.
+ * Copyright (c) 2023 Dennis P Paul.
  *
  * This library is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,7 +39,7 @@ WEAK void setup();
 WEAK void loop();
 WEAK void beat(uint32_t pBeat);
 
-WEAK void audioblock(SIGNAL_TYPE* pLeftTX, SIGNAL_TYPE* pRightTX, SIGNAL_TYPE* pLeftRX, SIGNAL_TYPE* pRightRX);
+WEAK void audioblock(float** input_signal, float** output_signal);
 WEAK void event_receive(const EVENT_TYPE event, const void* data);
 
 #endif  // __cplusplus

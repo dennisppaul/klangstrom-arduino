@@ -2,7 +2,7 @@
  * Klangstrom
  *
  * This file is part of the *wellen* library (https://github.com/dennisppaul/wellen).
- * Copyright (c) 2022 Dennis P Paul.
+ * Copyright (c) 2023 Dennis P Paul.
  *
  * This library is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,11 +21,13 @@
 #define _KLST_SDL_ADAPTER_H_
 
 #include <stdint.h>
+
 #include "KLST_SDL-constants.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
+uint32_t analogRead(uint32_t pPin);
 void     delay(uint32_t pMS);
 int      digitalRead(uint32_t pPin);
 void     digitalWrite(uint32_t pPin, uint32_t pValue);

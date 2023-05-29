@@ -7,7 +7,7 @@ KLST_EMU.build.core=sdl
 menu.upload_method=Upload method
 menu.board=Klangstrom Board
 menu.samplingrate=Sampling Rate
-menu.audioblock=Sample per Audio Block
+menu.audioblock=Samples per Audio Block
 menu.OSC=Enable OSC
 menu.DISPLAY=Enable Display
 

@@ -18,7 +18,7 @@ NodeADC          mADC;
 NodeVocoder      mVocoder{24, 4, 256};
 NodeVCOWavetable mVocoderCarrierOsc;
 NodeNoise        mVocoderCarrierOscNoise;
-SIGNAL_TYPE      mSamplerBuffer[KLANG_SAMPLES_PER_AUDIO_BLOCK];
+float      mSamplerBuffer[KLANG_SAMPLES_PER_AUDIO_BLOCK];
 
 void setup() {
     Klang::lock();
@@ -37,15 +37,15 @@ void setup() {
 
 void loop() {}
 
-void audioblock(SIGNAL_TYPE* pOutputLeft, SIGNAL_TYPE* pOutputRight, SIGNAL_TYPE* pInputLeft, SIGNAL_TYPE* pInputRight) {
-    mADC.process_frame(pInputLeft, pInputRight);
-    mDAC.process_frame(pOutputLeft, pOutputRight);
+void audioblock(float** input_signal, float** output_signal) {
+    mADC.process_frame(input_signal[LEFT], input_signal[RIGHT]);
+    mDAC.process_frame(output_signal[LEFT], output_signal[RIGHT]);
 }
 
-void event_receive(const EVENT_TYPE event, const float* data) {
+void event_receive(const EVENT_TYPE event, const void* data) {
     switch (event) {
         case EVENT_KEY_PRESSED:
-            handle_key_pressed(keyboard_event(data).key);
+            handle_key_pressed(keyboard_event(data).keys[0]);
             break;
         case EVENT_MOUSE_MOVED:
             mouseMoved(mouse_event(data).x, mouse_event(data).y);

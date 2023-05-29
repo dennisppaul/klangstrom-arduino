@@ -2,7 +2,7 @@
 layout: libdoc
 title: NodeKernelBlockMulti.hpp
 permalink: /NodeKernelBlockMulti.hpp/
-index: 63
+index: 59
 ---
 
 ```c
@@ -82,14 +82,14 @@ namespace klang {
             return mInputConnections.size();
         }
 
-        void update(CHANNEL_ID pChannel, SIGNAL_TYPE* pAudioBlock) {
+        void update(CHANNEL_ID pChannel, float* pAudioBlock) {
             const uint8_t mNumInputChannels = get_num_input_channels();
             bool          m_has_SIGNAL[mNumInputChannels];
             for (uint8_t i = 0; i < mNumInputChannels; ++i) {
                 m_has_SIGNAL[i] = (mInputConnections[i].connection != nullptr);
             }
             if (is_not_updated()) {
-                vector<SIGNAL_TYPE*> mInputSignals(mNumInputChannels);
+                vector<float*> mInputSignals(mNumInputChannels);
                 for (uint8_t i = 0; i < mNumInputChannels; ++i) {
                     if (m_has_SIGNAL[i]) {
                         mInputConnections[i].id = AudioBlockPool::instance().request();
@@ -137,18 +137,18 @@ namespace klang {
 
     protected:
         /* override kernel method to implement custom kernels. */
-        virtual void kernel(vector<SIGNAL_TYPE*>& pOutputSignals, vector<SIGNAL_TYPE*>& pInputSignals) = 0;
+        virtual void kernel(vector<float*>& pOutputSignals, vector<float*>& pInputSignals) = 0;
 
     private:
         typedef struct KernelConnectionStruct {
             Connection*    connection = nullptr;
             AUDIO_BLOCK_ID id         = AudioBlockPool::NO_ID;
-            SIGNAL_TYPE*   data       = nullptr;
+            float*   data       = nullptr;
         } KernelConnection;
 
         vector<KernelConnection> mInputConnections;
         uint8_t                  fNumOutputChannels = 1;
-        vector<SIGNAL_TYPE*>     mOutputSignals;
+        vector<float*>     mOutputSignals;
 
         void add_channel(uint32_t pChannel, Connection* pConnection) {
             if (pChannel >= mInputConnections.size()) {

@@ -74,7 +74,7 @@ namespace klang {
             return false;
         }
 
-        void update(CHANNEL_ID pChannel, SIGNAL_TYPE* pAudioBlock) {
+        void update(CHANNEL_ID pChannel, float* pAudioBlock) {
             if (is_not_updated()) {
                 output().update(Node::CH_IN_SIGNAL, pAudioBlock);
                 flag_updated();

@@ -1,13 +1,15 @@
 #ifndef _USB_HOST_BSP_INC_
 #define _USB_HOST_BSP_INC_
 
+#ifdef USE_USBHOST
+
+#include "Arduino.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-#include "Arduino.h"
 #include "usbh_conf.h"
-
 #if defined(KLST_BOARD_KLST_TINY)
 #include "stm32f4xx.h"
 #include "stm32f4xx_hal.h"
@@ -24,5 +26,7 @@ extern "C" {
 #ifdef __cplusplus
 }
 #endif
+
+#endif // USE_USBHOST
 
 #endif /* _USB_HOST_BSP_INC_ */

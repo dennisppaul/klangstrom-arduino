@@ -81,16 +81,16 @@ void beat(uint32_t pBeat) {
     Serial.println(mAudioblockDurationAverage);
 }
 
-void audioblock(SIGNAL_TYPE* pOutputLeft, SIGNAL_TYPE* pOutputRight, SIGNAL_TYPE* pInputLeft, SIGNAL_TYPE* pInputRight) {
+void audioblock(float** input_signal, float** output_signal) {
     const uint32_t start = klst_get_cycles();
-    mDAC.process_frame(pOutputLeft, pOutputRight);
+    mDAC.process_frame(output_signal[LEFT], output_signal[RIGHT]);
     const uint32_t delta                            = klst_get_cycles() - start;
     mAudioblockDuration[mAudioblockDurationCounter] = klst_cyclesToMicros(delta);
     mAudioblockDurationCounter++;
     mAudioblockDurationCounter %= NUM_OF_AUDIO_BLOCK_DURATION_SAMPLES;
 }
 
-void event_receive(const EVENT_TYPE event, const float* data) {
+void event_receive(const EVENT_TYPE event, const void* data) {
     switch (event) {
         case EVENT_MOUSE_PRESSED:
         case EVENT_ENCODER_BUTTON_PRESSED:

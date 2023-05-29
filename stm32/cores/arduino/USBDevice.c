@@ -20,20 +20,31 @@ extern USBD_HandleTypeDef hUsbDeviceFS;
 #include "usbd_midi.h"
 #include "usbd_midi_if.h"
 
-void transmit_midi_note_on(const uint8_t channel, const uint8_t note, const uint8_t velocity) {
-    MIDI_note_on(note, velocity);
-    USBD_UsrLog("note on");
+void usb_device_transmit_midi_message(const uint8_t data1, const uint8_t data2, const uint8_t data3) {
+    uint8_t b[4];
+    // computer header byte!!! see USBHost
+    b[0] = 0x0B; // TODO this is not OK
+    b[1] = data1;
+    b[2] = data2;
+    b[3] = data3;
+    MIDI_Send(b, 4);
 }
 
-void transmit_midi_note_off(const uint8_t channel, const uint8_t note) {
+void usb_device_transmit_midi_note_off(const uint8_t channel, const uint8_t note, const uint8_t velocity) {
     MIDI_note_off(note, 0);
     USBD_UsrLog("note off");
 }
 
-void transmit_midi_control_change(const uint8_t channel, const uint8_t number, const uint8_t value) {
+void usb_device_transmit_midi_note_on(const uint8_t channel, const uint8_t note, const uint8_t velocity) {
+    MIDI_note_on(note, velocity);
+    USBD_UsrLog("note on");
+}
+
+void usb_device_transmit_midi_control_change(const uint8_t channel, const uint8_t number, const uint8_t value) {
     MIDI_cc(channel, number, value);
     USBD_UsrLog("control change");
 }
+
 #endif  // USBDEVICE_MIDI
 
 /* --- MOUSE + KEYBOARD ----------------------------------------------------- */

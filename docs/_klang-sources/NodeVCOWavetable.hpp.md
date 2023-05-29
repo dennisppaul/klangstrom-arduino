@@ -2,7 +2,7 @@
 layout: libdoc
 title: NodeVCOWavetable.hpp
 permalink: /NodeVCOWavetable.hpp/
-index: 93
+index: 89
 ---
 
 ```c
@@ -52,23 +52,6 @@ index: 93
 #define NodeVCOWavetable_hpp
 
 #include "KlangMath.hpp"
-
-#if (KLANG_SIGNAL_TYPE == SIGNAL_TYPE_INT16)
-
-#define OSCIL_F_BITS               16
-#define OSCIL_F_BITS_AS_MULTIPLIER 65536
-// #define SCALE_WAVETABLE(x)         ((x) * ((1 << 15) - 1))
-#define Q_FRAC     15
-#define FADD(a, b) ((a) + (b))
-#define FSUB(a, b) ((a) - (b))
-#define FMUL(a, b) (((a) * (b)) >> (Q_FRAC))
-#define FDIV(a, b) (((a) << (Q_FRAC)) / (b))
-
-#elif (KLANG_SIGNAL_TYPE == SIGNAL_TYPE_FLOAT)
-
-// #define SCALE_WAVETABLE(x) (x)
-
-#endif
 
 namespace klang {
     template <class BUFFER_TYPE>
@@ -232,19 +215,19 @@ namespace klang {
             }
         }
 
-        void set_amplitude(SIGNAL_TYPE pAmplitude) {
+        void set_amplitude(float pAmplitude) {
             mAmplitude = pAmplitude;
         }
 
-        const SIGNAL_TYPE get_amplitude() {
+        const float get_amplitude() {
             return mAmplitude;
         }
 
-        void set_offset(SIGNAL_TYPE pOffset) {
+        void set_offset(float pOffset) {
             mOffset = pOffset;
         }
 
-        const SIGNAL_TYPE get_offset() {
+        const float get_offset() {
             return mOffset;
         }
 
@@ -276,42 +259,11 @@ namespace klang {
             return fInterpolateSamples;
         }
 
-#if (KLANG_SIGNAL_TYPE == SIGNAL_TYPE_INT16)
-        /* +++++++++++++++++++++++++++++++++++++++++++++++++++ */
-        /* ++++++++++++++ FIXED-POINT FUNCTIONS ++++++++++++++ */
-        /* +++++++++++++++++++++++++++++++++++++++++++++++++++ */
-
-        void set_frequency(SIGNAL_TYPE pFrequency) {
-            phase_increment_fractional = ((WAVETABLE_t)pFrequency) * ((OSCIL_F_BITS_AS_MULTIPLIER * M_BUFFER_LENGTH) / KLANG_AUDIO_RATE_UINT16);
-        }
-
-        SIGNAL_TYPE get_frequency() { return 0; }
-
-        void set_frequency_float(float pFrequency) {
-            phase_increment_fractional = (WAVETABLE_t)((((float)M_BUFFER_LENGTH * pFrequency) / KLANG_AUDIO_RATE_UINT16) * OSCIL_F_BITS_AS_MULTIPLIER);
-        }
-
-        void set_amplitude_float(float pAmplitude) {
-            mAmplitude = pAmplitude * SIGNAL_MAX;
-        }
-
-        void set_offset_float(float pOffset) {
-            mOffset = pOffset * SIGNAL_MAX;
-        }
-
-        void set_input_FREQ_scale(uint16_t pInput_FREQ_Scale) {
-            mInput_FREQ_Scale = pInput_FREQ_Scale;
-        }
-
-        void set_input_FREQ_offset(uint16_t pInput_FREQ_Offset) {
-            mInput_FREQ_Offset = pInput_FREQ_Offset;
-        }
-#elif (KLANG_SIGNAL_TYPE == SIGNAL_TYPE_FLOAT)
         /* +++++++++++++++++++++++++++++++++++++++++++++++++++ */
         /* +++++++++++++ FLOATING-POINT FUNCTIONS ++++++++++++ */
         /* +++++++++++++++++++++++++++++++++++++++++++++++++++ */
 
-        void set_frequency(SIGNAL_TYPE pFrequency) {
+        void set_frequency(float pFrequency) {
             if (mFrequency != pFrequency) {
                 mFrequency    = pFrequency;
                 const float a = (float)mWavetableLength * KLANG_AUDIO_RATE_UINT16_INV;
@@ -319,10 +271,9 @@ namespace klang {
             }
         }
 
-        const SIGNAL_TYPE get_frequency() { return mFrequency; }
-#endif
+        const float get_frequency() { return mFrequency; }
 
-        void update(CHANNEL_ID pChannel, SIGNAL_TYPE* pAudioBlock) {
+        void update(CHANNEL_ID pChannel, float* pAudioBlock) {
             if (is_not_updated()) {
                 mBlock_FREQ = AudioBlockPool::NO_ID;
                 if (mConnection_CH_IN_FREQ != nullptr) {
@@ -337,31 +288,19 @@ namespace klang {
                 flag_updated();
             }
             if (pChannel == CH_OUT_SIGNAL) {
-                SIGNAL_TYPE* mBlockData_FREQ = nullptr;
+                float* mBlockData_FREQ = nullptr;
                 if (mBlock_FREQ != AudioBlockPool::NO_ID) {
                     mBlockData_FREQ = AudioBlockPool::instance().data(mBlock_FREQ);
                 }
                 const bool mHasFreqBuffer = (mBlockData_FREQ != nullptr);
 
-                const SIGNAL_TYPE* mBlockData_AMP = nullptr;
+                const float* mBlockData_AMP = nullptr;
                 if (mBlock_AMP != AudioBlockPool::NO_ID) {
                     mBlockData_AMP = AudioBlockPool::instance().data(mBlock_AMP);
                 }
                 const bool mHasAmpBuffer = (mBlockData_AMP != nullptr);
 
                 for (uint16_t i = 0; i < KLANG_SAMPLES_PER_AUDIO_BLOCK; i++) {
-#if (KLANG_SIGNAL_TYPE == SIGNAL_TYPE_INT16)
-                    /* frequency */
-                    if (mBlock_FREQ != AudioBlockPool::NO_ID) {
-                        phase_increment_fractional = ((WAVETABLE_t)mInput_FREQ_Offset + mInput_FREQ_Scale * mBlockData_FREQ[i] / OSCIL_F_BITS_AS_MULTIPLIER) * ((WAVETABLE_t)OSCIL_F_BITS_AS_MULTIPLIER * M_BUFFER_LENGTH / KLANG_AUDIO_RATE_UINT16);
-                    }
-                    /* amp */
-                    const SIGNAL_TYPE mAmpTmp = (mBlock_AMP != AudioBlockPool::NO_ID) ? mBlockData_AMP[i] : mAmplitude;
-                    /* wavetable */
-                    incrementPhase();
-                    const uint16_t mIndex = ((phase_fractional >> OSCIL_F_BITS) & (M_BUFFER_LENGTH - 1));
-                    mBlock[i]             = FADD(FMUL(mWavetable[mIndex], mAmpTmp), mOffset);
-#elif (KLANG_SIGNAL_TYPE == SIGNAL_TYPE_FLOAT)
                     /* frequency */
                     if (mHasFreqBuffer) {
                         set_frequency(mBlockData_FREQ[i]);
@@ -383,7 +322,6 @@ namespace klang {
                     }
                     pAudioBlock[i] *= mHasAmpBuffer ? mBlockData_AMP[i] : mAmplitude;
                     pAudioBlock[i] += mOffset;
-#endif
                 }
             }
 
@@ -406,19 +344,7 @@ namespace klang {
             return pRawSample;
         }
 
-#if (KLANG_SIGNAL_TYPE == SIGNAL_TYPE_INT16)
-        typedef int32_t WAVETABLE_t;
-        WAVETABLE_t     phase_fractional;
-        WAVETABLE_t     phase_increment_fractional;
-
-        uint16_t mInput_FREQ_Scale  = 1;
-        uint16_t mInput_FREQ_Offset = 0;
-
-        inline void incrementPhase() {
-            phase_fractional += phase_increment_fractional;
-        }
-#elif (KLANG_SIGNAL_TYPE == SIGNAL_TYPE_FLOAT)
-        SIGNAL_TYPE mFrequency = 0.0;
+        float mFrequency = 0.0;
         float       mStepSize  = 0.0;
         float       mArrayPtr  = 0.0;
 
@@ -427,7 +353,6 @@ namespace klang {
                 mArrayPtr -= mWavetableLength;
             }
         }
-#endif
 
         static constexpr float KLANG_AUDIO_RATE_UINT16_INV = 1.0 / (float)KLANG_AUDIO_RATE_UINT16;
         BUFFER_TYPE*           mWavetable;
@@ -448,8 +373,8 @@ namespace klang {
         Connection* mConnection_CH_IN_FREQ = nullptr;
         Connection* mConnection_CH_IN_AMP  = nullptr;
 
-        SIGNAL_TYPE mAmplitude = SIGNAL_MAX;
-        SIGNAL_TYPE mOffset    = 0.0;
+        float mAmplitude = SIGNAL_MAX;
+        float mOffset    = 0.0;
     };
 
     template <>
@@ -511,7 +436,7 @@ namespace klang {
     using NodeVCOWavetableUI16 = NodeVCOWavetableT<uint16_t>;
     using NodeVCOWavetableI16  = NodeVCOWavetableT<int16_t>;
     using NodeVCOWavetableF32  = NodeVCOWavetableT<float>;
-    using NodeVCOWavetable     = NodeVCOWavetableT<SIGNAL_TYPE>;
+    using NodeVCOWavetable     = NodeVCOWavetableT<float>;
 }  // namespace klang
 
 #endif /* NodeVCOWavetable_hpp */

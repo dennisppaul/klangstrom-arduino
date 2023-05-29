@@ -61,17 +61,17 @@ namespace klang {
             return false;
         }
 
-        void update(CHANNEL_ID pChannel, SIGNAL_TYPE *pAudioBlock) {
+        void update(CHANNEL_ID pChannel, float *pAudioBlock) {
             if (is_not_updated()) {
                 if (mConnection_CH_IN_SIGNAL != nullptr) {
                     AUDIO_BLOCK_ID mBlock_IN_SIGNAL = AudioBlockPool::instance().request();
                     mConnection_CH_IN_SIGNAL->update(mBlock_IN_SIGNAL);
                     /* process and store output blocks */
-                    SIGNAL_TYPE *mBlockData_IN_SIGNAL    = AudioBlockPool::instance().data(mBlock_IN_SIGNAL);
+                    float *mBlockData_IN_SIGNAL    = AudioBlockPool::instance().data(mBlock_IN_SIGNAL);
                     mBlock_OUT_SIGNAL_L                  = AudioBlockPool::instance().request();
-                    SIGNAL_TYPE *mBlockData_OUT_SIGNAL_L = AudioBlockPool::instance().data(mBlock_OUT_SIGNAL_L);
+                    float *mBlockData_OUT_SIGNAL_L = AudioBlockPool::instance().data(mBlock_OUT_SIGNAL_L);
                     mBlock_OUT_SIGNAL_R                  = AudioBlockPool::NO_ID;
-                    SIGNAL_TYPE *mBlockData_OUT_SIGNAL_R = nullptr;
+                    float *mBlockData_OUT_SIGNAL_R = nullptr;
                     if (mStereoOutput) {
                         mBlock_OUT_SIGNAL_R     = AudioBlockPool::instance().request();
                         mBlockData_OUT_SIGNAL_R = AudioBlockPool::instance().data(mBlock_OUT_SIGNAL_R);
@@ -87,16 +87,16 @@ namespace klang {
                 flag_updated();
             }
             if (pChannel == CH_OUT_SIGNAL_LEFT && mBlock_OUT_SIGNAL_L != AudioBlockPool::NO_ID) {
-                SIGNAL_TYPE *mBlockData_OUT_SIGNAL_L = AudioBlockPool::instance().data(mBlock_OUT_SIGNAL_L);
+                float *mBlockData_OUT_SIGNAL_L = AudioBlockPool::instance().data(mBlock_OUT_SIGNAL_L);
                 for (uint16_t i = 0; i < KLANG_SAMPLES_PER_AUDIO_BLOCK; i++) {
                     pAudioBlock[i] = mBlockData_OUT_SIGNAL_L[i];
                 }
                 // @TODO(should probably use `std::copy` here
                 // memcpy( mBlockData_OUT_SIGNAL_L,
                 //         pAudioBlock,
-                //         sizeof(SIGNAL_TYPE) * KLANG_SAMPLES_PER_AUDIO_BLOCK);
+                //         sizeof(float) * KLANG_SAMPLES_PER_AUDIO_BLOCK);
             } else if (pChannel == CH_OUT_SIGNAL_RIGHT && mStereoOutput && mBlock_OUT_SIGNAL_R != AudioBlockPool::NO_ID) {
-                SIGNAL_TYPE *mBlockData_OUT_SIGNAL_R = AudioBlockPool::instance().data(mBlock_OUT_SIGNAL_R);
+                float *mBlockData_OUT_SIGNAL_R = AudioBlockPool::instance().data(mBlock_OUT_SIGNAL_R);
                 for (uint16_t i = 0; i < KLANG_SAMPLES_PER_AUDIO_BLOCK; i++) {
                     pAudioBlock[i] = mBlockData_OUT_SIGNAL_R[i];
                 }
@@ -107,19 +107,19 @@ namespace klang {
             mStereoOutput = pStereoOutput;
         }
 
-        void set_feedback(SIGNAL_TYPE pValue) {
+        void set_feedback(float pValue) {
             ChorusFeedback_set(pValue);
         }
 
-        void set_rate(SIGNAL_TYPE pValue) {
+        void set_rate(float pValue) {
             ChorusRate_set(pValue);
         }
 
-        void set_delay(SIGNAL_TYPE pValue) {
+        void set_delay(float pValue) {
             ChorusDelay_set(pValue);
         }
 
-        void set_sweep(SIGNAL_TYPE pValue) {
+        void set_sweep(float pValue) {
             ChorusSweep_set(pValue);
         }
 

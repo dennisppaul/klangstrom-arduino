@@ -213,12 +213,12 @@
 
 #define HSE_VALUE 16000000U
 
-#define BUTTON_PROGRAMMER      PC5
+#define KLST_NUM_ENCODERS      3
 #define KLST_NUM_LEDS          3
 #define KLST_NUM_ADCS          2
 #define KLST_NUM_DACS          2
 #define KLST_ANALOG_RESOLUTION 16
-#define KLST_UART_BAUD         115200
+#define BUTTON_PROGRAMMER      PC5
 
 #ifndef LED_BUILTIN
 #define LED_BUILTIN LED_00
@@ -252,6 +252,7 @@
 // #endif
 
 #ifdef __cplusplus
+#define KLST_UART_BAUD 115200
 #define KLST_SERIAL_00 Serial1
 #define KLST_SERIAL_01 Serial4
 #define KLST_LOG       Serial

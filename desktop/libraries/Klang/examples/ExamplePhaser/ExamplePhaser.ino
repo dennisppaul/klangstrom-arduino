@@ -23,12 +23,12 @@ void setup() {
 
 void loop() {}
 
-void audioblock(SIGNAL_TYPE* pOutputLeft, SIGNAL_TYPE* pOutputRight, SIGNAL_TYPE* pInputLeft, SIGNAL_TYPE* pInputRight) {
-    mADC.process_frame(pInputLeft, pInputRight);
-    mDAC.process_frame(pOutputLeft, pOutputRight);
+void audioblock(float** input_signal, float** output_signal) {
+    mADC.process_frame(input_signal[LEFT], input_signal[RIGHT]);
+    mDAC.process_frame(output_signal[LEFT], output_signal[RIGHT]);
 }
 
-void event_receive(const EVENT_TYPE event, const float* data) {
+void event_receive(const EVENT_TYPE event, const void* data) {
     if (event == EVENT_MOUSE_MOVED) {
         mPhaser.set_wet(0.5);
         mPhaser.set_feedback(mouse_event(data).x * 2.0);

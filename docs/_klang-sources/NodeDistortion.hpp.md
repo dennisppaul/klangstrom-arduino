@@ -2,7 +2,7 @@
 layout: libdoc
 title: NodeDistortion.hpp
 permalink: /NodeDistortion.hpp/
-index: 57
+index: 53
 ---
 
 ```c
@@ -96,7 +96,7 @@ namespace klang {
         }
 
     protected:
-        SIGNAL_TYPE kernel(const SIGNAL_TYPE s) {
+        float kernel(const float s) {
             switch (mDistortionType) {
                 case CLIP:
                     return limit_clip(s * mAmplification);

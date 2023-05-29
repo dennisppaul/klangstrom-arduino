@@ -37,3 +37,4 @@ fp-info-cache
 
 .vscode
 *.code-workspace
+**/DaisySP/examples.todo

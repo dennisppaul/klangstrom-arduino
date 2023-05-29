@@ -2,7 +2,7 @@
  * Klangstrom
  *
  * This file is part of the *wellen* library (https://github.com/dennisppaul/wellen).
- * Copyright (c) 2022 Dennis P Paul.
+ * Copyright (c) 2023 Dennis P Paul.
  *
  * This library is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,8 +25,8 @@
 
 #include <vector>
 
-#include "KlangstromDisplay.h"
 #include "KlangstromCallback.h"
+#include "KlangstromDisplay.h"
 
 namespace klangstrom {
     class KlangstromDisplay_SDL_BSP : public KlangstromDisplay, public KlangstromCallback {
@@ -35,6 +35,8 @@ namespace klangstrom {
             mPosition.x = 0;
             mPosition.y = 0;
         }
+        virtual ~KlangstromDisplay_SDL_BSP() {}
+
         void BSP_init();
         void BSP_set_pixel(const uint16_t x, const uint16_t y, const uint16_t color);
         void BSP_clear_background();
@@ -46,10 +48,10 @@ namespace klangstrom {
         void BSP_character(uint16_t x, uint16_t y, char ch, const uint16_t foreground_color, const uint16_t background_color);
         void BSP_character_scaled(uint16_t x, uint16_t y, uint8_t scale, char ch, const uint16_t foreground_color, const uint16_t background_color);
         void BSP_block(uint16_t x, uint16_t y, uint16_t w, uint16_t h, const uint16_t *data);
-        
+
         /* --- plattform specific --- */
 
-		void callback();
+        void callback();
 
         void ILI9341_Select() {}
         void ILI9341_Unselect() {}

@@ -2,7 +2,7 @@
 layout: libdoc
 title: NodeVCFMoogLHBP.hpp
 permalink: /NodeVCFMoogLHBP.hpp/
-index: 90
+index: 86
 ---
 
 ```c
@@ -67,7 +67,7 @@ namespace klang {
         }
 
     protected:
-        SIGNAL_TYPE process(SIGNAL_TYPE pInput) {
+        float process(float pInput) {
             /* from https://www.musicdsp.org/en/latest/Filters/25-moog-vcf-variation-1.html */
             // Set coefficients given frequency & resonance [0.0...1.0]
             float t1, t2;  // temporary buffers

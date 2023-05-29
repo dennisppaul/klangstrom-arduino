@@ -2,7 +2,7 @@
 layout: libdoc
 title: NodeKernelBlockStereo.hpp
 permalink: /NodeKernelBlockStereo.hpp/
-index: 64
+index: 60
 ---
 
 ```c
@@ -78,15 +78,15 @@ namespace klang {
             return false;
         }
 
-        void update(CHANNEL_ID pChannel, SIGNAL_TYPE* pAudioBlock) {
+        void update(CHANNEL_ID pChannel, float* pAudioBlock) {
             if (mConnection_CH_IN_SIGNAL_A == nullptr && mConnection_CH_IN_SIGNAL_B == nullptr) {
                 for (uint16_t i = 0; i < KLANG_SAMPLES_PER_AUDIO_BLOCK; i++) {
                     pAudioBlock[i] = 0;
                 }
             } else {
                 if (is_not_updated()) {
-                    SIGNAL_TYPE*   mBlockData_OUT_SIGNAL_A = nullptr;
-                    SIGNAL_TYPE*   mBlockData_IN_SIGNAL_A  = nullptr;
+                    float*   mBlockData_OUT_SIGNAL_A = nullptr;
+                    float*   mBlockData_IN_SIGNAL_A  = nullptr;
                     AUDIO_BLOCK_ID mBlock_SIGNAL_IN_A      = AudioBlockPool::NO_ID;
                     if (mConnection_CH_IN_SIGNAL_A != nullptr) {
                         mBlock_SIGNAL_OUT_A     = AudioBlockPool::instance().request();
@@ -96,8 +96,8 @@ namespace klang {
                         mConnection_CH_IN_SIGNAL_A->update(mBlock_SIGNAL_IN_A);
                     }
 
-                    SIGNAL_TYPE*   mBlockData_OUT_SIGNAL_B = nullptr;
-                    SIGNAL_TYPE*   mBlockData_IN_SIGNAL_B  = nullptr;
+                    float*   mBlockData_OUT_SIGNAL_B = nullptr;
+                    float*   mBlockData_IN_SIGNAL_B  = nullptr;
                     AUDIO_BLOCK_ID mBlock_SIGNAL_IN_B      = AudioBlockPool::NO_ID;
                     if (mConnection_CH_IN_SIGNAL_B != nullptr) {
                         mBlock_SIGNAL_OUT_B     = AudioBlockPool::instance().request();
@@ -118,10 +118,10 @@ namespace klang {
                     flag_updated();
                 }
                 if (pChannel == CH_OUT_SIGNAL_LEFT && mConnection_CH_IN_SIGNAL_A != nullptr) {
-                    SIGNAL_TYPE* mBlockData_OUT_SIGNAL_A = AudioBlockPool::instance().data(mBlock_SIGNAL_OUT_A);
+                    float* mBlockData_OUT_SIGNAL_A = AudioBlockPool::instance().data(mBlock_SIGNAL_OUT_A);
                     KLANG_COPY_AUDIO_BUFFER(pAudioBlock, mBlockData_OUT_SIGNAL_A);
                 } else if (pChannel == CH_OUT_SIGNAL_RIGHT && mConnection_CH_IN_SIGNAL_B != nullptr) {
-                    SIGNAL_TYPE* mBlockData_OUT_SIGNAL_B = AudioBlockPool::instance().data(mBlock_SIGNAL_OUT_B);
+                    float* mBlockData_OUT_SIGNAL_B = AudioBlockPool::instance().data(mBlock_SIGNAL_OUT_B);
                     KLANG_COPY_AUDIO_BUFFER(pAudioBlock, mBlockData_OUT_SIGNAL_B);
                 }
             }
@@ -131,10 +131,10 @@ namespace klang {
 
     protected:
         /* override kernel method to implement custom kernels. */
-        virtual void kernel(SIGNAL_TYPE* pOutputSignal_LEFT,
-                            SIGNAL_TYPE* pOutputSignal_RIGHT,
-                            SIGNAL_TYPE* pInputSignal_A,
-                            SIGNAL_TYPE* pInputSignal_B) = 0;
+        virtual void kernel(float* pOutputSignal_LEFT,
+                            float* pOutputSignal_RIGHT,
+                            float* pInputSignal_A,
+                            float* pInputSignal_B) = 0;
 
     private:
         Connection* mConnection_CH_IN_SIGNAL_A = nullptr;

@@ -72,8 +72,8 @@
 #endif
 #define OSC_DEFAULT_FREQUENCY 220.0
 #define OSC_DEFAULT_AMPLITUDE 0.75
-#define SIGNAL_TYPE_FLOAT     1
-#define SIGNAL_TYPE_INT16     2
+#define float_FLOAT     1
+#define float_INT16     2
 
 #ifndef KLST_ARCH_MCU
 #define KLST_ARCH_MCU 1

@@ -343,6 +343,7 @@
 /* --- PERIPHERALS ---------------------------------------------------------- */
 /* -------------------------------------------------------------------------- */
 
+#define KLST_NUM_ENCODERS      2
 #define KLST_NUM_LEDS          16
 #define KLST_NUM_ADCS          2
 #define KLST_NUM_DACS          2
@@ -440,13 +441,11 @@
 /* -------------------------------------------------------------------------- */
 
 #ifdef __cplusplus
-
 #define KLST_UART_BAUD 115200
 #define KLST_SERIAL_00 Serial7
 #define KLST_SERIAL_01 Serial8
 #define KLST_LOG       Serial
 #define Console        Serial
-
 #endif
 
 /*----------------------------------------------------------------------------

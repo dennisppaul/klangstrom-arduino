@@ -1,3 +1,5 @@
+#ifdef USE_USBHOST
+
 /**
   ******************************************************************************
   * @file    usbh_hid_keybd.c
@@ -429,3 +431,4 @@ uint8_t USBH_HID_GetASCIICode(HID_KEYBD_Info_TypeDef *info, uint8_t index)
 }
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
 
+#endif // USE_USBHOST

@@ -11,17 +11,16 @@ NodeVCOFunction fVCO;
 NodeDAC         fDAC;
 
 KlangstromDisplayDrawBuffer fDrawBuffer(32);
-KlangstromDisplay*          Display;
+KlangstromDisplay&          Display = KlangstromDisplay::create();
 
 void setup() {
-    Display = KlangstromDisplay::create();
-    Display->begin();
-    Display->background(0, 0, 0);
-    Display->color(255, 255, 255);
-    Display->clear();
+    Display.begin();
+    Display.background(0, 0, 0);
+    Display.color(255, 255, 255);
+    Display.clear();
 
-    Display->textFont(&Font_5x8);
-    Display->text(30, 30, "DRAW AUDIO BUFFER");
+    Display.textFont(&Font_5x8);
+    Display.text(30, 30, "DRAW AUDIO BUFFER");
 
     fDrawBuffer.width         = 128;
     fDrawBuffer.height        = 64;

@@ -91,7 +91,7 @@ namespace klang {
             return false;
         }
 
-        void update(CHANNEL_ID pChannel, SIGNAL_TYPE* pAudioBlock) {
+        void update(CHANNEL_ID pChannel, float* pAudioBlock) {
             const bool    m_has_SIGNAL_0      = (mConnection_CH_IN_SIGNAL_0 != nullptr);
             const bool    m_has_SIGNAL_1      = (mConnection_CH_IN_SIGNAL_1 != nullptr);
             const bool    m_has_SIGNAL_2      = (mConnection_CH_IN_SIGNAL_2 != nullptr);
@@ -102,10 +102,10 @@ namespace klang {
                 AUDIO_BLOCK_ID mBlock_SIGNAL_1     = AudioBlockPool::NO_ID;
                 AUDIO_BLOCK_ID mBlock_SIGNAL_2     = AudioBlockPool::NO_ID;
                 AUDIO_BLOCK_ID mBlock_SIGNAL_3     = AudioBlockPool::NO_ID;
-                SIGNAL_TYPE*   mBlockData_SIGNAL_0 = nullptr;
-                SIGNAL_TYPE*   mBlockData_SIGNAL_1 = nullptr;
-                SIGNAL_TYPE*   mBlockData_SIGNAL_2 = nullptr;
-                SIGNAL_TYPE*   mBlockData_SIGNAL_3 = nullptr;
+                float*   mBlockData_SIGNAL_0 = nullptr;
+                float*   mBlockData_SIGNAL_1 = nullptr;
+                float*   mBlockData_SIGNAL_2 = nullptr;
+                float*   mBlockData_SIGNAL_3 = nullptr;
 
                 if (m_has_SIGNAL_0) {
                     mBlock_SIGNAL_0     = AudioBlockPool::instance().request();
@@ -145,7 +145,7 @@ namespace klang {
 
                 flag_updated();
             } else {
-                memset(pAudioBlock, 0.0, KLANG_SAMPLES_PER_AUDIO_BLOCK * sizeof(SIGNAL_TYPE));
+                memset(pAudioBlock, 0.0, KLANG_SAMPLES_PER_AUDIO_BLOCK * sizeof(float));
             }
         }
 
@@ -153,7 +153,7 @@ namespace klang {
             mMix[pChannel] = pValue;
         }
 
-        SIGNAL_TYPE get_mix(uint8_t pChannel) {
+        float get_mix(uint8_t pChannel) {
             return mMix[pChannel];
         }
 

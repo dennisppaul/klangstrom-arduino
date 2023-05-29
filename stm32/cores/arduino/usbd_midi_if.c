@@ -13,13 +13,34 @@
 
 #include "USBDevice.h"
 
-#ifndef WEAK
-#define WEAK __attribute__((weak))
-#endif
-
-WEAK void receive_midi_note_off(const uint8_t channel, const uint8_t note) {}
-WEAK void receive_midi_note_on(const uint8_t channel, const uint8_t note, const uint8_t velocity) {}
-WEAK void receive_midi_control_change(const uint8_t channel, const uint8_t number, const uint8_t value) {}
+static const uint8_t MIDI_NONE                  = 0x00;
+static const uint8_t MIDI_NOTE_OFF              = 0x80;
+static const uint8_t MIDI_NOTE_ON               = 0x90;
+static const uint8_t MIDI_AFTERTOUCH            = 0xA0;
+static const uint8_t MIDI_CONTROL_CHANGE        = 0xB0;
+static const uint8_t MIDI_PROGRAM_CHANGE        = 0xC0;
+static const uint8_t MIDI_CHANNEL_PRESSURE      = 0xD0;
+static const uint8_t MIDI_PITCHBEND             = 0xE0;
+static const uint8_t MIDI_SYS_EX                = 0xF0;
+static const uint8_t MIDI_MTCQFRAME             = 0xF1;  // dataB = quarter frame number
+static const uint8_t MIDI_SONG_POSITION_POINTER = 0xF2;
+static const uint8_t MIDI_SONG_SELECT           = 0xF3;  // dataB = song#
+static const uint8_t MIDI_UNDEF_1               = 0xF4;
+static const uint8_t MIDI_UNDEF_2               = 0xF5;
+static const uint8_t MIDI_TUNE_REQ              = 0xF6;  // no data, return oscillators
+static const uint8_t MIDI_ENDEX                 = 0xF7;  // ends a SYSEX dump
+static const uint8_t MIDI_CLOCK_TICK            = 0xF8;
+static const uint8_t MIDI_RT_CLOCK              = 0xF8;  // *
+static const uint8_t MIDI_RT_UNDEF_1            = 0xF9;
+static const uint8_t MIDI_CLOCK_START           = 0xFA;
+static const uint8_t MIDI_RT_START              = 0xFA;  // *
+static const uint8_t MIDI_CLOCK_CONTINUE        = 0xFB;
+static const uint8_t MIDI_RT_CONTINUE           = 0xFB;  // *
+static const uint8_t MIDI_CLOCK_STOP            = 0xFC;
+static const uint8_t MIDI_RT_STOP               = 0xFC;  // *
+static const uint8_t MIDI_RT_UNDEF_2            = 0xFD;
+static const uint8_t MIDI_RT_SENSE              = 0xFE;  // Sent every 300ms on a live connection. Can ignore.
+static const uint8_t MIDI_RT_RESET              = 0xFF;  // Reset any parameters to their power up values
 
 /** @addtogroup STM32_USB_DEVICE_LIBRARY
  * @{
@@ -103,13 +124,124 @@ int8_t MIDI_DeInit(USBD_HandleTypeDef* pdev, uint8_t cfgidx) {
  */
 int8_t MIDI_Send(uint8_t* buffer, uint32_t length) {
     uint8_t ret = USBD_OK;
-
     USBD_MIDI_SetTxBuffer(&hUsbDeviceFS, buffer, length);
-
     ret = USBD_MIDI_TransmitPacket(&hUsbDeviceFS);
-
     return (ret);
 }
+
+static void parseSysExMessage(uint8_t* message) {
+    const uint8_t sys_ex_message_type = message[0] & 0xFF;  // // bits 7-3 of the status byte
+    uint8_t       lsb, msb, song_number;
+    uint16_t      song_position;
+
+    switch (sys_ex_message_type) {
+        case MIDI_SYS_EX:  // System Exclusive
+                           // The second byte is the first data byte of the system exclusive message
+                           // Do something with the system exclusive message
+            usb_device_call_midi_sys_ex(message);
+            break;
+        case MIDI_MTCQFRAME:  // MIDI Time Code Quarter Frame
+                              // The second byte contains the time code data
+                              // Do something with the MIDI Time Code Quarter Frame message
+            usb_device_call_midi_mtc_quarter_frame(message[1]);
+            break;
+        case MIDI_SONG_POSITION_POINTER:
+            // The second byte is the least significant 7 bits of the song position, and the third byte
+            // is the most significant 7 bits
+            lsb           = message[1];
+            msb           = message[2];
+            song_position = (msb << 7) | lsb;
+            usb_device_call_midi_song_position_pointer(song_position);
+            break;
+        case MIDI_SONG_SELECT:  // Song Select
+                                // The second byte is the song number
+            song_number = message[1];
+            usb_device_call_midi_song_select(song_number);
+            break;
+        case MIDI_TUNE_REQ:  // Tune Request
+            usb_device_call_midi_tune_req();
+            break;
+        case MIDI_ENDEX:  // End of System Exclusive
+            usb_device_call_midi_end_ex();
+            break;
+        case MIDI_CLOCK_TICK:
+            usb_device_call_midi_clock_tick();
+            break;
+        case MIDI_CLOCK_START:
+            usb_device_call_midi_clock_start();
+            break;
+        case MIDI_CLOCK_CONTINUE:
+            usb_device_call_midi_clock_continue();
+            break;
+        case MIDI_CLOCK_STOP:
+            usb_device_call_midi_clock_stop();
+            break;
+        case MIDI_RT_SENSE:
+            usb_device_call_midi_rt_sense();
+            break;
+        case MIDI_RT_RESET:
+            usb_device_call_midi_rt_reset();
+            break;
+    }
+}
+
+static void parseMIDIMessage(uint8_t* message) {
+    const uint8_t status_byte  = message[0];
+    const uint8_t message_type = status_byte & 0xF0;  // bits 7-4 of the status byte
+    const uint8_t channel      = status_byte & 0x0F;  // bits 3-0 of the status byte
+    uint8_t       note, velocity, pressure, lsb, msb, controller, value, program;
+    uint16_t      pitch_bend;
+
+    switch (message_type) {
+        case MIDI_NOTE_OFF:
+            note     = message[1];
+            velocity = message[2];
+            usb_device_call_midi_note_off(channel, note, velocity);
+            break;
+        case MIDI_NOTE_ON:
+            note     = message[1];
+            velocity = message[2];
+            usb_device_call_midi_note_on(channel, note, velocity);
+            break;
+        case MIDI_AFTERTOUCH:
+            note     = message[1];
+            pressure = message[2];
+            usb_device_call_midi_aftertouch(channel, note, pressure);
+            break;
+        case MIDI_CONTROL_CHANGE:
+            controller = message[1];
+            value      = message[2];
+            usb_device_call_midi_control_change(channel, controller, value);
+            break;
+        case MIDI_PROGRAM_CHANGE:
+            program = message[1];
+            usb_device_call_midi_program_change(channel, program);
+            break;
+        case MIDI_CHANNEL_PRESSURE:
+            pressure = message[1];
+            usb_device_call_midi_channel_pressure(channel, pressure);
+            break;
+        case MIDI_PITCHBEND:
+            // The second byte of the message is the least significant 7 bits of the pitch bend value, and the third byte is the most significant 7 bits
+            lsb        = message[1];
+            msb        = message[2];
+            pitch_bend = (msb << 7) | lsb;
+            usb_device_call_midi_pitch_bend(channel, pitch_bend);
+            break;
+        case MIDI_SYS_EX:
+            parseSysExMessage(message);
+            break;
+    }
+}
+
+/* this TMP hack is required as long as we need to copy files to the core folder :( )*/
+typedef struct {
+    uint8_t  channel;
+    uint8_t  command;
+    uint16_t a;
+    uint8_t  b;
+} TMP___EventMIDI;
+static const uint8_t TMP___EVENT_MIDI = 0x0B;
 
 /**
  * @brief  MIDI_Receive
@@ -119,43 +251,16 @@ int8_t MIDI_Send(uint8_t* buffer, uint32_t length) {
  * @retval Result of the operation: USBD_OK if all operations are OK else USBD_FAIL
  */
 int8_t MIDI_Receive(uint8_t* buffer, uint32_t length) {
-    uint8_t  channel = buffer[1] & 0x0F;
-    uint8_t  msgtype = buffer[1] & 0xF0;
-    uint8_t  b1      = buffer[2];
-    uint8_t  b2      = buffer[3];
-    uint16_t b       = ((b2 & 0x7f) << 7) | (b1 & 0x7f);
+    /* this TMP hack is required as long as we need to copy files to the core folder :( )*/
+    TMP___EventMIDI mEvent;
+    mEvent.command = buffer[1] & 0xF0;
+    mEvent.channel = buffer[1] & 0x0F;
+    mEvent.a       = buffer[2];
+    mEvent.b       = buffer[3];
+    usb_device_call_event_receive(TMP___EVENT_MIDI, &mEvent);
 
-    USBD_UsrLog("MIDI receive channel:0x%02X msg:0x%02X b1:0x%02X b2:0x%02X", channel, msgtype, b1, b2);
-
-    static const uint8_t NOTE_OFF                = 0x80;
-    static const uint8_t NOTE_ON                 = 0x90;
-    static const uint8_t CONTROL_CHANGE          = 0xB0;
-    static const uint8_t PROGRAM_CHANGE          = 0xC0;
-    static const uint8_t SYSTEM_REALTIME_MESSAGE = 0xF0;
-
-    switch (msgtype) {
-        case NOTE_OFF:
-            USBD_UsrLog("NOTE_OFF");
-            receive_midi_note_off(channel, b1);
-            break;
-        case NOTE_ON:
-            USBD_UsrLog("NOTE_ON");
-            receive_midi_note_on(channel, b1, b2);
-            break;
-        case CONTROL_CHANGE:
-            USBD_UsrLog("CONTROL_CHANGE");
-            receive_midi_control_change(channel, b1, b2);
-            break;
-        case PROGRAM_CHANGE:
-            USBD_UsrLog("PROGRAM_CHANGE");
-            // receive_midi_program_change(channel, b1, b2);
-            break;
-        case SYSTEM_REALTIME_MESSAGE:
-            USBD_UsrLog("SYSTEM_REALTIME_MESSAGE");
-            break;
-        default:
-            break;
-    }
+    uint8_t mMessage[3] = {buffer[1], buffer[2], buffer[3]};
+    parseMIDIMessage(mMessage);
     return 0;
 }
 

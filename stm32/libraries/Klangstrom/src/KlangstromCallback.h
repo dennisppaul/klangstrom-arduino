@@ -2,7 +2,7 @@
  * Klangstrom
  *
  * This file is part of the *wellen* library (https://github.com/dennisppaul/wellen).
- * Copyright (c) 2022 Dennis P Paul.
+ * Copyright (c) 2023 Dennis P Paul.
  *
  * This library is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,8 +17,8 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _KLANGSTROMCALLBACK_H_
-#define _KLANGSTROMCALLBACK_H_
+#ifndef _KLANGSTROM_CALLBACK_H_
+#define _KLANGSTROM_CALLBACK_H_
 
 namespace klangstrom {
 	class KlangstromCallback {
@@ -27,4 +27,4 @@ namespace klangstrom {
 	};
 }  // namespace klangstrom
 
-#endif  // _KLANGSTROMCALLBACK_H_
+#endif  // _KLANGSTROM_CALLBACK_H_

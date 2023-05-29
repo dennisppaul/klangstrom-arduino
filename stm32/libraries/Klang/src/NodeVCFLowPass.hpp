@@ -65,7 +65,7 @@ namespace klang {
     protected:
         float       buf0;
         float       buf1;
-        SIGNAL_TYPE process(SIGNAL_TYPE input) {
+        float process(float input) {
             const float q = mResonance;
             const float f = mCutoff;
             // set feedback amount given f and q between 0 and 1

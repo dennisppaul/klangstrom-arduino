@@ -2,7 +2,7 @@
 layout: libdoc
 title: AudioBlockPool.hpp
 permalink: /AudioBlockPool.hpp/
-index: 27
+index: 23
 ---
 
 ```c
@@ -81,7 +81,7 @@ namespace klang {
             }
         }
 
-        SIGNAL_TYPE* data(AUDIO_BLOCK_ID pAudioBlockID) {
+        float* data(AUDIO_BLOCK_ID pAudioBlockID) {
             if (pAudioBlockID > NO_ID && pAudioBlockID < KLANG_AUDIO_BLOCKS) {
                 return mAudioBlocks[pAudioBlockID];
             } else {
@@ -115,13 +115,13 @@ namespace klang {
 
         bool mAudioBlockAvailableIDs[KLANG_AUDIO_BLOCKS];
 #ifdef KLANG_USE_HEAP_ALLOCATION
-        SIGNAL_TYPE** mAudioBlocks;
+        float** mAudioBlocks;
 #else
         // @TODO(see if there is a way to move audioblock buffer to specific memory location in class ( with `static`? ) + test this on desktop version too)
-        // static SIGNAL_TYPE mAudioBlocks[KLANG_AUDIO_BLOCKS][KLANG_SAMPLES_PER_AUDIO_BLOCK] __attribute__ ((section(".audio_block_buffer"))); // or make this global
-        // SIGNAL_TYPE mAudioBlocks[KLANG_AUDIO_BLOCKS][KLANG_SAMPLES_PER_AUDIO_BLOCK];
+        // static float mAudioBlocks[KLANG_AUDIO_BLOCKS][KLANG_SAMPLES_PER_AUDIO_BLOCK] __attribute__ ((section(".audio_block_buffer"))); // or make this global
+        // float mAudioBlocks[KLANG_AUDIO_BLOCKS][KLANG_SAMPLES_PER_AUDIO_BLOCK];
         // @TODO(removed `inline` not sure why it was there in the first place.)
-        inline static SIGNAL_TYPE mAudioBlocks[KLANG_AUDIO_BLOCKS][KLANG_SAMPLES_PER_AUDIO_BLOCK]
+        inline static float mAudioBlocks[KLANG_AUDIO_BLOCKS][KLANG_SAMPLES_PER_AUDIO_BLOCK]
 #if (KLST_ARCH == KLST_ARCH_MCU)
             __attribute__((section(".audio_block_buffer")))
         // @TODO(moved memory to RAM_D3 (0x38000000). not really happy about this plattform specificness at this point)
@@ -138,9 +138,9 @@ namespace klang {
 
         AudioBlockPool() {
 #ifdef KLANG_USE_HEAP_ALLOCATION
-            mAudioBlocks = new SIGNAL_TYPE*[KLANG_AUDIO_BLOCKS];
+            mAudioBlocks = new float*[KLANG_AUDIO_BLOCKS];
             for (AUDIO_BLOCK_ID i = 0; i < KLANG_AUDIO_BLOCKS; i++) {
-                SIGNAL_TYPE* mBlock = new SIGNAL_TYPE[KLANG_SAMPLES_PER_AUDIO_BLOCK];
+                float* mBlock = new float[KLANG_SAMPLES_PER_AUDIO_BLOCK];
                 mAudioBlocks[i]     = mBlock;
             }
 #endif

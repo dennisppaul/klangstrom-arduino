@@ -2,7 +2,7 @@
 layout: libdoc
 title: NodeKernelBlock.hpp
 permalink: /NodeKernelBlock.hpp/
-index: 61
+index: 57
 ---
 
 ```c
@@ -66,7 +66,7 @@ namespace klang {
             return false;
         }
 
-        void update(CHANNEL_ID pChannel, SIGNAL_TYPE* pAudioBlock) {
+        void update(CHANNEL_ID pChannel, float* pAudioBlock) {
             if (is_not_updated()) {
                 if (mConnection_CH_IN_SIGNAL != nullptr) {
                     mConnection_CH_IN_SIGNAL->update(pAudioBlock);
@@ -82,7 +82,7 @@ namespace klang {
 
     protected:
         /* override kernel method to implement custom kernels. */
-        virtual void kernel(SIGNAL_TYPE* s) = 0;
+        virtual void kernel(float* s) = 0;
 
     private:
         Connection* mConnection_CH_IN_SIGNAL = nullptr;

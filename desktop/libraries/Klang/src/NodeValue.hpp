@@ -41,7 +41,7 @@ namespace klang {
 
         bool disconnect(CHANNEL_ID pInChannel) { return false; }
 
-        void update(CHANNEL_ID pChannel, SIGNAL_TYPE* pAudioBlock) {
+        void update(CHANNEL_ID pChannel, float* pAudioBlock) {
             if (pChannel == CH_OUT_SIGNAL) {
                 for (uint16_t i = 0; i < KLANG_SAMPLES_PER_AUDIO_BLOCK; i++) {
                     pAudioBlock[i] = mValue;
@@ -49,11 +49,11 @@ namespace klang {
             }
         }
 
-        void set_value(SIGNAL_TYPE pValue) {
+        void set_value(float pValue) {
             mValue = pValue;
         }
 
-        SIGNAL_TYPE get_value() {
+        float get_value() {
             return mValue;
         }
 
@@ -66,7 +66,7 @@ namespace klang {
         }
 
     private:
-        SIGNAL_TYPE mValue = 0.0;
+        float mValue = 0.0;
     };
 }  // namespace klang
 

@@ -38,7 +38,7 @@ namespace klang {
         static constexpr float TRIGGER_FALLING_EDGE = -1.0;
         static constexpr float TRIGGER_RISING_EDGE  = 1.0;
 
-        SIGNAL_TYPE kernel(SIGNAL_TYPE s) {
+        float kernel(float s) {
             if (mPreviousSample > mThreshold && s < mThreshold) {
                 fire_event(KLANG_EVENT::TRIGGER, std::vector<float>{TRIGGER_FALLING_EDGE});
             } else if (mPreviousSample < mThreshold && s > mThreshold) {
@@ -51,7 +51,7 @@ namespace klang {
         void set_command(KLANG_CMD_TYPE pCommand, KLANG_CMD_TYPE* pPayLoad) {}
 
     private:
-        SIGNAL_TYPE            mPreviousSample = 0.0;
+        float            mPreviousSample = 0.0;
         static constexpr float mThreshold      = 0.0;
     };
 }  // namespace klang

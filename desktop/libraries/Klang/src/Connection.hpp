@@ -40,7 +40,7 @@ namespace klang {
         Node&      input_node;
         CHANNEL_ID input_channel_id;
 
-        void update(SIGNAL_TYPE* pAudioBlock);
+        void update(float* pAudioBlock);
         void update(AUDIO_BLOCK_ID pAudioBlockID);
 
         static void reset();

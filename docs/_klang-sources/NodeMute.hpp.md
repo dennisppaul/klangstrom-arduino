@@ -2,7 +2,7 @@
 layout: libdoc
 title: NodeMute.hpp
 permalink: /NodeMute.hpp/
-index: 74
+index: 70
 ---
 
 ```c
@@ -77,7 +77,7 @@ namespace klang {
             return false;
         }
 
-        void update(CHANNEL_ID pChannel, SIGNAL_TYPE* pAudioBlock) {
+        void update(CHANNEL_ID pChannel, float* pAudioBlock) {
             if (is_not_updated()) {
                 if (mConnection_CH_IN_SIGNAL != nullptr) {
                     if (!mIsMuted) {

@@ -1,3 +1,5 @@
+#ifdef USE_USBHOST
+
 /* USER CODE BEGIN Header */
 /**
   ******************************************************************************
@@ -143,3 +145,4 @@ static void USBH_UserProcess  (USBH_HandleTypeDef *phost, uint8_t id)
   * @}
   */
 
+#endif // USE_USBHOST

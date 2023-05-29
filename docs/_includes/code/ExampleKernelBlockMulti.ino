@@ -19,7 +19,7 @@ public:
     float mix_x = 1.0;
     float mix_y = 1.0;
 
-    void kernel(vector<SIGNAL_TYPE*>& pOutputSignals, vector<SIGNAL_TYPE*>& pInputSignals) {
+    void kernel(vector<float*>& pOutputSignals, vector<float*>& pInputSignals) {
         for (uint16_t i = 0; i < KLANG_SAMPLES_PER_AUDIO_BLOCK; i++) {
             pOutputSignals[CH_OUT_SIGNAL_LEFT][i] =
                 pInputSignals[0][i] * 0.5 +
@@ -55,11 +55,11 @@ void setup() {
 
 void loop() {}
 
-void audioblock(SIGNAL_TYPE* pOutputLeft, SIGNAL_TYPE* pOutputRight, SIGNAL_TYPE* pInputLeft, SIGNAL_TYPE* pInputRight) {
-    mDAC.process_frame(pOutputLeft, pOutputRight);
+void audioblock(float** input_signal, float** output_signal) {
+    mDAC.process_frame(output_signal[LEFT], output_signal[RIGHT]);
 }
 
-void event_receive(const EVENT_TYPE event, const float* data) {
+void event_receive(const EVENT_TYPE event, const void* data) {
     if (event == EVENT_MOUSE_MOVED) {
         mKernel.mix_x = mouse_event(data).x;
         mKernel.mix_y = mouse_event(data).y;

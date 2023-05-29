@@ -65,7 +65,7 @@ namespace klang {
             return false;
         }
 
-        void update(CHANNEL_ID pChannel, SIGNAL_TYPE* pAudioBlock) {
+        void update(CHANNEL_ID pChannel, float* pAudioBlock) {
             if (is_not_updated()) {
                 if (mConnection_CH_IN_SIGNAL != nullptr) {
                     // @TODO(@feature, "instead of updating directly into the incoming block, an extra block could be created here then after updating all other input blocks, the output will be processed into that block. in step 3 data will only be copied …")
@@ -126,7 +126,7 @@ namespace klang {
     protected:
         float               mCutoff                    = 0.5f;
         float               mResonance                 = 0.5f;
-        virtual SIGNAL_TYPE process(SIGNAL_TYPE input) = 0;
+        virtual float process(float input) = 0;
 
     private:
         AUDIO_BLOCK_ID mBlock_CUTOFF    = AudioBlockPool::NO_ID;

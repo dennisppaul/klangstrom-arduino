@@ -2,7 +2,7 @@
 layout: libdoc
 title: Klang.hpp
 permalink: /Klang.hpp/
-index: 34
+index: 30
 ---
 
 ```c
@@ -82,15 +82,8 @@ index: 34
 #endif
 #endif
 
-#if !defined(SIGNAL_TYPE_FLOAT) && !defined(SIGNAL_TYPE_INT16)
-#warning SIGNAL_TYPE is not defined properly. choosing `SIGNAL_TYPE_FLOAT`. check if `KlangDefines.hpp` is included in `KlangConfiguration.h`?
-#endif
-
-#ifndef KLANG_SIGNAL_TYPE
-#define KLANG_SIGNAL_TYPE SIGNAL_TYPE_FLOAT
-#ifdef DEBUG_SHOW_DEFAULT_WARNINGS
-#warning setting KLANG_SIGNAL_TYPE to default value: SIGNAL_TYPE_FLOAT
-#endif
+#if !defined(float_FLOAT) && !defined(float_INT16)
+#warning float is not defined properly. choosing `float_FLOAT`. check if `KlangDefines.hpp` is included in `KlangConfiguration.h`?
 #endif
 
 #ifndef KLANG_HEAP_ALLOCATION
@@ -102,20 +95,11 @@ index: 34
 
 /* --- SIGNAL --- */
 
-#if (KLANG_SIGNAL_TYPE == SIGNAL_TYPE_INT16)
-typedef int16_t          SIGNAL_TYPE;
-const static SIGNAL_TYPE SIGNAL_MIN = -32768;
-const static SIGNAL_TYPE SIGNAL_MAX = 32767;
-#elif (KLANG_SIGNAL_TYPE == SIGNAL_TYPE_FLOAT)
-typedef float            SIGNAL_TYPE;
-const static SIGNAL_TYPE SIGNAL_MIN = -1.0;
-const static SIGNAL_TYPE SIGNAL_MAX = 1.0;
-#else
-#error KLANG_SIGNAL_TYPE not defined
-#endif
+const static float SIGNAL_MIN = -1.0;
+const static float SIGNAL_MAX = 1.0;
 
-#define KLANG_FILL_AUDIO_BUFFER(DST, VAL) memset(DST, VAL, KLANG_SAMPLES_PER_AUDIO_BLOCK * sizeof(SIGNAL_TYPE))
-#define KLANG_COPY_AUDIO_BUFFER(DST, SRC) memcpy(DST, SRC, KLANG_SAMPLES_PER_AUDIO_BLOCK * sizeof(SIGNAL_TYPE))
+#define KLANG_FILL_AUDIO_BUFFER(DST, VAL) memset(DST, VAL, KLANG_SAMPLES_PER_AUDIO_BLOCK * sizeof(float))
+#define KLANG_COPY_AUDIO_BUFFER(DST, SRC) memcpy(DST, SRC, KLANG_SAMPLES_PER_AUDIO_BLOCK * sizeof(float))
 
 /* --- CONSTANTS --- */
 

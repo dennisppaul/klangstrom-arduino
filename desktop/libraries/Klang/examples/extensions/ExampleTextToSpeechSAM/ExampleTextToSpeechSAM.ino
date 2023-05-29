@@ -24,14 +24,14 @@ void setup() {
 
 void loop() {}
 
-void audioblock(SIGNAL_TYPE* pOutputLeft, SIGNAL_TYPE* pOutputRight, SIGNAL_TYPE* pInputLeft, SIGNAL_TYPE* pInputRight) {
-    mDAC.process_frame(pOutputLeft, pOutputRight);
+void audioblock(float** input_signal, float** output_signal) {
+    mDAC.process_frame(output_signal[LEFT], output_signal[RIGHT]);
 }
 
-void event_receive(const EVENT_TYPE event, const float* data) {
+void event_receive(const EVENT_TYPE event, const void* data) {
     switch (event) {
-        case EVENT_KEY_PRESSED:
-            handle_key_pressed(keyboard_event(data).key);
+        case EVENT_KEYBOARD:
+            handle_key_pressed(keyboard_event(data).keys[0]);
             break;
         case EVENT_ENCODER_BUTTON_PRESSED:
             if (encoder_event(data).index == ENCODER_00) {

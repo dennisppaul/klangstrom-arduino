@@ -1,3 +1,5 @@
+#ifdef USE_USBHOST
+
 /**
   ******************************************************************************
   * @file    usbh_hid_parser.c
@@ -235,3 +237,5 @@ uint32_t HID_WriteItem(HID_Report_ItemTypedef *ri, uint32_t value, uint8_t ndx)
   * @}
   */
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
+
+#endif // USE_USBHOST

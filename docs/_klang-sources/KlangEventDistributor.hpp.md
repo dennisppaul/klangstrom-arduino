@@ -2,7 +2,7 @@
 layout: libdoc
 title: KlangEventDistributor.hpp
 permalink: /KlangEventDistributor.hpp/
-index: 37
+index: 33
 ---
 
 ```c

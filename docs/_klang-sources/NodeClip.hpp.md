@@ -2,7 +2,7 @@
 layout: libdoc
 title: NodeClip.hpp
 permalink: /NodeClip.hpp/
-index: 53
+index: 49
 ---
 
 ```c
@@ -59,7 +59,7 @@ namespace klang {
         }
 
     protected:
-        SIGNAL_TYPE kernel(const SIGNAL_TYPE s) {
+        float kernel(const float s) {
             return KlangMath::clamp(s, mClipMin, mClipMax);
         }
 

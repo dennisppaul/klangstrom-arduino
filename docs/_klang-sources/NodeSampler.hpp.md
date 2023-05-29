@@ -2,7 +2,7 @@
 layout: libdoc
 title: NodeSampler.hpp
 permalink: /NodeSampler.hpp/
-index: 83
+index: 79
 ---
 
 ```c
@@ -67,7 +67,7 @@ namespace klang {
 
         bool disconnect(CHANNEL_ID pInChannel) { return false; }
 
-        void update(CHANNEL_ID pChannel, SIGNAL_TYPE* pAudioBlock) {
+        void update(CHANNEL_ID pChannel, float* pAudioBlock) {
             if (pChannel == CH_OUT_SIGNAL) {
                 for (uint16_t i = 0; i < KLANG_SAMPLES_PER_AUDIO_BLOCK; i++) {
                     pAudioBlock[i] = next_sample();
@@ -121,19 +121,19 @@ namespace klang {
             return fLength;
         }
 
-        void set_in(SIGNAL_TYPE pIn) {
+        void set_in(float pIn) {
             fIn = KlangMath::clamp(pIn, 0.0, fOut);
         }
 
-        SIGNAL_TYPE get_in() {
+        float get_in() {
             return fIn;
         }
 
-        void set_out(SIGNAL_TYPE pOut) {
+        void set_out(float pOut) {
             fOut = KlangMath::clamp(pOut, fIn, 1.0);
         }
 
-        SIGNAL_TYPE get_out() {
+        float get_out() {
             return fOut;
         }
 
@@ -153,7 +153,7 @@ namespace klang {
             }
         }
 
-        inline SIGNAL_TYPE next_sample() {
+        inline float next_sample() {
             if (fBuffer != nullptr) {
                 /* quit early if buffer has no elements or loop ended */
                 if (fLength == 0) {
@@ -272,7 +272,7 @@ namespace klang {
     using NodeSamplerUI16 = NodeSamplerT<uint16_t>;
     using NodeSamplerI16  = NodeSamplerT<int16_t>;
     using NodeSamplerF32  = NodeSamplerT<float>;
-    using NodeSampler     = NodeSamplerT<SIGNAL_TYPE>;
+    using NodeSampler     = NodeSamplerT<float>;
 }  // namespace klang
 
 #endif /* NodeSampler_hpp */

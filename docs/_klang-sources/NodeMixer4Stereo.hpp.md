@@ -2,7 +2,7 @@
 layout: libdoc
 title: NodeMixer4Stereo.hpp
 permalink: /NodeMixer4Stereo.hpp/
-index: 70
+index: 66
 ---
 
 ```c
@@ -111,7 +111,7 @@ namespace klang {
             return false;
         }
 
-        void update(CHANNEL_ID pChannel, SIGNAL_TYPE* pAudioBlock) {
+        void update(CHANNEL_ID pChannel, float* pAudioBlock) {
             const bool    b0                  = (mConnection_CH_IN_SIGNAL_0 != nullptr);
             const bool    b1                  = (mConnection_CH_IN_SIGNAL_1 != nullptr);
             const bool    b2                  = (mConnection_CH_IN_SIGNAL_2 != nullptr);
@@ -122,10 +122,10 @@ namespace klang {
                 AUDIO_BLOCK_ID mBlock_SIGNAL_1     = AudioBlockPool::NO_ID;
                 AUDIO_BLOCK_ID mBlock_SIGNAL_2     = AudioBlockPool::NO_ID;
                 AUDIO_BLOCK_ID mBlock_SIGNAL_3     = AudioBlockPool::NO_ID;
-                SIGNAL_TYPE*   mBlockData_SIGNAL_0 = nullptr;
-                SIGNAL_TYPE*   mBlockData_SIGNAL_1 = nullptr;
-                SIGNAL_TYPE*   mBlockData_SIGNAL_2 = nullptr;
-                SIGNAL_TYPE*   mBlockData_SIGNAL_3 = nullptr;
+                float*   mBlockData_SIGNAL_0 = nullptr;
+                float*   mBlockData_SIGNAL_1 = nullptr;
+                float*   mBlockData_SIGNAL_2 = nullptr;
+                float*   mBlockData_SIGNAL_3 = nullptr;
 
                 if (b0) {
                     mBlock_SIGNAL_0     = AudioBlockPool::instance().request();
@@ -150,8 +150,8 @@ namespace klang {
 
                 mBlock_CH_OUT_SIGNAL_LEFT                   = AudioBlockPool::instance().request();
                 mBlock_CH_OUT_SIGNAL_RIGHT                  = AudioBlockPool::instance().request();
-                SIGNAL_TYPE* mBlockData_CH_OUT_SIGNAL_LEFT  = AudioBlockPool::instance().data(mBlock_CH_OUT_SIGNAL_LEFT);
-                SIGNAL_TYPE* mBlockData_CH_OUT_SIGNAL_RIGHT = AudioBlockPool::instance().data(mBlock_CH_OUT_SIGNAL_RIGHT);
+                float* mBlockData_CH_OUT_SIGNAL_LEFT  = AudioBlockPool::instance().data(mBlock_CH_OUT_SIGNAL_LEFT);
+                float* mBlockData_CH_OUT_SIGNAL_RIGHT = AudioBlockPool::instance().data(mBlock_CH_OUT_SIGNAL_RIGHT);
 
                 const float mPan0 = mPan[SIGNAL_CHANNEL::SIGNAL_0] * 0.5 + 0.5;
                 const float mPan1 = mPan[SIGNAL_CHANNEL::SIGNAL_1] * 0.5 + 0.5;
@@ -212,42 +212,42 @@ namespace klang {
             }
             if (pChannel == CH_OUT_SIGNAL_LEFT) {
                 if (mBlock_CH_OUT_SIGNAL_LEFT != AudioBlockPool::NO_ID) {
-                    SIGNAL_TYPE* mBlockData_CH_OUT_SIGNAL_LEFT = AudioBlockPool::instance().data(mBlock_CH_OUT_SIGNAL_LEFT);
+                    float* mBlockData_CH_OUT_SIGNAL_LEFT = AudioBlockPool::instance().data(mBlock_CH_OUT_SIGNAL_LEFT);
 #ifdef KLST_USE_DSP
                     arm_copy_f32(mBlockData_CH_OUT_SIGNAL_LEFT, pAudioBlock, KLANG_SAMPLES_PER_AUDIO_BLOCK);
 #else
                     memcpy(pAudioBlock,
                            mBlockData_CH_OUT_SIGNAL_LEFT,
-                           sizeof(SIGNAL_TYPE) * KLANG_SAMPLES_PER_AUDIO_BLOCK);
+                           sizeof(float) * KLANG_SAMPLES_PER_AUDIO_BLOCK);
 #endif
                 }
             } else if (pChannel == CH_OUT_SIGNAL_RIGHT) {
                 if (mBlock_CH_OUT_SIGNAL_RIGHT != AudioBlockPool::NO_ID) {
-                    SIGNAL_TYPE* mBlockData_CH_OUT_SIGNAL_RIGHT = AudioBlockPool::instance().data(mBlock_CH_OUT_SIGNAL_RIGHT);
+                    float* mBlockData_CH_OUT_SIGNAL_RIGHT = AudioBlockPool::instance().data(mBlock_CH_OUT_SIGNAL_RIGHT);
 #ifdef KLST_USE_DSP
                     arm_copy_f32(mBlockData_CH_OUT_SIGNAL_LEFT, pAudioBlock, KLANG_SAMPLES_PER_AUDIO_BLOCK);
 #else
                     memcpy(pAudioBlock,
                            mBlockData_CH_OUT_SIGNAL_RIGHT,
-                           sizeof(SIGNAL_TYPE) * KLANG_SAMPLES_PER_AUDIO_BLOCK);
+                           sizeof(float) * KLANG_SAMPLES_PER_AUDIO_BLOCK);
 #endif
                 }
             }
         }
 
-        void set_mix(SIGNAL_CHANNEL pChannel, SIGNAL_TYPE pValue) {
+        void set_mix(SIGNAL_CHANNEL pChannel, float pValue) {
             mMix[pChannel] = pValue;
         }
 
-        SIGNAL_TYPE get_mix(uint8_t pChannel) {
+        float get_mix(uint8_t pChannel) {
             return mMix[pChannel];
         }
 
-        void set_pan(SIGNAL_CHANNEL pChannel, SIGNAL_TYPE pValue) {
+        void set_pan(SIGNAL_CHANNEL pChannel, float pValue) {
             mPan[pChannel] = pValue;
         }
 
-        SIGNAL_TYPE get_pan(uint8_t pChannel) {
+        float get_pan(uint8_t pChannel) {
             return mPan[pChannel];
         }
 
@@ -271,8 +271,8 @@ namespace klang {
         Connection*          mConnection_CH_IN_SIGNAL_2      = nullptr;
         Connection*          mConnection_CH_IN_SIGNAL_3      = nullptr;
         static const uint8_t NUM_SIGNAL_INPUT_CHANNELS       = 4;
-        SIGNAL_TYPE          mMix[NUM_SIGNAL_INPUT_CHANNELS] = {1.0, 1.0, 1.0, 1.0};
-        SIGNAL_TYPE          mPan[NUM_SIGNAL_INPUT_CHANNELS] = {0.0, 0.0, 0.0, 0.0};
+        float          mMix[NUM_SIGNAL_INPUT_CHANNELS] = {1.0, 1.0, 1.0, 1.0};
+        float          mPan[NUM_SIGNAL_INPUT_CHANNELS] = {0.0, 0.0, 0.0, 0.0};
     };
 }  // namespace klang
 

@@ -2,7 +2,7 @@
 layout: libdoc
 title: NodePhaser.hpp
 permalink: /NodePhaser.hpp/
-index: 79
+index: 75
 ---
 
 ```c
@@ -48,7 +48,7 @@ index: 79
 
 namespace klang {
     //    static const uint16_t WAVETABLE_LENGTH = 2048;
-    //    SIGNAL_TYPE oTableSine[WAVETABLE_LENGTH+1]; // @TODO(should be one wavetable ( aka `static` ) for all phasersaudio)
+    //    float oTableSine[WAVETABLE_LENGTH+1]; // @TODO(should be one wavetable ( aka `static` ) for all phasersaudio)
 
     class NodePhaser : public Node {
     public:
@@ -89,7 +89,7 @@ namespace klang {
             return false;
         }
 
-        void update(CHANNEL_ID pChannel, SIGNAL_TYPE* pAudioBlock) {
+        void update(CHANNEL_ID pChannel, float* pAudioBlock) {
             if (is_not_updated()) {
                 if (mConnection_CH_IN_SIGNAL != nullptr) {
                     mConnection_CH_IN_SIGNAL->update(pAudioBlock);
@@ -177,12 +177,12 @@ namespace klang {
 
         //        bool oWavetableFilled = false;
         //
-        //        SIGNAL_TYPE sin_fast(float pRad) {
+        //        float sin_fast(float pRad) {
         //            const uint16_t mIndex = ((uint32_t)(WAVETABLE_LENGTH * pRad / TWO_PI)) % WAVETABLE_LENGTH;
         //            return oTableSine[mIndex];
         //        }
         //
-        //        SIGNAL_TYPE cos_fast(float pRad) {
+        //        float cos_fast(float pRad) {
         //            return sin_fast(pRad + HALF_PI);
         //        }
 

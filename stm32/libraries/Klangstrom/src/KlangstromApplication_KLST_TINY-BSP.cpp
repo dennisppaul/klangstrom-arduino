@@ -2,7 +2,7 @@
  * Klangstrom
  *
  * This file is part of the *wellen* library (https://github.com/dennisppaul/wellen).
- * Copyright (c) 2022 Dennis P Paul.
+ * Copyright (c) 2023 Dennis P Paul.
  *
  * This library is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -45,6 +45,19 @@ extern TIM_HandleTypeDef htim2;
 extern TIM_HandleTypeDef htim3;
 extern TIM_HandleTypeDef htim8;
 
+#include "KlangstromApplicationInterface.h"
+
+int klangstrom::get_LED_pin(uint16_t index) {
+    const static int KLST_BOARD_LEDs[KLST_NUM_LEDS] = {
+        LED_00,
+        LED_01,
+        LED_02};
+    if (index >= 0 && index < KLST_NUM_LEDS) {
+        return KLST_BOARD_LEDs[index];
+    }
+    return -1;
+}
+
 /* ----------------------------------------------------------------------------------------------------------------- */
 /* ERROR HANDLING                                                                                                    */
 /* ----------------------------------------------------------------------------------------------------------------- */
@@ -55,14 +68,8 @@ uint8_t KLST_BSP_error_code() {
 }
 
 void KLST_BSP_init_LEDs() {
-    const static int mLEDs[KLST_NUM_LEDS] = {
-        LED_00,
-        LED_01,
-        LED_02
-    };
-    /* LEDs */
-    for (uint8_t i = 0; i < KLST_NUM_LEDS; i++) {
-        pinMode(mLEDs[i], OUTPUT);
+    for (uint16_t i = 0; i < KLST_NUM_LEDS; i++) {
+        pinMode(klangstrom::get_LED_pin(i), OUTPUT);
     }
 }
 
@@ -103,13 +110,13 @@ void KLST_BSP_deinit_encoders() {
 
 void KLST_BSP_configure_audio_codec() {
     /*
-    * POWER UP SEQUENCE
-    * - Switch on power supplies. By default the WM8731 is in Standby Mode, the DAC is digitally muted and the Audio Interface and Outputs are all OFF.
-    * - Set all required bits in the Power Down register (0Ch) to ‘0’; EXCEPT the OUTPD bit, this should be set to ‘1’ (Default).
-    * - Set required values in all other registers except 12h (Active).
-    * - Set the ‘Active’ bit in register 12h.
-    * - The last write of the sequence should be setting OUTPD to ‘0’ (active) in register 0Ch, enabling the DAC signal path, free of any significant power-up noise.
-    */
+     * POWER UP SEQUENCE
+     * - Switch on power supplies. By default the WM8731 is in Standby Mode, the DAC is digitally muted and the Audio Interface and Outputs are all OFF.
+     * - Set all required bits in the Power Down register (0Ch) to ‘0’; EXCEPT the OUTPD bit, this should be set to ‘1’ (Default).
+     * - Set required values in all other registers except 12h (Active).
+     * - Set the ‘Active’ bit in register 12h.
+     * - The last write of the sequence should be setting OUTPD to ‘0’ (active) in register 0Ch, enabling the DAC signal path, free of any significant power-up noise.
+     */
     //	WM8731_write(WM8731_RESET_REGISTER, 0b00000000);
     WM8731_write(WM8731_POWER_DOWN_CONTROL, 0b00010000);
     WM8731_write(WM8731_ANALOG_AUDIO_PATH_CONTROL, 0b00000000);

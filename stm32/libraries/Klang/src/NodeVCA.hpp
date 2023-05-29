@@ -37,11 +37,11 @@ namespace klang {
         static const CHANNEL_ID CH_IN_SIGNAL        = 0;
         static const CHANNEL_ID CH_IN_AMPLIFICATION = 1;
 
-        void set_amplification(SIGNAL_TYPE pValue) {
+        void set_amplification(float pValue) {
             mAmplification = pValue;
         }
 
-        SIGNAL_TYPE get_amplification() {
+        float get_amplification() {
             return mAmplification;
         }
 
@@ -54,9 +54,9 @@ namespace klang {
         }
 
     protected:
-        void kernel(SIGNAL_TYPE* pOutputSignal,
-                    SIGNAL_TYPE* pInputSignal_A,
-                    SIGNAL_TYPE* pInputSignal_B) {
+        void kernel(float* pOutputSignal,
+                    float* pInputSignal_A,
+                    float* pInputSignal_B) {
             if (pInputSignal_A == nullptr) {
                 for (uint16_t i = 0; i < KLANG_SAMPLES_PER_AUDIO_BLOCK; i++) {
                     pOutputSignal[i] = 0.0;
@@ -73,7 +73,7 @@ namespace klang {
         }
 
     private:
-        SIGNAL_TYPE mAmplification = 1.0;
+        float mAmplification = 1.0;
     };
 }  // namespace klang
 

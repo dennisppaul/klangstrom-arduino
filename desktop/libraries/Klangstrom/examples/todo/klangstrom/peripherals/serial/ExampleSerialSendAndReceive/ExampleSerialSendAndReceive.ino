@@ -33,7 +33,7 @@ void data_receive(const uint8_t receiver, uint8_t* data, uint8_t length) {
     }
 }
 
-void event_receive(const uint8_t event, const float* data) {
+void event_receive(const EVENT_TYPE event, const void* data) {
     if (event == EVENT_ENCODER_BUTTON_PRESSED) {
         if (encoder_event(data).index == ENCODER_00) {
             uint8_t mData[1] = {23};

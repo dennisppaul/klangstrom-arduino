@@ -38,23 +38,23 @@
 namespace klang {
     class NodeMap : public NodeKernelBlock {
     public:
-        void set_in_min(SIGNAL_TYPE pInMin) {
+        void set_in_min(float pInMin) {
             mInMin = pInMin;
         }
 
-        void set_in_max(SIGNAL_TYPE pInMax) {
+        void set_in_max(float pInMax) {
             mInMax = pInMax;
         }
 
-        void set_out_min(SIGNAL_TYPE pOutMin) {
+        void set_out_min(float pOutMin) {
             mOutMin = pOutMin;
         }
 
-        void set_out_max(SIGNAL_TYPE pOutMax) {
+        void set_out_max(float pOutMax) {
             mOutMax = pOutMax;
         }
 
-        void set_in_min(SIGNAL_TYPE pInMin, SIGNAL_TYPE pInMax, SIGNAL_TYPE pOutMin, SIGNAL_TYPE pOutMax) {
+        void set_in_min(float pInMin, float pInMax, float pOutMin, float pOutMax) {
             mInMin  = pInMin;
             mInMax  = pInMax;
             mOutMin = pOutMin;
@@ -79,7 +79,7 @@ namespace klang {
         }
 
     protected:
-        void kernel(SIGNAL_TYPE* s) {
+        void kernel(float* s) {
             const float r = (mInMax - mInMin) / (mOutMax - mOutMin);
             for (uint16_t i = 0; i < KLANG_SAMPLES_PER_AUDIO_BLOCK; i++) {
                 const float a = s[i] - mInMin;
@@ -89,10 +89,10 @@ namespace klang {
         }
 
     private:
-        SIGNAL_TYPE mInMin  = 0.0;
-        SIGNAL_TYPE mInMax  = 1.0;
-        SIGNAL_TYPE mOutMin = 0.0;
-        SIGNAL_TYPE mOutMax = 1.0;
+        float mInMin  = 0.0;
+        float mInMax  = 1.0;
+        float mOutMin = 0.0;
+        float mOutMax = 1.0;
     };
 }  // namespace klang
 

@@ -8,21 +8,19 @@
 
 using namespace klangstrom;
 
-KlangstromDisplay         *Display;
+KlangstromDisplay         &Display = KlangstromDisplay::create();
 KlangstromDisplayTerminal *mTerminal;
-
-EmbeddedCli *cli;
+EmbeddedCli               *cli;
 
 void setup() {
     Serial.begin(115200);
 
-    Display = KlangstromDisplay::create();
-    Display->begin();
-    Display->background(0, 0, 0);
-    Display->clear();
-    Display->color(255, 255, 255);
+    Display.begin();
+    Display.background(0, 0, 0);
+    Display.clear();
+    Display.color(255, 255, 255);
 
-    mTerminal         = new KlangstromDisplayTerminal(Display, &Font_7x10);
+    mTerminal         = new KlangstromDisplayTerminal(&Display, &Font_7x10);
     mTerminal->width  = 31;
     mTerminal->height = 29;
     mTerminal->x      = 11;
@@ -40,8 +38,7 @@ void setup() {
     }
     mTerminal->print("Cli has started. Enter your commands.");
 
-    embeddedCliAddBinding(
-        cli, {"hello", "Print hello message", true, (void *)"world", onHello});
+    embeddedCliAddBinding(cli, {"hello", "Print hello message", true, (void *)"world", onHello});
 
     cli->onCommand = onCommand;
     cli->writeChar = writeChar;

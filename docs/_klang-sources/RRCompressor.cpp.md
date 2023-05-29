@@ -2,7 +2,7 @@
 layout: libdoc
 title: RRCompressor.cpp
 permalink: /RRCompressor.cpp/
-index: 97
+index: 93
 ---
 
 ```c

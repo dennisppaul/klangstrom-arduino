@@ -14,7 +14,7 @@ public:
         mAmount = pAmount;
     }
 
-    SIGNAL_TYPE kernel(SIGNAL_TYPE s) {
+    float kernel(float s) {
         /*
             from http://www.musicdsp.org/showArchiveComment.php?ArchiveID=46
 
@@ -54,23 +54,23 @@ void setup() {
 
 void loop() {}
 
-void audioblock(SIGNAL_TYPE* pOutputLeft, SIGNAL_TYPE* pOutputRight, SIGNAL_TYPE* pInputLeft, SIGNAL_TYPE* pInputRight) {
-    mDAC.process_frame(pOutputLeft, pOutputRight);
+void audioblock(float** input_signal, float** output_signal) {
+    mDAC.process_frame(output_signal[LEFT], output_signal[RIGHT]);
 }
 
-void event_receive(const EVENT_TYPE event, const float* data) {
+void event_receive(const EVENT_TYPE event, const void* data) {
     switch (event) {
         case EVENT_KEY_PRESSED:
-            if (keyboard_event(data).key == '1') {
+            if (keyboard_event(data).keys[0] == '1') {
                 set_waveform(NodeVCOFunction::WAVEFORM::SINE);
             }
-            if (keyboard_event(data).key == '2') {
+            if (keyboard_event(data).keys[0] == '2') {
                 set_waveform(NodeVCOFunction::WAVEFORM::TRIANGLE);
             }
-            if (keyboard_event(data).key == '3') {
+            if (keyboard_event(data).keys[0] == '3') {
                 set_waveform(NodeVCOFunction::WAVEFORM::SAWTOOTH);
             }
-            if (keyboard_event(data).key == '4') {
+            if (keyboard_event(data).keys[0] == '4') {
                 set_waveform(NodeVCOFunction::WAVEFORM::SQUARE);
             }
             break;

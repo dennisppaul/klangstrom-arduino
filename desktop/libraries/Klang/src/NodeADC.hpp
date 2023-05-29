@@ -52,12 +52,12 @@ namespace klang {
             return false;
         }
 
-        void process_frame(SIGNAL_TYPE *pLeft, SIGNAL_TYPE *pRight) {
+        void process_frame(float *pLeft, float *pRight) {
             std::copy(pLeft, pLeft + KLANG_SAMPLES_PER_AUDIO_BLOCK, mBufferLeft);
             std::copy(pRight, pRight + KLANG_SAMPLES_PER_AUDIO_BLOCK, mBufferRight);
         }
 
-        void update(CHANNEL_ID pChannel, SIGNAL_TYPE *pAudioBlock) {
+        void update(CHANNEL_ID pChannel, float *pAudioBlock) {
             // @TODO use `std::copy` function
             if (pChannel == CH_OUT_SIGNAL_LEFT) {
                 for (uint16_t i = 0; i < KLANG_SAMPLES_PER_AUDIO_BLOCK; i++) {
@@ -74,8 +74,8 @@ namespace klang {
         void set_command(KLANG_CMD_TYPE pCommand, KLANG_CMD_TYPE *pPayLoad) {}
 
     private:
-        SIGNAL_TYPE mBufferLeft[KLANG_SAMPLES_PER_AUDIO_BLOCK];
-        SIGNAL_TYPE mBufferRight[KLANG_SAMPLES_PER_AUDIO_BLOCK];
+        float mBufferLeft[KLANG_SAMPLES_PER_AUDIO_BLOCK];
+        float mBufferRight[KLANG_SAMPLES_PER_AUDIO_BLOCK];
     };
 }  // namespace klang
 

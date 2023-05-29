@@ -23,9 +23,9 @@
  * conventions:
  *
  * - methods to modify fields should be implemented as `set_` and `get_` or `add_` ( e.g
- *   `void set_gain(SIGNAL_TYPE)`, `SIGNAL_TYPE get_gain()` and `void add_gain(SIGNAL_TYPE)` )
+ *   `void set_gain(float)`, `float get_gain()` and `void add_gain(float)` )
  * - public methods should be all lowercase letters, words separated by underscore and names start
- *   with a verb ( e.g `void set_gain(SIGNAL_TYPE)` )
+ *   with a verb ( e.g `void set_gain(float)` )
  * - `CH_IN_SIGNAL` + `CH_OUT_SIGNAL` should be defined if not `0`
  * - channel IDs should be defined as public static constants with `CH_IN_` and `CH_OUT_`
  *   ( e.g `CH_IN_GAIN` and `CH_OUT_SIGNAL_LEFT` )
@@ -89,7 +89,7 @@ namespace klang {
 
         // virtual CHANNEL_ID get_num_input_channels() = 0;
         // virtual CHANNEL_ID get_num_output_channels() = 0;
-        virtual void update(CHANNEL_ID pChannel, SIGNAL_TYPE* pAudioBlock)          = 0;
+        virtual void update(CHANNEL_ID pChannel, float* pAudioBlock)          = 0;
         virtual bool connect(Connection* pConnection, CHANNEL_ID pInChannel)        = 0;
         virtual bool disconnect(CHANNEL_ID pInChannel)                              = 0;
         virtual void set_command(KLANG_CMD_TYPE pCommand, KLANG_CMD_TYPE* pPayLoad) = 0;

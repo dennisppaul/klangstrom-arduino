@@ -2,7 +2,7 @@
 layout: libdoc
 title: NodeCompressor.hpp
 permalink: /NodeCompressor.hpp/
-index: 54
+index: 50
 ---
 
 ```c
@@ -91,7 +91,7 @@ namespace klang {
             return false;
         }
 
-        void update(CHANNEL_ID pChannel, SIGNAL_TYPE* pAudioBlock) {
+        void update(CHANNEL_ID pChannel, float* pAudioBlock) {
             if (is_not_updated()) {
                 if (mInput_SIGNAL != nullptr) {
                     mInput_SIGNAL->output_node.update(mInput_SIGNAL->output_channel_id, pAudioBlock);

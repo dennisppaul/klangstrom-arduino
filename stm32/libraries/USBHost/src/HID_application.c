@@ -1,7 +1,3 @@
-/*
- * HID_application.c
- */
-
 #ifdef USE_USBHOST
 
 #include "USBHost.h"
@@ -10,23 +6,15 @@
 #include "usbh_hid_keybd.h"
 #include "usbh_hid_mouse.h"
 
-#define NUM_OF_SIMULTANEOUS_KEYS 6
-#define NUM_OF_MOUSE_BUTTONS     3
-
-static uint8_t fPreviousKeys[NUM_OF_SIMULTANEOUS_KEYS]     = {0};
-static bool    fPreviousMouseButtons[NUM_OF_MOUSE_BUTTONS] = {false};
-static int8_t  fPreviousMouseX                             = 0;
-static int8_t  fPreviousMouseY                             = 0;
+static uint8_t fPreviousKeys[KEYBOARD_NUM_KEYS]         = {0};
+static bool    fPreviousMouseButtons[MOUSE_NUM_BUTTONS] = {false};
+static int8_t  fPreviousMouseX                          = 0;
+static int8_t  fPreviousMouseY                          = 0;
 
 void handleMouse(HID_MOUSE_Info_TypeDef* mMouseInfo) {
-    // TODO is that still an issue?
-    // TODO polling mouse info twice is a nasty hack,
-    // but without this mouse events are always one event behind.
-    // investigate why this is necessary and why it works?
-    //		USBH_HID_GetMouseInfo(phost);
     const int8_t x = (int8_t)(mMouseInfo->x);
     const int8_t y = (int8_t)(mMouseInfo->y);
-    for (uint8_t i = 0; i < NUM_OF_MOUSE_BUTTONS; i++) {
+    for (uint8_t i = 0; i < MOUSE_NUM_BUTTONS; i++) {
         if (fPreviousMouseButtons[i] && !mMouseInfo->buttons[i]) {
             usb_host_call_mouse_released(i, x, y);
         } else if (!fPreviousMouseButtons[i] && mMouseInfo->buttons[i]) {
@@ -50,7 +38,7 @@ void handleMouse(HID_MOUSE_Info_TypeDef* mMouseInfo) {
 }
 
 bool evaluateKeyAlreadyPressed(uint8_t* pPreviousKeys, uint8_t pKey) {
-    for (uint8_t i = 0; i < NUM_OF_SIMULTANEOUS_KEYS; i++) {
+    for (uint8_t i = 0; i < KEYBOARD_NUM_KEYS; i++) {
         if (pPreviousKeys[i] == pKey) {
             pPreviousKeys[i] = 0;
             return true;
@@ -61,13 +49,14 @@ bool evaluateKeyAlreadyPressed(uint8_t* pPreviousKeys, uint8_t pKey) {
 
 void handleKeyboard(HID_KEYBD_Info_TypeDef* mInfo) {
     /* TODO we are using the interpreted ASCII values, rather than the *raw* integer values, maybe those could be also send as `keyCode` */
-    uint8_t mPreviousKeys[NUM_OF_SIMULTANEOUS_KEYS];
-    memcpy(mPreviousKeys, fPreviousKeys, NUM_OF_SIMULTANEOUS_KEYS * sizeof(uint8_t));
+    uint8_t mPreviousKeys[KEYBOARD_NUM_KEYS];
+    memcpy(mPreviousKeys, fPreviousKeys, KEYBOARD_NUM_KEYS * sizeof(uint8_t));
 
     /* `key_pressed` :: find keys that were not previously pressed */
-    for (uint8_t i = 0; i < NUM_OF_SIMULTANEOUS_KEYS; i++) {
+    for (uint8_t i = 0; i < KEYBOARD_NUM_KEYS; i++) {
         uint8_t key      = USBH_HID_GetASCIICode(mInfo, i);
         fPreviousKeys[i] = key;  // store key(s) for next pass
+        // TODO maybe remove key TAB(9), RETURN(10) and BACKSPACE(13) from this list?
         if (key > 0) {
             bool mKeyAlreadyPressed = evaluateKeyAlreadyPressed(mPreviousKeys, key);
             if (!mKeyAlreadyPressed) {
@@ -77,7 +66,7 @@ void handleKeyboard(HID_KEYBD_Info_TypeDef* mInfo) {
     }
 
     /* `key_released` :: find keys that were previously pressed, but are not anymore */
-    for (uint8_t i = 0; i < NUM_OF_SIMULTANEOUS_KEYS; i++) {
+    for (uint8_t i = 0; i < KEYBOARD_NUM_KEYS; i++) {
         if (mPreviousKeys[i] > 0) {
             usb_host_call_key_released(mPreviousKeys[i]);
         }

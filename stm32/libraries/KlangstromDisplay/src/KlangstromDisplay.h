@@ -2,7 +2,7 @@
  * Klangstrom
  *
  * This file is part of the *wellen* library (https://github.com/dennisppaul/wellen).
- * Copyright (c) 2022 Dennis P Paul.
+ * Copyright (c) 2023 Dennis P Paul.
  *
  * This library is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -75,6 +75,9 @@ namespace klangstrom {
             KlangstromDisplay *mDisplay = create_ptr();
             return *mDisplay;
         }
+        static void release(KlangstromDisplay *mDisplay) {
+            delete mDisplay;
+        }
 
         KlangstromDisplay() {
             mColorForeground.r = 255;
@@ -87,6 +90,8 @@ namespace klangstrom {
             mColorBackground.a = 255;
             font               = nullptr;
         }
+
+        virtual ~KlangstromDisplay(){};
 
         /* utilities */
 
@@ -214,6 +219,38 @@ namespace klangstrom {
             BSP_set_pixel(x, y, get_color_16i());
         }
 
+        void horizontal_pattern_line(uint16_t x, uint16_t y, uint16_t width, uint8_t pattern, bool draw_background = true) {
+            const uint16_t mForegroundColor = get_color_16i();
+            const uint16_t mBackgroundColor = get_background_16i();
+            for (size_t i = 0; i < width; i++) {
+                const uint8_t  mPatternID = i % 8;
+                const uint16_t mX         = x + i;
+                if (evaluatePattern(mPatternID, pattern)) {
+                    BSP_set_pixel(mX, y, mForegroundColor);
+                } else {
+                    if (draw_background) {
+                        BSP_set_pixel(mX, y, mBackgroundColor);
+                    }
+                }
+            }
+        }
+
+        void vertical_pattern_line(uint16_t x, uint16_t y, uint16_t height, uint8_t pattern, bool draw_background = true) {
+            const uint16_t mForegroundColor = get_color_16i();
+            const uint16_t mBackgroundColor = get_background_16i();
+            for (size_t i = 0; i < height; i++) {
+                const uint8_t  mPatternID = i % 8;
+                const uint16_t mY         = y + i;
+                if (evaluatePattern(mPatternID, pattern)) {
+                    BSP_set_pixel(x, mY, mForegroundColor);
+                } else {
+                    if (draw_background) {
+                        BSP_set_pixel(x, mY, mBackgroundColor);
+                    }
+                }
+            }
+        }
+
         void line(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1) {
             if (x0 == x1) {
                 BSP_line_vertical(x0, fmin(y0, y1), abs(y1 - y0), get_color_16i());
@@ -232,55 +269,63 @@ namespace klangstrom {
             }
         }
 
-        void text(uint16_t x, uint16_t y, const char *str) {
+        void text_c_str(uint16_t x, uint16_t y, const char *text) {
             const uint16_t xx = x;
             if (font) {
                 const uint16_t mForegroundColor = get_color_16i();
                 const uint16_t mBackgroundColor = get_background_16i();
-                while (*str) {
+                while (*text) {
                     if (x + font->width >= width()) {
                         x = xx;
                         y += font->height;
                         if (y + font->height >= height()) {
                             break;
                         }
-                        if (*str == ' ') {
+                        if (*text == ' ') {
                             // skip spaces in the beginning of the new line
-                            str++;
+                            text++;
                             continue;
                         }
                     }
-                    BSP_character(x, y, *str, mForegroundColor, mBackgroundColor);
+                    BSP_character(x, y, *text, mForegroundColor, mBackgroundColor);
                     x += font->width;
-                    str++;
+                    text++;
                 }
             }
         }
 
-        void text_scaled(uint16_t x, uint16_t y, uint8_t scale, const char *str) {
+        void text(const uint16_t x, const uint16_t y, const String text) {
+            text_c_str(x, y, text.c_str());
+        }
+
+        void text_c_str(uint16_t x, uint16_t y, const uint8_t scale, const char *text) {
             if (font) {
                 const uint16_t mForegroundColor  = get_color_16i();
                 const uint16_t mBackgroundColor  = get_background_16i();
                 const uint16_t mScaledFontHeight = font->height * scale;
                 const uint16_t mScaledFontWidth  = font->width * scale;
-                while (*str) {
+                while (*text) {
                     if (x + mScaledFontWidth >= width()) {
                         x = 0;
                         y += mScaledFontHeight;
                         if (y + mScaledFontHeight >= height()) {
                             break;
                         }
-                        if (*str == ' ') {
+                        if (*text == ' ') {
                             // skip spaces in the beginning of the new line
-                            str++;
+                            text++;
                             continue;
                         }
                     }
-                    BSP_character_scaled(x, y, scale, *str, mForegroundColor, mBackgroundColor);
+                    BSP_character_scaled(x, y, scale, *text, mForegroundColor, mBackgroundColor);
                     x += mScaledFontWidth;
-                    str++;
+                    text++;
                 }
             }
+        }
+
+        void text(const uint16_t x, const uint16_t y, const uint8_t scale, const String text) {
+            text_c_str(x, y, scale, text.c_str());
         }
 
         void character(uint16_t x, uint16_t y, const char c) {
@@ -315,6 +360,12 @@ namespace klangstrom {
 
         void textFont(KlangstromDisplayFont *pFont) {
             font = pFont;
+        }
+
+    private:
+        bool evaluatePattern(uint8_t pIndex, uint8_t pPattern) {
+            const uint8_t mMask = (uint8_t)(1 << pIndex);
+            return (mMask & pPattern) > 0;
         }
 
         // void set_rotation(uint8_t m) {

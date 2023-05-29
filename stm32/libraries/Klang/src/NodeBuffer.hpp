@@ -53,7 +53,7 @@ namespace klang {
             return false;
         }
 
-        void update(CHANNEL_ID pChannel, SIGNAL_TYPE* pAudioBlock) {
+        void update(CHANNEL_ID pChannel, float* pAudioBlock) {
             if (is_not_updated()) {
                 if (mConnection_CH_IN_SIGNAL != nullptr) {
                     mBlock_SIGNAL = AudioBlockPool::instance().request();
@@ -62,7 +62,7 @@ namespace klang {
                 flag_updated();
             }
             if (pChannel == CH_OUT_SIGNAL) {
-                SIGNAL_TYPE* mBlockData_IN_SIGNAL = AudioBlockPool::instance().data(mBlock_SIGNAL);
+                float* mBlockData_IN_SIGNAL = AudioBlockPool::instance().data(mBlock_SIGNAL);
                 // @TODO(should probably use `std::copy` here)
                 for (uint16_t i = 0; i < KLANG_SAMPLES_PER_AUDIO_BLOCK; i++) {
                     pAudioBlock[i] = mBlockData_IN_SIGNAL[i];

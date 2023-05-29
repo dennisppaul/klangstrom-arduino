@@ -2,7 +2,7 @@
  * Klangstrom
  *
  * This file is part of the *wellen* library (https://github.com/dennisppaul/wellen).
- * Copyright (c) 2022 Dennis P Paul.
+ * Copyright (c) 2023 Dennis P Paul.
  *
  * This library is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,15 +30,11 @@
 
 #define uint32 uint32_t  // this is required to compile e.g the library `TFT_22_IL9225`
 
-/* *premature* klang defines @TODO */
-
-typedef float SIGNAL_TYPE;
-
 /* buttons */
 
-#define KLST_BUTTON_ENCODER_00 0x00
-#define KLST_BUTTON_ENCODER_01 0x01
-#define KLST_BUTTON_ENCODER_02 0x02
+#define KLST_BUTTON_ENCODER_00 0x00 // same as KlangstromEvents::ENCODER_00
+#define KLST_BUTTON_ENCODER_01 0x01 // same as KlangstromEvents::ENCODER_01
+#define KLST_BUTTON_ENCODER_02 0x02 // same as KlangstromEvents::ENCODER_02
 #define KLST_BUTTON_PROGRAMMER 0x03
 
 /* options */
@@ -84,13 +80,13 @@ static const uint32_t KLST_U_ID[KLST_NUM_OF_U_ID][3] = {
     {0x001B003E, 0xFFFFFFFF, 0x00003037},  // KLST_SHEEP_16
     {0x00470024, 0xFFFFFFFF, 0x00003029},  // KLST_SHEEP_17
     {0x001A003F, 0xFFFFFFFF, 0x00002F81},  // KLST_SHEEP_18
-    {0x00000000, 0x00000000, 0x00000000},  // KLST_SHEEP_19
+    {0x00300047, 0xFFFFFFFF, 0x0000302A},  // KLST_SHEEP_19
     {0x0046001D, 0xFFFFFFFF, 0x00003093},  // KLST_SHEEP_20
-    {0x00300045, 0xFFFFFFFF, 0x00003013},  // KLST_SHEEP_21
-    {0x002E0028, 0xFFFFFFFF, 0x00003057},  // KLST_SHEEP_22
+    {0x00300045, 0xFFFFFFFF, 0x00003013},  // KLST_SHEEP_21 (90°+NO_USBMICROB)
+    {0x002E0028, 0xFFFFFFFF, 0x00003057},  // KLST_SHEEP_22 (90°)
     {0x002E0022, 0xFFFFFFFF, 0x00002FE8},  // KLST_SHEEP_23
     {0x001A003D, 0xFFFFFFFF, 0x00003031},  // KLST_SHEEP_24
-    {0x00300040, 0xFFFFFFFF, 0x00003073},  // KLST_SHEEP_25
+    {0x00300040, 0xFFFFFFFF, 0x00003073},  // KLST_SHEEP_25 (BUTTONS)
 };
 
 /* Klanstrong Defines ( redefined for C context ) */

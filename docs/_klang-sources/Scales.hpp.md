@@ -2,7 +2,7 @@
 layout: libdoc
 title: Scales.hpp
 permalink: /Scales.hpp/
-index: 102
+index: 98
 ---
 
 ```c

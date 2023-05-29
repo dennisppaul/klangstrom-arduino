@@ -2,7 +2,7 @@
 layout: libdoc
 title: NodeMixer8.hpp
 permalink: /NodeMixer8.hpp/
-index: 71
+index: 67
 ---
 
 ```c
@@ -72,7 +72,7 @@ namespace klang {
             }
         }
 
-        void update(CHANNEL_ID pChannel, SIGNAL_TYPE* pAudioBlock) {
+        void update(CHANNEL_ID pChannel, float* pAudioBlock) {
             bool    m_has_SIGNAL[NUM_CH_IN];
             uint8_t mSignalInputCounter = 0;
             for (uint8_t i = 0; i < NUM_CH_IN; ++i) {
@@ -82,14 +82,14 @@ namespace klang {
             }
             if (is_not_updated() && pChannel == CH_OUT_SIGNAL && mSignalInputCounter > 0) {
                 AUDIO_BLOCK_ID mBlock_SIGNAL[NUM_CH_IN];
-                SIGNAL_TYPE*   mBlockData_SIGNAL[NUM_CH_IN];
+                float*   mBlockData_SIGNAL[NUM_CH_IN];
 
                 for (uint8_t i = 0; i < NUM_CH_IN; ++i) {
                     if (m_has_SIGNAL[i]) {
                         mBlock_SIGNAL[i] = AudioBlockPool::instance().request();
                         if (mBlock_SIGNAL[i] == AudioBlockPool::NO_ID) {
                             // @note(probably ran out of memory blocks @maybe(implement some better error handling))
-                            memset(pAudioBlock, 0.0, KLANG_SAMPLES_PER_AUDIO_BLOCK * sizeof(SIGNAL_TYPE));
+                            memset(pAudioBlock, 0.0, KLANG_SAMPLES_PER_AUDIO_BLOCK * sizeof(float));
                             return;
                         }
                         mBlockData_SIGNAL[i] = AudioBlockPool::instance().data(mBlock_SIGNAL[i]);
@@ -114,7 +114,7 @@ namespace klang {
 
                 flag_updated();
             } else {
-                memset(pAudioBlock, 0.0, KLANG_SAMPLES_PER_AUDIO_BLOCK * sizeof(SIGNAL_TYPE));
+                memset(pAudioBlock, 0.0, KLANG_SAMPLES_PER_AUDIO_BLOCK * sizeof(float));
             }
         }
 
@@ -122,7 +122,7 @@ namespace klang {
             mMix[pChannel] = pValue;
         }
 
-        SIGNAL_TYPE get_mix(uint8_t pChannel) {
+        float get_mix(uint8_t pChannel) {
             return mMix[pChannel];
         }
 

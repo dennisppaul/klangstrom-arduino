@@ -13,9 +13,8 @@
 #include "dwt.h"
 #include "hw_config.h"
 #include "clock.h"
-#ifdef USBCON
 #include "usbd_if.h"
-#endif
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -23,11 +22,14 @@ extern "C" {
 #if defined(HAL_CRC_MODULE_ENABLED)
 CRC_HandleTypeDef hcrc = {.Instance =
 #if defined(CRC2_BASE)
-                            CRC2
+                            CRC2,
 #elif defined(CRC_BASE)
-                            CRC
+                            CRC,
 #else
 #error "No CRC instance available!"
+#endif
+#if defined(CRC_INPUTDATA_FORMAT_BYTES)
+                          .InputDataFormat = CRC_INPUTDATA_FORMAT_BYTES
 #endif
                          };
 #endif

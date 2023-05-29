@@ -1,3 +1,5 @@
+#ifdef USE_USBHOST
+
 /**
   ******************************************************************************
   * @file    usbh_core.c
@@ -1368,3 +1370,5 @@ USBH_StatusTypeDef  USBH_LL_NotifyURBChange(USBH_HandleTypeDef *phost)
   */
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
+
+#endif // USE_USBHOST

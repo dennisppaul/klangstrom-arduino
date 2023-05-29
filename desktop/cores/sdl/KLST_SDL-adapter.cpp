@@ -5,12 +5,13 @@
 //
 //
 
+#include "KLST_SDL-adapter.h"
+
 #include <chrono>
 
 #include "Arduino.h"
-#include "KLST_SDL-includes.h"
-#include "KLST_SDL-adapter.h"
 #include "KLST_Emulator.h"
+#include "KLST_SDL-includes.h"
 
 using namespace std;
 
@@ -21,6 +22,10 @@ using namespace std;
 #endif
 
 KLST_Emulator mEmulator;
+
+uint32_t analogRead(uint32_t pPin) {
+    return mEmulator.analogRead(pPin);
+}
 
 int digitalRead(uint32_t pPin) {
     return mEmulator.digitalRead(pPin);

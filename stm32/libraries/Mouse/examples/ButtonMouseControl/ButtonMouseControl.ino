@@ -80,6 +80,5 @@ void loop() {
   }
 
   // a delay so the mouse doesn't move too fast:
-  Mouse.move(1,0,0);
-  delay(responseDelay * 10);
+  delay(responseDelay);
 }

@@ -1,3 +1,5 @@
+#ifdef USE_USBHOST
+
 /**
   ******************************************************************************
   * @file    usbh_pipes.c
@@ -185,4 +187,4 @@ static uint16_t USBH_GetFreePipe(USBH_HandleTypeDef *phost)
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
 
-
+#endif // USE_USBHOST

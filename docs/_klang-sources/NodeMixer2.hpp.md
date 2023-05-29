@@ -2,7 +2,7 @@
 layout: libdoc
 title: NodeMixer2.hpp
 permalink: /NodeMixer2.hpp/
-index: 67
+index: 63
 ---
 
 ```c
@@ -86,22 +86,22 @@ namespace klang {
             return false;
         }
 
-        void set_mix(SIGNAL_TYPE pMix) {
+        void set_mix(float pMix) {
             mMix = pMix;
         }
 
-        SIGNAL_TYPE get_mix() {
+        float get_mix() {
             return mMix;
         }
 
-        void update(CHANNEL_ID pChannel, SIGNAL_TYPE* pAudioBlock) {
+        void update(CHANNEL_ID pChannel, float* pAudioBlock) {
             if (is_not_updated() && pChannel == CH_OUT_SIGNAL && (mConnection_CH_IN_SIGNAL_0 != nullptr && mConnection_CH_IN_SIGNAL_1 != nullptr)) {
                 AUDIO_BLOCK_ID mBlock_SIGNAL_0     = AudioBlockPool::NO_ID;
                 AUDIO_BLOCK_ID mBlock_SIGNAL_1     = AudioBlockPool::NO_ID;
                 AUDIO_BLOCK_ID mBlock_MIX          = AudioBlockPool::NO_ID;
-                SIGNAL_TYPE*   mBlockData_SIGNAL_0 = nullptr;
-                SIGNAL_TYPE*   mBlockData_SIGNAL_1 = nullptr;
-                SIGNAL_TYPE*   mBlockData_MIX      = nullptr;
+                float*   mBlockData_SIGNAL_0 = nullptr;
+                float*   mBlockData_SIGNAL_1 = nullptr;
+                float*   mBlockData_MIX      = nullptr;
 
                 if (mConnection_CH_IN_SIGNAL_0 != nullptr) {
                     mBlock_SIGNAL_0     = AudioBlockPool::instance().request();
@@ -123,7 +123,7 @@ namespace klang {
                     (mBlockData_SIGNAL_0 == nullptr ? 0 : 1) +
                     (mBlockData_SIGNAL_1 == nullptr ? 0 : 1);
                 if (mSignalInputCounter == 0) {
-                    memset(pAudioBlock, 0.0, KLANG_SAMPLES_PER_AUDIO_BLOCK * sizeof(SIGNAL_TYPE));
+                    memset(pAudioBlock, 0.0, KLANG_SAMPLES_PER_AUDIO_BLOCK * sizeof(float));
                 } else {
                     const bool mHasBlockData_MIX_Signal      = mBlockData_MIX != nullptr;
                     const bool mHasBlockData_SIGNAL_0_Signal = mBlockData_SIGNAL_0 != nullptr;
@@ -144,7 +144,7 @@ namespace klang {
 
                 flag_updated();
             } else {
-                memset(pAudioBlock, 0.0, KLANG_SAMPLES_PER_AUDIO_BLOCK * sizeof(SIGNAL_TYPE));
+                memset(pAudioBlock, 0.0, KLANG_SAMPLES_PER_AUDIO_BLOCK * sizeof(float));
             }
         }
 
@@ -161,7 +161,7 @@ namespace klang {
         Connection* mConnection_CH_IN_SIGNAL_1 = nullptr;
         Connection* mConnection_CH_IN_MIX      = nullptr;
 
-        SIGNAL_TYPE mMix = 0.5;
+        float mMix = 0.5;
     };
 }  // namespace klang
 

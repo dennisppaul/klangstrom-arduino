@@ -1,6 +1,7 @@
+#ifdef USE_USBHOST
+
 #include "USBHost_BSP_inc.h"
 
-#ifdef USE_USBHOST
 #ifdef KLST_BOARD_KLST_TINY
 
 // @todo (look into USB FS vs HS?)

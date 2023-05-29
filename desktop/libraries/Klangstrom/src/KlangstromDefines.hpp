@@ -2,7 +2,7 @@
  * Klangstrom
  *
  * This file is part of the *wellen* library (https://github.com/dennisppaul/wellen).
- * Copyright (c) 2022 Dennis P Paul.
+ * Copyright (c) 2023 Dennis P Paul.
  *
  * This library is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,6 +22,23 @@
 
 #include <stdint.h>
 
+#ifndef KLANG_INPUT_CHANNELS
+#define KLANG_INPUT_CHANNELS 2
+#ifdef DEBUG_SHOW_DEFAULT_WARNINGS
+#warning setting KLANG_INPUT_CHANNELS to default value: 2
+#endif
+#endif
+
+#ifndef KLANG_OUTPUT_CHANNELS
+#define KLANG_OUTPUT_CHANNELS 2
+#ifdef DEBUG_SHOW_DEFAULT_WARNINGS
+#warning setting KLANG_OUTPUT_CHANNELS to default value: 2
+#endif
+#endif
+
+static const uint8_t LEFT  = 0;
+static const uint8_t RIGHT = 1;
+
 /* platform / architecture ( as defined in `KLST_ARCH` ) */
 
 #define KLST_ARCH_MCU     1
@@ -33,9 +50,6 @@
 //@todo(@maybe add application specific debugging flags)
 
 /* --- USER DEFINES --- */
-
-#define SIGNAL_TYPE_FLOAT 1
-#define SIGNAL_TYPE_INT16 2
 
 #if __has_include("KlangConfiguration.h")
 #include "KlangConfiguration.h"
@@ -60,23 +74,6 @@
 #ifdef DEBUG_SHOW_DEFAULT_WARNINGS
 #warning setting KLANG_SAMPLES_PER_AUDIO_BLOCK to default value: 512
 #endif
-#endif
-
-#ifndef KLANG_SIGNAL_TYPE
-#define KLANG_SIGNAL_TYPE SIGNAL_TYPE_FLOAT
-#ifdef DEBUG_SHOW_DEFAULT_WARNINGS
-#warning setting KLANG_SIGNAL_TYPE to default value: SIGNAL_TYPE_FLOAT
-#endif
-#endif
-
-/* --- SIGNAL --- */
-
-#if (KLANG_SIGNAL_TYPE == SIGNAL_TYPE_INT16)
-typedef int16_t SIGNAL_TYPE;
-#elif (KLANG_SIGNAL_TYPE == SIGNAL_TYPE_FLOAT)
-typedef float SIGNAL_TYPE;
-#else
-#error KLANG_SIGNAL_TYPE not defined
 #endif
 
 /* --- TYPEDEFS --- */

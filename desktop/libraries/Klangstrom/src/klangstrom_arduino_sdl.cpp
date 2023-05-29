@@ -2,7 +2,7 @@
  * Klangstrom
  *
  * This file is part of the *wellen* library (https://github.com/dennisppaul/wellen).
- * Copyright (c) 2022 Dennis P Paul.
+ * Copyright (c) 2023 Dennis P Paul.
  *
  * This library is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -46,12 +46,21 @@
 #endif
 
 /* KLST */
+
 #include "KLST_SDL-adapter.h"
 #include "KlangstromApplicationArduino.h"
 #include "klangstrom_arduino_debug.h"
 #include "klangstrom_arduino_proxy_encoder.h"
 #include "klangstrom_arduino_proxy_serial.h"
 #include "klangstrom_arduino_sdl.h"
+
+/* --- USBHost adapter --- */
+
+#define EMULATE_USB_HOST
+
+#ifdef EMULATE_USB_HOST
+#include "USBHostCallbacks.h"
+#endif  // EMULATE_USB_HOST
 
 /* KLST -------------------------------------------------------------------------------- */
 
@@ -100,32 +109,35 @@ UdpTransmitSocket *mTransmitSocket = nullptr;
 
 thread mLoopThread;
 
-float                         mInternalAudioOutputBufferLeft[KLANG_SAMPLES_PER_AUDIO_BLOCK * 2];
-float                         mInternalAudioOutputBufferRight[KLANG_SAMPLES_PER_AUDIO_BLOCK * 2];
-int                           mBufferOffset       = 0;
-uint32_t                      mBeatCounter        = 0;
-SDL_TimerID                   mTimerID            = 0;
-SDL_Window                   *mWindow             = nullptr;
-SDL_Renderer                 *gRenderer           = nullptr;
-bool                          mQuitFlag           = false;
-bool                          mMouseButtonPressed = false;
-bool                          mCapsLockDown       = false;
+int                           mBufferOffset                          = 0;
+uint32_t                      mBeatCounter                           = 0;
+SDL_TimerID                   mTimerID                               = 0;
+bool                          mTimerDisabled                         = false;
+SDL_Window                   *mWindow                                = nullptr;
+SDL_Renderer                 *gRenderer                              = nullptr;
+bool                          mQuitFlag                              = false;
+bool                          mCapsLockDown                          = false;
+bool                          fMouseButtonPressed[MOUSE_NUM_BUTTONS] = {false};
+int8_t                        mCurrentEncoder                        = NUMBER_OF_ENCODERS > 0 ? 0 : -1;
 KlangstromArduinoProxyEncoder mEncoders[NUMBER_OF_ENCODERS];
-int8_t                        mCurrentEncoder = NUMBER_OF_ENCODERS > 0 ? 0 : -1;
+static uint8_t                fKeyBuffer[KEYBOARD_NUM_KEYS]     = {0};
+static uint8_t                fKeyCodeBuffer[KEYBOARD_NUM_KEYS] = {0};
+static EventKeyboard          fKeyboardEvent                    = {.keys     = fKeyBuffer,
+                                                                   .keycodes = fKeyCodeBuffer};
+int                           fMousePreviousX                   = 0;
+int                           fMousePreviousY                   = 0;
 
-const static int8_t AUDIO_DEFAULT_DEVICE = -1;
-int8_t              mAudioInputDeviceID  = AUDIO_DEFAULT_DEVICE;
-int8_t              mAudioOutputDeviceID = AUDIO_DEFAULT_DEVICE;
+const static int8_t AUDIO_DEFAULT_DEVICE         = -1;
+int8_t              mAudioInputDeviceID          = AUDIO_DEFAULT_DEVICE;
+int8_t              mAudioOutputDeviceID         = AUDIO_DEFAULT_DEVICE;
+SDL_AudioDeviceID   mAudioInputDeviceInternalID  = 0;
+SDL_AudioDeviceID   mAudioOutputDeviceInternalID = 0;
 
-SDL_AudioDeviceID mAudioInputDeviceInternalID  = 0;
-SDL_AudioDeviceID mAudioOutputDeviceInternalID = 0;
-
-const static int8_t NUM_OF_RX_BUFFER      = 2;
-uint8_t             mCurrentInputBufferID = 0;
-SIGNAL_TYPE         mInputBufferLeft[NUM_OF_RX_BUFFER][KLANG_SAMPLES_PER_AUDIO_BLOCK];
-SIGNAL_TYPE         mInputBufferRight[NUM_OF_RX_BUFFER][KLANG_SAMPLES_PER_AUDIO_BLOCK];
-SIGNAL_TYPE         mOutputBufferLeft[KLANG_SAMPLES_PER_AUDIO_BLOCK];
-SIGNAL_TYPE         mOutputBufferRight[KLANG_SAMPLES_PER_AUDIO_BLOCK];
+const static uint8_t NUM_INPUT_SWAP_BUFFERS = 2;
+uint8_t              mCurrentInputBufferID  = 0;
+float                fOutputBuffers[KLANG_OUTPUT_CHANNELS][KLANG_SAMPLES_PER_AUDIO_BLOCK];
+float                fInputBuffers[NUM_INPUT_SWAP_BUFFERS][KLANG_INPUT_CHANNELS][KLANG_SAMPLES_PER_AUDIO_BLOCK];
+float                fInternalAudioOutputBuffers[KLANG_OUTPUT_CHANNELS][KLANG_SAMPLES_PER_AUDIO_BLOCK * NUM_INPUT_SWAP_BUFFERS];
 
 #define DEBUG_AUDIO_DEVICE
 #define AUDIO_INPUT  SDL_TRUE
@@ -167,13 +179,12 @@ SDL_Renderer *getSDLRenderer() {
 /* KLST -------------------------------------------------------------------------------- */
 
 void init_main() {
-    for (int i = 0; i < KLANG_SAMPLES_PER_AUDIO_BLOCK; i++) {
-        mOutputBufferLeft[i]                                               = 0;
-        mOutputBufferRight[i]                                              = 0;
-        mInternalAudioOutputBufferLeft[i]                                  = 0;
-        mInternalAudioOutputBufferRight[i]                                 = 0;
-        mInternalAudioOutputBufferLeft[i + KLANG_SAMPLES_PER_AUDIO_BLOCK]  = 0;
-        mInternalAudioOutputBufferRight[i + KLANG_SAMPLES_PER_AUDIO_BLOCK] = 0;
+    for (size_t j = 0; j < KLANG_OUTPUT_CHANNELS; j++) {
+        for (int i = 0; i < KLANG_SAMPLES_PER_AUDIO_BLOCK; i++) {
+            fOutputBuffers[j][i]                                              = 0;
+            fInternalAudioOutputBuffers[j][i]                                 = 0;
+            fInternalAudioOutputBuffers[j][i + KLANG_SAMPLES_PER_AUDIO_BLOCK] = 0;
+        }
     }
 
     init_SDL();
@@ -216,11 +227,13 @@ void loop_thread() {
     }
 }
 
-void pre_setup() {}
+void pre_setup() {
+    register_audioblock(audioblock);
+}
 
 void post_setup() {
     /* @note(if beat has not been set in `setup` start with default BPM */
-    if (mTimerID == 0) {
+    if (mTimerID == 0 && !mTimerDisabled) {
 #ifdef KLST_SDL_INITIALIZE_BEAT
         klangstrom_arduino_beats_per_minute(KLST_SDL_DEFAULT_BPM);
 #endif
@@ -228,6 +241,7 @@ void post_setup() {
 }
 
 void loop_main() {
+    configure();
     pre_setup();
     setup();
     post_setup();
@@ -240,14 +254,21 @@ void loop_main() {
     mLoopThread.detach();
 }
 
+bool get_encoder_button_state(uint8_t encoder) {
+    if (encoder >= NUMBER_OF_ENCODERS) {
+        return false;
+    }
+    return mEncoders[encoder].button_pressed;
+}
+
 static void handle_key_pressed_capslock(SDL_Event &e) {
     const SDL_Scancode  mScanCode              = e.key.keysym.scancode;
     const static int8_t ENCODER_ROTATION_SPEED = 1;
     switch (mScanCode) {
-        case SDL_SCANCODE_RIGHT:
+        case SDL_SCANCODE_UP:
             mEncoders[mCurrentEncoder].rotate(ENCODER_ROTATION_SPEED);
             break;
-        case SDL_SCANCODE_LEFT:
+        case SDL_SCANCODE_DOWN:
             mEncoders[mCurrentEncoder].rotate(-ENCODER_ROTATION_SPEED);
             break;
         case SDL_SCANCODE_SPACE:
@@ -255,11 +276,11 @@ static void handle_key_pressed_capslock(SDL_Event &e) {
                 mEncoders[mCurrentEncoder].button_pressed = true;
             }
             break;
-        case SDL_SCANCODE_UP:
+        case SDL_SCANCODE_RIGHT:
             mCurrentEncoder++;
             mCurrentEncoder %= NUMBER_OF_ENCODERS;
             break;
-        case SDL_SCANCODE_DOWN:
+        case SDL_SCANCODE_LEFT:
             mCurrentEncoder += NUMBER_OF_ENCODERS - 1;
             mCurrentEncoder %= NUMBER_OF_ENCODERS;
             break;
@@ -281,51 +302,120 @@ static void handle_key_released_capslock(SDL_Event &e) {
     }
 }
 
-static void handle_key_pressed(SDL_Event &e) {
-    if (e.key.keysym.scancode == SDL_SCANCODE_CAPSLOCK) {
-        mCapsLockDown = true;
-        // if (e.key.keysym.mod == KMOD_CAPS)
-    } else {
-        if (mCapsLockDown) {
-            handle_key_pressed_capslock(e);
-        } else {
-            const char mKey = e.key.keysym.scancode;
-            // const float data[1] = {(float)(SDL_GetScancodeName((SDL_Scancode)mKey)[0])};
-            // event_receive(EVENT_KEY_PRESSED, data);
-            /* @TODO("dirty hack … this needs to be handle differently") */
+static bool isKeyValid(SDL_Event &e) {
+    const SDL_Keycode mKey = e.key.keysym.sym;
+    return mKey > 0 && mKey <= SDLK_DELETE;
+    // return mKey >= SDLK_SPACE && mKey <= SDLK_DELETE;
+}
 
-            // @TODO(change to process multiple keys)
-            EventKeyboard e;
-            e.keys[0] = SDL_GetScancodeName((SDL_Scancode)mKey)[0];
-            if ((SDL_Scancode)mKey == SDL_SCANCODE_SPACE) {
-                e.keys[0] = ' ';
+int8_t findKeyCode(uint8_t pKeyCode) {
+    for (uint8_t i = 0; i < KEYBOARD_NUM_KEYS; i++) {
+        if (fKeyCodeBuffer[i] == pKeyCode) {
+            return i;
+        }
+    }
+    return -1;
+}
+
+int8_t findFreeKeyCode() {
+    for (uint8_t i = 0; i < KEYBOARD_NUM_KEYS; i++) {
+        if (fKeyCodeBuffer[i] == 0) {
+            return i;
+        }
+    }
+    return -1;
+}
+
+static void handle_keyboard_events(SDL_Event &e) {
+    if (!e.key.repeat) {
+        const bool         mKeyPressed = (e.type == SDL_KEYDOWN);
+        const uint8_t      mKey        = isKeyValid(e) ? e.key.keysym.sym : 0;
+        const SDL_Scancode mKeyCode    = e.key.keysym.scancode;
+        const uint8_t      mKeyCode8U  = (mKeyCode < 0 || mKeyCode > 255) ? 0 : (uint8_t)mKeyCode;
+        const int8_t       mKeyCodeID  = findKeyCode(mKeyCode8U);
+        if (mKeyCodeID >= 0) {
+            if (!mKeyPressed) {
+                fKeyCodeBuffer[mKeyCodeID] = 0;
+                fKeyBuffer[mKeyCodeID]     = 0;
             }
-            event_receive(EVENT_KEY_PRESSED, &e);
-#ifdef DEBUG_PRINT_EVENTS
-            KLANG_LOG("key pressed: %c", SDL_GetScancodeName((SDL_Scancode)mKey)[0]);
+        } else {
+            if (mKeyPressed) {
+                const int8_t mFreeKeyCodeID = findFreeKeyCode();
+                if (mFreeKeyCodeID >= 0) {
+                    fKeyCodeBuffer[mFreeKeyCodeID] = mKeyCode8U;
+                    fKeyBuffer[mFreeKeyCodeID]     = mKey;
+                }
+            }
+        }
+        if (e.key.keysym.scancode == SDL_SCANCODE_LSHIFT) {
+            fKeyboardEvent.SHIFT_LEFT = mKeyPressed;
+        }
+        if (e.key.keysym.scancode == SDL_SCANCODE_RSHIFT) {
+            fKeyboardEvent.SHIFT_RIGHT = mKeyPressed;
+        }
+        if (e.key.keysym.scancode == SDL_SCANCODE_LGUI) {
+            fKeyboardEvent.GUI_LEFT = mKeyPressed;
+        }
+        if (e.key.keysym.scancode == SDL_SCANCODE_RGUI) {
+            fKeyboardEvent.GUI_RIGHT = mKeyPressed;
+        }
+        if (e.key.keysym.scancode == SDL_SCANCODE_LALT) {
+            fKeyboardEvent.ALT_LEFT = mKeyPressed;
+        }
+        if (e.key.keysym.scancode == SDL_SCANCODE_RALT) {
+            fKeyboardEvent.ALT_RIGHT = mKeyPressed;
+        }
+        if (e.key.keysym.scancode == SDL_SCANCODE_LCTRL) {
+            fKeyboardEvent.CTRL_LEFT = mKeyPressed;
+        }
+        if (e.key.keysym.scancode == SDL_SCANCODE_RCTRL) {
+            fKeyboardEvent.CTRL_RIGHT = mKeyPressed;
+        }
+#ifdef EMULATE_USB_HOST
+        usb_host_call_event_receive(EVENT_KEYBOARD, &fKeyboardEvent);
+#else
+        event_receive(EVENT_KEYBOARD, &fKeyboardEvent);
 #endif
+    }
+}
+
+static void handle_key_pressed(SDL_Event &e) {
+    if (!e.key.repeat) {
+        const SDL_Scancode mKeyCode = e.key.keysym.scancode;
+        if (mKeyCode == SDL_SCANCODE_CAPSLOCK) {
+            mCapsLockDown = !mCapsLockDown;
+        } else {
+            if (mCapsLockDown) {
+                handle_key_pressed_capslock(e);
+            } else {
+#ifdef EMULATE_USB_HOST
+                if (isKeyValid(e)) {
+                    const SDL_Keycode mKey = e.key.keysym.sym;
+                    usb_host_call_key_pressed(mKey);
+                }
+#endif
+#ifdef DEBUG_PRINT_EVENTS
+                KLANG_LOG("key pressed: %s", SDL_GetScancodeName(mKeyCode));
+#endif
+            }
         }
     }
 }
 
 static void handle_key_released(SDL_Event &e) {
     if (e.key.keysym.scancode == SDL_SCANCODE_CAPSLOCK) {
-        mCapsLockDown = false;
     } else {
         if (mCapsLockDown) {
             handle_key_released_capslock(e);
         } else {
-            const char mKey = e.key.keysym.scancode;
-            // const float data[1] = {(float)(SDL_GetScancodeName((SDL_Scancode)mKey)[0])};
-            // event_receive(EVENT_KEY_RELEASED, data);
-            /* @TODO("dirty hack … this needs to be handle differently") */
-            EventKeyboard e;
-            e.keys[0] = (float)(SDL_GetScancodeName((SDL_Scancode)mKey)[0]);
-            if ((SDL_Scancode)mKey == SDL_SCANCODE_SPACE) {
-                e.keys[0] = ' ';
+#ifdef EMULATE_USB_HOST
+            if (isKeyValid(e)) {
+                const SDL_Keycode mKey = e.key.keysym.sym;
+                usb_host_call_key_released(mKey);
             }
-            event_receive(EVENT_KEY_RELEASED, &e);
+#endif
 #ifdef DEBUG_PRINT_EVENTS
+            const char mKey = e.key.keysym.scancode;
             KLANG_LOG("key released: %c", SDL_GetScancodeName((SDL_Scancode)mKey)[0]);
 #endif
         }
@@ -344,24 +434,27 @@ static void loop_encoders() {
     }
 }
 
-int fMousePreviousX = 0;
-int fMousePreviousY = 0;
-
-void handle_mouse_event(uint8_t event, int x, int y, int button) {
+void handle_mouse_event_receive(int x, int y) {
     EventMouse e;
-    // @TODO(this is not aligned with the mouse events in `USBHost`)
-    // e.x             = (float)x / SCREEN_WIDTH;
-    // e.y             = (float)y / SCREEN_HEIGHT;
-    // e.x_delta       = e.x - fMousePreviousX;
-    // e.y_delta       = e.y - fMousePreviousY;
-    e.x             = x - fMousePreviousX;
-    e.y             = y - fMousePreviousY;
-    fMousePreviousX = x;
-    fMousePreviousY = y;
-    e.LEFT          = (button != MOUSE_BUTTON_NONE);  // @TODO this only works for left button
-    e.MIDDLE        = false;
-    e.RIGHT         = false;
-    event_receive(event, &e);
+    e.x      = x;
+    e.y      = y;
+    e.LEFT   = fMouseButtonPressed[MOUSE_BUTTON_LEFT];
+    e.RIGHT  = fMouseButtonPressed[MOUSE_BUTTON_RIGHT];
+    e.MIDDLE = fMouseButtonPressed[MOUSE_BUTTON_MIDDLE];
+#ifdef EMULATE_USB_HOST
+    usb_host_call_event_receive(EVENT_MOUSE, &e);
+#else
+    event_receive(EVENT_MOUSE, &e);
+#endif
+}
+
+static uint8_t getKLSTMouseButton(const bool *pPrevMouseButtonStates) {
+    for (uint8_t i = 0; i < MOUSE_NUM_BUTTONS; i++) {
+        if (fMouseButtonPressed[i] != pPrevMouseButtonStates[i]) {
+            return i;
+        }
+    }
+    return MOUSE_BUTTON_NONE;
 }
 
 void loop_event() {
@@ -373,34 +466,43 @@ void loop_event() {
         if (e.type == SDL_QUIT) {
             mQuitFlag = true;
         }
+        /* --- MOUSE --- */
         if (e.type == SDL_MOUSEBUTTONDOWN || e.type == SDL_MOUSEBUTTONUP || e.type == SDL_MOUSEMOTION) {
-            int x, y;
-            SDL_GetMouseState(&x, &y);
-            // uint8_t mButton = SDL_BUTTON(SDL_GetMouseState(&x, &y));
-            // bool mLeftButtonPressed = (mButton == SDL_BUTTON_LEFT);
-            // @note(treats all mouse buttons  left mouse button)
+            int          x_SDL, y_SDL;
+            const Uint32 mButtonState = SDL_GetMouseState(&x_SDL, &y_SDL);
+            int          x            = x_SDL - fMousePreviousX;
+            int          y            = y_SDL - fMousePreviousY;
+            fMousePreviousX           = x_SDL;
+            fMousePreviousY           = y_SDL;
+            bool mPrevMouseButtonStates[MOUSE_NUM_BUTTONS];
+            for (uint8_t i = 0; i < MOUSE_NUM_BUTTONS; i++) {
+                mPrevMouseButtonStates[i] = fMouseButtonPressed[i];
+                fMouseButtonPressed[i]    = (mButtonState & (1 << i));
+            }
+            const uint8_t mCurrentKLSTMouseButton = getKLSTMouseButton(mPrevMouseButtonStates);
+#ifdef EMULATE_USB_HOST
             if (e.type == SDL_MOUSEBUTTONDOWN) {
-                mMouseButtonPressed = true;
-                handle_mouse_event(EVENT_MOUSE_PRESSED, x, y, MOUSE_BUTTON_LEFT);
+                usb_host_call_mouse_pressed(mCurrentKLSTMouseButton, x, y);
             } else if (e.type == SDL_MOUSEBUTTONUP) {
-                mMouseButtonPressed = false;
-                handle_mouse_event(EVENT_MOUSE_RELEASED, x, y, MOUSE_BUTTON_LEFT);
+                usb_host_call_mouse_released(mCurrentKLSTMouseButton, x, y);
             }
             if (e.type == SDL_MOUSEMOTION) {
-                if (mMouseButtonPressed) {
-                    handle_mouse_event(EVENT_MOUSE_DRAGGED, x, y, MOUSE_BUTTON_LEFT);
-                } else {
-                    handle_mouse_event(EVENT_MOUSE_MOVED, x, y, MOUSE_BUTTON_NONE);
-                }
+                usb_host_call_mouse_moved(fMouseButtonPressed, x, y);
             }
+#endif
+            handle_mouse_event_receive(x, y);
         }
-        if (e.type == SDL_KEYDOWN) {
-            handle_key_pressed(e);
-        }
-        if (e.type == SDL_KEYUP) {
-            handle_key_released(e);
+        /* --- KEYBOARD --- */
+        if (e.type == SDL_KEYDOWN || e.type == SDL_KEYUP) {
+            if (e.type == SDL_KEYDOWN) {
+                handle_key_pressed(e);
+            } else if (e.type == SDL_KEYUP) {
+                handle_key_released(e);
+            }
+            handle_keyboard_events(e);
         }
     }
+    /* --- ENCODERS --- */
     loop_encoders();
 }
 
@@ -424,6 +526,7 @@ static const int16_t GUI_UNIT_SPACING  = 4;
 static const int16_t GUI_ELEMENT_WIDTH = GUI_UNIT_WIDTH * 2 + GUI_UNIT_SPACING;
 
 void draw_oscilloscope() {
+    // TODO this is fixed to 2 channels. change function so it draws any number of channels …
     display_scale = 0.5f;
     display_x     = GUI_START_X;
     display_y     = GUI_START_Y + (GUI_UNIT_HEIGHT + GUI_UNIT_SPACING) * 2;
@@ -444,10 +547,10 @@ void draw_oscilloscope() {
         int k        = i + mBufferOffset;
         int x0       = SCREEN_WIDTH * (float)(i - 1) / (float)KLANG_SAMPLES_PER_AUDIO_BLOCK;
         int x1       = SCREEN_WIDTH * (float)i / (float)KLANG_SAMPLES_PER_AUDIO_BLOCK;
-        int y0_left  = clamp(mInternalAudioOutputBufferRight[j]) * SCREEN_HEIGHT / 4 + SCREEN_HEIGHT / 4;
-        int y1_left  = clamp(mInternalAudioOutputBufferRight[k]) * SCREEN_HEIGHT / 4 + SCREEN_HEIGHT / 4;
-        int y0_right = clamp(mInternalAudioOutputBufferLeft[j]) * SCREEN_HEIGHT / 4 + SCREEN_HEIGHT / 4 * 3;
-        int y1_right = clamp(mInternalAudioOutputBufferLeft[k]) * SCREEN_HEIGHT / 4 + SCREEN_HEIGHT / 4 * 3;
+        int y0_left  = clamp(fInternalAudioOutputBuffers[LEFT][j]) * SCREEN_HEIGHT / 4 + SCREEN_HEIGHT / 4;
+        int y1_left  = clamp(fInternalAudioOutputBuffers[LEFT][k]) * SCREEN_HEIGHT / 4 + SCREEN_HEIGHT / 4;
+        int y0_right = clamp(fInternalAudioOutputBuffers[RIGHT][j]) * SCREEN_HEIGHT / 4 + SCREEN_HEIGHT / 4 * 3;
+        int y1_right = clamp(fInternalAudioOutputBuffers[RIGHT][k]) * SCREEN_HEIGHT / 4 + SCREEN_HEIGHT / 4 * 3;
         line(gRenderer, x0, y0_left, x1, y1_left);
         line(gRenderer, x0, y0_right, x1, y1_right);
     }
@@ -570,22 +673,37 @@ inline float sanitize_sample(float f) {
 }
 
 void update_audiobuffer() {
-    const uint8_t _mCurrentInputBufferID = mCurrentInputBufferID;
-    audioblock(mOutputBufferLeft, mOutputBufferRight, mInputBufferLeft[_mCurrentInputBufferID], mInputBufferRight[_mCurrentInputBufferID]);
-    for (int i = 0; i < KLANG_SAMPLES_PER_AUDIO_BLOCK; i++) {
-        mInternalAudioOutputBufferLeft[i + mBufferOffset]  = sanitize_sample(mOutputBufferLeft[i]);
-        mInternalAudioOutputBufferRight[i + mBufferOffset] = sanitize_sample(mOutputBufferRight[i]);
+    // NOTE the code below is NOT very elegant, however it seems as if this is the only way to pass a 2D array to a function.
+    // the option to pass the arrays by performing a C-style cast to a double pointer ( e.g `(float **)fOutputBuffers` ) is not
+    // allowed and may produce undefined behavior or a segmantation fault.
+    // it might be a better idea to use dynamic memory allocation after all …
+    float *mInputBuffer[KLANG_INPUT_CHANNELS];
+    float *mOutputBuffer[KLANG_OUTPUT_CHANNELS];
+    for (size_t j = 0; j < KLANG_INPUT_CHANNELS; j++) {
+        mInputBuffer[j] = fInputBuffers[mCurrentInputBufferID][j];
+    }
+    for (size_t j = 0; j < KLANG_OUTPUT_CHANNELS; j++) {
+        mOutputBuffer[j] = fOutputBuffers[j];
+    }
+
+    call_audioblock(mInputBuffer, mOutputBuffer);
+
+    for (size_t j = 0; j < KLANG_OUTPUT_CHANNELS; j++) {
+        for (size_t i = 0; i < KLANG_SAMPLES_PER_AUDIO_BLOCK; i++) {
+            fInternalAudioOutputBuffers[j][i + mBufferOffset] = sanitize_sample(fOutputBuffers[j][i]);
+        }
     }
 }
 
 void audio_output_callback(void *userdata, Uint8 *pStream, int pBufferLength) {
+    // @TODO this is fixed to 2 channels
     /* for `AUDIO_F32` the stride is 8 = 4 Bytes LEFT + 4 Bytes RIGHT */
 #define LEFT_POS  0
 #define RIGHT_POS 4
     uint16_t mBufferPos = 0;
     for (int i = 0; i < pBufferLength; i += 8) {
-        auto *mLeftF  = (uint8_t *)&mInternalAudioOutputBufferLeft[mBufferPos + mBufferOffset];
-        auto *mRightF = (uint8_t *)&mInternalAudioOutputBufferRight[mBufferPos + mBufferOffset];
+        auto *mLeftF  = (uint8_t *)&fInternalAudioOutputBuffers[LEFT][mBufferPos + mBufferOffset];
+        auto *mRightF = (uint8_t *)&fInternalAudioOutputBuffers[RIGHT][mBufferPos + mBufferOffset];
         for (uint8_t j = 0; j < 4; j++) {
             pStream[i + LEFT_POS + j]  = mLeftF[j];
             pStream[i + RIGHT_POS + j] = mRightF[j];
@@ -606,34 +724,40 @@ Uint32 beat_callback(Uint32 interval, void *param) {
     return interval;
 }
 
-void klangstrom_arduino_beats_per_minute(float pBPM) {
-    if (pBPM > 0) {
-        const float    mMilliSeconds = 1000.0f / (pBPM / 60.0f);
+void klangstrom_arduino_beats_per_minute(float BPM) {
+    if (BPM > 0) {
+        const float    mMilliSeconds = 1000.0f / (BPM / 60.0f);
         const uint32_t pMicroSeconds = (uint32_t)(mMilliSeconds * 1000);
         klangstrom_arduino_beats_per_minute_ms(pMicroSeconds);
+    } else {
+        klangstrom_arduino_beats_per_minute_ms(0);
     }
 }
 
-void klangstrom_arduino_beats_per_minute_ms(uint32_t pMicroSeconds) {
+void klangstrom_arduino_beats_per_minute_ms(uint32_t micro_seconds) {
     if (mTimerID > 0) {
         bool mOK = SDL_RemoveTimer(mTimerID);
         if (!mOK) {
             KLANG_LOG_ERR("+++ (ERROR) could not remove beat timer");
         }
     }
-    if (pMicroSeconds > 0) {
-        const float mMilliSeconds = pMicroSeconds / 1000.0f;
+    if (micro_seconds > 0) {
+        const float mMilliSeconds = micro_seconds / 1000.0f;
         mTimerID                  = SDL_AddTimer(mMilliSeconds, beat_callback, nullptr);
         if (!mTimerID) {
             KLANG_LOG_ERR("+++ (ERROR) could not start beat");
         }
+        mTimerDisabled = false;
+    } else {
+        mTimerDisabled = true;
     }
 }
 
 void init_audio_output() {
-    for (int i = 0; i < KLANG_SAMPLES_PER_AUDIO_BLOCK * 2; i++) {
-        mInternalAudioOutputBufferLeft[i]  = 0.0;
-        mInternalAudioOutputBufferRight[i] = 0.0;
+    for (size_t j = 0; j < KLANG_OUTPUT_CHANNELS; j++) {
+        for (int i = 0; i < KLANG_SAMPLES_PER_AUDIO_BLOCK * 2; i++) {
+            fInternalAudioOutputBuffers[j][i] = 0.0;
+        }
     }
 
     if (SDL_GetNumAudioDevices(AUDIO_OUTPUT) < 1) {
@@ -684,10 +808,11 @@ void init_audio_output() {
 #ifdef KLST_SDL_USE_AUDIO_INPUT
 void audio_input_callback(void *userdata, Uint8 *pStream, int pBufferLength) {
     mCurrentInputBufferID++;
-    mCurrentInputBufferID %= NUM_OF_RX_BUFFER;
-    for (int i = 0; i < pBufferLength; i += 8) {
-        mInputBufferLeft[mCurrentInputBufferID][i / 8]  = FLOAT_32(pStream, i + 0);
-        mInputBufferRight[mCurrentInputBufferID][i / 8] = FLOAT_32(pStream, i + 4);
+    mCurrentInputBufferID %= NUM_INPUT_SWAP_BUFFERS;
+    for (int i = 0; i < pBufferLength; i += KLANG_INPUT_CHANNELS * 4) {
+        for (size_t j = 0; j < KLANG_INPUT_CHANNELS; j++) {
+            fInputBuffers[mCurrentInputBufferID][j][i / 8] = FLOAT_32(pStream, i + j * 4);
+        }
     }
 }
 
@@ -806,15 +931,12 @@ void init_SDL() {
     KLANG_LOG("+++ KLANG_AUDIO_BLOCKS            : %i         +++", KLANG_AUDIO_BLOCKS);
 #endif
     KLANG_LOG("+++ KLANG_SAMPLES_PER_AUDIO_BLOCK : %i       +++", KLANG_SAMPLES_PER_AUDIO_BLOCK);
-#ifdef KLANG_AUDIO_BLOCKS
-    KLANG_LOG("+++ KLANG_SIGNAL_TYPE             : %i          +++", KLANG_SIGNAL_TYPE);
-#endif
 #ifdef KLST_SDL_USE_OSC
     KLANG_LOG("+++ KLANG_OSC_TRANSMIT_ADDRESS    : %s", KLANG_OSC_TRANSMIT_ADDRESS);
     KLANG_LOG("+++ KLANG_OSC_TRANSMIT_PORT       : %i", KLANG_OSC_TRANSMIT_PORT);
     KLANG_LOG("+++ KLANG_OSC_RECEIVE_PORT        : %i", KLANG_OSC_RECEIVE_PORT);
 #endif
-    KLANG_LOG("+++ KLANG_BOARD_EMULATOR         : %s +++", get_board_name(KLANG_BOARD_EMULATOR));
+    KLANG_LOG("+++ KLANG_BOARD_EMULATOR          : %s +++", get_board_name(KLANG_BOARD_EMULATOR));
     KLANG_LOG("+++                                            +++");
     KLANG_LOG("++++++++++++++++++++++++++++++++++++++++++++++++++");
 
@@ -1041,7 +1163,7 @@ void klangstrom_arduino_event_transmit(EVENT_TYPE pEvent, float *data) {
 #endif
 }
 
-void klangstrom_arduino_data_transmit(const uint8_t pSender, uint8_t *pData, uint8_t pDataLength) {
+void klangstrom_arduino_data_transmit(const uint8_t pSender, uint8_t *pData, uint16_t pDataLength) {
 #ifdef KLST_SDL_USE_OSC
     // @todo(implement all events)
     char                      buffer[OSC_TRANSMIT_OUTPUT_BUFFER_SIZE];

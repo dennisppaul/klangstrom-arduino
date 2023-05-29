@@ -2,7 +2,7 @@
 layout: libdoc
 title: NodePitchDetection.h
 permalink: /NodePitchDetection.h/
-index: 80
+index: 76
 ---
 
 ```c

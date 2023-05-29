@@ -2,7 +2,7 @@
  * Klangstrom
  *
  * This file is part of the *wellen* library (https://github.com/dennisppaul/wellen).
- * Copyright (c) 2022 Dennis P Paul.
+ * Copyright (c) 2023 Dennis P Paul.
  *
  * This library is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,10 +28,10 @@
 
 #if (KLST_ARCH == KLST_ARCH_DESKTOP)
 #include "KlangstromDisplay_SDL-BSP.h"
-#warning will create display for KLST_ARCH_DESKTOP
+// #warning will create display for KLST_ARCH_DESKTOP
 #elif (KLST_ARCH == KLST_ARCH_MCU)
 #include "KlangstromDisplay_KLST-BSP.h"
-#warning will create display for KLST_ARCH_MCU
+// #warning will create display for KLST_ARCH_MCU
 #endif
 
 klangstrom::KlangstromDisplay* klangstrom::KlangstromDisplay::create_ptr() {

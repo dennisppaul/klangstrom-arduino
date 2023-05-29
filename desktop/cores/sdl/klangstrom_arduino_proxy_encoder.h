@@ -2,7 +2,7 @@
  * Klangstrom
  *
  * This file is part of the *wellen* library (https://github.com/dennisppaul/wellen).
- * Copyright (c) 2022 Dennis P Paul.
+ * Copyright (c) 2023 Dennis P Paul.
  *
  * This library is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,10 +30,10 @@ public:
     uint8_t  ID             = 0;
     bool     button_pressed = false;
 
-    void draw(SDL_Renderer *gRenderer, bool pActive);
+    void draw(SDL_Renderer* gRenderer, bool pActive);
     void rotate(int16_t pDelta);
     void update(bool pFlagged);
-    
+
 private:
     static const uint8_t MOVED_COUNTER           = 15;
     int16_t              previous_ticks          = 0;
@@ -41,6 +41,8 @@ private:
     bool                 selected                = false;
     bool                 previous_button_pressed = false;
     uint8_t              fMovedCounter           = 0;
+
+    void populate_event(EventEncoder& e);
 };
 
 #endif /* klangstrom_arduino_proxy_encoder_h */

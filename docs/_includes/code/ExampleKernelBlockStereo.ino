@@ -15,10 +15,10 @@ class MNodeKernel : public NodeKernelBlockStereo {
 public:
     float mix = 1.0;
 
-    void kernel(SIGNAL_TYPE* pOutputSignal_LEFT,
-                SIGNAL_TYPE* pOutputSignal_RIGHT,
-                SIGNAL_TYPE* pInputSignal_A,
-                SIGNAL_TYPE* pInputSignal_B) {
+    void kernel(float* pOutputSignal_LEFT,
+                float* pOutputSignal_RIGHT,
+                float* pInputSignal_A,
+                float* pInputSignal_B) {
         for (uint16_t i = 0; i < KLANG_SAMPLES_PER_AUDIO_BLOCK; i++) {
             pOutputSignal_LEFT[i]  = mix * pInputSignal_B[i] + (1.0 - mix) * pInputSignal_A[i];
             pOutputSignal_RIGHT[i] = mix * pInputSignal_A[i] + (1.0 - mix) * pInputSignal_B[i];
@@ -50,11 +50,11 @@ void setup() {
 
 void loop() {}
 
-void audioblock(SIGNAL_TYPE* pOutputLeft, SIGNAL_TYPE* pOutputRight, SIGNAL_TYPE* pInputLeft, SIGNAL_TYPE* pInputRight) {
-    mDAC.process_frame(pOutputLeft, pOutputRight);
+void audioblock(float** input_signal, float** output_signal) {
+    mDAC.process_frame(output_signal[LEFT], output_signal[RIGHT]);
 }
 
-void event_receive(const EVENT_TYPE event, const float* data) {
+void event_receive(const EVENT_TYPE event, const void* data) {
     if (event == EVENT_MOUSE_MOVED) {
         mKernel.mix = mouse_event(data).y;
     }

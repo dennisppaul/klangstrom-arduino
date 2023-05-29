@@ -1,3 +1,5 @@
+#ifdef USE_USBHOST
+
 /**
  ******************************************************************************
  * @file    usbh_MIDI.c
@@ -32,6 +34,9 @@
 
 /*------------------------------------------------------------------------------------------------------------------------------*/
 
+/* KLST */
+
+extern bool usb_host_midi_connected;
 
 /** @defgroup USBH_MIDI_CORE_Private_FunctionPrototypes
  * @{
@@ -154,6 +159,8 @@ static USBH_StatusTypeDef USBH_MIDI_InterfaceInit (USBH_HandleTypeDef *phost)
 		USBH_LL_SetToggle  (phost, MIDI_Handle->InPipe,0);
 		USBH_LL_SetToggle  (phost, MIDI_Handle->OutPipe,0);
 		status = USBH_OK;
+
+		usb_host_midi_connected = true;
 	}
 	return status;
 }
@@ -190,6 +197,8 @@ USBH_StatusTypeDef USBH_MIDI_InterfaceDeInit (USBH_HandleTypeDef *phost)
 		USBH_free (phost->pActiveClass->pData);
 		phost->pActiveClass->pData = 0;
 	}
+
+	usb_host_midi_connected = false;
 
 	return USBH_OK;
 }
@@ -530,3 +539,5 @@ __weak void USBH_MIDI_ReceiveCallback(USBH_HandleTypeDef *phost)
 }
 
 /**************************END OF FILE*********************************************************/
+
+#endif // USE_USBHOST

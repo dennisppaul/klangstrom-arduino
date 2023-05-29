@@ -38,8 +38,8 @@ void setup() {
 
 void loop() {}
 
-void audioblock(SIGNAL_TYPE* pOutputLeft, SIGNAL_TYPE* pOutputRight, SIGNAL_TYPE* pInputLeft, SIGNAL_TYPE* pInputRight) {
-    mDAC.process_frame(pOutputLeft, pOutputRight);
+void audioblock(float** input_signal, float** output_signal) {
+    mDAC.process_frame(output_signal[LEFT], output_signal[RIGHT]);
 }
 
 void handle_key_pressed(char key) {
@@ -74,10 +74,10 @@ void handle_key_pressed(char key) {
     }
 }
 
-void event_receive(const EVENT_TYPE event, const float* data) {
+void event_receive(const EVENT_TYPE event, const void* data) {
     switch (event) {
         case EVENT_KEY_PRESSED:
-            handle_key_pressed(keyboard_event(data).key);
+            handle_key_pressed(keyboard_event(data).keys[0]);
             break;
         case EVENT_MOUSE_MOVED:
             mVCOFunction.set_frequency(DEFAULT_FREQUENCY / 2 * floor(32 * mouse_event(data).x));

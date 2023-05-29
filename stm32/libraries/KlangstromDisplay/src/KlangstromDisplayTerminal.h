@@ -2,7 +2,7 @@
  * Klangstrom
  *
  * This file is part of the *wellen* library (https://github.com/dennisppaul/wellen).
- * Copyright (c) 2022 Dennis P Paul.
+ * Copyright (c) 2023 Dennis P Paul.
  *
  * This library is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -66,14 +66,14 @@ namespace klangstrom {
         }
 
         void println(const char* s) {
-            for (int i = 0; i < strlen(s); i++) {
+            for (size_t i = 0; i < strlen(s); i++) {
                 print(s[i]);
             }
             println();
         }
 
         void print(const char* s) {
-            for (int i = 0; i < strlen(s); i++) {
+            for (size_t i = 0; i < strlen(s); i++) {
                 print(s[i]);
             }
         }

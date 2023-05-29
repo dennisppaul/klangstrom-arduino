@@ -73,7 +73,7 @@ namespace klang {
             return false;
         }
 
-        void update(CHANNEL_ID pChannel, SIGNAL_TYPE* pAudioBlock) {
+        void update(CHANNEL_ID pChannel, float* pAudioBlock) {
             if (is_not_updated()) {
                 if (mConnection_CH_IN_SIGNAL != nullptr) {
                     mConnection_CH_IN_SIGNAL->update(pAudioBlock);
@@ -82,7 +82,7 @@ namespace klang {
                 if (mConnection_CH_IN_TRIGGER != nullptr) {
                     mBlock_TRIGGER = AudioBlockPool::instance().request();
                     mConnection_CH_IN_TRIGGER->update(mBlock_TRIGGER);
-                    SIGNAL_TYPE* mBlockData_TRIGGER = AudioBlockPool::instance().data(mBlock_TRIGGER);
+                    float* mBlockData_TRIGGER = AudioBlockPool::instance().data(mBlock_TRIGGER);
                     for (uint16_t i = 0; i < KLANG_SAMPLES_PER_AUDIO_BLOCK; i++) {
                         const float mCurrentSample = mBlockData_TRIGGER[i];
                         mBlockData_TRIGGER[i]      = evaluateEdge(mPreviousSample, mCurrentSample);
@@ -94,13 +94,13 @@ namespace klang {
 
             if (pChannel == CH_OUT_SIGNAL) {
                 const bool   mHasTriggerSignal  = (mBlock_TRIGGER != AudioBlockPool::NO_ID);
-                SIGNAL_TYPE* mBlockData_TRIGGER = nullptr;
+                float* mBlockData_TRIGGER = nullptr;
                 if (mHasTriggerSignal) {
                     mBlockData_TRIGGER = AudioBlockPool::instance().data(mBlock_TRIGGER);
                 }
                 for (uint16_t i = 0; i < KLANG_SAMPLES_PER_AUDIO_BLOCK; i++) {
                     if (mHasTriggerSignal) {
-                        const SIGNAL_TYPE mTriggerState = mBlockData_TRIGGER[i];
+                        const float mTriggerState = mBlockData_TRIGGER[i];
                         if (mTriggerState == RAMP_RISING_EDGE) {
                             start();
                         } else if (mTriggerState == RAMP_FALLING_EDGE) {
@@ -112,7 +112,7 @@ namespace klang {
             } else if (pChannel == CH_OUT_TRIGGER) {
                 const bool mHasTriggerSignal = (mBlock_TRIGGER != AudioBlockPool::NO_ID);
                 if (mHasTriggerSignal) {
-                    SIGNAL_TYPE* mBlockData_TRIGGER = AudioBlockPool::instance().data(mBlock_TRIGGER);
+                    float* mBlockData_TRIGGER = AudioBlockPool::instance().data(mBlock_TRIGGER);
                     KLANG_COPY_AUDIO_BUFFER(pAudioBlock, mBlockData_TRIGGER);
                 } else {
                     KLANG_FILL_AUDIO_BUFFER(pAudioBlock, 0.0);
@@ -146,27 +146,27 @@ namespace klang {
             mEnvelopeDone = true;
         }
 
-        void set_time_scale(SIGNAL_TYPE pTimeScale) {
+        void set_time_scale(float pTimeScale) {
             mTimeScale = pTimeScale;
         }
 
-        SIGNAL_TYPE get_time_scale() {
+        float get_time_scale() {
             return mTimeScale;
         }
 
-        void set_value_scale(SIGNAL_TYPE pValueScale) {
+        void set_value_scale(float pValueScale) {
             mValueScale = pValueScale;
         }
 
-        SIGNAL_TYPE get_value_scale() {
+        float get_value_scale() {
             return mValueScale;
         }
 
-        void set_start_value(SIGNAL_TYPE pStartValue) {
+        void set_start_value(float pStartValue) {
             mStartValue = pStartValue;
         }
 
-        SIGNAL_TYPE get_start_value() {
+        float get_start_value() {
             return mStartValue;
         }
 
@@ -200,9 +200,9 @@ namespace klang {
 
         AUDIO_BLOCK_ID mBlock_TRIGGER = AudioBlockPool::NO_ID;
 
-        static constexpr SIGNAL_TYPE RAMP_NO_EDGE                     = 0.0;
-        static constexpr SIGNAL_TYPE RAMP_RISING_EDGE                 = 1.0;
-        static constexpr SIGNAL_TYPE RAMP_FALLING_EDGE                = -1.0;
+        static constexpr float RAMP_NO_EDGE                     = 0.0;
+        static constexpr float RAMP_RISING_EDGE                 = 1.0;
+        static constexpr float RAMP_FALLING_EDGE                = -1.0;
         static constexpr float       mThreshold                       = 0.0;  // @todo(could be made configurable)
         static constexpr float       M_TIME_SCALE                     = 1000;
         static constexpr float       KLANG_AUDIO_RATE_UINT16_FRAC_INV = M_TIME_SCALE / KLANG_AUDIO_RATE_UINT16;
@@ -218,9 +218,9 @@ namespace klang {
         float       mStageDuration  = 0.0;
         bool        mEnvelopeDone   = true;
         bool        fLoop           = false;
-        SIGNAL_TYPE mPreviousSample = mThreshold;
+        float mPreviousSample = mThreshold;
 
-        inline SIGNAL_TYPE kernel(const SIGNAL_TYPE s) {
+        inline float kernel(const float s) {
             if (!mEnvelopeDone) {
                 if (mEnvStage < mEnvelopeStages.size()) {
                     mValue += mTimeScale * mDelta;
@@ -240,7 +240,7 @@ namespace klang {
                 }
             }
             const bool        mHasInputSignal = (mConnection_CH_IN_SIGNAL != nullptr);
-            const SIGNAL_TYPE a               = mHasInputSignal ? s * mValue : mValue;
+            const float a               = mHasInputSignal ? s * mValue : mValue;
             return a * mValueScale;
         }
 
@@ -266,7 +266,7 @@ namespace klang {
             }
         }
 
-        const SIGNAL_TYPE evaluateEdge(const SIGNAL_TYPE pPreviousSample, const SIGNAL_TYPE pCurrentSample) {
+        const float evaluateEdge(const float pPreviousSample, const float pCurrentSample) {
             if ((pPreviousSample <= mThreshold) && (pCurrentSample > mThreshold)) {
                 return RAMP_RISING_EDGE;
             } else if ((pPreviousSample >= mThreshold) && (pCurrentSample < mThreshold)) {

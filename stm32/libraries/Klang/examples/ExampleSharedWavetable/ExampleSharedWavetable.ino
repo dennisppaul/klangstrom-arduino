@@ -14,7 +14,7 @@ static const uint8_t  NUM_OF_OSC     = 4;
 static const uint16_t WAVETABLE_SIZE = 256;
 static const float    FREQ_OFFSET    = 0.02;
 static const float    BASE_FREQ      = 110;
-SIGNAL_TYPE*          mWavetable     = new SIGNAL_TYPE[WAVETABLE_SIZE];
+float*          mWavetable     = new float[WAVETABLE_SIZE];
 
 NodeDAC          mDAC;
 NodeVCOWavetable mOSC[NUM_OF_OSC];
@@ -46,7 +46,7 @@ void beat(uint32_t pBeat) {
     set_frequency(random(1, 12));
 }
 
-void audioblock(SIGNAL_TYPE* pOutputLeft, SIGNAL_TYPE* pOutputRight,
-                SIGNAL_TYPE* pInputLeft, SIGNAL_TYPE* pInputRight) {
-    mDAC.process_frame(pOutputLeft, pOutputRight);
+void audioblock(float* output_signal[LEFT], float* output_signal[RIGHT],
+                float* input_signal[LEFT], float* input_signal[RIGHT]) {
+    mDAC.process_frame(output_signal[LEFT], output_signal[RIGHT]);
 }

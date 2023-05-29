@@ -15,7 +15,7 @@ void setup() {
 
 void loop() {}
 
-void event_receive(const uint8_t event, const float* data) {
+void event_receive(const EVENT_TYPE event, const void* data) {
     switch (event) {
         case EVENT_ENCODER_BUTTON_PRESSED:
             if (encoder_event(data).index == ENCODER_00) {

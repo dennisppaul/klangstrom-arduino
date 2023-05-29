@@ -30,7 +30,7 @@ KLST_TINY.build.float-abi=-mfloat-abi=hard
 KLST_TINY.build.ldscript=ldscript.ld
 KLST_TINY.build.peripheral_pins=-DCUSTOM_PERIPHERAL_PINS
 KLST_TINY.build.st_extra_flags=-D{build.product_line} {build.enable_usb} {build.xSerial}
-KLST_TINY.build.extra_flags=-DKLST_BOARD_{build.board} -DKLST_ARCH=1 -DKLANG_SAMPLES_PER_AUDIO_BLOCK={build.flags.audioblock} -DKLANG_AUDIO_RATE={build.flags.samplingrate} -DKLANG_DEBUG_LEVEL=2 -DKLANG_SIGNAL_TYPE=1 -DKLST_WAVETABLE_INTERPOLATE_SAMPLES=1 -DKLST_USE_CMSIS_DSP -DCORE_CALLBACK
+KLST_TINY.build.extra_flags=-DKLST_BOARD_{build.board} -DKLST_ARCH=1 -DKLANG_SAMPLES_PER_AUDIO_BLOCK={build.flags.audioblock} -DKLANG_AUDIO_RATE={build.flags.samplingrate} -DKLANG_DEBUG_LEVEL=2 -DKLST_WAVETABLE_INTERPOLATE_SAMPLES=1 -DKLST_USE_CMSIS_DSP -DCORE_CALLBACK
 KLST_TINY.compiler.cpp.std=gnu++17
 
 #

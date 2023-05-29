@@ -2,7 +2,7 @@
  * Klangstrom
  *
  * This file is part of the *wellen* library (https://github.com/dennisppaul/wellen).
- * Copyright (c) 2022 Dennis P Paul.
+ * Copyright (c) 2023 Dennis P Paul.
  *
  * This library is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,6 +25,7 @@
 namespace klangstrom {
     class KlangstromDisplay_KLST_BSP : public KlangstromDisplay {
     public:
+        virtual ~KlangstromDisplay_KLST_BSP() {}
         void BSP_init();
         void BSP_set_pixel(const uint16_t x, const uint16_t y, const uint16_t color);
         void BSP_clear_background();

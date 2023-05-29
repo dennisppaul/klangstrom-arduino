@@ -2,7 +2,7 @@
  * Klangstrom
  *
  * This file is part of the *wellen* library (https://github.com/dennisppaul/wellen).
- * Copyright (c) 2022 Dennis P Paul.
+ * Copyright (c) 2023 Dennis P Paul.
  *
  * This library is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -98,6 +98,7 @@
 #define KLST_NUM_DACS          2
 #define KLST_ANALOG_RESOLUTION 16
 #define KLST_UART_BAUD         115200
+#define KLST_NUM_LEDS          NUMBER_OF_LEDS
 
 #define KLST_LOG Serial
 

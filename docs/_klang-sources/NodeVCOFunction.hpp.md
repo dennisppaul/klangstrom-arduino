@@ -2,7 +2,7 @@
 layout: libdoc
 title: NodeVCOFunction.hpp
 permalink: /NodeVCOFunction.hpp/
-index: 92
+index: 88
 ---
 
 ```c
@@ -107,32 +107,32 @@ namespace klang {
             }
         }
 
-        void set_amplitude(SIGNAL_TYPE pAmplitude) {
+        void set_amplitude(float pAmplitude) {
             mAmplitude = pAmplitude;
         }
 
-        const SIGNAL_TYPE get_amplitude() {
+        const float get_amplitude() {
             return mAmplitude;
         }
 
-        void set_offset(SIGNAL_TYPE pOffset) {
+        void set_offset(float pOffset) {
             mOffset = pOffset;
         }
 
-        const SIGNAL_TYPE get_offset() {
+        const float get_offset() {
             return mOffset;
         }
 
-        void set_frequency(SIGNAL_TYPE pFrequency) {
+        void set_frequency(float pFrequency) {
             if (mFrequency != pFrequency) {
                 mFrequency = pFrequency;
                 mStepSize  = mFrequency * TWO_PI / KLANG_AUDIO_RATE_UINT16;
             }
         }
 
-        const SIGNAL_TYPE get_frequency() { return mFrequency; }
+        const float get_frequency() { return mFrequency; }
 
-        void update(CHANNEL_ID pChannel, SIGNAL_TYPE* pAudioBlock) {
+        void update(CHANNEL_ID pChannel, float* pAudioBlock) {
             if (is_not_updated()) {
                 mBlock_FREQ = AudioBlockPool::NO_ID;
                 if (mConnection_CH_IN_FREQ != nullptr) {
@@ -147,11 +147,11 @@ namespace klang {
                 flag_updated();
             }
             if (pChannel == CH_OUT_SIGNAL) {
-                SIGNAL_TYPE* mBlockData_FREQ = nullptr;
+                float* mBlockData_FREQ = nullptr;
                 if (mBlock_FREQ != AudioBlockPool::NO_ID) {
                     mBlockData_FREQ = AudioBlockPool::instance().data(mBlock_FREQ);
                 }
-                SIGNAL_TYPE* mBlockData_AMP = nullptr;
+                float* mBlockData_AMP = nullptr;
                 if (mBlock_AMP != AudioBlockPool::NO_ID) {
                     mBlockData_AMP = AudioBlockPool::instance().data(mBlock_AMP);
                 }
@@ -191,11 +191,11 @@ namespace klang {
         }
 
     private:
-        SIGNAL_TYPE mFrequency = 0.0;
+        float mFrequency = 0.0;
         float       mStepSize  = 0.0;
         double      mPhase     = 0.0;  // @NOTE("single precision introduces drift")
-        SIGNAL_TYPE mAmplitude = SIGNAL_MAX;
-        SIGNAL_TYPE mOffset    = 0.0;
+        float mAmplitude = SIGNAL_MAX;
+        float mOffset    = 0.0;
         WAVEFORM    mWaveform  = WAVEFORM::SINE;
 
         AUDIO_BLOCK_ID mBlock_FREQ            = AudioBlockPool::NO_ID;
@@ -203,7 +203,7 @@ namespace klang {
         Connection*    mConnection_CH_IN_FREQ = nullptr;
         Connection*    mConnection_CH_IN_AMP  = nullptr;
 
-        void process_sine(uint16_t i, SIGNAL_TYPE* pAudioBlock) {
+        void process_sine(uint16_t i, float* pAudioBlock) {
             mPhase += mStepSize;
             if (mPhase > TWO_PI) {
                 mPhase -= TWO_PI;
@@ -211,7 +211,7 @@ namespace klang {
             pAudioBlock[i] = klang_math_sin(mPhase);
         }
 
-        void process_triangle(uint16_t i, SIGNAL_TYPE* pAudioBlock) {
+        void process_triangle(uint16_t i, float* pAudioBlock) {
             mPhase += mFrequency;
             mPhase                       = KlangMath::mod(mPhase, KLANG_AUDIO_RATE);
             const float mPhaseShifted    = mPhase - (KLANG_AUDIO_RATE / 2);
@@ -219,13 +219,13 @@ namespace klang {
             pAudioBlock[i]               = (mPhaseShiftedAbs - (KLANG_AUDIO_RATE / 4)) / (KLANG_AUDIO_RATE / 4);
         }
 
-        void process_sawtooth(uint16_t i, SIGNAL_TYPE* pAudioBlock) {
+        void process_sawtooth(uint16_t i, float* pAudioBlock) {
             mPhase += mFrequency;
             mPhase         = KlangMath::mod(mPhase, KLANG_AUDIO_RATE);
             pAudioBlock[i] = (mPhase / (KLANG_AUDIO_RATE / 2)) + SIGNAL_MIN;
         }
 
-        void process_square(uint16_t i, SIGNAL_TYPE* pAudioBlock) {
+        void process_square(uint16_t i, float* pAudioBlock) {
             mPhase += mFrequency;
             mPhase         = KlangMath::mod(mPhase, KLANG_AUDIO_RATE);
             pAudioBlock[i] = mPhase > (KLANG_AUDIO_RATE / 2) ? SIGNAL_MAX : SIGNAL_MIN;

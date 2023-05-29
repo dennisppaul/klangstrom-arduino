@@ -59,7 +59,7 @@ void beat(uint32_t pBeat) {
     mVCO.set_frequency(DEFAULT_FREQUENCY + (pBeat % 16) * 20);
 }
 
-void event_receive(const EVENT_TYPE event, const float* data) {
+void event_receive(const EVENT_TYPE event, const void* data) {
     switch (event) {
         case EVENT_ENCODER_BUTTON_PRESSED:
         case EVENT_KEY_PRESSED:
@@ -81,11 +81,11 @@ void loop() {
     }
 }
 
-void audioblock(SIGNAL_TYPE* pOutputLeft, SIGNAL_TYPE* pOutputRight,
-                SIGNAL_TYPE* pInputLeft, SIGNAL_TYPE* pInputRight) {
-    mDAC.process_frame(pOutputLeft, pOutputRight);
+void audioblock(float* output_signal[LEFT], float* output_signal[RIGHT],
+                float* input_signal[LEFT], float* input_signal[RIGHT]) {
+    mDAC.process_frame(output_signal[LEFT], output_signal[RIGHT]);
     if (!fBufferUpdated) {
-        KLANG_COPY_AUDIO_BUFFER(mBuffer, pOutputLeft);
+        KLANG_COPY_AUDIO_BUFFER(mBuffer, output_signal[LEFT]);
         fBufferUpdated = true;
     }
 }

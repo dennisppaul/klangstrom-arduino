@@ -37,19 +37,19 @@
 namespace klang {
     class NodeSoftClip : public NodeKernelBlock {
     public:
-        void set_level_in(SIGNAL_TYPE pValue) {
+        void set_level_in(float pValue) {
             mLevel_IN = pValue;
         }
 
-        SIGNAL_TYPE get_level_in() {
+        float get_level_in() {
             return mLevel_IN;
         }
 
-        void set_level_out(SIGNAL_TYPE pValue) {
+        void set_level_out(float pValue) {
             mLevel_OUT = pValue;
         }
 
-        SIGNAL_TYPE get_level_out() {
+        float get_level_out() {
             return mLevel_OUT;
         }
 
@@ -66,15 +66,15 @@ namespace klang {
         }
 
     protected:
-        void kernel(SIGNAL_TYPE* s) {
+        void kernel(float* s) {
             for (uint16_t i = 0; i < KLANG_SAMPLES_PER_AUDIO_BLOCK; i++) {
                 s[i] = klang_math_tan(s[i] * mLevel_IN) * mLevel_OUT;
             }
         }
 
     private:
-        SIGNAL_TYPE mLevel_IN  = 1.0;
-        SIGNAL_TYPE mLevel_OUT = 1.0;
+        float mLevel_IN  = 1.0;
+        float mLevel_OUT = 1.0;
     };
 }  // namespace klang
 

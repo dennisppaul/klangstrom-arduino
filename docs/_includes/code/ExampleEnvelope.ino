@@ -76,8 +76,8 @@ void setup() {
 
 void loop() {}
 
-void audioblock(SIGNAL_TYPE* pOutputLeft, SIGNAL_TYPE* pOutputRight, SIGNAL_TYPE* pInputLeft, SIGNAL_TYPE* pInputRight) {
-    mDAC.process_frame(pOutputLeft, pOutputRight);
+void audioblock(float** input_signal, float** output_signal) {
+    mDAC.process_frame(output_signal[LEFT], output_signal[RIGHT]);
 }
 
 void start_envelopes() {
@@ -86,9 +86,9 @@ void start_envelopes() {
     mEnvelopeCutoff.start();
 }
 
-void event_receive(const EVENT_TYPE event, const float* data) {
+void event_receive(const EVENT_TYPE event, const void* data) {
     if (event == EVENT_KEY_PRESSED) {
-        const char key = (char)keyboard_event(data).key;
+        const char key = (char)keyboard_event(data).keys[0];
         switch (key) {
             case '1':
                 start_envelopes();

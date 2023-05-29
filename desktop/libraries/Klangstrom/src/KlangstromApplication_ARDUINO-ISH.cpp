@@ -2,7 +2,7 @@
  * Klangstrom
  *
  * This file is part of the *wellen* library (https://github.com/dennisppaul/wellen).
- * Copyright (c) 2022 Dennis P Paul.
+ * Copyright (c) 2023 Dennis P Paul.
  *
  * This library is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,17 +17,19 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "KlangstromDefines.hpp"
+#include "KlangstromDefines.hpp"  // @NOTE(this is required for defines below)
 
 #if (KLST_ARCH == KLST_ARCH_MCU)
-
 #include "Arduino.h"
 #include "KlangstromApplicationArduino.h"
+#include "KlangstromApplicationInterface.h"
 #include "KlangstromApplicationInterface_ARDUINO-ISH.h"
 #include "KlangstromDefinesArduino.h"
 #include "pins_arduino.h"
 
 // @TODO check if this works ... copied from `KlangstromApplication.cpp`
+
+#include <vector>
 
 #include "Klangstrom.h"
 #include "core_callback.h"
@@ -69,7 +71,6 @@ void klangstrom_callback() {
 #endif
 
 #define KLST_DISABLE_INTERRUPTS_IN_AUDIOBLOCK
-extern void audioblock(SIGNAL_TYPE* pOutputLeft, SIGNAL_TYPE* pOutputRight, SIGNAL_TYPE* pInputLeftRX, SIGNAL_TYPE* pInputRight);
 
 using namespace klangstrom;
 
@@ -84,7 +85,6 @@ extern "C" {
 char KLST_U_ID_SERIAL[25] = "000000000000000000000000";  // 96-bit unique ID
 
 /* options */
-
 bool    mKLSTOptionEnableBeat             = true;
 bool    mKLSTOptionEnableEncoders         = true;
 bool    mKLSTOptionEnableSerialPorts      = true;
@@ -107,24 +107,12 @@ uint8_t mKLSTAudioLine =
     ;
 
 /* beat */
-
 HardwareTimer* mKLSTBeatTimer;
 uint32_t       mKLSTBeatCounter          = 0;
 uint32_t       mKLSTBeatIntervalDuration = 1000000 / 2;
 
 /* encoders */
-#define KLST_ENCODERS_OMIT_ROTATION_EVENTS
-static int16_t mEncoder_00TickCountPrevious = 0;
-static bool    mEncoder_00ButtonState       = true;
-static bool    mEncoder_00ToggleOmitEvent   = true;
-static int16_t mEncoder_01TickCountPrevious = 0;
-static bool    mEncoder_01ButtonState       = true;
-static bool    mEncoder_01ToggleOmitEvent   = true;
-#ifdef ENCODER_02_TIMER
-static int16_t mEncoder_02TickCountPrevious = 0;
-static bool    mEncoder_02ButtonState       = true;
-static bool    mEncoder_02ToggleOmitEvent   = true;
-#endif
+EventEncoder fEncoderEvents[KLST_NUM_ENCODERS];
 
 /* ----------------------------------------------------------------------------------------------------------------- */
 /* OPTIONS                                                                                                           */
@@ -155,14 +143,12 @@ void        KLST_BSP_configure_TinyUSB() {
 /* ----------------------------------------------------------------------------------------------------------------- */
 /* SETUP                                                                                                             */
 /* ----------------------------------------------------------------------------------------------------------------- */
-void KLST_ISH_handle_encoder_rotations();
-void KLST_ISH_handle_encoder_buttons();
 
 void KLST_IT_beat_callback() {
     beat(mKLSTBeatCounter++);
 }
 
-unsigned long KLST_get_U_ID(uint8_t pOffset);
+unsigned long KLST_get_U_ID(uint8_t offset);
 
 void KLST_update_U_ID_serial() {
     for (uint8_t j = 0; j < 3; j++) {
@@ -175,11 +161,63 @@ void KLST_update_U_ID_serial() {
     }
 }
 
+/* --- ENCODER helper functions --- */
+
+static int16_t getEncoderRotation(uint8_t index) {
+    switch (index) {
+        case ENCODER_00:
+            return (int16_t)ENCODER_00_TIMER->CNT / 2;
+        case ENCODER_01:
+            return (int16_t)ENCODER_01_TIMER->CNT / 2;
+#ifdef ENCODER_02_TIMER
+        case ENCODER_02:
+            return (int16_t)ENCODER_02_TIMER->CNT / 2;
+#endif
+    }
+    return 0;
+}
+
+static bool isEncoderButtonPressed(uint8_t index) {
+    bool button = true;
+    switch (index) {
+        case ENCODER_00: {
+            button = !digitalRead(ENCODER_00_BUTTON);
+            break;
+        }
+        case ENCODER_01: {
+            button = !digitalRead(ENCODER_01_BUTTON);
+            break;
+        }
+#ifdef ENCODER_02_BUTTON
+        case ENCODER_02: {
+            button = !digitalRead(ENCODER_02_BUTTON);
+            break;
+        }
+#endif
+    }
+    return button;
+}
+
+static bool isEncoderRotated(EventEncoder& e) {
+    return fEncoderEvents[e.index].ticks != getEncoderRotation(e.index);
+}
+
+static void updateEncoderEvent(EventEncoder& encoder, bool new_button_state) {
+    encoder.ticks_previous = encoder.ticks;
+    encoder.ticks          = getEncoderRotation(encoder.index);
+    encoder.delta          = encoder.ticks - encoder.ticks_previous;
+    encoder.button         = new_button_state;
+}
+
+/* --- ENCODER helper functions --- */
+
 /**
  * called before setup
  * @note(make sure to remove static from functions!)
  */
 void KLST_ISH_pre_setup() {
+    register_audioblock(audioblock);
+
     KLST_update_U_ID_serial();
     KLST_BSP_init_LEDs();
     KLST_BSP_init_peripherals();
@@ -203,12 +241,17 @@ void KLST_ISH_pre_setup() {
 #ifdef ENCODER_02_BUTTON
     pinMode(ENCODER_02_BUTTON, INPUT);
 #endif
-    /* … and read initial button state at start up */
-    mEncoder_00ButtonState = digitalRead(ENCODER_00_BUTTON);
-    mEncoder_01ButtonState = digitalRead(ENCODER_01_BUTTON);
-#ifdef ENCODER_02_BUTTON
-    mEncoder_02ButtonState = digitalRead(ENCODER_02_BUTTON);
-#endif
+    /* … and read initial encoder states at start up */
+    for (uint8_t i = 0; i < KLST_NUM_ENCODERS; i++) {
+        fEncoderEvents[i].index          = ENCODER_00 + i;
+        fEncoderEvents[i].ticks          = getEncoderRotation(fEncoderEvents[i].index);
+        fEncoderEvents[i].ticks_previous = fEncoderEvents[i].ticks;
+        fEncoderEvents[i].delta          = 0;
+        fEncoderEvents[i].button         = isEncoderButtonPressed(fEncoderEvents[i].index);
+    }
+
+    /* programmer button */
+    pinMode(KLST_BUTTON_PROGRAMMER, INPUT);
 
     /* start UART interrupts */
     if (mKLSTOptionEnableSerialPorts) {
@@ -245,12 +288,9 @@ void KLST_ISH_post_setup() {
     /* start encoder timers */
     if (mKLSTOptionEnableEncoders) {
         KLST_BSP_init_encoders();
-
-        mEncoder_00TickCountPrevious = (int16_t)ENCODER_00_TIMER->CNT;
-        mEncoder_01TickCountPrevious = (int16_t)ENCODER_01_TIMER->CNT;
-#ifdef ENCODER_02_TIMER
-        mEncoder_02TickCountPrevious = (int16_t)ENCODER_02_TIMER->CNT;
-#endif
+        for (uint8_t i = 0; i < KLST_NUM_ENCODERS; i++) {
+            updateEncoderEvent(fEncoderEvents[i], isEncoderButtonPressed(i));
+        }
     }
 
     /* beat */
@@ -274,109 +314,36 @@ void KLST_ISH_loop() {
     }
 }
 
+static void handleEncoderButtonEvent(EventEncoder& e) {
+    if (e.button) {
+        call_encoder_pressed(e.index);
+    } else {
+        call_encoder_released(e.index);
+    }
+    call_encoder_event_receive(EVENT_ENCODER, &e);
+}
+
+static void handleEncoderRotationEvent(EventEncoder& e) {
+    call_encoder_rotated(e.index, e.ticks, e.delta);
+    call_encoder_event_receive(EVENT_ENCODER, &e);
+}
+
 void KLST_ISH_handle_encoders() {
-    KLST_ISH_handle_encoder_rotations();
-    KLST_ISH_handle_encoder_buttons();
+    for (uint8_t i = 0; i < KLST_NUM_ENCODERS; i++) {
+        const bool mIsEncoderRotated  = isEncoderRotated(fEncoderEvents[i]);
+        const bool mButtonState       = isEncoderButtonPressed(fEncoderEvents[i].index);
+        const bool mHasEncoderChanged = (mButtonState != fEncoderEvents[i].button);
+        updateEncoderEvent(fEncoderEvents[i], mButtonState);
+        if (mIsEncoderRotated) {
+            handleEncoderRotationEvent(fEncoderEvents[i]);
+        }
+        if (mHasEncoderChanged) {
+            handleEncoderButtonEvent(fEncoderEvents[i]);
+        }
+    }
 }
 
-void KLST_ISH_handle_encoder_rotations() {
-    /* --- ENCODER_00 --- */
-    const int16_t mEncoder_00TickCountCurrent = (int16_t)ENCODER_00_TIMER->CNT;
-    if (mEncoder_00TickCountPrevious != mEncoder_00TickCountCurrent) {
-        EventEncoder e;
-        e.index          = ENCODER_00;
-        e.ticks          = mEncoder_00TickCountCurrent;
-        e.previous_ticks = mEncoder_00TickCountPrevious;
-        e.delta          = e.ticks - e.previous_ticks;
-#ifdef KLST_ENCODERS_OMIT_ROTATION_EVENTS
-        mEncoder_00ToggleOmitEvent = !mEncoder_00ToggleOmitEvent;
-        if (mEncoder_00ToggleOmitEvent) {
-#endif
-            event_receive(EVENT_ENCODER_ROTATED, &e);
-#ifdef KLST_ENCODERS_OMIT_ROTATION_EVENTS
-        }
-#endif
-        mEncoder_00TickCountPrevious = mEncoder_00TickCountCurrent;
-    }
-    /* --- ENCODER_01 --- */
-    const int16_t mEncoder_01TickCountCurrent = (int16_t)ENCODER_01_TIMER->CNT;
-    if (mEncoder_01TickCountPrevious != mEncoder_01TickCountCurrent) {
-        EventEncoder e;
-        e.index          = ENCODER_01;
-        e.ticks          = mEncoder_01TickCountCurrent;
-        e.previous_ticks = mEncoder_01TickCountPrevious;
-        e.delta          = e.ticks - e.previous_ticks;
-#ifdef KLST_ENCODERS_OMIT_ROTATION_EVENTS
-        mEncoder_01ToggleOmitEvent = !mEncoder_01ToggleOmitEvent;
-        if (mEncoder_01ToggleOmitEvent) {
-#endif
-            event_receive(EVENT_ENCODER_ROTATED, &e);
-#ifdef KLST_ENCODERS_OMIT_ROTATION_EVENTS
-        }
-#endif
-        mEncoder_01TickCountPrevious = mEncoder_01TickCountCurrent;
-    }
-    /* --- ENCODER_02 --- */
-#ifdef ENCODER_02_TIMER
-    const int16_t mEncoder_02TickCountCurrent = (int16_t)ENCODER_02_TIMER->CNT;
-    if (mEncoder_02TickCountPrevious != mEncoder_02TickCountCurrent) {
-        EventEncoder e;
-        e.index          = ENCODER_02;
-        e.ticks          = mEncoder_02TickCountCurrent;
-        e.previous_ticks = mEncoder_02TickCountPrevious;
-        e.delta          = e.ticks - e.previous_ticks;
-#ifdef KLST_ENCODERS_OMIT_ROTATION_EVENTS
-        mEncoder_02ToggleOmitEvent = !mEncoder_02ToggleOmitEvent;
-        if (mEncoder_02ToggleOmitEvent) {
-#endif
-            event_receive(EVENT_ENCODER_ROTATED, &e);
-#ifdef KLST_ENCODERS_OMIT_ROTATION_EVENTS
-        }
-#endif
-        mEncoder_02TickCountPrevious = mEncoder_02TickCountCurrent;
-    }
-#endif
-}
-
-void KLST_ISH_handle_encoder_buttons() {
-    bool mENCODER_00ButtonState = digitalRead(ENCODER_00_BUTTON);
-    if (mEncoder_00ButtonState != mENCODER_00ButtonState) {
-        EventEncoder e;
-        e.index = ENCODER_00;
-        if (mENCODER_00ButtonState) {
-            event_receive(EVENT_ENCODER_BUTTON_RELEASED, &e);
-        } else {
-            event_receive(EVENT_ENCODER_BUTTON_PRESSED, &e);
-        }
-        mEncoder_00ButtonState = mENCODER_00ButtonState;
-    }
-    bool mENCODER_01ButtonState = digitalRead(ENCODER_01_BUTTON);
-    if (mEncoder_01ButtonState != mENCODER_01ButtonState) {
-        EventEncoder e;
-        e.index = ENCODER_01;
-        if (mENCODER_01ButtonState) {
-            event_receive(EVENT_ENCODER_BUTTON_RELEASED, &e);
-        } else {
-            event_receive(EVENT_ENCODER_BUTTON_PRESSED, &e);
-        }
-        mEncoder_01ButtonState = mENCODER_01ButtonState;
-    }
-#ifdef ENCODER_02_BUTTON
-    bool mENCODER_02ButtonState = digitalRead(ENCODER_02_BUTTON);
-    if (mEncoder_02ButtonState != mENCODER_02ButtonState) {
-        EventEncoder e;
-        e.index = ENCODER_02;
-        if (mENCODER_02ButtonState) {
-            event_receive(EVENT_ENCODER_BUTTON_RELEASED, &e);
-        } else {
-            event_receive(EVENT_ENCODER_BUTTON_PRESSED, &e);
-        }
-        mEncoder_02ButtonState = mENCODER_02ButtonState;
-    }
-#endif
-}
-
-static void handle_serial_data_receive(HardwareSerial& pSerial, DATA_PERIPHERAL_TYPE pPeripheral) {
+static void handleSerialDataReceive(HardwareSerial& pSerial, DATA_PERIPHERAL_TYPE pPeripheral) {
     // @TOOD(maybe use a fixed static buffer?)
     uint8_t mLength;
     while ((mLength = pSerial.available()) > 0) {
@@ -390,41 +357,12 @@ static void handle_serial_data_receive(HardwareSerial& pSerial, DATA_PERIPHERAL_
 
 void KLST_ISH_handleSerialPorts() {
 #ifdef HAL_UART_MODULE_ENABLED
-    handle_serial_data_receive(KLST_SERIAL_00, SERIAL_00);
-    handle_serial_data_receive(KLST_SERIAL_01, SERIAL_01);
+    handleSerialDataReceive(KLST_SERIAL_00, SERIAL_00);
+    handleSerialDataReceive(KLST_SERIAL_01, SERIAL_01);
 #ifdef KLST_SERIAL_02
-    handle_serial_data_receive(KLST_SERIAL_02, SERIAL_02);
+    handleSerialDataReceive(KLST_SERIAL_02, SERIAL_02);
 #endif
-//     {
-//         // @TOOD(maybe use a fixed static buffer?)
-//         uint8_t mLength;
-//         while ((mLength = KLST_SERIAL_00.available()) > 0) {
-//             uint8_t mData[mLength];
-//             size_t  mBytesRead = KLST_SERIAL_00.readBytes(mData, mLength);
-//             if (mBytesRead > 0) {
-//                 data_receive(SERIAL_00, mData, mBytesRead);
-//             }
-//         }
-//     }
-//     {
-//         const uint8_t mLength = KLST_SERIAL_01.available();
-//         if (mLength > 0) {
-//             uint8_t mData[mLength];
-//             KLST_SERIAL_01.readBytes(mData, mLength);
-//             data_receive(SERIAL_01, mData, mLength);
-//         }
-//     }
-// #ifdef KLST_SERIAL_02
-//     {
-//         const uint8_t mLength = KLST_SERIAL_02.available();
-//         if (mLength > 0) {
-//             uint8_t mData[mLength];
-//             KLST_SERIAL_02.readBytes(mData, mLength);
-//             data_receive(SERIAL_02, mData, mLength);
-//         }
-//     }
-// #endif
-#endif
+#endif  // HAL_UART_MODULE_ENABLED
 }
 
 const uint8_t  M_NUM_OF_BITS = 16;
@@ -435,11 +373,9 @@ const uint32_t M_MASK_RIGHT  = ~(M_MASK_LEFT);
 /**
  * fills buffer with new block of samples
  */
-SIGNAL_TYPE mLeftTX[KLANG_SAMPLES_PER_AUDIO_BLOCK];
-SIGNAL_TYPE mRightTX[KLANG_SAMPLES_PER_AUDIO_BLOCK];
-SIGNAL_TYPE mLeftRX[KLANG_SAMPLES_PER_AUDIO_BLOCK];
-SIGNAL_TYPE mRightRX[KLANG_SAMPLES_PER_AUDIO_BLOCK];
-WEAK void   KLST_ISH_fill_buffer(uint32_t* pTXBuffer, uint32_t* pRXBuffer, uint16_t pBufferLength) {
+float     fOutputBuffers[KLANG_OUTPUT_CHANNELS][KLANG_SAMPLES_PER_AUDIO_BLOCK];
+float     fInputBuffers[KLANG_INPUT_CHANNELS][KLANG_SAMPLES_PER_AUDIO_BLOCK];
+WEAK void KLST_ISH_fill_buffer(uint32_t* pTXBuffer, uint32_t* pRXBuffer, uint16_t pBufferLength) {
 #ifdef KLST_DISABLE_INTERRUPTS_IN_AUDIOBLOCK
     noInterrupts();
 #endif
@@ -449,20 +385,33 @@ WEAK void   KLST_ISH_fill_buffer(uint32_t* pTXBuffer, uint32_t* pRXBuffer, uint1
             const uint32_t p         = pRXBuffer[i];
             const int16_t  mLeftInt  = (p & M_MASK_LEFT);
             const int16_t  mRightInt = (p & M_MASK_RIGHT) >> M_NUM_OF_BITS;
-            mLeftRX[i]               = mLeftInt / M_INT_SCALE;
-            mRightRX[i]              = mRightInt / M_INT_SCALE;
+            fInputBuffers[LEFT][i]               = mLeftInt / M_INT_SCALE;
+            fInputBuffers[RIGHT][i]              = mRightInt / M_INT_SCALE;
         }
     }
     /* calculate next audio block */
-    audioblock(mLeftTX, mRightTX, mLeftRX, mRightRX);
+    // NOTE the code below is NOT very elegant, however it seems as if this is the only way to pass a 2D array to a function.
+    // the option to pass the arrays by performing a C-style cast to a double pointer ( e.g `(float **)fOutputBuffers` ) is not
+    // allowed and may produce undefined behavior or a segmantation fault.
+    // it might be a better idea to use dynamic memory allocation after all …
+    float* mInputBuffer[KLANG_INPUT_CHANNELS];
+    float* mOutputBuffer[KLANG_OUTPUT_CHANNELS];
+    for (size_t j = 0; j < KLANG_INPUT_CHANNELS; j++) {
+        mInputBuffer[j] = fInputBuffers[j];
+    }
+    for (size_t j = 0; j < KLANG_OUTPUT_CHANNELS; j++) {
+        mOutputBuffer[j] = fOutputBuffers[j];
+    }
+    call_audioblock(mInputBuffer, mOutputBuffer);
+
     /* pack sample for transmit buffer */
     for (int i = 0; i < KLANG_SAMPLES_PER_AUDIO_BLOCK; i++) {
-        int16_t mLeftInt  = (int16_t)(mLeftTX[i] * M_INT_SCALE);
-        int16_t mRightInt = (int16_t)(mRightTX[i] * M_INT_SCALE);
+        int16_t mLeftInt  = (int16_t)(fOutputBuffers[LEFT][i] * M_INT_SCALE);
+        int16_t mRightInt = (int16_t)(fOutputBuffers[RIGHT][i] * M_INT_SCALE);
         pTXBuffer[i]      = ((uint32_t)(uint16_t)mLeftInt) << 0 | ((uint32_t)(uint16_t)mRightInt) << M_NUM_OF_BITS;
         // //@todo this assumes a 16bit sample depth!
-        // int16_t mL = (int16_t) (mLeftTX[i] * 32767.0f);
-        // int16_t mR = (int16_t) (mRightTX[i] * 32767.0f);
+        // int16_t mL = (int16_t) (fOutputBuffers[LEFT][i] * 32767.0f);
+        // int16_t mR = (int16_t) (fOutputBuffers[RIGHT][i] * 32767.0f);
         // pTXBuffer[i] = ((uint32_t) (uint16_t) mL) << 0 | ((uint32_t) (uint16_t) mR) << 16;
     }
 #ifdef KLST_DISABLE_INTERRUPTS_IN_AUDIOBLOCK
@@ -520,8 +469,8 @@ void KLST_ISH_jump_to_bootloader() {
     SysMemBootJump();
 }
 
-void KLST_shutdown_toggle_leds(const uint16_t pDelay) {
-    delay(pDelay);
+void KLST_shutdown_toggle_leds(const uint16_t delay_time) {
+    delay(delay_time);
     digitalWrite(LED_00, !digitalRead(LED_00));
     digitalWrite(LED_01, !digitalRead(LED_01));
     digitalWrite(LED_02, !digitalRead(LED_02));
@@ -590,43 +539,43 @@ void klangstrom::begin_serial_debug(bool pWaitForSerial, uint32_t pBaudRate) {
 #endif
 }
 
-void klangstrom::option(uint8_t pOption, float pValue) {
-    switch (pOption) {
+void klangstrom::option(uint8_t option, float value) {
+    switch (option) {
         case KLST_OPTION_AUDIO_INPUT:
-            mKLSTAudioLine = pValue;
+            mKLSTAudioLine = value;
             break;
         case KLST_OPTION_ENCODERS:
-            mKLSTOptionEnableEncoders = pValue;
+            mKLSTOptionEnableEncoders = value;
             break;
         case KLST_OPTION_SERIAL_PORTS:
-            mKLSTOptionEnableSerialPorts = pValue;
+            mKLSTOptionEnableSerialPorts = value;
             break;
         case KLST_OPTION_BEAT:
-            mKLSTOptionEnableBeat = pValue;
+            mKLSTOptionEnableBeat = value;
             break;
         case KLST_OPTION_PROGRAMMER_BUTTON:
-            mKLSTOptionEnableProgrammerButton = pValue;
+            mKLSTOptionEnableProgrammerButton = value;
             break;
         case KLST_OPTION_ENABLE_AUDIO_INPUT:
-            mKLSTOptionEnableAudioInput = pValue;
+            mKLSTOptionEnableAudioInput = value;
             break;
         case KLST_OPTION_HEADPHONE_OUTPUT_VOLUME:
-            mKLSTOptionHeadphoneOutputVolume = pValue;
+            mKLSTOptionHeadphoneOutputVolume = value;
             break;
         case KLST_OPTION_SERIAL_00_BAUD_RATE:
-            mKLSTOptionSerial00BaudRate = pValue;
+            mKLSTOptionSerial00BaudRate = value;
             break;
         case KLST_OPTION_SERIAL_01_BAUD_RATE:
-            mKLSTOptionSerial01BaudRate = pValue;
+            mKLSTOptionSerial01BaudRate = value;
             break;
         case KLST_OPTION_SERIAL_02_BAUD_RATE:
-            mKLSTOptionSerial02BaudRate = pValue;
+            mKLSTOptionSerial02BaudRate = value;
             break;
     }
 }
 
-float klangstrom::get_option(uint8_t pOption) {
-    switch (pOption) {
+float klangstrom::get_option(uint8_t option) {
+    switch (option) {
         case KLST_OPTION_AUDIO_INPUT:
             return mKLSTAudioLine;
         case KLST_OPTION_ENCODERS:
@@ -651,67 +600,51 @@ float klangstrom::get_option(uint8_t pOption) {
     return -1.0;
 }
 
-void klangstrom::LED(uint16_t pLED, uint8_t pState) {
-    switch (pState) {
+void klangstrom::LED(uint16_t pin, uint8_t state) {
+    switch (state) {
         case LED_OFF:
         case LED_ON:
-            digitalWrite(pLED, pState ? HIGH : LOW);
+            digitalWrite(pin, state ? HIGH : LOW);
             break;
         case LED_TOGGLE:
-            digitalWrite(pLED, !digitalRead(pLED));
+            digitalWrite(pin, !digitalRead(pin));
             break;
     }
 }
 
-void klangstrom::dac(uint8_t pDAC, uint16_t pValue) {
-    analogWrite(pDAC, pValue);
+void klangstrom::DAC(uint8_t DAC, uint16_t value) {
+    analogWrite(DAC, value);
 }
 
-uint16_t klangstrom::adc(uint8_t pADC) {
-    return analogRead(pADC);
+uint16_t klangstrom::ADC(uint8_t ADC) {
+    return analogRead(ADC);
 }
 
-/**
- * @deprecated use `LED(uint16_t pLED, uint8_t pState)` instead
- * @brief
- *
- * @param pLED
- * @param pState
- */
-void klangstrom::led(uint16_t pLED, bool pState) {
-    digitalWrite(pLED, pState ? HIGH : LOW);
-}
-
-/**
- * @deprecated use `LED(uint16_t pLED, uint8_t pState)` instead
- * @brief
- *
- */
-void klangstrom::led_toggle(uint16_t pLED) {
-    digitalWrite(pLED, !digitalRead(pLED));
-}
-
-void klangstrom::beats_per_minute(float pBPM) {
-    if (pBPM == 0) {
+void klangstrom::beats_per_minute(float BPM) {
+    if (BPM <= 0) {
+        klangstrom::beats_per_minute_ms(0);
+        mKLSTBeatTimer->pause();
         return;
     }
-    klangstrom::beats_per_minute_ms((uint32_t)((60.0 / pBPM) * 1000000));
+    mKLSTBeatTimer->resume();
+    klangstrom::beats_per_minute_ms((uint32_t)((60.0 / BPM) * 1000000));
 }
 
-void klangstrom::beats_per_minute_ms(uint32_t pMicroSeconds) {
-    mKLSTBeatIntervalDuration = pMicroSeconds;
+void klangstrom::beats_per_minute_ms(uint32_t micro_seconds) {
+    mKLSTBeatIntervalDuration = micro_seconds;
     mKLSTBeatTimer->setOverflow(mKLSTBeatIntervalDuration, MICROSEC_FORMAT);
 }
 
-bool klangstrom::button_state(uint8_t pButton) {
-    switch (pButton) {
+bool klangstrom::button_state(uint8_t button) {
+    // TODO check if the button state should be flipped
+    switch (button) {
         case KLST_BUTTON_ENCODER_00:
-            return !mEncoder_00ButtonState;
+            return fEncoderEvents[ENCODER_00].button;
         case KLST_BUTTON_ENCODER_01:
-            return !mEncoder_01ButtonState;
+            return fEncoderEvents[ENCODER_01].button;
 #ifdef ENCODER_02_TIMER
         case KLST_BUTTON_ENCODER_02:
-            return !mEncoder_02ButtonState;
+            return fEncoderEvents[ENCODER_02].button;
 #endif
         case KLST_BUTTON_PROGRAMMER:
             return !digitalRead(BUTTON_PROGRAMMER);
@@ -719,26 +652,26 @@ bool klangstrom::button_state(uint8_t pButton) {
     return false;
 }
 
-bool klangstrom::pin_state(uint8_t pButton) {
-    return !digitalRead(pButton);
+bool klangstrom::pin_state(uint8_t button) {
+    return !digitalRead(button);
 }
 
-void klangstrom::data_transmit(const uint8_t pSender, uint8_t* pData, uint8_t pDataLength) {
-    switch (pSender) {
+void klangstrom::data_transmit(const uint8_t sender, uint8_t* data, uint16_t length) {
+    switch (sender) {
 #ifdef HAL_UART_MODULE_ENABLED
 #ifdef KLST_SERIAL_00
         case SERIAL_00:
-            KLST_SERIAL_00.write(pData, pDataLength);
+            KLST_SERIAL_00.write(data, length);
             break;
 #endif
 #ifdef KLST_SERIAL_01
         case SERIAL_01:
-            KLST_SERIAL_01.write(pData, pDataLength);
+            KLST_SERIAL_01.write(data, length);
             break;
 #endif
 #ifdef KLST_SERIAL_02
         case SERIAL_02:
-            KLST_SERIAL_02.write(pData, pDataLength);
+            KLST_SERIAL_02.write(data, length);
             break;
 #endif
 #endif
@@ -747,6 +680,26 @@ void klangstrom::data_transmit(const uint8_t pSender, uint8_t* pData, uint8_t pD
 
 char* klangstrom::U_ID() {
     return KLST_U_ID_SERIAL;
+}
+
+uint32_t klangstrom::query_available_memory_block() {
+    uint32_t              size     = 1;
+    uint32_t              acc_size = 0;
+    uint8_t*              ptr      = nullptr;
+    std::vector<uint8_t*> pointers;
+    while (true) {
+        ptr = new (std::nothrow) uint8_t[size];
+        if (ptr == nullptr) {
+            break;
+        }
+        acc_size += size;
+        pointers.push_back(ptr);
+        size *= 2;
+    }
+    for (auto ptr : pointers) {
+        delete[] ptr;
+    }
+    return size / 2;
 }
 
 #endif  // __cplusplus

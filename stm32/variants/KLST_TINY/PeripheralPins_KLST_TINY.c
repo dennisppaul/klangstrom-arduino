@@ -12,7 +12,7 @@
  */
 /*
  * Automatically generated from STM32F446R(C-E)Tx.xml
- * CubeMX DB release 6.0.50
+ * CubeMX DB release 6.0.80
  */
 #if defined(KLST_BOARD_KLST_TINY)
 #include "Arduino.h"

@@ -141,7 +141,7 @@ namespace klang {
             voclib_reset_history(&mVocoder);
         }
 
-        void update(CHANNEL_ID pChannel, SIGNAL_TYPE* pAudioBlock) {
+        void update(CHANNEL_ID pChannel, float* pAudioBlock) {
             if (is_not_updated()) {
                 mBlock_CARRIER = AudioBlockPool::NO_ID;
                 if (mInput_CH_IN_CARRIER != nullptr) {
@@ -159,14 +159,14 @@ namespace klang {
             }
 
             if (pChannel == CH_OUT_SIGNAL) {
-                SIGNAL_TYPE* mBlockData_CARRIER;
+                float* mBlockData_CARRIER;
                 if (mBlock_CARRIER != AudioBlockPool::NO_ID) {
                     mBlockData_CARRIER = AudioBlockPool::instance().data(mBlock_CARRIER);
                 } else {
                     mBlockData_CARRIER = nullptr;
                 }
 
-                SIGNAL_TYPE* mBlockData_MODULATOR;
+                float* mBlockData_MODULATOR;
                 if (mBlock_MODULATOR != AudioBlockPool::NO_ID) {
                     mBlockData_MODULATOR = AudioBlockPool::instance().data(mBlock_MODULATOR);
                 } else {
@@ -199,8 +199,8 @@ namespace klang {
         Connection* mInput_CH_IN_CARRIER   = nullptr;
         Connection* mInput_CH_IN_MODULATOR = nullptr;  // "… usually the voice."
 
-        SIGNAL_TYPE mSignal_REACTION_TIME = 0.04;
-        SIGNAL_TYPE mSignal_FORMANT_SHIFT = 1.0;
+        float mSignal_REACTION_TIME = 0.04;
+        float mSignal_FORMANT_SHIFT = 1.0;
 
         voclib_instance mVocoder;
 

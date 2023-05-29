@@ -64,7 +64,7 @@ void beat(uint32_t pBeat) {
     Serial.println(mValue);
 }
 
-void event_receive(const uint8_t event, const float* data) {
+void event_receive(const EVENT_TYPE event, const void* data) {
     switch (event) {
         case EVENT_ENCODER_BUTTON_PRESSED:
             mValue = 0;
@@ -81,10 +81,10 @@ void event_receive(const uint8_t event, const float* data) {
     }
 }
 
-void audioblock(SIGNAL_TYPE* pOutputLeft, SIGNAL_TYPE* pOutputRight,
-                SIGNAL_TYPE* pInputLeft, SIGNAL_TYPE* pInputRight) {
+void audioblock(float* output_signal[LEFT], float* output_signal[RIGHT],
+                float* input_signal[LEFT], float* input_signal[RIGHT]) {
     for (uint16_t i = 0; i < KLANG_SAMPLES_PER_AUDIO_BLOCK; i++) {
-        pOutputLeft[i]  = mToggle ? mValue : -mValue; // signal needs to be toggles otherwise audiocodec fades voltage to 0V
-        pOutputRight[i] = pOutputLeft[i];
+        output_signal[LEFT][i]  = mToggle ? mValue : -mValue; // signal needs to be toggles otherwise audiocodec fades voltage to 0V
+        output_signal[RIGHT][i] = output_signal[LEFT][i];
     }
 }

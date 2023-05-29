@@ -1,3 +1,5 @@
+#ifdef USE_USBHOST
+
 /* USER CODE BEGIN Header */
 /**
   ******************************************************************************
@@ -51,3 +53,4 @@ void MX_DriverVbus(uint8_t state)
   // HAL_GPIO_WritePin(GPIOD,GPIO_PIN_7,(GPIO_PinState)data);
 }
 
+#endif // USE_USBHOST

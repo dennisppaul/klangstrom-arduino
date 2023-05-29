@@ -2,7 +2,7 @@
 layout: libdoc
 title: Connection.cpp
 permalink: /Connection.cpp/
-index: 28
+index: 24
 ---
 
 ```c
@@ -47,7 +47,7 @@ Connection::~Connection() {
     input_node.disconnect(input_channel_id);
 }
 
-void Connection::update(SIGNAL_TYPE* pAudioBlock) {
+void Connection::update(float* pAudioBlock) {
     output_node.update(output_channel_id, pAudioBlock);
 }
 
