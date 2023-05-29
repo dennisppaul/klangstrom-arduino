@@ -7,3 +7,4 @@
 - [TinyDir](https://github.com/cxong/tinydir)
 - [Mutable Instruments](https://github.com/pichenettes/eurorack)
 - [DaisySP](https://github.com/electro-smith/DaisySP/)
+- [Rakarrack](http://rakarrack.sourceforge.net)
