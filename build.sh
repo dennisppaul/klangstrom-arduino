@@ -24,7 +24,7 @@ build_archive() {
     echo $M_ARCHIVE_NAME
     print_line
 #     tar -cpjSf $M_ARCHIVE_NAME.$M_EXTENSION -C $M_KLST_LIB_PATH/$M_PACKAGE_NAME .
-#      cp $PATH_TO_ARCHIVES/$M_ARCHIVE_NAME.$M_EXTENSION .
+#     cp $PATH_TO_ARCHIVES/$M_ARCHIVE_NAME.$M_EXTENSION .
 
     CHECKSUM=$(sha256sum $M_ARCHIVE_NAME.$M_EXTENSION | awk '{print $1}')
     echo "checksum: SHA-256:" $CHECKSUM

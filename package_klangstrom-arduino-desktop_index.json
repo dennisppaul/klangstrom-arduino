@@ -10,7 +10,7 @@
       },
       "platforms": [
         {
-          "name": "Klangstrom (Simulator)",
+          "name": "Klangstrom (Emulator)",
           "architecture": "desktop",
           "version": "0.0.3",
           "category": "Contributed",
@@ -19,7 +19,7 @@
           "checksum": "SHA-256:8bc397e170df46c4d61b5af8c290e56c885f43f0cd5fc9e294229680b1eea46d",
           "size": "7783349",
           "boards": [
-            {"name": "Klangstrom (Desktop Simulator)"}
+            {"name": "Klangstrom (Emulator)"}
           ]
         }
       ]
