@@ -16,8 +16,8 @@
           "category": "Contributed",
           "url": "https://github.com/dennisppaul/klangstrom-arduino/raw/release/klangstrom-arduino-stm32-0.0.3.tar.bz2",
           "archiveFileName": "klangstrom-arduino-stm32-0.0.3.tar.bz2",
-          "checksum": "SHA-256:77c5afd46ff99033db4211d9d37ca55e62d3927611df0515bb39d1429b4c083a",
-          "size": "5594797",
+          "checksum": "SHA-256:1ac3b55622fccc76f38e0f220035c551eaea9bd53bcbf4e8c11ce7eadf4bf42d",
+          "size": "5756801",
           "boards": [
             {"name": "Klangstrom Board KLST_SHEEP (STM32H743VI)"},
             {"name": "Klangstrom Board KLST_TINY (STM32F446RET)"},

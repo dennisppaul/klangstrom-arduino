@@ -10,16 +10,16 @@
       },
       "platforms": [
         {
-          "name": "Klangstrom (Emulator)",
-          "architecture": "desktop",
+          "name": "Klangstrom (Desktop Emulator)",
+          "architecture": "*",
           "version": "0.0.3",
           "category": "Contributed",
           "url": "https://github.com/dennisppaul/klangstrom-arduino/raw/release/klangstrom-arduino-desktop-0.0.3.tar.bz2",
           "archiveFileName": "klangstrom-arduino-desktop-0.0.3.tar.bz2",
-          "checksum": "SHA-256:8bc397e170df46c4d61b5af8c290e56c885f43f0cd5fc9e294229680b1eea46d",
-          "size": "7783349",
+          "checksum": "SHA-256:a375f905a4a996ea59196ec68dd81a9b3420df473697fa94ca08e58e30bfa51d",
+          "size": "9525510",
           "boards": [
-            {"name": "Klangstrom (Emulator)"}
+            {"name": "Klangstrom (Desktop Emulator)"}
           ]
         }
       ]
