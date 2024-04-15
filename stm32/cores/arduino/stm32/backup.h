@@ -86,6 +86,10 @@ static inline void enableBackupDomain(void)
   /* Enable BKPSRAM CLK for backup SRAM */
   __HAL_RCC_BKPSRAM_CLK_ENABLE();
 #endif
+#if defined(TAMP_BKP0R) && defined(__HAL_RCC_RTCAPB_CLK_ENABLE)
+  /* Enable RTC CLK for TAMP backup registers */
+  __HAL_RCC_RTCAPB_CLK_ENABLE();
+#endif
 }
 
 static inline void disableBackupDomain(void)
@@ -95,12 +99,16 @@ static inline void disableBackupDomain(void)
   HAL_PWR_DisableBkUpAccess();
 #endif
 #ifdef __HAL_RCC_BKPSRAM_CLK_DISABLE
-  /* Disnable BKPSRAM CLK for backup SRAM */
+  /* Disable BKPSRAM CLK for backup SRAM */
   __HAL_RCC_BKPSRAM_CLK_DISABLE();
 #endif
 #ifdef __HAL_RCC_BKP_CLK_DISABLE
   /* Disable BKP CLK for backup registers */
   __HAL_RCC_BKP_CLK_DISABLE();
+#endif
+#if defined(TAMP_BKP0R) && defined(__HAL_RCC_RTCAPB_CLK_DISABLE)
+  /* Disable RTC CLK for TAMP backup registers */
+  __HAL_RCC_RTCAPB_CLK_DISABLE();
 #endif
 }
 
@@ -111,8 +119,8 @@ static inline void setBackupRegister(uint32_t index, uint32_t value)
 #elif defined(RTC_BKP0R)
   LL_RTC_BAK_SetRegister(RTC, index, value);
 #elif defined(TAMP_BKP0R)
-#if defined(STM32G4xx) || defined(STM32L5xx) || defined(STM32U5xx) ||\
-    defined(STM32MP1xx) || defined(STM32WLxx)
+#if defined(STM32G4xx) || defined(STM32H5xx) || defined(STM32L5xx) ||\
+    defined(STM32U5xx) || defined(STM32MP1xx) || defined(STM32WLxx)
   /* For those series this API requires RTC even if it is not used
      and TAMP is used instead */
   LL_RTC_BKP_SetRegister(RTC, index, value);
@@ -134,8 +142,8 @@ static inline uint32_t getBackupRegister(uint32_t index)
 #elif defined(RTC_BKP0R)
   return LL_RTC_BAK_GetRegister(RTC, index);
 #elif defined(TAMP_BKP0R)
-#if defined(STM32G4xx) || defined(STM32L5xx) || defined(STM32U5xx) ||\
-    defined(STM32MP1xx) || defined(STM32WLxx)
+#if defined(STM32G4xx) || defined(STM32H5xx) || defined(STM32L5xx) ||\
+    defined(STM32U5xx) || defined(STM32MP1xx) || defined(STM32WLxx)
   /* For those series this API requires RTC even if it is not used
      and TAMP is used instead */
   return LL_RTC_BKP_GetRegister(RTC, index);

@@ -24,9 +24,9 @@ NodeTextToSpeechSAM mTTS(46160);
 
 void setup() {
     Serial.begin(115200);
-    Serial.println("----------------");
-    Serial.println("Talking Terminal");
-    Serial.println("----------------");
+    Serial.println("---------------");
+    Serial.println("TalkingTerminal");
+    Serial.println("---------------");
 
     USBHost.init();
     USBHost.register_key_pressed(key_pressed);
@@ -62,7 +62,7 @@ void beat(uint32_t beat) {
     LED(LED_01, LED_TOGGLE);
 }
 
-void audioblock(float** input_signal, float** output_signal) {
+void audioblock(float **input_signal, float **output_signal) {
     mDAC.process_frame(output_signal[LEFT], output_signal[RIGHT]);
 }
 

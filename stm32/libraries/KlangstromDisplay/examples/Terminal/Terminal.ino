@@ -10,7 +10,9 @@ KlangstromDisplayTerminal* mTerminal;
 
 void setup() {
     Serial.begin(115200);
-    Serial.println("--- KLST TERMINAL ---");
+    Serial.println("--------");
+    Serial.println("Terminal");
+    Serial.println("--------");
 
     Display.begin();
     Display.background(0, 0, 0);

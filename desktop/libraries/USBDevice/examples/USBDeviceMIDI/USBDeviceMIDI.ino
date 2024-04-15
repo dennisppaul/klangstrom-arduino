@@ -17,11 +17,10 @@ uint8_t mNote = 48;
 
 void setup() {
     Serial.begin(115200);
-    Serial.println("---------------");
-    Serial.println("USB Device MIDI");
-    Serial.println("---------------");
-    Serial.println(__DATE__);
-    Serial.println(__TIME__);
+    Serial.println("-------------");
+    Serial.println("USBDeviceMIDI");
+    Serial.println("-------------");
+
     USBDevice.init();
     USBDevice.register_midi_note_on(midi_note_on);
     USBDevice.register_midi_note_off(midi_note_off);

@@ -11,6 +11,11 @@ ADSR      fADSR;
 Clamp     fClamp;
 
 void setup() {
+    Serial.begin(115200);
+    Serial.println("--------");
+    Serial.println("12.Clamp");
+    Serial.println("--------");
+
     fWavetable.set_waveform(KlangWellen::WAVEFORM_SINE);
     fClamp.set_min(-0.1);
     fClamp.set_max(0.1);

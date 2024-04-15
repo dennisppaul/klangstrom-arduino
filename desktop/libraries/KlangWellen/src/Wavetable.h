@@ -1,8 +1,8 @@
 /*
- * Wellen
+ * KlangWellen
  *
- * This file is part of the *wellen* library (https://github.com/dennisppaul/wellen).
- * Copyright (c) 2023 Dennis P Paul.
+ * This file is part of the *KlangWellen* library (https://github.com/dennisppaul/klangwellen).
+ * Copyright (c) 2023 Dennis P Paul
  *
  * This library is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General  License as published by
@@ -110,7 +110,7 @@ namespace klangwellen {
 
         static void noise(float* wavetable, uint32_t wavetable_size) {
             for (uint32_t i = 0; i < wavetable_size; i++) {
-                wavetable[i] = KlangWellen::random() * 2.0 - 1.0;
+                wavetable[i] = KlangWellen::random() * 2.0f - 1.0f;
             }
         }
 
@@ -136,7 +136,7 @@ namespace klangwellen {
             return fourier_table(wavetable, wavetable_size, harmonics, amps, -0.25f);
         }
 
-        static void sawtooth(float* wavetable, uint32_t wavetable_size, bool is_ramp_up) {
+        static void sawtooth_ramp(float* wavetable, uint32_t wavetable_size, bool is_ramp_up) {
             const float mSign = is_ramp_up ? -1.0f : 1.0f;
             for (uint32_t i = 0; i < wavetable_size; i++) {
                 wavetable[i] = mSign * (2.0f * ((float)i / (float)(wavetable_size - 1)) - 1.0f);
@@ -149,7 +149,7 @@ namespace klangwellen {
 
         static void sine(float* wavetable, uint32_t wavetable_size) {
             for (uint32_t i = 0; i < wavetable_size; i++) {
-                wavetable[i] = KlangWellen::fast_sin(2.0f * PI * ((float)i / (float)(wavetable_size)));
+                wavetable[i] = KlangWellen::fast_sin(2.0f * PIf * ((float)i / (float)(wavetable_size)));
             }
         }
 
@@ -381,6 +381,8 @@ namespace klangwellen {
         }
 
     private:
+        static constexpr float PIf = (float)PI;
+        static constexpr float TWO_PIf = (float)TWO_PI;
         static constexpr float M_DEFAULT_AMPLITUDE = 0.75f;
         static constexpr float M_DEFAULT_FREQUENCY = 220.0f;
         float*                 mWavetable;
@@ -407,12 +409,12 @@ namespace klangwellen {
         static float* fourier_table(float* pWavetable, uint32_t wavetable_size, uint8_t pHarmonics, float* pAmps, float pPhase) {
             float  a;
             double w;
-            pPhase *= PI * 2;
+            pPhase *= PIf * 2;
             for (uint8_t i = 0; i < pHarmonics; i++) {
                 for (uint32_t n = 0; n < wavetable_size; n++) {
                     a = (pAmps) ? pAmps[i] : 1.f;
                     w = (i + 1) * (n * 2 * PI / wavetable_size);
-                    pWavetable[n] += (float)(a * KlangWellen::cos(w + pPhase));
+                    pWavetable[n] += (float)(a * KlangWellen::cos((float)w + pPhase));
                 }
             }
             normalise_table(pWavetable, wavetable_size);
@@ -455,8 +457,8 @@ namespace klangwellen {
         }
 
         float next_sample_interpolate_cubic() {
-            const uint32_t mOffset         = (int)(mPhaseOffset * mWavetableSize) % mWavetableSize;
-            const float    mArrayPtrOffset = mArrayPtr + mOffset;
+            const uint32_t mSampleOffset   = (int)(mPhaseOffset * mWavetableSize) % mWavetableSize;
+            const float    mArrayPtrOffset = mArrayPtr + mSampleOffset;
             /* cubic interpolation */
             const float    frac   = mArrayPtrOffset - (int)mArrayPtrOffset;
             const float    a      = (int)mArrayPtrOffset > 0 ? mWavetable[(int)mArrayPtrOffset - 1] : mWavetable[mWavetableSize - 1];
@@ -475,8 +477,8 @@ namespace klangwellen {
         }
 
         float next_sample_interpolate_linear() {
-            const uint32_t mOffset         = (uint32_t)(mPhaseOffset * mWavetableSize) % mWavetableSize;
-            const float    mArrayPtrOffset = mArrayPtr + mOffset;
+            const uint32_t mSampleOffset   = (uint32_t)(mPhaseOffset * mWavetableSize) % mWavetableSize;
+            const float    mArrayPtrOffset = mArrayPtr + mSampleOffset;
             /* linear interpolation */
             const float    mFrac   = mArrayPtrOffset - (int)mArrayPtrOffset;
             const float    a       = mWavetable[(int)mArrayPtrOffset];

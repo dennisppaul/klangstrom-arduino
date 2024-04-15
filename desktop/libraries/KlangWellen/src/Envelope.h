@@ -1,8 +1,8 @@
 /*
- * Wellen
+ * KlangWellen
  *
- * This file is part of the *wellen* library (https://github.com/dennisppaul/wellen).
- * Copyright (c) 2023 Dennis P Paul.
+ * This file is part of the *KlangWellen* library (https://github.com/dennisppaul/klangwellen).
+ * Copyright (c) 2023 Dennis P Paul
  *
  * This library is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -130,14 +130,15 @@ namespace klangwellen {
          */
         float process() {
             if (!mEnvelopeDone) {
-                if (mEnvStage < mEnvelopeStages.size()) {
+                const int mNumberOfStages = mEnvelopeStages.size();
+                if (mEnvStage < mNumberOfStages) {
                     mValue += mTimeScale * mDelta;
                     mStageDuration += mTimeScale * 1.0f / mSamplingRate;
                     if (mStageDuration > mEnvelopeStages[mEnvStage].duration) {
                         const float mRemainder = mStageDuration - mEnvelopeStages[mEnvStage].duration;
                         finished_stage(mEnvStage);
                         mEnvStage++;
-                        if (mEnvStage < mEnvelopeStages.size() - 1) {
+                        if (mEnvStage < mNumberOfStages - 1) {
                             prepareNextStage(mEnvStage, mRemainder);
                         } else {
                             stop();

@@ -14,6 +14,11 @@ ADSR      fADSR_DSP;
 Trigger   fTrigger;
 
 void setup() {
+    Serial.begin(115200);
+    Serial.println("----------");
+    Serial.println("11.Trigger");
+    Serial.println("----------");
+
     fWavetable.set_waveform(KlangWellen::WAVEFORM_SINE);
     fWavetable.set_frequency(220.0);
     fWavetable_DSP.set_waveform(KlangWellen::WAVEFORM_TRIANGLE);

@@ -8,14 +8,10 @@ using namespace klangstrom;
 
 void setup() {
     Serial.begin(115200);
-    Serial.println("-------------------------");
-    Serial.println("USB Host Mouse + Keyboard");
-    Serial.print("( ");
-    Serial.print(__DATE__);
-    Serial.print(" ");
-    Serial.print(__TIME__);
-    Serial.println(" )");
-    Serial.println("-------------------------");
+    Serial.println("--------------------");
+    Serial.println("USBHostMouseKeyboard");
+    Serial.println("--------------------");
+
     USBHost.init();
     USBHost.register_key_pressed(key_pressed);
     USBHost.register_key_released(key_released);

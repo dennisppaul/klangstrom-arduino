@@ -1,8 +1,8 @@
 /*
- * Wellen
+ * KlangWellen
  *
- * This file is part of the *wellen* library (https://github.com/dennisppaul/wellen).
- * Copyright (c) 2023 Dennis P Paul.
+ * This file is part of the *KlangWellen* library (https://github.com/dennisppaul/klangwellen).
+ * Copyright (c) 2023 Dennis P Paul
  *
  * This library is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,19 +26,6 @@
 namespace klangwellen {
     class Scale {
     public:
-        static const Scale CHROMATIC;
-        static const Scale FIFTH;
-        static const Scale MINOR;
-        static const Scale MAJOR;
-        static const Scale MINOR_CHORD;
-        static const Scale MAJOR_CHORD;
-        static const Scale MINOR_CHORD_7;
-        static const Scale MAJOR_CHORD_7;
-        static const Scale MINOR_PENTATONIC;
-        static const Scale MAJOR_PENTATONIC;
-        static const Scale OCTAVE;
-        static const Scale DIMINISHED;
-
         Scale(const std::initializer_list<uint8_t>& note_list) : length(note_list.size()) {
             notes      = new uint8_t[length];
             uint16_t i = 0;

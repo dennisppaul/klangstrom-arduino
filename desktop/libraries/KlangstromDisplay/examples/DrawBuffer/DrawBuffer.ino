@@ -1,5 +1,5 @@
-#include "Klangstrom.h"
 #include "KlangNodes.hpp"
+#include "Klangstrom.h"
 #include "KlangstromDisplay.h"
 #include "KlangstromDisplayDrawBuffer.h"
 #include "KlangstromDisplayFont_5x8.h"
@@ -14,6 +14,11 @@ KlangstromDisplayDrawBuffer fDrawBuffer(32);
 KlangstromDisplay&          Display = KlangstromDisplay::create();
 
 void setup() {
+    Serial.begin(115200);
+    Serial.println("----------");
+    Serial.println("DrawBuffer");
+    Serial.println("----------");
+
     Display.begin();
     Display.background(0, 0, 0);
     Display.color(255, 255, 255);
@@ -53,8 +58,7 @@ void loop() {
     delay(300);               // wait for a second
 }
 
-void audioblock(float* output_signal[LEFT], float* output_signal[RIGHT],
-                float* input_signal[LEFT], float* input_signal[RIGHT]) {
+void audioblock(float** input_signal, float** output_signal) {
     fDAC.process_frame(output_signal[LEFT], output_signal[RIGHT]);
     fDrawBuffer.update_buffer(output_signal[RIGHT], KLANG_SAMPLES_PER_AUDIO_BLOCK);
 }

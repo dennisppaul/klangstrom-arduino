@@ -8,6 +8,11 @@ Wavetable          fWavetable;
 FilterVowelFormant fFilter;
 
 void setup() {
+    Serial.begin(115200);
+    Serial.println("----------------");
+    Serial.println("05.FormantFilter");
+    Serial.println("----------------");
+
     fWavetable.set_waveform(KlangWellen::WAVEFORM_SAWTOOTH);
     fWavetable.set_frequency(35);
     fWavetable.set_amplitude(0.125f);

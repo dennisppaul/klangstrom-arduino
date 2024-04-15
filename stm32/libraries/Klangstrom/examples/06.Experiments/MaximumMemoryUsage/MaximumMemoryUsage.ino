@@ -2,9 +2,9 @@
 
 void setup() {
     Serial.begin(115200);
-    Serial.println("-------------------------");
-    Serial.println("PrintAvailableMemoryBlock");
-    Serial.println("-------------------------");
+    Serial.println("------------------");
+    Serial.println("MAximumMemoryUsage");
+    Serial.println("------------------");
 }
 
 void print_available_memory_block(uint32_t size_available_memory_block) {
@@ -30,7 +30,7 @@ uint8_t memory_RAM_D2[294912] __attribute__((section(".sample_buffer")))     = {
 uint8_t memory_RAM_D3[59392] __attribute__((section(".audio_block_buffer"))) = {0};  // RAM_D3 :: 64K > 65536 bytes - 6144 bytes ( DMA BUFFER ) = 59392 bytes
 /* note that this allocation scheme results into a total of 871380 bytes ( 850K ) separated into 3
  * memory blocks. also note that the `.data` section is the default location for global variables.
- * the section attributes `.sample_buffer` and `.audio_block_buffer` are required to use other 
+ * the section attributes `.sample_buffer` and `.audio_block_buffer` are required to use other
  * memory locations.
  */
 

@@ -1,5 +1,5 @@
-#include "Klangstrom.h"
 #include "CycleCounter.h"
+#include "Klangstrom.h"
 #include "KlangstromDisplay.h"
 #include "KlangstromDisplayDrawBuffer.h"
 #include "KlangstromDisplayFont_5x8.h"
@@ -90,6 +90,11 @@ void draw_primitves() {
 }
 
 void setup() {
+    Serial.begin(115200);
+    Serial.println("--------------");
+    Serial.println("DrawPrimitives");
+    Serial.println("--------------");
+
     Display.begin();
     klst_enable_cycle_counter();
 }

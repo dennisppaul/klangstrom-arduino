@@ -9,6 +9,11 @@ Wavetable fWavetable;
 ADSR      fADSR;
 
 void setup() {
+    Serial.begin(115200);
+    Serial.println("-------");
+    Serial.println("02.ADSR");
+    Serial.println("-------");
+
     fWavetable.set_waveform(KlangWellen::WAVEFORM_SINE);
 }
 

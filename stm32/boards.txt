@@ -28,13 +28,14 @@ KLST_SHEEP.name=Klangstrom Board KLST_SHEEP (STM32H743VI)
 
 KLST_SHEEP.build.board=KLST_SHEEP
 KLST_SHEEP.build.variant=KLST_SHEEP
-KLST_SHEEP.build.cmsis_lib_gcc=arm_cortexM7lfsp_math
+#KLST_SHEEP.build.cmsis_lib_gcc=arm_cortexM7lfsp_math
 KLST_SHEEP.build.fpu=-mfpu=fpv5-d16
 #KLST_SHEEP.build.fpu=-mfpu=fpv4-sp-d16
 KLST_SHEEP.build.series=STM32H7xx
+KLST_SHEEP.build.flash_offset=0x0
 KLST_SHEEP.build.mcu=cortex-m7
 KLST_SHEEP.upload.maximum_size=2097152
-KLST_SHEEP.upload.maximum_data_size=524288
+KLST_SHEEP.upload.maximum_data_size=884736
 KLST_SHEEP.build.product_line=STM32H743xx
 
 #
@@ -178,9 +179,10 @@ KLST_TINY.name=Klangstrom Board KLST_TINY (STM32F446RET)
 
 KLST_TINY.build.variant=KLST_TINY
 KLST_TINY.build.board=KLST_TINY
-KLST_TINY.build.cmsis_lib_gcc=arm_cortexM4lf_math
+#KLST_TINY.build.cmsis_lib_gcc=arm_cortexM4lf_math
 KLST_TINY.build.fpu=-mfpu=fpv4-sp-d16
 KLST_TINY.build.series=STM32F4xx
+KLST_TINY.build.flash_offset=0x0
 KLST_TINY.build.mcu=cortex-m4
 KLST_TINY.upload.maximum_size=524288
 KLST_TINY.upload.maximum_data_size=131072
@@ -321,9 +323,10 @@ KLST_CORE.name=Klangstrom Board KLST_CORE (STM32H743II)
 
 KLST_CORE.build.variant=KLST_CORE
 KLST_CORE.build.board=KLST_CORE
-KLST_CORE.build.cmsis_lib_gcc=arm_cortexM7lfsp_math
+#KLST_CORE.build.cmsis_lib_gcc=arm_cortexM7lfsp_math
 KLST_CORE.build.fpu=-mfpu=fpv5-d16
 KLST_CORE.build.series=STM32H7xx
+KLST_CORE.build.flash_offset=0x0
 KLST_CORE.build.mcu=cortex-m7
 KLST_CORE.upload.maximum_size=2097152
 KLST_CORE.upload.maximum_data_size=884736

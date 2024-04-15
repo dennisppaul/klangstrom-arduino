@@ -7,6 +7,11 @@ using namespace klangwellen;
 Wavetable fWavetable;
 
 void setup() {
+    Serial.begin(115200);
+    Serial.println("------------");
+    Serial.println("01.Wavetable");
+    Serial.println("------------");
+
     fWavetable.set_waveform(KlangWellen::WAVEFORM_SAWTOOTH, 16);
     fWavetable.set_frequency(55);
     fWavetable.set_amplitude(0.5);

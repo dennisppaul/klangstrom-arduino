@@ -20,6 +20,11 @@ uint32_t mBeatDurationMax  = 120000;
 uint32_t mBeatDurationInc  = 1000;
 
 void setup() {
+    Serial.begin(115200);
+    Serial.println("----");
+    Serial.println("Beat");
+    Serial.println("----");
+
     Klang::lock();
     Klang::connect(mVCO, Node::CH_OUT_SIGNAL, mDAC, NodeDAC::CH_IN_SIGNAL_LEFT);
     mVCO.set_frequency(mFreq);

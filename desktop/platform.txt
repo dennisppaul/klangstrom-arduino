@@ -17,6 +17,8 @@ version=0.0.3
 
 recipe.hooks.prebuild.1.pattern=date
 
+macos.architecture=arm
+
 compiler.path.macosx=/usr/bin/
 compiler.path.linux=/usr/bin/
 compiler.klst_define=-DKLST_ARCH=2 -DKLANG_SAMPLES_PER_AUDIO_BLOCK={build.flags.audioblock} {build.flags.OSC} {build.flags.DISPLAY} -DKLANG_AUDIO_RATE={build.flags.samplingrate} -DKLANG_DEBUG_LEVEL=2 -DKLANG_OSC_TRANSMIT_PORT=7001 -DKLANG_OSC_RECEIVE_PORT=7001 -DKLANG_BOARD_EMULATOR={build.flags.board} -DKLST_USE_CMSIS_DSP -DTEST 
@@ -25,7 +27,7 @@ compiler.klst_lib_src=./Klangstrom
 #compiler.klst_lib_src=../../libraries/Klangstrom/src
 #compiler.klst_shared_lib=../../libraries/Klangstrom/lib/klangstrom.a
 
-compiler.SDL2_lib_src.macosx=SDL2.macosx/include/
+compiler.SDL2_lib_src.macosx=SDL2.macos.{macos.architecture}/include/
 compiler.SDL2_lib_src.linux=SDL2.linux/include/
 compiler.SDL2_lib_src.windows=SDL2.windows/include/
 
@@ -62,11 +64,11 @@ recipe.ar.pattern="{compiler.path}{compiler.ar.cmd}" {compiler.ar.flags} "{archi
 compiler.c.linker.cmd=g++
 compiler.ldflags=
 # @TODO try to get rif of `cores/sdl` in `libpath`
-compiler.c.linker.libpath.macosx=cores/sdl/SDL2.macos
-compiler.c.linker.libpath.linux=cores/sdl/SDL2.linux
-compiler.c.linker.libpath.windows=cores/sdl/SDL2.windows
-compiler.c.linker.SDL2flags.macosx=-lm -liconv -Wl,-framework,CoreAudio -Wl,-framework,AudioToolbox -Wl,-framework,ForceFeedback -lobjc -Wl,-framework,CoreVideo -Wl,-framework,Cocoa -Wl,-framework,Carbon -Wl,-framework,IOKit -Wl,-weak_framework,QuartzCore -Wl,-weak_framework,Metal -lSDL2
-compiler.c.linker.SDL2flags.linux=-lm -D_THREAD_SAFE -D_REENTRANT -lpthread -lSDL2 -L{runtime.platform.path}/{compiler.c.linker.libpath}/lib/
+compiler.c.linker.libpath.macosx=cores/sdl/SDL2.macos.{macos.architecture}
+compiler.c.linker.libpath.linux=cores/SDL2.linux
+compiler.c.linker.libpath.windows=cores/SDL2.windows
+compiler.c.linker.SDL2flags.macosx=-lm -liconv -Wl,-framework,CoreAudio -Wl,-framework,AudioToolbox -Wl,-framework,ForceFeedback -lobjc -Wl,-framework,CoreVideo -Wl,-framework,Cocoa -Wl,-framework,Carbon -Wl,-framework,IOKit -Wl,-weak_framework,QuartzCore -Wl,-weak_framework,Metal -lSDL2 "-L{runtime.platform.path}/{compiler.c.linker.libpath}/lib/"
+compiler.c.linker.SDL2flags.linux=-lm -D_THREAD_SAFE -D_REENTRANT -lpthread -lSDL2 "-L{runtime.platform.path}/{compiler.c.linker.libpath}/lib/"
 compiler.c.linker.SDL2flags.windows=
 recipe.c.combine.pattern="{compiler.path}{compiler.c.linker.cmd}" {object_files} {compiler.c.linker.SDL2flags} "{build.path}/{archive_file}" "-L{build.path}" -o "{build.path}/{build.project_name}.exec" {compiler.ldflags}
 # recipe.c.combine.pattern="{compiler.path}{compiler.c.linker.cmd}" {object_files} {compiler.c.linker.SDL2flags} {runtime.platform.path}/{compiler.c.linker.libpath} "{build.path}/{archive_file}" "-L{build.path}" -o "{build.path}/{build.project_name}.exec" {compiler.ldflags}

@@ -1,8 +1,8 @@
 /*
- * Wellen
+ * KlangWellen
  *
- * This file is part of the *wellen* library (https://github.com/dennisppaul/wellen).
- * Copyright (c) 2023 Dennis P Paul.
+ * This file is part of the *KlangWellen* library (https://github.com/dennisppaul/klangwellen).
+ * Copyright (c) 2023 Dennis P Paul
  *
  * This library is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,6 +30,11 @@
 #define KLANG_SAMPLES_PER_AUDIO_BLOCK 512
 #endif
 
+#ifndef KLANG_SAMPLING_RATE
+#warning KLANG_SAMPLING_RATE not defined - using default value of 48000
+#define KLANG_SAMPLING_RATE 48000
+#endif
+
 #ifndef PI
 #define PI M_PI
 #endif
@@ -45,238 +50,331 @@
 namespace klangwellen {
     class KlangWellen {
     public:
-        static const uint8_t      BITS_PER_SAMPLE_16                    = 16;
-        static const uint8_t      BITS_PER_SAMPLE_24                    = 24;
-        static const uint8_t      BITS_PER_SAMPLE_32                    = 32;
-        static const uint8_t      BITS_PER_SAMPLE_8                     = 8;
-        static constexpr float    DEFAULT_ATTACK                        = 0.005f;
-        static const int          DEFAULT_AUDIOBLOCK_SIZE               = 1024;
-        static const int          DEFAULT_AUDIO_DEVICE                  = -1;
-        static const uint8_t      DEFAULT_BITS_PER_SAMPLE               = BITS_PER_SAMPLE_16;
-        static constexpr float    DEFAULT_DECAY                         = 0.01f;
-        static constexpr float    DEFAULT_FILTER_BANDWIDTH              = 100.0f;
-        static constexpr float    DEFAULT_FILTER_FREQUENCY              = 1000.0f;
-        static constexpr float    DEFAULT_RELEASE                       = 0.075f;
-        static constexpr uint32_t DEFAULT_SAMPLING_RATE                 = 48000;
-        static constexpr uint32_t DEFAULT_INTERPOLATE_AMP_FREQ_DURATION = 5.f / 1000.f * (float)DEFAULT_SAMPLING_RATE;  // KlangWellen::millis_to_samples(5);
-        static constexpr float    DEFAULT_SUSTAIN                       = 0.5f;
-        static const int          DEFAULT_WAVETABLE_SIZE                = 512;
-        static const uint8_t      DISTORTION_HARD_CLIPPING              = 0;
-        static const uint8_t      DISTORTION_FOLDBACK                   = 1;
-        static const uint8_t      DISTORTION_FOLDBACK_SINGLE            = 2;
-        static const uint8_t      DISTORTION_FULL_WAVE_RECTIFICATION    = 3;
-        static const uint8_t      DISTORTION_HALF_WAVE_RECTIFICATION    = 4;
-        static const uint8_t      DISTORTION_INFINITE_CLIPPING          = 5;
-        static const uint8_t      DISTORTION_SOFT_CLIPPING_CUBIC        = 6;
-        static const uint8_t      DISTORTION_SOFT_CLIPPING_ARC_TANGENT  = 7;
-        static const uint8_t      DISTORTION_BIT_CRUSHING               = 8;
-        static const int          EVENT_UNDEFINED                       = -1;
-        static const int          EVENT_CHANNEL                         = 0;
-        static const int          EVENT_NOTE_ON                         = 0;
-        static const int          EVENT_NOTE                            = 1;
-        static const int          EVENT_NOTE_OFF                        = 1;
-        static const int          EVENT_CONTROLCHANGE                   = 2;
-        static const int          EVENT_PITCHBEND                       = 3;
-        static const int          EVENT_PROGRAMCHANGE                   = 4;
-        static const int          EVENT_VELOCITY                        = 2;
-        static const uint8_t      FILTER_MODE_LOW_PASS                  = 0;
-        static const uint8_t      FILTER_MODE_HIGH_PASS                 = 1;
-        static const uint8_t      FILTER_MODE_BAND_PASS                 = 2;
-        static const uint8_t      FILTER_MODE_NOTCH                     = 3;
-        static const uint8_t      FILTER_MODE_PEAK                      = 4;
-        static const uint8_t      FILTER_MODE_LOWSHELF                  = 5;
-        static const uint8_t      FILTER_MODE_HIGHSHELF                 = 6;
-        static const uint8_t      FILTER_MODE_BAND_REJECT               = 7;
-        static const int          LOOP_INFINITE                         = std::numeric_limits<int>::max();
-        static const uint8_t      MONO                                  = 1;
-        static const uint8_t      NOISE_WHITE                           = 0;
-        static const uint8_t      NOISE_GAUSSIAN_WHITE                  = 1;
-        static const uint8_t      NOISE_GAUSSIAN_WHITE2                 = 2;
-        static const uint8_t      NOISE_PINK                            = 3;
-        static const uint8_t      NOISE_PINK2                           = 4;
-        static const uint8_t      NOISE_PINK3                           = 5;
-        static const uint8_t      NOISE_SIMPLEX                         = 6;
-        static constexpr float    NOTE_WHOLE                            = 0.25f;
-        static constexpr float    NOTE_HALF                             = 0.5f;
-        static const uint8_t      NOTE_QUARTER                          = 1;
-        static const uint8_t      NOTE_EIGHTH                           = 2;
-        static const uint8_t      NOTE_SIXTEENTH                        = 4;
-        static const uint8_t      NOTE_THIRTYSECOND                     = 8;
-        static const int          NO_AUDIO_DEVICE                       = -2;
-        static const int          NO_CHANNELS                           = 0;
-        static const int          NO_EVENT                              = -1;
-        static const int          NO_INPOINT                            = 0;
-        static const int          NO_LOOP                               = -2;
-        static const int          NO_LOOP_COUNT                         = -1;
-        static const int          NO_OUTPOINT                           = -1;
-        static const int          NO_POSITION                           = -1;
-        static const int          NO_VALUE                              = -1;
-        static const uint8_t      PAN_LINEAR                            = 0;
-        static const uint8_t      PAN_SINE_LAW                          = 2;
-        static const uint8_t      PAN_SQUARE_LAW                        = 1;
-        static const uint8_t      SIGNAL_LEFT                           = 0;
-        static constexpr float    SIGNAL_MAX                            = 1.0f;
-        static constexpr float    SIGNAL_MIN                            = -1.0f;
-        static const int          SIGNAL_MONO                           = 1;
-        static const int          SIGNAL_PROCESSING_IGNORE_IN_OUTPOINTS = -3;
-        static const int          SIGNAL_RIGHT                          = 1;
-        static const int          SIGNAL_STEREO                         = 2;
-        static const uint8_t      SIG_INT16_BIG_ENDIAN                  = 2;
-        static const uint8_t      SIG_INT16_LITTLE_ENDIAN               = 3;
-        static const uint8_t      SIG_INT24_3_BIG_ENDIAN                = 4;
-        static const uint8_t      SIG_INT24_3_LITTLE_ENDIAN             = 5;
-        static const uint8_t      SIG_INT24_4_BIG_ENDIAN                = 6;
-        static const uint8_t      SIG_INT24_4_LITTLE_ENDIAN             = 7;
-        static const uint8_t      SIG_INT32_BIG_ENDIAN                  = 8;
-        static const uint8_t      SIG_INT32_LITTLE_ENDIAN               = 9;
-        static const uint8_t      SIG_INT8                              = 0;
-        static const uint8_t      SIG_UINT8                             = 1;
-        static const uint8_t      STEREO                                = 2;
-        static const uint8_t      VERSION_MAJOR                         = 0;
-        static const uint8_t      VERSION_MINOR                         = 8;
-        static const uint8_t      WAVEFORM_SINE                         = 0;
-        static const uint8_t      WAVEFORM_TRIANGLE                     = 1;
-        static const uint8_t      WAVEFORM_SAWTOOTH                     = 2;
-        static const uint8_t      WAVEFORM_SQUARE                       = 3;
-        static const uint8_t      WAVEFORM_NOISE                        = 4;
-        static const uint8_t      WAVESHAPE_INTERPOLATE_NONE            = 0;
-        static const uint8_t      WAVESHAPE_INTERPOLATE_LINEAR          = 1;
-        static const uint8_t      WAVESHAPE_INTERPOLATE_CUBIC           = 2;
-        static const uint8_t      WAV_FORMAT_PCM                        = 1;
-        static const uint8_t      WAV_FORMAT_IEEE_FLOAT_32BIT           = 3;
+        static const uint8_t      BITS_PER_SAMPLE_16 = 16;
+        static const uint8_t      BITS_PER_SAMPLE_24 = 24;
+        static const uint8_t      BITS_PER_SAMPLE_32 = 32;
+        static const uint8_t      BITS_PER_SAMPLE_8 = 8;
+        static constexpr float    DEFAULT_ATTACK = 0.005f;
+        static const int          DEFAULT_AUDIOBLOCK_SIZE = KLANG_SAMPLES_PER_AUDIO_BLOCK; // TODO decide for either one
+        static const int          DEFAULT_AUDIO_DEVICE = -1;
+        static const uint8_t      DEFAULT_BITS_PER_SAMPLE = BITS_PER_SAMPLE_16;
+        static constexpr float    DEFAULT_DECAY = 0.01f;
+        static constexpr float    DEFAULT_FILTER_BANDWIDTH = 100.0f;
+        static constexpr float    DEFAULT_FILTER_FREQUENCY = 1000.0f;
+        static constexpr float    DEFAULT_RELEASE = 0.075f;
+        static constexpr uint32_t DEFAULT_SAMPLING_RATE = KLANG_SAMPLING_RATE; // TODO decide for either one
+        static constexpr uint32_t DEFAULT_INTERPOLATE_AMP_FREQ_DURATION = 5.f / 1000.f * (float) DEFAULT_SAMPLING_RATE;
+        // KlangWellen::millis_to_samples(5);
+        static constexpr float DEFAULT_SUSTAIN                       = 0.5f;
+        static const int       DEFAULT_WAVETABLE_SIZE                = 512;
+        static const uint8_t   DISTORTION_HARD_CLIPPING              = 0;
+        static const uint8_t   DISTORTION_FOLDBACK                   = 1;
+        static const uint8_t   DISTORTION_FOLDBACK_SINGLE            = 2;
+        static const uint8_t   DISTORTION_FULL_WAVE_RECTIFICATION    = 3;
+        static const uint8_t   DISTORTION_HALF_WAVE_RECTIFICATION    = 4;
+        static const uint8_t   DISTORTION_INFINITE_CLIPPING          = 5;
+        static const uint8_t   DISTORTION_SOFT_CLIPPING_CUBIC        = 6;
+        static const uint8_t   DISTORTION_SOFT_CLIPPING_ARC_TANGENT  = 7;
+        static const uint8_t   DISTORTION_BIT_CRUSHING               = 8;
+        static const int       EVENT_UNDEFINED                       = -1;
+        static const int       EVENT_CHANNEL                         = 0;
+        static const int       EVENT_NOTE_ON                         = 0;
+        static const int       EVENT_NOTE                            = 1;
+        static const int       EVENT_NOTE_OFF                        = 1;
+        static const int       EVENT_CONTROLCHANGE                   = 2;
+        static const int       EVENT_PITCHBEND                       = 3;
+        static const int       EVENT_PROGRAMCHANGE                   = 4;
+        static const int       EVENT_VELOCITY                        = 2;
+        static const uint8_t   FILTER_MODE_LOW_PASS                  = 0;
+        static const uint8_t   FILTER_MODE_HIGH_PASS                 = 1;
+        static const uint8_t   FILTER_MODE_BAND_PASS                 = 2;
+        static const uint8_t   FILTER_MODE_NOTCH                     = 3;
+        static const uint8_t   FILTER_MODE_PEAK                      = 4;
+        static const uint8_t   FILTER_MODE_LOWSHELF                  = 5;
+        static const uint8_t   FILTER_MODE_HIGHSHELF                 = 6;
+        static const uint8_t   FILTER_MODE_BAND_REJECT               = 7;
+        static const int       LOOP_INFINITE                         = std::numeric_limits<int>::max();
+        static const uint8_t   MONO                                  = 1;
+        static const uint8_t   NOISE_WHITE                           = 0;
+        static const uint8_t   NOISE_GAUSSIAN_WHITE                  = 1;
+        static const uint8_t   NOISE_GAUSSIAN_WHITE2                 = 2;
+        static const uint8_t   NOISE_PINK                            = 3;
+        static const uint8_t   NOISE_PINK2                           = 4;
+        static const uint8_t   NOISE_PINK3                           = 5;
+        static const uint8_t   NOISE_SIMPLEX                         = 6;
+        static constexpr float NOTE_WHOLE                            = 0.25f;
+        static constexpr float NOTE_HALF                             = 0.5f;
+        static const uint8_t   NOTE_QUARTER                          = 1;
+        static const uint8_t   NOTE_EIGHTH                           = 2;
+        static const uint8_t   NOTE_SIXTEENTH                        = 4;
+        static const uint8_t   NOTE_THIRTYSECOND                     = 8;
+        static const int       NO_AUDIO_DEVICE                       = -2;
+        static const int       NO_CHANNELS                           = 0;
+        static const int       NO_EVENT                              = -1;
+        static const int       NO_INPOINT                            = 0;
+        static const int       NO_LOOP                               = -2;
+        static const int       NO_LOOP_COUNT                         = -1;
+        static const int       NO_OUTPOINT                           = -1;
+        static const int       NO_POSITION                           = -1;
+        static const int       NO_VALUE                              = -1;
+        static const uint8_t   PAN_LINEAR                            = 0;
+        static const uint8_t   PAN_SINE_LAW                          = 2;
+        static const uint8_t   PAN_SQUARE_LAW                        = 1;
+        static const uint8_t   SIGNAL_LEFT                           = 0;
+        static constexpr float SIGNAL_MAX                            = 1.0f;
+        static constexpr float SIGNAL_MIN                            = -1.0f;
+        static const int       SIGNAL_MONO                           = 1;
+        static const int       SIGNAL_PROCESSING_IGNORE_IN_OUTPOINTS = -3;
+        static const int       SIGNAL_RIGHT                          = 1;
+        static const int       SIGNAL_STEREO                         = 2;
+        static const uint8_t   SIG_INT16_BIG_ENDIAN                  = 2;
+        static const uint8_t   SIG_INT16_LITTLE_ENDIAN               = 3;
+        static const uint8_t   SIG_INT24_3_BIG_ENDIAN                = 4;
+        static const uint8_t   SIG_INT24_3_LITTLE_ENDIAN             = 5;
+        static const uint8_t   SIG_INT24_4_BIG_ENDIAN                = 6;
+        static const uint8_t   SIG_INT24_4_LITTLE_ENDIAN             = 7;
+        static const uint8_t   SIG_INT32_BIG_ENDIAN                  = 8;
+        static const uint8_t   SIG_INT32_LITTLE_ENDIAN               = 9;
+        static const uint8_t   SIG_INT8                              = 0;
+        static const uint8_t   SIG_UINT8                             = 1;
+        static const uint8_t   STEREO                                = 2;
+        static const uint8_t   VERSION_MAJOR                         = 0;
+        static const uint8_t   VERSION_MINOR                         = 8;
+        static const uint8_t   WAVEFORM_SINE                         = 0;
+        static const uint8_t   WAVEFORM_TRIANGLE                     = 1;
+        static const uint8_t   WAVEFORM_SAWTOOTH                     = 2;
+        static const uint8_t   WAVEFORM_SQUARE                       = 3;
+        static const uint8_t   WAVEFORM_NOISE                        = 4;
+        static const uint8_t   WAVESHAPE_INTERPOLATE_NONE            = 0;
+        static const uint8_t   WAVESHAPE_INTERPOLATE_LINEAR          = 1;
+        static const uint8_t   WAVESHAPE_INTERPOLATE_CUBIC           = 2;
+        static const uint8_t   WAV_FORMAT_PCM                        = 1;
+        static const uint8_t   WAV_FORMAT_IEEE_FLOAT_32BIT           = 3;
 
         /* --- sound --- */
 
         static constexpr float MIDI_NOTE_CONVERSION_BASE_FREQUENCY = 440.0;
         static const uint8_t   NOTE_OFFSET                         = 69;
-        static float           note_to_frequency(uint8_t pMidiNote) {
+
+        static float note_to_frequency(uint8_t pMidiNote) {
             return MIDI_NOTE_CONVERSION_BASE_FREQUENCY * pow(2, ((pMidiNote - NOTE_OFFSET) / 12.0));
+        }
+
+        static void normalize(float *buffer, const uint32_t numSamples) {
+            if (buffer == nullptr || numSamples == 0) {
+                return;
+            }
+
+            float peakValue = 0.0f;
+
+            // find the peak value in the buffer
+            for (uint32_t i = 0; i < numSamples; i++) {
+                const float sample = std::abs(buffer[i]);
+                if (sample > peakValue) {
+                    peakValue = sample;
+                }
+            }
+
+            // avoid division by zero
+            if (peakValue == 0.0f) {
+                return;
+            }
+
+            const float normalizationFactor = 1.0f / peakValue;
+
+            // normalize the buffer
+            for (uint32_t i = 0; i < numSamples; i++) {
+                buffer[i] *= normalizationFactor;
+            }
+        }
+
+        static void peak(float *buffer, const uint32_t length, float &min, float &max) {
+            if (buffer == nullptr || length == 0) {
+                return;
+            }
+
+            min = 0.0f;
+            max = 0.0f;
+
+            for (uint32_t i = 0; i < length; i++) {
+                const float sample = buffer[i];
+                if (sample < min) {
+                    min = sample;
+                }
+                if (sample > max) {
+                    max = sample;
+                }
+            }
         }
 
         /* --- math --- */
 
-        static uint32_t millis_to_samples(float pMillis, float pSamplingRate);
-        static uint32_t millis_to_samples(float pMillis);
-        static float    random_normalized();
-        static uint32_t x32Seed;
-        static uint32_t xorshift32();
-        static float    random();
+        // static uint32_t millis_to_samples(float pMillis, float pSamplingRate);
+        // static uint32_t millis_to_samples(float pMillis);
+        // static float    random_normalized();
+        // static uint32_t x32Seed;
+        // static uint32_t xorshift32();
+        // static float    random();
+        inline static uint32_t x32Seed = 23;
 
-        inline static float clamp(float value,
-                                  float minimum,
-                                  float maximum) {
+        static uint32_t millis_to_samples(const float pMillis, const float pSamplingRate) {
+            return static_cast<uint32_t>(pMillis / 1000.0f * pSamplingRate);
+        }
+
+        static uint32_t millis_to_samples(const float pMillis) {
+            return static_cast<uint32_t>(pMillis / 1000.0f * static_cast<float>(DEFAULT_SAMPLING_RATE));
+        }
+
+        /* xorshift32 ( ref: https://en.wikipedia.org/wiki/Xorshift ) */
+        // static uint32_t x32Seed = 23;
+        static uint32_t xorshift32() {
+            x32Seed ^= x32Seed << 13;
+            x32Seed ^= x32Seed >> 17;
+            x32Seed ^= x32Seed << 5;
+            return x32Seed;
+        }
+
+        /**
+         * returns a random number between 0 ... 1
+         */
+        static float random_normalized() {
+            // TODO replace with mapping, without division
+            return ((float) xorshift32() / UINT32_MAX);
+        }
+
+        static float random() {
+            // TODO replace with mapping, without division
+            return ((float) xorshift32() / UINT32_MAX) * 2 - 1;
+        }
+
+        static float clamp(const float value,
+                           const float minimum,
+                           const float maximum) {
             return value > maximum ? maximum : (value < minimum ? minimum : value);
         }
 
-        inline static float clamp(float value) {
+        static float clip(const float value) {
+            return clamp(value);
+        }
+
+        static float clamp(const float value) {
             return value > SIGNAL_MAX ? SIGNAL_MAX : (value < SIGNAL_MIN ? SIGNAL_MIN : value);
         }
 
-        inline static uint8_t clamp127(uint8_t value) {
+        static uint8_t clamp127(const uint8_t value) {
             return value > 127 ? 127 : value;
         }
 
-        template <typename T>
-        inline static T clamp(T value, T minimum, T maximum) {
+        template<typename T>
+        static T clamp(T value, T minimum, T maximum) {
             return value > maximum ? maximum : (value < minimum ? minimum : value);
         }
 
-        inline static float pow(float base, float exponent) {
+        static float pow(const float base, const float exponent) {
             return powf(base, exponent);
         }
 
-        inline static float lerp(float v0, float v1, float t) {
+        static float lerp(const float v0, const float v1, const float t) {
             return v0 + t * (v1 - v0);
         }
 
-        inline static float max(float a, float b) {
+        static float max(const float a, const float b) {
             return a > b ? a : b;
         }
 
-        inline static float min(float a, float b) {
+        static float min(const float a, const float b) {
             return a < b ? a : b;
         }
 
-        inline static float abs(float value) {
+        static float abs(const float value) {
             return value > 0 ? value : -value;
         }
 
-        template <typename T>
-        inline static T abs(T value) {
+        template<typename T>
+        static T abs(T value) {
             return value > 0 ? value : -value;
         }
 
-        template <typename T>
-        inline static int sign(T val) {
+        template<typename T>
+        static int sign(T val) {
             return (T(0) < val) - (val < T(0));
         }
 
-        inline static float mod(float a, float b) {
+        static float mod(const float a, const float b) {
             return a >= b ? (a - b * int(a / b)) : a;
             // return a >= b ? fmodf(a, b) : a;
             // return input >= ceil ? input % ceil : input;
             // from https://stackoverflow.com/questions/33333363/built-in-mod-vs-custom-mod-function-improve-the-performance-of-modulus-op
         }
 
-        inline static float map(float value,
-                                float inputMin,
-                                float inputMax,
-                                float outputMin,
-                                float outputMax) {
-            return ((value - inputMin) / (inputMax - inputMin) * (outputMax - outputMin) + outputMin);
+        static float map(const float value,
+                         const float inputMin,
+                         const float inputMax,
+                         const float outputMin,
+                         const float outputMax) {
+            const float a = value - inputMin;
+            const float b = inputMax - inputMin;
+            const float c = outputMax - outputMin;
+            const float d = a / b;
+            const float e = d * c;
+            return e + outputMin;
         }
 
-        inline static int16_t map_i16(int16_t value,
-                                      int16_t inputMin,
-                                      int16_t inputMax,
-                                      int16_t outputMin,
-                                      int16_t outputMax) {
+        static int16_t map_i16(const int16_t value,
+                               const int16_t inputMin,
+                               const int16_t inputMax,
+                               const int16_t outputMin,
+                               const int16_t outputMax) {
             return ((value - inputMin) * (outputMax - outputMin) / (inputMax - inputMin) + outputMin);
         }
 
-        inline static float sin(float r) {
+        static float sin(const float r) {
             return sinf(r);
         }
 
-        inline static float cos(float r) {
+        static float cos(const float r) {
             return cosf(r);
         }
 
-        inline static float sinh(float r) {
+        static float sinh(const float r) {
             return sinhf(r);
         }
 
-        inline static float cosh(float r) {
+        static float cosh(const float r) {
             return coshf(r);
         }
 
-        inline static float sqrt(float r) {
+        static float sqrt(const float r) {
             return sqrtf(r);
         }
 
-        inline static float fast_sqrt(float x) {
-            return 1.0 / fast_inv_sqrt(x);
+        static float fast_sqrt(const float x) {
+            return 1.0f / fast_inv_sqrt(x);
         }
 
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wstrict-aliasing"
-        inline static float fast_inv_sqrt(float x) {
-            float xhalf = 0.5f * x;
-            int   i     = *(int*)&x;
-            i           = 0x5f3759df - (i >> 1);
-            x           = *(float*)&i;
+#pragma GCC diagnostic ignored "-Wuninitialized"
+        static float fast_inv_sqrt(float x) {
+            const float xhalf = 0.5f * x;
+            int         i     = *(int *) &x;
+            i                 = 0x5f3759df - (i >> 1);
+            x                 = *(float *) &i;
             return x * (1.5f - xhalf * x * x);
         }
 #pragma GCC diagnostic pop
 
-        inline static float fast_sin(float x) {
-            if (x < -PI) {
-                while (x < -PI) {
-                    x += TWO_PI;
+        static constexpr float PIf     = (float) PI;
+        static constexpr float TWO_PIf = (float) TWO_PI;
+
+        static float fast_sin(float x) {
+            if (x < -PIf) {
+                while (x < -PIf) {
+                    x += TWO_PIf;
                 }
-            } else if (x > PI) {
-                while (x > PI) {
-                    x -= TWO_PI;
+            } else if (x > PIf) {
+                while (x > PIf) {
+                    x -= TWO_PIf;
                 }
             }
             const float x2          = x * x;
@@ -285,24 +383,24 @@ namespace klangwellen {
             return numerator / denominator;
         }
 
-        inline static float fast_sin3(const float X) {
+        static float fast_sin3(const float X) {
             // Valid on interval [-PI, PI]
             // Sine approximation using Bhaskara I technique discovered in 7th century.
             // https://en.wikipedia.org/wiki/Bh%C4%81skara_I
             const float AbsX        = abs(X);
-            const float Numerator   = 16.0f * X * (PI - AbsX);
-            const float Denominator = 5.0f * PI * PI - 4.0f * AbsX * (PI - AbsX);
+            const float Numerator   = 16.0f * X * (PIf - AbsX);
+            const float Denominator = 5.0f * PIf * PIf - 4.0f * AbsX * (PIf - AbsX);
             return Numerator / Denominator;
         }
 
-        inline static float fast_cos(float x) {
-            if (x < -PI) {
-                while (x < -PI) {
-                    x += TWO_PI;
+        static float fast_cos(float x) {
+            if (x < -PIf) {
+                while (x < -PIf) {
+                    x += TWO_PIf;
                 }
-            } else if (x > PI) {
-                while (x > PI) {
-                    x -= TWO_PI;
+            } else if (x > PIf) {
+                while (x > PIf) {
+                    x -= TWO_PIf;
                 }
             }
             const float x2          = x * x;
@@ -311,56 +409,109 @@ namespace klangwellen {
             return numerator / denominator;
         }
 
-        inline static float fast_sinh(float x) {
-            auto x2          = x * x;
-            auto numerator   = -x * (11511339840 + x2 * (1640635920 + x2 * (52785432 + x2 * 479249)));
-            auto denominator = -11511339840 + x2 * (277920720 + x2 * (-3177720 + x2 * 18361));
+        static float fast_sinh(const float x) {
+            const auto x2          = x * x;
+            const auto numerator   = -x * (11511339840 + x2 * (1640635920 + x2 * (52785432 + x2 * 479249)));
+            const auto denominator = -11511339840 + x2 * (277920720 + x2 * (-3177720 + x2 * 18361));
             return numerator / denominator;
         }
 
-        inline static float fast_cosh(float x) {
-            auto x2          = x * x;
-            auto numerator   = -(39251520 + x2 * (18471600 + x2 * (1075032 + 14615 * x2)));
-            auto denominator = -39251520 + x2 * (1154160 + x2 * (-16632 + 127 * x2));
+        static float fast_cosh(const float x) {
+            const auto x2          = x * x;
+            const auto numerator   = -(39251520 + x2 * (18471600 + x2 * (1075032 + 14615 * x2)));
+            const auto denominator = -39251520 + x2 * (1154160 + x2 * (-16632 + 127 * x2));
             return numerator / denominator;
         }
 
-        inline static float fast_tan(float x) {
-            auto x2          = x * x;
-            auto numerator   = x * (-135135 + x2 * (17325 + x2 * (-378 + x2)));
-            auto denominator = -135135 + x2 * (62370 + x2 * (-3150 + 28 * x2));
+        static float fast_tan(const float x) {
+            const auto x2          = x * x;
+            const auto numerator   = x * (-135135 + x2 * (17325 + x2 * (-378 + x2)));
+            const auto denominator = -135135 + x2 * (62370 + x2 * (-3150 + 28 * x2));
             return numerator / denominator;
         }
 
-        inline static float fast_tanh(float x) {
-            auto x2          = x * x;
-            auto numerator   = x * (135135 + x2 * (17325 + x2 * (378 + x2)));
-            auto denominator = 135135 + x2 * (62370 + x2 * (3150 + 28 * x2));
+        static float fast_tanh(const float x) {
+            const auto x2          = x * x;
+            const auto numerator   = x * (135135 + x2 * (17325 + x2 * (378 + x2)));
+            const auto denominator = 135135 + x2 * (62370 + x2 * (3150 + 28 * x2));
             return numerator / denominator;
         }
 
-        inline static float exp_j(float x) {
-            auto numerator   = 1680 + x * (840 + x * (180 + x * (20 + x)));
-            auto denominator = 1680 + x * (-840 + x * (180 + x * (-20 + x)));
+        static float exp_j(const float x) {
+            const auto numerator   = 1680 + x * (840 + x * (180 + x * (20 + x)));
+            const auto denominator = 1680 + x * (-840 + x * (180 + x * (-20 + x)));
             return numerator / denominator;
         }
 
-        inline static float fast_atan(float x) {
-            static const float PI_FOURTH = (PI / 4.0);
-            return PI_FOURTH * x - x * (fabs(x) - 1) * (0.2447 + 0.0663 * fabs(x));
+        static float fast_atan(const float x) {
+            static constexpr float PI_FOURTH = (PIf / 4.0f);
+            return PI_FOURTH * x - x * (fabs(x) - 1) * (0.2447f + 0.0663f * fabs(x));
         }
 
-        inline static float fast_atan2(float x) {
-            static const float PI_FOURTH = (PI / 4.0);
-            static const float A         = 0.0776509570923569;
-            static const float B         = -0.287434475393028;
-            static const float C         = (PI_FOURTH - A - B);
-            float              xx        = x * x;
+        static float fast_atan2(float x) {
+            static constexpr float PI_FOURTH = (PIf / 4.0f);
+            static const float     A         = 0.0776509570923569;
+            static const float     B         = -0.287434475393028;
+            static const float     C         = (PI_FOURTH - A - B);
+            const float            xx        = x * x;
             return ((A * xx + B) * xx + C) * x;
         }
 
+        /* --- interpolation --- */
+
+        static float linear_interpolate(const float y1, const float y2, const float mu) {
+            return y1 * (1.0f - mu) + y2 * mu;
+        }
+
+        static float interpolate_samples_linear(const float *buffer, const size_t bufferSize, const float position) {
+            const int   posInt = static_cast<int>(position);
+            const float mu     = position - posInt;
+
+            // Ensure that the positions are valid
+            const int y1Pos = posInt;
+            const int y2Pos = (posInt + 1 >= bufferSize) ? bufferSize - 1 : posInt + 1;
+
+            // Get the samples for interpolation
+            const float y1 = buffer[y1Pos];
+            const float y2 = buffer[y2Pos];
+
+            // Return the interpolated sample
+            return linear_interpolate(y1, y2, mu);
+        }
+
+        static float cubic_interpolate(const float y0, const float y1, const float y2, const float y3, const float mu) {
+            const float mu2 = mu * mu;
+            const float a0  = y3 - y2 - y0 + y1;
+            const float a1  = y0 - y1 - a0;
+            const float a2  = y2 - y0;
+            const float a3  = y1;
+
+            return (a0 * mu * mu2 + a1 * mu2 + a2 * mu + a3);
+        }
+
+        static float interpolate_samples_cubic(const float *buffer, const uint32_t bufferSize, const float position) {
+            const int   posInt = static_cast<int>(position);
+            const float mu     = position - posInt;
+
+            // Ensure that the positions are valid
+            const int y0Pos = (posInt - 1 < 0) ? 0 : posInt - 1;
+            const int y1Pos = posInt;
+            const int y2Pos = (posInt + 1 >= bufferSize) ? bufferSize - 1 : posInt + 1;
+            const int y3Pos = (posInt + 2 >= bufferSize) ? bufferSize - 1 : posInt + 2;
+
+            // Get the samples for interpolation
+            const float y0 = buffer[y0Pos];
+            const float y1 = buffer[y1Pos];
+            const float y2 = buffer[y2Pos];
+            const float y3 = buffer[y3Pos];
+
+            // Return the interpolated sample
+            return cubic_interpolate(y0, y1, y2, y3, mu);
+        }
+
         /* --- buffer --- */
-        inline static void fill(float* buffer, float value, uint32_t length = KLANG_SAMPLES_PER_AUDIO_BLOCK) {
+
+        inline static void fill(float *buffer, float value, uint32_t length = KLANG_SAMPLES_PER_AUDIO_BLOCK) {
             for (uint32_t i = 0; i < length; i++) {
                 buffer[i] = value;
             }
@@ -369,20 +520,20 @@ namespace klangwellen {
         /**
          * copies src into dst. dst will be overwritten.
          */
-        inline static void copy(float* src, float* dst, uint32_t length = KLANG_SAMPLES_PER_AUDIO_BLOCK) {
+        inline static void copy(float *src, float *dst, uint32_t length = KLANG_SAMPLES_PER_AUDIO_BLOCK) {
             std::copy(src, src + length, dst);
         }
 
         /**
          * adds buffer_b to buffer_a. result will be stored in buffer_a, buffer_b will not be changed.
          */
-        inline static void add(float* buffer_a, float* buffer_b, uint32_t length = KLANG_SAMPLES_PER_AUDIO_BLOCK) {
+        inline static void add(float *buffer_a, float *buffer_b, uint32_t length = KLANG_SAMPLES_PER_AUDIO_BLOCK) {
             for (uint32_t i = 0; i < length; i++) {
                 buffer_a[i] += buffer_b[i];
             }
         }
 
-        inline static void add(float* buffer_a, float scalar, uint32_t length = KLANG_SAMPLES_PER_AUDIO_BLOCK) {
+        inline static void add(float *buffer_a, float scalar, uint32_t length = KLANG_SAMPLES_PER_AUDIO_BLOCK) {
             for (uint32_t i = 0; i < length; i++) {
                 buffer_a[i] += scalar;
             }
@@ -391,13 +542,13 @@ namespace klangwellen {
         /**
          * subtracts buffer_b from buffer_a. result will be stored in buffer_a, buffer_b will not be changed.
          */
-        inline static void sub(float* buffer_a, float* buffer_b, uint32_t length = KLANG_SAMPLES_PER_AUDIO_BLOCK) {
+        inline static void sub(float *buffer_a, float *buffer_b, uint32_t length = KLANG_SAMPLES_PER_AUDIO_BLOCK) {
             for (uint32_t i = 0; i < length; i++) {
                 buffer_a[i] -= buffer_b[i];
             }
         }
 
-        inline static void sub(float* buffer_a, float scalar, uint32_t length = KLANG_SAMPLES_PER_AUDIO_BLOCK) {
+        inline static void sub(float *buffer_a, float scalar, uint32_t length = KLANG_SAMPLES_PER_AUDIO_BLOCK) {
             for (uint32_t i = 0; i < length; i++) {
                 buffer_a[i] -= scalar;
             }
@@ -406,13 +557,13 @@ namespace klangwellen {
         /**
          * multiplies buffer_b with buffer_a. result will be stored in buffer_a, buffer_b will not be changed.
          */
-        inline static void mult(float* buffer_a, float* buffer_b, uint32_t length = KLANG_SAMPLES_PER_AUDIO_BLOCK) {
+        inline static void mult(float *buffer_a, float *buffer_b, uint32_t length = KLANG_SAMPLES_PER_AUDIO_BLOCK) {
             for (uint32_t i = 0; i < length; i++) {
                 buffer_a[i] *= buffer_b[i];
             }
         }
 
-        inline static void mult(float* buffer_a, float scalar, uint32_t length = KLANG_SAMPLES_PER_AUDIO_BLOCK) {
+        inline static void mult(float *buffer_a, float scalar, uint32_t length = KLANG_SAMPLES_PER_AUDIO_BLOCK) {
             for (uint32_t i = 0; i < length; i++) {
                 buffer_a[i] *= scalar;
             }
@@ -421,16 +572,16 @@ namespace klangwellen {
         /**
          * divides buffer_b from buffer_a. result will be stored in buffer_a, buffer_b will not be changed.
          */
-        inline static void div(float* buffer_a, float* buffer_b, uint32_t length = KLANG_SAMPLES_PER_AUDIO_BLOCK) {
+        inline static void div(float *buffer_a, float *buffer_b, uint32_t length = KLANG_SAMPLES_PER_AUDIO_BLOCK) {
             for (uint32_t i = 0; i < length; i++) {
                 buffer_a[i] /= buffer_b[i];
             }
         }
 
-        inline static void div(float* buffer_a, float scalar, uint32_t length = KLANG_SAMPLES_PER_AUDIO_BLOCK) {
+        inline static void div(float *buffer_a, float scalar, uint32_t length = KLANG_SAMPLES_PER_AUDIO_BLOCK) {
             for (uint32_t i = 0; i < length; i++) {
                 buffer_a[i] /= scalar;
             }
         }
     };
-}  // namespace klangwellen
+} // namespace klangwellen

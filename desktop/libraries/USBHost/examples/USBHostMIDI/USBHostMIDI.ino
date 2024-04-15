@@ -8,18 +8,10 @@ using namespace klangstrom;
 
 void setup() {
     Serial.begin(115200);
-    Serial.println("-------------");
-    Serial.println("USB Host MIDI");
-    Serial.print("( ");
-    Serial.print(__DATE__);
-    Serial.print(" ");
-    Serial.print(__TIME__);
-    Serial.println(" )");
-    Serial.println("-------------");
-    printf("foo");
+    Serial.println("-----------");
+    Serial.println("USBHostMIDI");
+    Serial.println("-----------");
 
-    Serial.println(__DATE__);
-    Serial.println(__TIME__);
     USBHost.init();
     USBHost.register_midi_note_off(midi_note_off);
     USBHost.register_midi_note_on(midi_note_on);

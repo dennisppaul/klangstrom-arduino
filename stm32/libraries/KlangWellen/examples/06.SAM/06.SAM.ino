@@ -10,6 +10,11 @@ SAM    fSAM_left(fBuffer, 48000);
 SAM    fSAM_right(48000);
 
 void setup() {
+    Serial.begin(115200);
+    Serial.println("------");
+    Serial.println("06.SAM");
+    Serial.println("------");
+
     fSAM_right.set_speed(120);
     fSAM_right.set_throat(100);
     beats_per_minute(60);

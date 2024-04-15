@@ -64,6 +64,8 @@
   */
 
 /************************* Miscellaneous Configuration ************************/
+/*!< Uncomment the following line if you need to use initialized data in D2 domain SRAM (AHB SRAM) */
+/* #define DATA_IN_D2_SRAM */
 
 /* Note: Following vector table addresses must be defined in line with linker
          configuration. */
@@ -81,6 +83,7 @@
                                                      This value must be a multiple of 0x300. */
 #endif
 
+#ifndef VECT_TAB_BASE_ADDRESS
 #if defined(DUAL_CORE) && defined(CORE_CM4)
 #if defined(VECT_TAB_SRAM)
 #define VECT_TAB_BASE_ADDRESS   D2_AXISRAM_BASE   /*!< Vector Table base address field.
@@ -99,7 +102,7 @@
                                                        This value must be a multiple of 0x300. */
 #endif /* VECT_TAB_SRAM */
 #endif /* DUAL_CORE && CORE_CM4 */
-
+#endif /* !VECT_TAB_BASE_ADDRESS */
 
 
 /******************************************************************************/

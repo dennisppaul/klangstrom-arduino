@@ -1,8 +1,8 @@
 /*
- * Wellen
+ * KlangWellen
  *
- * This file is part of the *wellen* library (https://github.com/dennisppaul/wellen).
- * Copyright (c) 2023 Dennis P Paul.
+ * This file is part of the *KlangWellen* library (https://github.com/dennisppaul/klangwellen).
+ * Copyright (c) 2023 Dennis P Paul
  *
  * This library is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,6 +27,8 @@
  * - [ ] void process(float*, float*, uint32_t)
  */
 
+// @TODO Delay is broken, fix it
+
 #pragma once
 
 #include <stdint.h>
@@ -46,8 +48,7 @@ namespace klangwellen {
          * @param sample_rate the sample rate in Hz.
          * @param decay_rate  the decay of the echo, a value between 0 and 1. 1 meaning no decay, 0 means immediate decay
          */
-        Delay(float echo_length = 0.5, float decay_rate = 0.75, float wet = 0.8, uint32_t sample_rate = KlangWellen::DEFAULT_SAMPLING_RATE) {
-            fSampleRate = sample_rate;
+        Delay(float echo_length = 0.5, float decay_rate = 0.75, float wet = 0.8, uint32_t sample_rate = KlangWellen::DEFAULT_SAMPLING_RATE) : fSampleRate(sample_rate) {
             set_decay_rate(decay_rate);
             set_echo_length(echo_length);
             set_wet(wet);
@@ -105,14 +106,14 @@ namespace klangwellen {
         }
 
     private:
-        int32_t  fBufferPosition;
-        float    fDecayRate;
-        float    fWet;
-        float*   fBuffer;
-        int32_t  fBufferLength;
-        float    fNewEchoLength;
+        int32_t  fBufferPosition  = 0;
+        float    fDecayRate       = 0;
+        float    fWet             = 0;
+        float*   fBuffer          = nullptr;
+        bool     fAllocatedBuffer = false;
+        int32_t  fBufferLength    = 0;
+        float    fNewEchoLength   = 0;
         uint32_t fSampleRate;
-        bool     fAllocatedBuffer;
 
         void adaptEchoLength() {
             if (fNewEchoLength > 0) {

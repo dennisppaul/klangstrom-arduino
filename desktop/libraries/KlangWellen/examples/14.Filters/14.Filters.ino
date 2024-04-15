@@ -8,6 +8,11 @@ Wavetable fWavetable;
 Filter    fFilter;
 
 void setup() {
+    Serial.begin(115200);
+    Serial.println("----------");
+    Serial.println("14.Filters");
+    Serial.println("----------");
+
     fWavetable.set_waveform(KlangWellen::WAVEFORM_SQUARE);
     fWavetable.set_frequency(55);
     klangstrom::beats_per_minute(120 * 4);

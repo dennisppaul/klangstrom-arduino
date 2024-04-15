@@ -14,6 +14,11 @@ void draw_primitves() {
 }
 
 void setup() {
+    Serial.begin(115200);
+    Serial.println("-------------------");
+    Serial.println("FullscreenAnimation");
+    Serial.println("-------------------");
+
     Display.begin();
     beats_per_minute(900);  // == 15 Hz
 }

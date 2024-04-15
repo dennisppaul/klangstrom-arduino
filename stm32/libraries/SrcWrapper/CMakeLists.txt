@@ -58,6 +58,7 @@ add_library(SrcWrapper_bin OBJECT EXCLUDE_FROM_ALL
   src/HAL/stm32yyxx_hal_fmpsmbus.c
   src/HAL/stm32yyxx_hal_fmpsmbus_ex.c
   src/HAL/stm32yyxx_hal_gfxmmu.c
+  src/HAL/stm32yyxx_hal_gfxtim.c
   src/HAL/stm32yyxx_hal_gpio.c
   src/HAL/stm32yyxx_hal_gpio_ex.c
   src/HAL/stm32yyxx_hal_gpu2d.c
@@ -71,6 +72,7 @@ add_library(SrcWrapper_bin OBJECT EXCLUDE_FROM_ALL
   src/HAL/stm32yyxx_hal_i2c_ex.c
   src/HAL/stm32yyxx_hal_i2s.c
   src/HAL/stm32yyxx_hal_i2s_ex.c
+  src/HAL/stm32yyxx_hal_i3c.c
   src/HAL/stm32yyxx_hal_icache.c
   src/HAL/stm32yyxx_hal_ipcc.c
   src/HAL/stm32yyxx_hal_irda.c
@@ -152,6 +154,7 @@ add_library(SrcWrapper_bin OBJECT EXCLUDE_FROM_ALL
   src/LL/stm32yyxx_ll_gpio.c
   src/LL/stm32yyxx_ll_hrtim.c
   src/LL/stm32yyxx_ll_i2c.c
+  src/LL/stm32yyxx_ll_i3c.c
   src/LL/stm32yyxx_ll_icache.c
   src/LL/stm32yyxx_ll_lpgpio.c
   src/LL/stm32yyxx_ll_lptim.c

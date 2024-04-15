@@ -11,6 +11,11 @@ ADSR      fADSR;
 Reverb    fReverb;
 
 void setup() {
+    Serial.begin(115200);
+    Serial.println("---------");
+    Serial.println("04.Reverb");
+    Serial.println("---------");
+
     fWavetable.set_waveform(KlangWellen::WAVEFORM_SINE);
     fReverb.set_roomsize(0.9);
 }

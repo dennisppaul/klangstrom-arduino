@@ -1,5 +1,5 @@
-#include "Klangstrom.h"
 #include "KlangNodes.hpp"
+#include "Klangstrom.h"
 #include "KlangstromCard.h"
 
 using namespace klang;
@@ -25,8 +25,9 @@ void print_file_list(vector<String>& pFiles) {
 
 void setup() {
     Serial.begin(115200);
-    Serial.println("--- Example Write Raw Data");
-    Serial.println();
+    Serial.println("-------------------");
+    Serial.println("ExampleWriteRawData");
+    Serial.println("-------------------");
 
     bool           mOpenCardError = Card.begin();
     vector<String> mFiles;
@@ -81,8 +82,7 @@ void loop() {
     }
 }
 
-void audioblock(float* output_signal[LEFT], float* output_signal[RIGHT],
-                float* input_signal[LEFT], float* input_signal[RIGHT]) {
+void audioblock(float** input_signal, float** output_signal) {
     mDAC.process_frame(output_signal[LEFT], output_signal[RIGHT]);
     if (!fBufferUpdated) {
         KLANG_COPY_AUDIO_BUFFER(mBuffer, output_signal[LEFT]);

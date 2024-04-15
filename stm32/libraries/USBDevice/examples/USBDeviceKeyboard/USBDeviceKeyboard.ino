@@ -13,11 +13,10 @@ char mChar = 'a';
 
 void setup() {
     Serial.begin(115200);
-    Serial.println("-------------------");
-    Serial.println("USB Device Keyboard");
-    Serial.println("-------------------");
-    Serial.println(__DATE__);
-    Serial.println(__TIME__);
+    Serial.println("-----------------");
+    Serial.println("USBDeviceKeyboard");
+    Serial.println("-----------------");
+
     USBDevice.init();
 }
 

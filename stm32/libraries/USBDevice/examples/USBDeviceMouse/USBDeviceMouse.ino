@@ -11,11 +11,10 @@ using namespace klangstrom;
 
 void setup() {
     Serial.begin(115200);
-    Serial.println("----------------");
-    Serial.println("USB Device Mouse");
-    Serial.println("----------------");
-    Serial.println(__DATE__);
-    Serial.println(__TIME__);
+    Serial.println("--------------");
+    Serial.println("USBDeviceMouse");
+    Serial.println("--------------");
+
     usb_device_init();
 }
 

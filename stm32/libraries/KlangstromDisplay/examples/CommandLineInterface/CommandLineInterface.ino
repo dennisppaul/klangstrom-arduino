@@ -10,6 +10,11 @@ KlangstromDisplayCLI &CLI     = KlangstromDisplayCLI::create(&Display, &Font_7x1
 
 void setup() {
     Serial.begin(115200);
+    Serial.println("--------------------");
+    Serial.println("CommandLineInterface");
+    Serial.println("--------------------");
+
+    Serial.begin(115200);
 
     Display.begin();
     Display.background(255, 255, 255);

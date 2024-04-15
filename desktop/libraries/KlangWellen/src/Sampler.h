@@ -1,8 +1,8 @@
 /*
- * Wellen
+ * KlangWellen
  *
- * This file is part of the *wellen* library (https://github.com/dennisppaul/wellen).
- * Copyright (c) 2023 Dennis P Paul.
+ * This file is part of the *KlangWellen* library (https://github.com/dennisppaul/klangwellen).
+ * Copyright (c) 2023 Dennis P Paul
  *
  * This library is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,7 +41,6 @@
 #include "KlangWellen.h"
 
 namespace klangwellen {
-
     class SamplerListener {
     public:
         virtual void is_done() = 0;
@@ -50,23 +49,26 @@ namespace klangwellen {
     /**
      * plays back an array of samples at different speeds.
      */
-    template <class BUFFER_TYPE>
+    template<class BUFFER_TYPE>
     class SamplerT {
     public:
-        static const int8_t NO_LOOP_POINT = -1;
+        static constexpr int8_t NO_LOOP_POINT = -1;
 
-        SamplerT() : SamplerT(0) {}
+        SamplerT() : SamplerT(0) {
+        }
 
-        SamplerT(int32_t buffer_length, uint32_t sampling_rate = KlangWellen::DEFAULT_SAMPLING_RATE) : SamplerT(new BUFFER_TYPE[buffer_length], buffer_length, sampling_rate) {
+        explicit SamplerT(int32_t  buffer_length,
+                          uint32_t sampling_rate = KlangWellen::DEFAULT_SAMPLING_RATE) : SamplerT(
+            new BUFFER_TYPE[buffer_length], buffer_length, sampling_rate) {
             fAllocatedBuffer = true;
         }
 
-        SamplerT(BUFFER_TYPE* buffer,
-                 int32_t      buffer_length,
-                 uint32_t     sampling_rate = KlangWellen::DEFAULT_SAMPLING_RATE) : fDirectionForward(true),
-                                                                                fInPoint(0),
-                                                                                fOutPoint(0),
-                                                                                fSpeed(0) {
+        SamplerT(BUFFER_TYPE *  buffer,
+                 const int32_t  buffer_length,
+                 const uint32_t sampling_rate = KlangWellen::DEFAULT_SAMPLING_RATE) : fDirectionForward(true),
+            fInPoint(0),
+            fOutPoint(0),
+            fSpeed(0) {
             fSamplingRate = sampling_rate;
             set_buffer(buffer, buffer_length);
             fBufferIndex        = 0;
@@ -88,11 +90,11 @@ namespace klangwellen {
             }
         }
 
-        void add_listener(SamplerListener* sampler_listener) {
+        void add_listener(SamplerListener *sampler_listener) {
             fSamplerListeners.push_back(sampler_listener);
         }
 
-        bool remove_listener(SamplerListener* sampler_listener) {
+        bool remove_listener(SamplerListener *sampler_listener) {
             for (auto it = fSamplerListeners.begin(); it != fSamplerListeners.end(); ++it) {
                 if (*it == sampler_listener) {
                     fSamplerListeners.erase(it);
@@ -102,7 +104,7 @@ namespace klangwellen {
             return false;
         }
 
-        int32_t get_in() {
+        int32_t get_in() const {
             return fInPoint;
         }
 
@@ -113,51 +115,51 @@ namespace klangwellen {
             fInPoint = in_point;
         }
 
-        int32_t get_out() {
+        int32_t get_out() const {
             return fOutPoint;
         }
 
-        void set_out(int32_t out_point) {
+        void set_out(const int32_t out_point) {
             fOutPoint = out_point > last_index() ? last_index() : (out_point < fInPoint ? fInPoint : out_point);
         }
 
-        float get_speed() {
+        float get_speed() const {
             return fSpeed;
         }
 
-        void set_speed(float speed) {
+        void set_speed(const float speed) {
             fSpeed            = speed;
             fDirectionForward = speed > 0;
             set_frequency(KlangWellen::abs(speed) * fSamplingRate / fBufferLength); /* aka `step_size = speed` */
         }
 
-        void set_frequency(float frequency) {
+        void set_frequency(const float frequency) {
             fFrequency = frequency;
-            fStepSize  = fFrequency / fFrequencyScale * ((float)fBufferLength / fSamplingRate);
+            fStepSize  = fFrequency / fFrequencyScale * (static_cast<float>(fBufferLength) / fSamplingRate);
         }
 
-        float get_frequency() {
+        float get_frequency() const {
             return fFrequency;
         }
 
-        void set_amplitude(float amplitude) {
+        void set_amplitude(const float amplitude) {
             fAmplitude = amplitude;
         }
 
-        float get_amplitude() {
+        float get_amplitude() const {
             return fAmplitude;
         }
 
-        BUFFER_TYPE* get_buffer() {
+        BUFFER_TYPE *get_buffer() {
             return fBuffer;
         }
 
-        int32_t get_buffer_length() {
+        int32_t get_buffer_length() const {
             return fBufferLength;
         }
 
-        void set_buffer(BUFFER_TYPE* buffer, int32_t buffer_length) {
-            fAllocatedBuffer = false;  // TODO huuui, this is not nice and might cause some trouble somewhere
+        void set_buffer(BUFFER_TYPE *buffer, const int32_t buffer_length) {
+            fAllocatedBuffer = false; // TODO huuui, this is not nice and might cause some trouble somewhere
             fBuffer          = buffer;
             fBufferLength    = buffer_length;
             rewind();
@@ -168,52 +170,52 @@ namespace klangwellen {
             fLoopOut = NO_LOOP_POINT;
         }
 
-        void interpolate_samples(bool interpolate_samples) {
+        void interpolate_samples(bool const interpolate_samples) {
             fInterpolateSamples = interpolate_samples;
         }
 
-        bool interpolate_samples() {
+        bool interpolate_samples() const {
             return fInterpolateSamples;
         }
 
-        int32_t get_position() {
-            return (int32_t)fBufferIndex;
+        int32_t get_position() const {
+            return static_cast<int32_t>(fBufferIndex);
         }
 
-        float get_position_normalized() {
+        float get_position_normalized() const {
             return fBufferLength > 0 ? fBufferIndex / fBufferLength : 0.0f;
         }
 
-        float get_position_fractional_part() {
+        float get_position_fractional_part() const {
             return fBufferIndex - get_position();
         }
 
-        bool is_playing() {
+        bool is_playing() const {
             return fIsPlaying;
         }
 
         float process() {
             if (fBufferLength == 0) {
-                notifyListeners();  // "buffer is empty"
+                notifyListeners(); // "buffer is empty"
                 return 0.0f;
             }
 
             if (!fIsPlaying) {
-                notifyListeners();  // "not playing"
+                notifyListeners(); // "not playing"
                 return 0.0f;
             }
 
             validateInOutPoints();
 
             fBufferIndex += fDirectionForward ? fStepSize : -fStepSize;
-            const int32_t mRoundedIndex = (int32_t)fBufferIndex;
+            const int32_t mRoundedIndex = static_cast<int32_t>(fBufferIndex);
 
             const float   mFrac         = fBufferIndex - mRoundedIndex;
             const int32_t mCurrentIndex = wrapIndex(mRoundedIndex);
             fBufferIndex                = mCurrentIndex + mFrac;
 
             if (fDirectionForward ? (mCurrentIndex >= fOutPoint) : (mCurrentIndex <= fInPoint)) {
-                notifyListeners();  // "reached end"
+                notifyListeners(); // "reached end"
                 return 0.0f;
             } else {
                 fIsFlaggedDone = false;
@@ -225,8 +227,10 @@ namespace klangwellen {
             if (fInterpolateSamples) {
                 // TODO evaluate direction?
                 const int32_t mNextIndex  = wrapIndex(mCurrentIndex + 1);
-                const float   mNextSample = fBuffer[mNextIndex];
+                const float   mNextSample = convert_sample(fBuffer[mNextIndex]);
                 mSample                   = mSample * (1.0f - mFrac) + mNextSample * mFrac;
+                // mSample = interpolate_samples_linear(fBuffer, fBufferLength, fBufferIndex);
+                // mSample = interpolate_samples_cubic(fBuffer, fBufferLength, fBufferIndex);
             }
             mSample *= fAmplitude;
 
@@ -234,23 +238,23 @@ namespace klangwellen {
             if (fEdgeFadePadding > 0) {
                 const int32_t mRelativeIndex = fBufferLength - mCurrentIndex;
                 if (mCurrentIndex < fEdgeFadePadding) {
-                    const float mFadeInAmount = (float)mCurrentIndex / fEdgeFadePadding;
+                    const float mFadeInAmount = static_cast<float>(mCurrentIndex) / fEdgeFadePadding;
                     mSample *= mFadeInAmount;
                 } else if (mRelativeIndex < fEdgeFadePadding) {
-                    const float mFadeOutAmount = (float)mRelativeIndex / fEdgeFadePadding;
+                    const float mFadeOutAmount = static_cast<float>(mRelativeIndex) / fEdgeFadePadding;
                     mSample *= mFadeOutAmount;
                 }
             }
             return mSample;
         }
 
-        void process(float* signal_buffer, const uint32_t buffer_length = KLANG_SAMPLES_PER_AUDIO_BLOCK) {
+        void process(float *signal_buffer, const uint32_t buffer_length = KLANG_SAMPLES_PER_AUDIO_BLOCK) {
             for (uint16_t i = 0; i < buffer_length; i++) {
                 signal_buffer[i] = process();
             }
         }
 
-        int32_t get_edge_fading() {
+        int32_t get_edge_fading() const {
             return fEdgeFadePadding;
         }
 
@@ -266,7 +270,7 @@ namespace klangwellen {
             fBufferIndex = fDirectionForward ? fOutPoint : fInPoint;
         }
 
-        bool is_looping() {
+        bool is_looping() const {
             return fEvaluateLoop;
         }
 
@@ -311,7 +315,7 @@ namespace klangwellen {
             }
         }
 
-        void record(float* samples, int32_t num_samples) {
+        void record(float *samples, int32_t num_samples) {
             if (fIsRecording) {
                 for (int32_t i = 0; i < num_samples; i++) {
                     const float sample = samples[i];
@@ -320,7 +324,7 @@ namespace klangwellen {
             }
         }
 
-        bool is_recording() {
+        bool is_recording() const {
             return fIsRecording;
         }
 
@@ -331,7 +335,7 @@ namespace klangwellen {
         uint32_t end_recording() {
             fIsRecording                = false;
             const int32_t mBufferLength = fRecording.size();
-            float*        mBuffer       = new float[mBufferLength];
+            float *       mBuffer       = new float[mBufferLength];
             for (int32_t i = 0; i < mBufferLength; i++) {
                 mBuffer[i] = fRecording[i];
             }
@@ -344,42 +348,42 @@ namespace klangwellen {
             return mBufferLength;
         }
 
-        int32_t get_loop_in() {
+        int32_t get_loop_in() const {
             return fLoopIn;
         }
 
-        void set_loop_in(int32_t loop_in_point) {
+        void set_loop_in(const int32_t loop_in_point) {
             fLoopIn = KlangWellen::clamp(loop_in_point, NO_LOOP_POINT, fBufferLength - 1);
         }
 
-        float get_loop_in_normalized() {
+        float get_loop_in_normalized() const {
             if (fBufferLength < 2) {
                 return 0.0f;
             }
-            return (float)fLoopIn / (fBufferLength - 1);
+            return static_cast<float>(fLoopIn) / (fBufferLength - 1);
         }
 
-        void set_loop_in_normalized(float loop_in_point_normalized) {
-            set_loop_in((int32_t)(loop_in_point_normalized * fBufferLength - 1));
+        void set_loop_in_normalized(const float loop_in_point_normalized) {
+            set_loop_in(static_cast<int32_t>(loop_in_point_normalized * fBufferLength - 1));
         }
 
-        int32_t get_loop_out() {
+        int32_t get_loop_out() const {
             return fLoopOut;
         }
 
-        void set_loop_out(int32_t loop_out_point) {
+        void set_loop_out(const int32_t loop_out_point) {
             fLoopOut = KlangWellen::clamp(loop_out_point, NO_LOOP_POINT, fBufferLength - 1);
         }
 
-        float get_loop_out_normalized() {
+        float get_loop_out_normalized() const {
             if (fBufferLength < 2) {
                 return 0.0f;
             }
-            return (float)fLoopOut / (fBufferLength - 1);
+            return static_cast<float>(fLoopOut) / (fBufferLength - 1);
         }
 
-        void set_loop_out_normalized(float loop_out_point_normalized) {
-            set_loop_out((int32_t)(loop_out_point_normalized * fBufferLength - 1));
+        void set_loop_out_normalized(const float loop_out_point_normalized) {
+            set_loop_out(static_cast<int32_t>(loop_out_point_normalized * fBufferLength - 1));
         }
 
         void note_on() {
@@ -388,7 +392,7 @@ namespace klangwellen {
             enable_loop(true);
         }
 
-        void note_on(uint8_t note, uint8_t velocity) {
+        void note_on(const uint8_t note, const uint8_t velocity) {
             fIsPlaying = true;
             set_frequency(KlangWellen::note_to_frequency(note));
             set_amplitude(KlangWellen::clamp127(velocity) / 127.0f);
@@ -403,61 +407,61 @@ namespace klangwellen {
          * this function can be used to tune a loaded sample to a specific frequency. after the sampler has been tuned the
          * method <code>set_frequency(float)</code> can be used to play the sample at a desired frequency.
          *
-         * @param frequency_scale the assumed frequency of the sampler buffer in Hz
+         * @param tune_frequency the assumed frequency of the sampler buffer in Hz
          */
-        void tune_frequency_to(float tune_frequency) {
+        void tune_frequency_to(const float tune_frequency) {
             fFrequencyScale = tune_frequency;
         }
 
-        void set_duration(float seconds) {
+        void set_duration(const float seconds) {
             if (fBufferLength == 0 || seconds == 0.0f) {
                 return;
             }
-            const float mNormDurationSec = ((float)fBufferLength / (float)fSamplingRate);
+            const float mNormDurationSec = (static_cast<float>(fBufferLength) / static_cast<float>(fSamplingRate));
             const float mSpeed           = mNormDurationSec / seconds;
             set_speed(mSpeed);
         }
 
-        float get_duration() {
+        float get_duration() const {
             if (fBufferLength == 0 || fSpeed == 0.0f) {
                 return 0;
             }
-            const float mNormDurationSec = ((float)fBufferLength / (float)fSamplingRate);
+            const float mNormDurationSec = (static_cast<float>(fBufferLength) / static_cast<float>(fSamplingRate));
             return mNormDurationSec / fSpeed;
         }
 
     private:
-        std::vector<SamplerListener*> fSamplerListeners;
-        std::vector<BUFFER_TYPE>      fRecording;
-        uint32_t                      fSamplingRate;
-        float                         fAmplitude;
-        BUFFER_TYPE*                  fBuffer;
-        int32_t                       fBufferLength;
-        float                         fBufferIndex;
-        bool                          fDirectionForward;
-        int32_t                       fEdgeFadePadding;
-        bool                          fEvaluateLoop;
-        float                         fFrequency;
-        float                         fFrequencyScale;
-        int32_t                       fInPoint;
-        int32_t                       fOutPoint;
-        int32_t                       fLoopIn;
-        int32_t                       fLoopOut;
-        bool                          fInterpolateSamples;
-        bool                          fIsPlaying;
-        float                         fSpeed;
-        float                         fStepSize;
-        bool                          fIsFlaggedDone;
-        bool                          fIsRecording;
-        bool                          fAllocatedBuffer;
+        std::vector<SamplerListener *> fSamplerListeners;
+        std::vector<BUFFER_TYPE>       fRecording;
+        uint32_t                       fSamplingRate;
+        float                          fAmplitude;
+        BUFFER_TYPE *                  fBuffer;
+        int32_t                        fBufferLength;
+        float                          fBufferIndex;
+        bool                           fDirectionForward;
+        int32_t                        fEdgeFadePadding;
+        bool                           fEvaluateLoop;
+        float                          fFrequency;
+        float                          fFrequencyScale;
+        int32_t                        fInPoint;
+        int32_t                        fOutPoint;
+        int32_t                        fLoopIn;
+        int32_t                        fLoopOut;
+        bool                           fInterpolateSamples;
+        bool                           fIsPlaying;
+        float                          fSpeed;
+        float                          fStepSize;
+        bool                           fIsFlaggedDone;
+        bool                           fIsRecording;
+        bool                           fAllocatedBuffer;
 
-        int32_t last_index() {
+        int32_t last_index() const {
             return fBufferLength - 1;
         }
 
         void notifyListeners() {
             if (!fIsFlaggedDone) {
-                for (SamplerListener* l : fSamplerListeners) {
+                for (SamplerListener *l: fSamplerListeners) {
                     l->is_done();
                 }
             }
@@ -486,7 +490,7 @@ namespace klangwellen {
             }
         }
 
-        int32_t wrapIndex(int32_t i) {
+        int32_t wrapIndex(int32_t i) const {
             /* check if in loop concept viable i.e loop in- and output points are set */
             if (fEvaluateLoop) {
                 if (fLoopIn != NO_LOOP_POINT && fLoopOut != NO_LOOP_POINT) {
@@ -511,30 +515,30 @@ namespace klangwellen {
             return i;
         }
 
-        inline float convert_sample(const BUFFER_TYPE pRawSample) {
+        float convert_sample(const BUFFER_TYPE pRawSample) {
             return pRawSample;
         }
     };
 
-    template <>
-    float klangwellen::SamplerT<uint8_t>::convert_sample(const uint8_t pRawSample) {
-        const static float mScale = 1.0 / ((1 << 8) - 1);
-        const float        mRange = pRawSample * mScale;
+    template<>
+    inline float klangwellen::SamplerT<uint8_t>::convert_sample(const uint8_t pRawSample) {
+        constexpr static float mScale = 1.0 / ((1 << 8) - 1);
+        const float            mRange = pRawSample * mScale;
         return mRange * 2.0 - 1.0;
     }
 
-    template <>
-    float klangwellen::SamplerT<int8_t>::convert_sample(const int8_t pRawSample) {
-        const static float mScale  = 1.0 / ((1 << 8) - 1);
-        const float        mOffset = pRawSample + (1 << 7);
-        const float        mRange  = mOffset * mScale;
+    template<>
+    inline float klangwellen::SamplerT<int8_t>::convert_sample(const int8_t pRawSample) {
+        constexpr static float mScale  = 1.0 / ((1 << 8) - 1);
+        const float            mOffset = pRawSample + (1 << 7);
+        const float            mRange  = mOffset * mScale;
         return mRange * 2.0 - 1.0;
     }
 
-    template <>
-    float klangwellen::SamplerT<uint16_t>::convert_sample(const uint16_t pRawSample) {
-        const static float mScale = 1.0 / ((1 << 16) - 1);
-        const float        mRange = pRawSample * mScale;
+    template<>
+    inline float klangwellen::SamplerT<uint16_t>::convert_sample(const uint16_t pRawSample) {
+        constexpr static float mScale = 1.0 / ((1 << 16) - 1);
+        const float            mRange = pRawSample * mScale;
         return mRange * 2.0 - 1.0;
         // @note(below: less precise but faster)
         // const float s      = pRawSample;
@@ -543,18 +547,18 @@ namespace klangwellen {
         // return a;
     }
 
-    template <>
-    float klangwellen::SamplerT<int16_t>::convert_sample(const int16_t pRawSample) {
-        const static float mScale  = 1.0 / ((1 << 16) - 1);
-        const float        mOffset = pRawSample + (1 << 15);
-        const float        mRange  = mOffset * mScale;
+    template<>
+    inline float klangwellen::SamplerT<int16_t>::convert_sample(const int16_t pRawSample) {
+        constexpr static float mScale  = 1.0 / ((1 << 16) - 1);
+        const float            mOffset = pRawSample + (1 << 15);
+        const float            mRange  = mOffset * mScale;
         return mRange * 2.0 - 1.0;
     }
 
-    using SamplerUI8  = SamplerT<uint8_t>;
-    using SamplerI8   = SamplerT<int8_t>;
+    using SamplerUI8 = SamplerT<uint8_t>;
+    using SamplerI8 = SamplerT<int8_t>;
     using SamplerUI16 = SamplerT<uint16_t>;
-    using SamplerI16  = SamplerT<int16_t>;
-    using SamplerF32  = SamplerT<float>;
-    using Sampler     = SamplerT<float>;
-}  // namespace klangwellen
+    using SamplerI16 = SamplerT<int16_t>;
+    using SamplerF32 = SamplerT<float>;
+    using Sampler = SamplerT<float>;
+} // namespace klangwellen

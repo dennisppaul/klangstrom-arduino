@@ -12,6 +12,11 @@ Ramp                    fRampFilterFrequency;
 Ramp                    fRampFrequency;
 
 void setup() {
+    Serial.begin(115200);
+    Serial.println("-------");
+    Serial.println("15.Ramp");
+    Serial.println("-------");
+
     fWavetable.set_waveform(KlangWellen::WAVEFORM_SAWTOOTH);
     fWavetable.set_frequency(27.5);
     fFilter.set_resonance(0.3);

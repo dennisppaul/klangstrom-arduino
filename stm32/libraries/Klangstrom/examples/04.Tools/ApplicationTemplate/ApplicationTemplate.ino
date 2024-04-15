@@ -1,7 +1,7 @@
 #include "KlangNodes.hpp"
 #include "Klangstrom.h"
 
-// @TODO add `TaskScheduler`
+// @TODO merge with `SchedulingTasks`
 
 using namespace klang;
 using namespace klangstrom;
@@ -10,12 +10,17 @@ NodeVCOFunction mVCO;
 NodeDAC         mDAC;
 bool            toggle_amplitude = false;
 
-float   output_buffer_left[KLANG_SAMPLES_PER_AUDIO_BLOCK];
-float   output_buffer_right[KLANG_SAMPLES_PER_AUDIO_BLOCK];
+float         output_buffer_left[KLANG_SAMPLES_PER_AUDIO_BLOCK];
+float         output_buffer_right[KLANG_SAMPLES_PER_AUDIO_BLOCK];
 volatile bool schedule_audio = false;
 volatile bool schedule_beat  = false;
 
 void setup() {
+    Serial.begin(115200);
+    Serial.println("-------------------");
+    Serial.println("ApplicationTemplate");
+    Serial.println("-------------------");
+
     Klang::lock();
     Klang::connect(mVCO, Node::CH_OUT_SIGNAL, mDAC, NodeDAC::CH_IN_SIGNAL);
     mVCO.set_amplitude(0.0);

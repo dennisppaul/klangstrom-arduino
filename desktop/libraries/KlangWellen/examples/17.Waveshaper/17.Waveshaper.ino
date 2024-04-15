@@ -9,6 +9,11 @@ Waveshaper fWaveshaper;
 uint8_t    fWaveshaperType = Waveshaper::SIN;
 
 void setup() {
+    Serial.begin(115200);
+    Serial.println("-------------");
+    Serial.println("17.Waveshaper");
+    Serial.println("-------------");
+
     fWavetable.set_waveform(KlangWellen::WAVEFORM_SINE);
     fWavetable.set_amplitude(4.0);
     fWavetable.set_frequency(55);

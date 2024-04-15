@@ -1,3 +1,5 @@
+// @TODO Delay is broken, fix it!
+
 #include "ADSR.h"
 #include "Delay.h"
 #include "KlangWellen.h"
@@ -12,6 +14,11 @@ ADSR      fADSR;
 Delay     fDelay;
 
 void setup() {
+    Serial.begin(115200);
+    Serial.println("--------");
+    Serial.println("08.Delay");
+    Serial.println("--------");
+
     fWavetable.set_waveform(KlangWellen::WAVEFORM_TRIANGLE);
     fWavetable.set_amplitude(0.4);
     fDelay.set_echo_length(0.05);
@@ -34,7 +41,7 @@ void beat(uint32_t beat_counter) {
 }
 
 void audioblock(float** input_signal, float** output_signal) {
-    // /* process as float ( mono, single sample ) ... */
+    /* process as float ( mono, single sample ) ... */
     // for (uint16_t i = 0; i < KLANG_SAMPLES_PER_AUDIO_BLOCK; i++) {
     //     output_signal[LEFT][i]  = fDelay.process(fADSR.process(fWavetable.process()));
     //     output_signal[RIGHT][i] = output_signal[LEFT][i];

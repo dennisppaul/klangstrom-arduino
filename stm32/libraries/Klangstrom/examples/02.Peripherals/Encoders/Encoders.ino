@@ -7,6 +7,7 @@ void setup() {
     Serial.println("--------");
     Serial.println("Encoders");
     Serial.println("--------");
+
     register_encoder_rotated(encoder_rotated);
     register_encoder_pressed(encoder_pressed);
     register_encoder_released(encoder_released);

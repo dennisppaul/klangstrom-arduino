@@ -10,6 +10,11 @@ Envelope  fFrequencyEnvelope;
 Envelope  fAmplitudeEnvelope;
 
 void setup() {
+    Serial.begin(115200);
+    Serial.println("-----------");
+    Serial.println("16.Envelope");
+    Serial.println("-----------");
+
     fWavetable.set_waveform(KlangWellen::WAVEFORM_SAWTOOTH);
     fWavetable.set_frequency(55.0);
     fWavetable.set_amplitude(0.0);

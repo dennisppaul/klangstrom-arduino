@@ -6,8 +6,13 @@ using namespace klangwellen;
 Sampler fSampler{KlangWellen::DEFAULT_SAMPLING_RATE / 8};
 
 void setup() {
-    for (size_t i = 0; i < fSampler.get_buffer_length(); i++) {
-        float ratio              = 1.0 - (float)i / fSampler.get_buffer_length();
+    Serial.begin(115200);
+    Serial.println("----------");
+    Serial.println("07.Sampler");
+    Serial.println("----------");
+
+    for (int32_t i = 0; i < fSampler.get_buffer_length(); i++) {
+        float ratio = 1.0 - (float)i / fSampler.get_buffer_length();
         // fSampler.get_buffer()[i] = KlangWellen::random() * 0.2f * ratio * 127; // for SamplerI8
         fSampler.get_buffer()[i] = KlangWellen::random() * 0.2f * ratio;
     }

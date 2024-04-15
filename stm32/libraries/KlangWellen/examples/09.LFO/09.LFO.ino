@@ -9,6 +9,11 @@ Wavetable               fWavetable;
 FilterLowPassMoogLadder fFilter;
 
 void setup() {
+        Serial.begin(115200);
+    Serial.println("------");
+    Serial.println("09.LFO");
+    Serial.println("------");
+
     fLFO.set_waveform(KlangWellen::WAVEFORM_SINE);
     fLFO.set_oscillation_range(55, 1000);
     fLFO.set_frequency(0.5);

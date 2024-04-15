@@ -1,6 +1,8 @@
 #include "Arduino.h"
 #include "TaskScheduler.h"
 
+// @TODO merge with `ApplicationTemplate`
+
 using namespace klangstrom;
 
 TaskScheduler fTaskScheduler;
@@ -10,7 +12,6 @@ void setup() {
     Serial.println("---------------");
     Serial.println("SchedulingTasks");
     Serial.println("---------------");
-    Serial.println("---");
 
     fTaskScheduler.schedule_priority_task(exec_priority_task);
     fTaskScheduler.schedule_task(exec_normal_task);

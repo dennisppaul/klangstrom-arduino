@@ -42,8 +42,9 @@ void read_WAV_header() {
 
 void setup() {
     Serial.begin(115200);
-    Serial.println("--- Example WAV File Info");
-    Serial.println();
+    Serial.println("------------------");
+    Serial.println("ExampleWAVFileInfo");
+    Serial.println("------------------");
 
     bool           mOpenCardError = Card.begin();
     vector<String> mFiles;

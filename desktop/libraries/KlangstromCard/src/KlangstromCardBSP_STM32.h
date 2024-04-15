@@ -82,14 +82,15 @@ namespace klangstrom {
     private:
         SPISettings m_spiSettings;
         SPIClass    mSPI = SPIClass(
-               SDCARD_SPI_MOSI,
-               SDCARD_SPI_MISO,
-               SDCARD_SPI_SCK,
-               SDCARD_SPI_CS);
+            SDCARD_SPI_MOSI,
+            SDCARD_SPI_MISO,
+            SDCARD_SPI_SCK,
+            SDCARD_SPI_CS);
     };
 
     class KlangstromCardBSP_STM32 : public KlangstromCard {
     public:
+        KlangstromCardBSP_STM32(){};
         bool begin();
         bool begin(const char *pFolderPath);
         void get_file_list(vector<String> &pFiles, bool pIncludeHiddenFiles = false);
@@ -98,7 +99,7 @@ namespace klangstrom {
         void close();
         void print_WAV_header(WaveHeader_t *mHeader);
 
-        int  create_file(const String pFileName);
+        int create_file(const String pFileName);
 
     protected:
         int  BSP_read_block(uint8_t *pReadBuffer, uint32_t pReadBufferSize);

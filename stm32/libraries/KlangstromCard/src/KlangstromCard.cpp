@@ -19,12 +19,22 @@
 
 #include "KlangstromDefinesArduino.h"
 
-#if KLST_ARCH == KLST_ARCH_MCU
+#define KLST_ARCH_MCU     1
+#define KLST_ARCH_CPU     2
+#define KLST_ARCH_DESKTOP 2
+#define KLST_ARCH_VCV     3
+#define KLST_ARCH_PLUGIN  3
+
+#ifndef KLST_ARCH
+#warning "KLST_ARCH not defined"
+#endif
+
+#if (KLST_ARCH == KLST_ARCH_MCU)
 #include "KlangstromCardBSP_STM32.h"
 klangstrom::KlangstromCard *CardPtr = new klangstrom::KlangstromCardBSP_STM32();
 #elif KLST_ARCH == KLST_ARCH_CPU
 #include "KlangstromCardBSP_SDL.h"
 klangstrom::KlangstromCard *CardPtr = new klangstrom::KlangstromCardBSP_SDL();
 #else
-#warning "KLST_ARCH not defined"
+#warning "KLST_ARCH not defined properly"
 #endif

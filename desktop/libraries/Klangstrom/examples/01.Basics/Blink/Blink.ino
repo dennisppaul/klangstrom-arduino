@@ -8,6 +8,11 @@ NodeVCOFunction mVCO;
 NodeDAC         mDAC;
 
 void setup() {
+    Serial.begin(115200);
+    Serial.println("-----");
+    Serial.println("Blink");
+    Serial.println("-----");
+
     Klang::lock();
     Klang::connect(mVCO, Node::CH_OUT_SIGNAL, mDAC, NodeDAC::CH_IN_SIGNAL);
     mVCO.set_amplitude(0.5);

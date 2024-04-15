@@ -9,9 +9,14 @@ using namespace klangwellen;
 
 SAM       fSAM(48000);
 Wavetable fWavetable;
-Vocoder   fVocoder{13, 3}; // this still works on KLST_SHEEP but only with `fastest` compiler option
+Vocoder   fVocoder{13, 3};  // this still works on KLST_SHEEP but only with `fastest` compiler option
 
 void setup() {
+    Serial.begin(115200);
+    Serial.println("----------");
+    Serial.println("13.Vocoder");
+    Serial.println("----------");
+
     fSAM.speak("hello world");
 
     fWavetable.set_waveform(KlangWellen::WAVEFORM_SAWTOOTH);

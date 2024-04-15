@@ -3,6 +3,11 @@
 using namespace klangstrom;
 
 void setup() {
+    Serial.begin(115200);
+    Serial.println("-----------");
+    Serial.println("PassThrough");
+    Serial.println("-----------");
+
     option(KLST_OPTION_AUDIO_INPUT, KLST_MIC);
 }
 
