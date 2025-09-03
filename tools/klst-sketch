@@ -1,0 +1,112 @@
+#! /bin/zsh
+
+A_CLI=/opt/homebrew/bin/arduino-cli
+UPLOAD=
+SKETCH_PATH=
+BOARD=KLST_EMU
+PLATFORM_PRE_PREFIX=klangstrom-arduino
+PLATFORM_PREFIX=desktop
+PLATFROM_OPTIONS=
+VERBOSE=
+DRYRUN=
+
+print_usage() {
+	echo "Usage: klst-sketch [OPTION]... [SKETCH]"
+	echo 
+	echo "Options:"
+	echo "  -h,  --help                      print this help"
+	echo "  -b,  --board=BOARD_NAME          specify board e.g KLST_EMU, KLST_SHEEP, KLST_CORE"
+	echo "  -s,  --sketch=PATH_TO_SKETCH     specify path to sketch"
+	echo "  -u,  --upload                    set to upload/run sketch after compilation"
+	echo "  -v,  --verbose                   set to verbose compilation"
+	echo "  --osc                            enable OSC in emulator"
+	echo "  --dryrun                         prepare command and exit"
+	echo "  --fast                           set compiler to produce fastest code"
+	echo "  --usb                            set board to act as USB Host and/or Device:"
+	echo "                                       DEVICE_MOUSE"
+	echo "                                       DEVICE_KEYBOARD"
+	echo "                                       DEVICE_MIDI"
+	echo "                                       HOST"
+	echo "                                       HOST_DEVICE_MOUSE"
+	echo "                                       HOST_DEVICE_KEYBOARD"
+	echo "                                       HOST_DEVICE_MIDI"
+}
+
+for i in "$@"; do
+    case $i in
+        -h|--help) 
+         print_usage
+         exit 0 
+         ;;
+        -b=*|--board=*) 
+         BOARD="${i#*=}"
+         shift 
+         ;;
+        -s=*|--sketch=*)
+         SKETCH_PATH="${i#*=}"
+         shift 
+         ;;
+        -u|--upload)
+         UPLOAD=-u
+         shift 
+         ;;
+        -v|--verbose)
+         VERBOSE=-v
+         shift 
+         ;;
+        --osc)
+         PLATFROM_OPTIONS=$PLATFROM_OPTIONS:'OSC=enable'
+         shift 
+         ;;
+        --dryrun)
+         DRYRUN=true
+         shift 
+         ;;
+        --fast)
+         PLATFROM_OPTIONS=$PLATFROM_OPTIONS:'opt=o3std'
+         shift 
+         ;;
+        --usb=*)
+         DEVICE_NAME="${i#*=}"
+         PLATFROM_OPTIONS=$PLATFROM_OPTIONS:'usb='$DEVICE_NAME
+         shift 
+         ;;
+        -*|--*) echo "unknown option $1"
+         print_usage
+         exit 1 
+         ;;
+        *) 
+         SKETCH_PATH=$1 
+         ;;
+    esac
+done
+
+if [ $BOARD != "KLST_EMU" ]; then
+    PLATFORM_PREFIX=stm32
+fi
+
+FULL_BOARD_DESCRIPTOR=$PLATFORM_PRE_PREFIX:$PLATFORM_PREFIX:$BOARD
+
+if [ -n "$FULL_BOARD_DESCRIPTOR" ]; then
+    FULL_BOARD_DESCRIPTOR=$FULL_BOARD_DESCRIPTOR$PLATFROM_OPTIONS
+fi
+
+if [ $BOARD = "KLST_EMU" ]; then
+    FULL_BOARD_DESCRIPTOR=$FULL_BOARD_DESCRIPTOR":audioblock=2048"
+fi
+
+
+if [ $DRYRUN ] || [ "-v" = $VERBOSE ]; then
+	echo "A_CLI      :" $A_CLI 
+	echo "UPLOAD     :" $UPLOAD 
+	echo "VERBOSE    :" $VERBOSE 
+	echo "PLATFORM   :" $FULL_BOARD_DESCRIPTOR
+	echo "SKETCH_PATH:" $SKETCH_PATH
+	echo "COMMAND    :" "$A_CLI compile $UPLOAD $VERBOSE -b $FULL_BOARD_DESCRIPTOR $SKETCH_PATH"
+fi
+
+if [ $DRYRUN ]; then
+	exit
+fi
+
+$A_CLI compile --warnings more $UPLOAD $VERBOSE -b $FULL_BOARD_DESCRIPTOR $SKETCH_PATH

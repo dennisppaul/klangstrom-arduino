@@ -1,0 +1,48 @@
+#! /bin/zsh
+
+SCREEN=/usr/bin/screen
+BAUD=115200
+DEVICE=
+
+# trying to find serial port
+SEARCH_STRING="tty.usb"
+SEARCH_DIRECTORY="/dev"
+MATCHING_FILES=$(find "$SEARCH_DIRECTORY" -name "$SEARCH_STRING*" 2> /dev/null)
+if [ -n "$MATCHING_FILES" ]; then
+  DEVICE=$(realpath $(echo "$MATCHING_FILES" | head -n 1))
+fi
+
+print_usage() {
+	echo "Usage: klst-serialmonitor [OPTION]... [DEVICE]"
+	echo 
+	echo "Options:"
+	echo "  -h,  --help                      print this help"
+	echo "  -b,  --baud=BAUD_RATE            specify BAUD rate"
+	echo "  -d,  --device=PATH_TO_DEVICE     specify path to serial device"
+}
+
+for i in "$@"; do
+    case $i in
+        -h|--help) 
+         print_usage
+         exit 0 
+         ;;
+        -b=*|--baud=*) 
+         BAUD="${i#*=}"
+         shift 
+         ;;
+        -d=*|--device=*)
+         DEVICE="${i#*=}"
+         shift 
+         ;;
+        -*|--*) echo "unknown option $1"
+         print_usage
+         exit 1 
+         ;;
+        *) 
+         DEVICE=$1 
+         ;;
+    esac
+done
+
+$SCREEN $DEVICE $BAUD 
