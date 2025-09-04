@@ -62,7 +62,7 @@ public:
         g.translate(fPosition.x, fPosition.y);
 
         g.fill(1.0f);
-        g.textSize(KlangstromEmulator::DEFAULT_FONT_SIZE * 0.5f);
+        g.textSize(umfeld::KlangstromEmulator::DEFAULT_FONT_SIZE * 0.5f);
         g.text("DISPLAY", -1, -2);
         g.noFill();
 
@@ -88,8 +88,8 @@ public:
         TouchEvent touchevent;
         touchevent.number_of_touches = 1;
         touchevent.gesture_id        = 0;
-        touchevent.x[0]              = KlangstromEmulator::instance()->mouseX - fPosition.x;
-        touchevent.y[0]              = KlangstromEmulator::instance()->mouseY - fPosition.y;
+        touchevent.x[0]              = umfeld::mouseX - fPosition.x;
+        touchevent.y[0]              = umfeld::mouseY - fPosition.y;
         display_touch_event(&touchevent);
     }
 
@@ -143,15 +143,15 @@ bool display_init_BSP(TouchPanelMode touch_panel_mode) {
     if (!initialized) {
         initialized = true;
         display     = new DrawableDisplay(KLST_EMU_DISPLAY_WIDTH, KLST_EMU_DISPLAY_HEIGHT);
-        display->set_position(KlangstromEmulator::instance()->width - (KLST_EMU_DISPLAY_WIDTH + 20), 50);
-        KlangstromEmulator::instance()->register_drawable(display);
+        display->set_position(umfeld::KlangstromEmulator::instance()->getWidth() - (KLST_EMU_DISPLAY_WIDTH + 20), 50);
+        umfeld::KlangstromEmulator::instance()->register_drawable(display);
     }
     return true;
 }
 
 void display_deinit() {
     if (initialized && display != nullptr) {
-        KlangstromEmulator::instance()->unregister_drawable(display);
+        umfeld::KlangstromEmulator::instance()->unregister_drawable(display);
         delete display;
         display = nullptr;
     }

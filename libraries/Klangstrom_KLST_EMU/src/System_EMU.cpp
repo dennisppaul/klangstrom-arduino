@@ -84,7 +84,7 @@ void system_init_BSP() {
     console_status("----------------------------------------------------------------------------------------------------");
     console_status("system init: registering client at emulator");
     console_status("----------------------------------------------------------------------------------------------------");
-    KlangstromEmulator::instance()->register_client(&client);
+    umfeld::KlangstromEmulator::instance()->register_client(&client);
 }
 
 uint32_t system_get_ticks_BSP() {

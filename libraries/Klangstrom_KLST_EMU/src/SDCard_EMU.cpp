@@ -101,7 +101,7 @@ bool sdcard_init() {
             return false;
         }
         initialized = true;
-        KlangstromEmulator::instance()->register_drawable(new DrawableSDCard());
+        umfeld::KlangstromEmulator::instance()->register_drawable(new DrawableSDCard());
         console_status("SDCard: set path to '%s'", mFolderPath);
         return true;
     }

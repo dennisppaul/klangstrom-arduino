@@ -53,12 +53,12 @@ public:
             g.rect(0, ii * mHeight - mHeight * 0.5f, mWidth, mHeight);
             g.line(0, ii * mHeight, mWidth, ii * mHeight);
             g.stroke(1.0f);
-            for (int j = mStrafe; j < DEFAULT_FRAMES_PER_BUFFER; j += mStrafe) {
+            for (int j = mStrafe; j < KLST_EMU_AUDIO_BLOCK; j += mStrafe) {
                 const float mSample0 = mBuffers[i][j - mStrafe] * 0.5f;
                 const float mSample1 = mBuffers[i][j] * 0.5f;
-                const float x0       = mWidth * (float) (j - mStrafe) / DEFAULT_FRAMES_PER_BUFFER;
+                const float x0       = mWidth * (float) (j - mStrafe) / KLST_EMU_AUDIO_BLOCK;
                 const float y0       = ii * mHeight + mSample0 * mHeight;
-                const float x1       = mWidth * (float) j / DEFAULT_FRAMES_PER_BUFFER;
+                const float x1       = mWidth * (float) j / KLST_EMU_AUDIO_BLOCK;
                 const float y1       = ii * mHeight + mSample1 * mHeight;
                 g.line(x0, y0, x1, y1);
                 g.line(x0, y0, x0, ii * mHeight);
@@ -72,12 +72,12 @@ public:
             g.line(0, ii * mHeight, mWidth, ii * mHeight);
             g.stroke(1.0f);
             mBuffers = umfeld::KlangstromEmulator::instance()->get_audio_input_buffers();
-            for (int j = mStrafe; j < DEFAULT_FRAMES_PER_BUFFER; j += mStrafe) {
+            for (int j = mStrafe; j < KLST_EMU_AUDIO_BLOCK; j += mStrafe) {
                 const float mSample0 = mBuffers[i][j - mStrafe] * 0.5f;
                 const float mSample1 = mBuffers[i][j] * 0.5f;
-                const float x0       = mWidth * static_cast<float>(j - mStrafe) / DEFAULT_FRAMES_PER_BUFFER;
+                const float x0       = mWidth * static_cast<float>(j - mStrafe) / KLST_EMU_AUDIO_BLOCK;
                 const float y0       = ii * mHeight + mSample0 * mHeight;
-                const float x1       = mWidth * static_cast<float>(j) / DEFAULT_FRAMES_PER_BUFFER;
+                const float x1       = mWidth * static_cast<float>(j) / KLST_EMU_AUDIO_BLOCK;
                 const float y1       = ii * mHeight + mSample1 * mHeight;
                 g.line(x0, y0, x1, y1);
                 g.line(x0, y0, x0, ii * mHeight);
