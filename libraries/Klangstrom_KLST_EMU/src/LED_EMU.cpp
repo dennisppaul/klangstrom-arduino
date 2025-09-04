@@ -27,7 +27,7 @@ class DrawableLEDs : public Drawable {
 public:
     DrawableLEDs(LED* leds) : mLEDs(leds) {}
 
-    void draw(PGraphics* g) override {
+    void draw(umfeld::PGraphics* g) override {
         g->pushMatrix();
         g->translate(25, 80);
         const float mRadius  = 40;
@@ -58,7 +58,7 @@ void led_init_BSP() {
     static bool initialized = false;
     if (!initialized) {
         initialized = true;
-        KlangstromEmulator::instance()->register_drawable(new DrawableLEDs(led_data()));
+        umfeld::KlangstromEmulator::instance()->register_drawable(new DrawableLEDs(led_data()));
     }
 }
 

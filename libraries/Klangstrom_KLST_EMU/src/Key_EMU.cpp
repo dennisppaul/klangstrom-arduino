@@ -32,6 +32,8 @@
 #include "Console.h"
 #include "stm32_hal.h"
 
+using namespace umfeld;
+
 class DrawableKey final : public Drawable {
 public:
     explicit DrawableKey(Key* key) : fKey(key) {

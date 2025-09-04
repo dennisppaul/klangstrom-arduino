@@ -39,7 +39,6 @@
 #include "KlangstromEmulator.h"
 #include "Display.h"
 #include "DisplayDrawInterface.h"
-#include "UmgebungFunctions.h"
 
 class DrawableDisplay final : public Drawable {
 public:
@@ -49,15 +48,15 @@ public:
     DrawableDisplay(const uint16_t display_width,
                     const uint16_t display_height) : width(display_width),
                                                      height(display_height), fFrameBuffers{} {
-        fFrameBuffers[0] = new PImage(display_width, display_height, 4);
-        fFrameBuffers[1] = new PImage(display_width, display_height, 4);
+        fFrameBuffers[0] = new umfeld::PImage(display_width, display_height);
+        fFrameBuffers[1] = new umfeld::PImage(display_width, display_height);
 
         // subscribe to `mouseMoved()`
     }
 
-    void draw(PGraphics* g_ptr) override {
-        PGraphics& g      = *g_ptr;
-        PImage&    buffer = *fFrameBuffers[fActiveBuffer];
+    void draw(umfeld::PGraphics* g_ptr) override {
+        umfeld::PGraphics& g      = *g_ptr;
+        umfeld::PImage&    buffer = *fFrameBuffers[fActiveBuffer];
 
         g.pushMatrix();
         g.translate(fPosition.x, fPosition.y);
@@ -75,7 +74,7 @@ public:
             display_swap_buffer();
             mouseMoved(); // TODO move this to subscription model
             display_update_event();
-            buffer.updatePixels();
+            buffer.updatePixels(g_ptr);
             g.image(&buffer, 0, 0);
         }
 
@@ -103,7 +102,7 @@ public:
     }
 
     void clear(const uint32_t color) const {
-        const PImage&  buffer       = *fFrameBuffers[fActiveBuffer];
+        const umfeld::PImage&  buffer       = *fFrameBuffers[fActiveBuffer];
         uint32_t*      pixel_buffer = buffer.pixels;
         const uint32_t length       = buffer.width * buffer.height;
         for (uint32_t i = 0; i < length; i++) {
@@ -112,12 +111,12 @@ public:
     }
 
     void set_pixel(const uint16_t x, const uint16_t y, const uint32_t color) const {
-        const PImage& buffer = *fFrameBuffers[fActiveBuffer];
+        const umfeld::PImage& buffer = *fFrameBuffers[fActiveBuffer];
         buffer.set(x, y, color);
     }
 
     uint32_t get_pixel(const uint16_t x, const uint16_t y) const {
-        const PImage& buffer = *fFrameBuffers[fActiveBuffer];
+        const umfeld::PImage& buffer = *fFrameBuffers[fActiveBuffer];
         return buffer.get(x, y);
     }
 
@@ -126,9 +125,9 @@ public:
     }
 
 private:
-            DrawableDisplay() = delete;
-    PVector fPosition;
-    PImage* fFrameBuffers[2];
+    DrawableDisplay() = delete;
+    umfeld::PVector fPosition;
+    umfeld::PImage* fFrameBuffers[2];
     uint8_t fActiveBuffer = 0;
     bool    fDisplayOn    = true;
 };
@@ -241,7 +240,7 @@ void display_set_pixel_alpha_BSP(const uint16_t x, const uint16_t y, const uint3
     const uint8_t  r                  = static_cast<uint8_t>((GET_RED(color_ARGB) * alpha + GET_RED(current_color_ARGB) * inv_alpha));
     const uint8_t  g                  = static_cast<uint8_t>((GET_GREEN(color_ARGB) * alpha + GET_GREEN(current_color_ARGB) * inv_alpha));
     const uint8_t  b                  = static_cast<uint8_t>((GET_BLUE(color_ARGB) * alpha + GET_BLUE(current_color_ARGB) * inv_alpha));
-    display->set_pixel(x, y, umgebung::color(r / 255.0f, g / 255.0f, b / 255.0f));
+    display->set_pixel(x, y, umfeld::color(r / 255.0f, g / 255.0f, b / 255.0f));
 }
 
 uint32_t display_get_pixel_BSP(const uint16_t x, const uint16_t y) { return ABGR_TO_ARGB(display->get_pixel(x, y)); }

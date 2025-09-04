@@ -8,7 +8,7 @@
 ## Install Emulator (WIP)
 
 - install [Umfeld](https://github.com/dennisppaul/umfeld) with installer script `/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/dennisppaul/umfeld/refs/heads/main/install.sh)"`
-- ( klangstrom-emulator as library? )
+- @TODO( maybe add klangstrom-emulator as library? )
 
 ## Structure
 
@@ -38,6 +38,4 @@ klangstrom-arduino
     ├── KLST_PANDA 
     └── KLST_CATERPILLAR
 ```
-
-- [ ] TODO add emulator
 

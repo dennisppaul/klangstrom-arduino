@@ -27,6 +27,8 @@
 #include "System.h"
 #include "Console.h"
 
+using namespace umfeld;
+
 void KlangstromEmulatorClient::process_device(KlangstromEmulatorAudioDevice* device) {
     // TODO check if we should use double buffering here or if we just use normal buffer i.e `CALLBACK_FULL_COMPLETE`
     device->get_audiodevice()->peripherals->callback_tx(device->get_audiodevice(), CALLBACK_FULL_COMPLETE);
@@ -117,13 +119,13 @@ bool KlangstromEmulatorClient::handle_audiodevice(float** input, float** output,
     //     - mono output is mapped to both LEFT and RIGHT, stereo output is mapped to channel LEFT and RIGHT each, 3 channels are mapped to LEFT, CENTER;, RIGHT, etcetera
     // TODO handle cases where number of output and input channels do not match.
     // TODO especially when device has or expects more channels than audio system
-    if (audioblock.output_channels > audio_output_channels) {
-        println("output channels mismatch: device output channels (", static_cast<int>(audioblock.output_channels), ") must match audio system output channels (", audio_output_channels, ")");
+    if (audioblock.output_channels > umfeld::audio_output_channels) {
+        println("output channels mismatch: device output channels (", static_cast<int>(audioblock.output_channels), ") must match audio system output channels (", umfeld::audio_output_channels, ")");
         return true;
     }
 
-    if (audioblock.input_channels > audio_input_channels && audioblock.input_channels > 2) {
-        println("input channels mismatch: device input channels (", static_cast<int>(audioblock.input_channels), ") must match audio system input channels (", audio_input_channels, ")");
+    if (audioblock.input_channels > umfeld::audio_input_channels && audioblock.input_channels > 2) {
+        println("input channels mismatch: device input channels (", static_cast<int>(audioblock.input_channels), ") must match audio system input channels (", umfeld::audio_input_channels, ")");
         return true;
     }
 

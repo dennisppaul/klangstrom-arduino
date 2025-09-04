@@ -36,7 +36,7 @@ class DrawableSDCard : public Drawable {
 public:
     DrawableSDCard() {}
 
-    void draw(PGraphics* g) override {
+    void draw(umfeld::PGraphics* g) override {
         g->pushMatrix();
         g->translate(0, 0);
         if (mCardDetected) {

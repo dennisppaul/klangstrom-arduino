@@ -28,8 +28,8 @@ class DrawableAudioDevice final : public Drawable {
 public:
     explicit DrawableAudioDevice(AudioDevice* audiodevice) : fAudioDevice(audiodevice) {}
 
-    void draw(PGraphics* g_ptr) override {
-        PGraphics& g = *g_ptr;
+    void draw(umfeld::PGraphics* g_ptr) override {
+        umfeld::PGraphics& g = *g_ptr;
 
         g.stroke(1.0f);
         g.noFill();
@@ -41,13 +41,13 @@ public:
 
         if (fAudioDevice->peripherals->is_paused) {
             g.fill(1.0f);
-            g.textSize(KlangstromEmulator::DEFAULT_FONT_SIZE * 0.5f);
-            g.text("PAUSED", 3, -mHeight / 2 + KlangstromEmulator::DEFAULT_FONT_SIZE * 0.5f + 2);
+            g.textSize(umfeld::KlangstromEmulator::DEFAULT_FONT_SIZE * 0.5f);
+            g.text("PAUSED", 3, -mHeight / 2 + umfeld::KlangstromEmulator::DEFAULT_FONT_SIZE * 0.5f + 2);
             g.noFill();
         }
 
-        float** mBuffers = KlangstromEmulator::instance()->get_audio_output_buffers(); // TODO get buffer from each device
-        for (int i = 0; i < audio_output_channels; i++) {
+        float** mBuffers = umfeld::KlangstromEmulator::instance()->get_audio_output_buffers(); // TODO get buffer from each device
+        for (int i = 0; i < umfeld::audio_output_channels; i++) {
             const auto ii = static_cast<float>(i);
             g.stroke(1, 0.5f);
             g.rect(0, ii * mHeight - mHeight * 0.5f, mWidth, mHeight);
@@ -65,13 +65,13 @@ public:
             }
         }
         g.translate(0, mHeight * 2 + 10);
-        for (int i = 0; i < audio_input_channels; i++) {
+        for (int i = 0; i < umfeld::audio_input_channels; i++) {
             const auto ii = static_cast<float>(i);
             g.stroke(1, 0.5f);
             g.rect(0, ii * mHeight - mHeight * 0.5f, mWidth, mHeight);
             g.line(0, ii * mHeight, mWidth, ii * mHeight);
             g.stroke(1.0f);
-            mBuffers = KlangstromEmulator::instance()->get_audio_input_buffers();
+            mBuffers = umfeld::KlangstromEmulator::instance()->get_audio_input_buffers();
             for (int j = mStrafe; j < DEFAULT_FRAMES_PER_BUFFER; j += mStrafe) {
                 const float mSample0 = mBuffers[i][j - mStrafe] * 0.5f;
                 const float mSample1 = mBuffers[i][j] * 0.5f;
@@ -144,8 +144,8 @@ void audiodevice_init_device_BSP(AudioDevice* audiodevice) {
         audiodevice->peripherals->callback_rx    = rx_input_callback;
         audiodevice->peripherals->callback_tx    = tx_output_callback;
         audiodevice->peripherals->callback_error = error_callback;
-        KlangstromEmulator::instance()->register_audio_device(audiodevice);
-        KlangstromEmulator::instance()->register_drawable(new DrawableAudioDevice(audiodevice));
+        umfeld::KlangstromEmulator::instance()->register_audio_device(audiodevice);
+        umfeld::KlangstromEmulator::instance()->register_drawable(new DrawableAudioDevice(audiodevice));
         audiodevice_pause(audiodevice);
     }
 }

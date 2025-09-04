@@ -61,7 +61,7 @@ void serialdevice_send(const SerialDevice* serialdevice, const uint8_t* data, co
     msg.add(serialdevice->device_id);
     msg.add(std::string{data, data + length}); // NOTE does not work with C-style string
     msg.add(length);
-    KlangstromEmulator::instance()->osc_send(msg);
+    umfeld::KlangstromEmulator::instance()->osc_send(msg);
 }
 
 bool serialdevice_init_BSP(SerialDevice* serialdevice) {
@@ -104,8 +104,8 @@ bool serialdevice_init_BSP(SerialDevice* serialdevice) {
     // TODO in hardware implementation this would require the client to intialize hardware manually
     // NOTE client needs to set peripherals manually
 
-    KlangstromEmulator::instance()->register_serial_device(serialdevice);
-    KlangstromEmulator::instance()->register_drawable(new DrawableSerialDevice(serialdevice));
+    umfeld::KlangstromEmulator::instance()->register_serial_device(serialdevice);
+    umfeld::KlangstromEmulator::instance()->register_drawable(new DrawableSerialDevice(serialdevice));
     return mDeviceInitialized;
 }
 
