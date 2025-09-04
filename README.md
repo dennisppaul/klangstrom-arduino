@@ -1,7 +1,8 @@
 # Klangstrom for Arduino
 
 - install [Arduino IDE](https://www.arduino.cc/en/software/#ide)
-- in Arduino IDE at `Tools > Board:... > Board Manager...` ( `CMD+SHIFT+B` ) install `STM32 MCU based board`
+- start *Arduino IDE**
+- install board definitions. go to `Tools > Board:... > Board Manager...` select `STM32 MCU based board`
 - install klangstrom with installer script `/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/dennisppaul/klangstrom-arduino/refs/heads/main/install.sh)"` ( <- WIP needs testing )
 
 ## Install Emulator (WIP)
@@ -33,7 +34,10 @@ klangstrom-arduino
 │   ├── link_variant_files.sh
 │   ├── klst-update-variant.sh
 │   └── stm32duino.config
-└── boards # variants files added to STM32duino via script 
-    ├── klangstrom-stm32-standalone # WIP whole repo or copy just `variants` + `tools` 
-    └── klangstrom-emulator-standalone # WIP whole repo or copy just `emulator` to `hardware`
+└── variants # variants files added to STM32duino via script 
+    ├── KLST_PANDA 
+    └── KLST_CATERPILLAR
 ```
+
+- [ ] TODO add emulator
+
