@@ -1,6 +1,6 @@
 # RELEASE NOTES
 
-## v0.1.0 (2025-09-21)
+## v1.0.0 (2025-09-21)
 
 - this release drops support for older boards and focuses on KLST_PANDA ( and KLST_CATERPILLAR as a feature-reduced spin off )
 - moved project to GitHub *organization* at https://github.com/Klangstrom
@@ -8,3 +8,4 @@
     - klangstrom-arduino
     - klangstrom-hardware
     - klangstrom-libraries
+- the API is completely rewritten and now incompatible with prior version
