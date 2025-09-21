@@ -31,11 +31,11 @@ WEAK void display_touch_event(TouchEvent* touchevent) {}
 Callback_0_VOID          fUpdateCallback = display_update_event;
 Callback_1_TOUCHEVENTPTR fTouchCallback  = display_touch_event;
 
-bool fIsDoubleBuffer = false;
+bool is_double_buffer = false;
 
 bool display_init(const bool double_buffered, const TouchPanelMode touch_panel_mode) {
-    fIsDoubleBuffer = double_buffered;
-    if (!fIsDoubleBuffer) {
+    is_double_buffer = double_buffered;
+    if (!is_double_buffer) {
         console_status("display is using single buffer mode");
     }
     return display_init_BSP(touch_panel_mode);
@@ -62,7 +62,7 @@ void display_fire_update_callback() {
 }
 
 bool display_is_double_buffered() {
-    return fIsDoubleBuffer;
+    return is_double_buffer;
 }
 
 #ifdef __cplusplus

@@ -56,6 +56,15 @@ void                       system_reset_cycles();                    // implemen
 uint32_t                   system_get_cycles();                      // implemented as BSP
 uint32_t                   system_clock_frequency();                 // implemented as BSP
 float                      system_cycles_to_micros(uint32_t cycles);
+void                       system_external_memory_init(uintptr_t base_address, size_t total_size); // called in 'system_init_BSP()'
+void                       system_external_memory_reset();
+size_t                     system_external_memory_available();
+size_t                     system_external_memory_used();
+bool                       system_external_memory_is_in_range(const void* pointer);
+void*                      system_external_memory_allocate(size_t size);
+inline float*              system_external_memory_allocate_float_array(const size_t size) { return static_cast<float*>(system_external_memory_allocate(size * sizeof(float))); }
+inline uint32_t*           system_external_memory_allocate_uint32_array(const size_t size) { return static_cast<uint32_t*>(system_external_memory_allocate(size * sizeof(uint32_t))); }
+void*                      system_external_memory_allocate_aligned(size_t size, size_t alignment);
 
 /**
  * @brief initialize the default audio codec and starts it

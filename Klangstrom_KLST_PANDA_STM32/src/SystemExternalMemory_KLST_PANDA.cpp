@@ -36,7 +36,7 @@ extern OSPI_HandleTypeDef hospi1;
 //#define EXT_MEM __attribute__((section(".external_memory")))
 //#define NUM_SAMPLES (48000 * 20)
 //EXT_MEM float m_array[NUM_SAMPLES];
-void externalmemory_init() {
+void external_memory_init() {
     OSPI_HyperbusCmdTypeDef  sCommand;
     OSPI_MemoryMappedTypeDef sMemMappedCfg;
 
@@ -59,14 +59,14 @@ void externalmemory_init() {
     }
 }
 
-void externalmemory_deinit() {}
+void external_memory_deinit() {}
 
 /* S70KL1281 memory */
 
 #define SDRAM_ADDRESS_START 0x90000000
 #define SDRAM_SIZE 0x1000000
 
-void externalmemory_test() {
+void external_memory_test() {
     uint32_t counter;
     uint32_t start_time;
     uint32_t stop_time;

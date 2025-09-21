@@ -37,42 +37,51 @@ using namespace umfeld;
 
 class DrawableKey final : public Drawable {
 public:
-    explicit DrawableKey(Key* key) : fKey(key) {
-        fPositionX = oPositionX;
-        oPositionX += umfeld::KlangstromEmulator::DEFAULT_FONT_SIZE;
+    float key_widget_position_x = 20;
+    float key_widget_position_y = 38 * 16;
+
+    explicit DrawableKey(Key* key) : key_ptr(key) {
+        position_x = o_position_x;
+        o_position_x += umfeld::KlangstromEmulator::DEFAULT_FONT_SIZE;
     }
 
     void draw(PGraphics* g_ptr) override {
-        PGraphics& g = *g_ptr;
+        PGraphics& graphics = *g_ptr;
 
-        g.pushMatrix();
-        g.translate(512 + fPositionX, 200);
+        graphics.pushMatrix();
+        graphics.translate(key_widget_position_x + position_x, key_widget_position_y);
 
-        g.stroke(1.0f);
-        if (fKey->pressed) {
-            g.fill(1.0f);
+        graphics.fill(1.0f);
+        graphics.noStroke();
+        graphics.textSize(KlangstromEmulator::DEFAULT_FONT_SIZE * 0.5f);
+        graphics.text("KEYS", -1, -2);
+        graphics.noFill();
+
+        graphics.stroke(1.0f);
+        if (key_ptr->pressed) {
+            graphics.fill(1.0f);
         } else {
-            g.noFill();
+            graphics.noFill();
         }
         constexpr float mWidth = KlangstromEmulator::DEFAULT_FONT_SIZE - 4;
-        g.rect(0, 0, mWidth, mWidth);
+        graphics.rect(0, 0, mWidth, mWidth);
 
-        g.fill(1.0f);
-        g.noStroke();
-        g.textSize(KlangstromEmulator::DEFAULT_FONT_SIZE * 0.5);
-        const std::string mID = std::to_string(fKey->device_id);
-        g.text(mID.c_str(), mWidth / 2 - 4, KlangstromEmulator::DEFAULT_FONT_SIZE * 0.5f + 3);
+        graphics.fill(1.0f);
+        graphics.noStroke();
+        graphics.textSize(KlangstromEmulator::DEFAULT_FONT_SIZE * 0.5);
+        const std::string mID = std::to_string(key_ptr->device_id);
+        graphics.text(mID.c_str(), mWidth / 2 - 4, KlangstromEmulator::DEFAULT_FONT_SIZE * 0.5f + 3);
 
-        g.popMatrix();
+        graphics.popMatrix();
     }
 
 private:
-    Key*         fKey;
-    float        fPositionX;
-    static float oPositionX;
+    Key*         key_ptr;
+    float        position_x;
+    static float o_position_x;
 };
 
-float DrawableKey::oPositionX = 0;
+float DrawableKey::o_position_x = 0;
 
 #ifdef __cplusplus
 extern "C" {

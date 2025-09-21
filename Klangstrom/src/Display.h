@@ -98,6 +98,7 @@ int16_t            display_get_width();                                   // imp
 int16_t            display_get_height();                                  // implemented as BSP
 void               display_set_backlight(float brightness);               // implemented as BSP
 void               display_enable_automatic_update(bool sync_to_v_blank); // implemented as BSP
+void               display_request_reload();                              // implemented as BSP
 void               display_swap_buffer();                                 // implemented as BSP
 void               display_switch_on();                                   // implemented as BSP
 void               display_switch_off();                                  // implemented as BSP

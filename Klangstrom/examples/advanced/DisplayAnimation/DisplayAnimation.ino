@@ -27,7 +27,6 @@ public:
     uint16_t y;
 };
 
-// std::vector<PVector> points;
 constexpr uint16_t MAX_POINTS     = 64;
 uint16_t           points_counter = 0;
 PVector            points[MAX_POINTS];
@@ -39,7 +38,7 @@ void setup() {
     system_init();
 
     display_init(true, POLLING);
-    display_set_backlight(0.5f);
+    display_set_backlight(0.85f);
     display_enable_automatic_update(true);
 }
 
@@ -55,23 +54,23 @@ void loop() {
 uint8_t move = 0;
 
 void display_update_event() {
-    draw_clear(GRAY(0x00));
+    draw_clear(KLST_DISPLAY_GRAY(0x00));
 
-    draw_rect_fill(30, 30, 20, 20, RGB(0xFF, 0x00, 0x00));
-    draw_rect_fill(50, 30, 20, 20, RGB(0x00, 0xFF, 0x00));
-    draw_rect_fill(70, 30, 20, 20, RGB(0x00, 0x00, 0xFF));
-    draw_rect_fill(display_get_width() - 40, display_get_height() - 40, 20, 20, GRAY(0xFF));
-    draw_rect_fill(x, y, 20, 20, RGBA(0xFF, 0xFF, 0xFF, 0x80));
+    draw_rect_fill(30, 30, 20, 20, KLST_DISPLAY_RGB(0xFF, 0x00, 0x00));
+    draw_rect_fill(50, 30, 20, 20, KLST_DISPLAY_RGB(0x00, 0xFF, 0x00));
+    draw_rect_fill(70, 30, 20, 20, KLST_DISPLAY_RGB(0x00, 0x00, 0xFF));
+    draw_rect_fill(display_get_width() - 40, display_get_height() - 40, 20, 20, KLST_DISPLAY_GRAY(0xFF));
+    draw_rect_fill(x, y, 20, 20, KLST_DISPLAY_RGBA(0xFF, 0xFF, 0xFF, 0x80));
     draw_rect_fill(x + 5, y + 5, 40, 40, 0x80FF8000);
 
     for (int i = 0; i < 25; ++i) {
-        draw_rect_fill(x + (i % 5) * 30, y + i / 5 * 30, 20, 20, RGB(0xFF, 0xFF, 0xFF));
+        draw_rect_fill(x + (i % 5) * 30, y + i / 5 * 30, 20, 20, KLST_DISPLAY_RGB(0xFF, 0xFF, 0xFF));
     }
 
-    draw_line_horizontal(0, display_get_height() / 2, display_get_width(), RGB(0xFF, 0xFF, 0xFF));
-    draw_line_vertical(display_get_width() / 2, 0, display_get_height(), RGB(0xFF, 0xFF, 0xFF));
-    draw_line(0, 0, display_get_width(), display_get_height(), RGB(0xFF, 0xFF, 0xFF));
-    draw_line(0, display_get_height(), display_get_width(), 0, RGB(0xFF, 0xFF, 0xFF));
+    draw_line_horizontal(0, display_get_height() / 2, display_get_width(), KLST_DISPLAY_RGB(0xFF, 0xFF, 0xFF));
+    draw_line_vertical(display_get_width() / 2, 0, display_get_height(), KLST_DISPLAY_RGB(0xFF, 0xFF, 0xFF));
+    draw_line(0, 0, display_get_width(), display_get_height(), KLST_DISPLAY_RGB(0xFF, 0xFF, 0xFF));
+    draw_line(0, display_get_height(), display_get_width(), 0, KLST_DISPLAY_RGB(0xFF, 0xFF, 0xFF));
     draw_line_vertical_pattern(0, display_get_height() / 3, display_get_width(), 0b11001100);
 
     draw_stroke(0xFF0000FF);
@@ -79,12 +78,12 @@ void display_update_event() {
     draw_stroke(0xFFFF0000);
     draw_line_horizontal_pattern(0, display_get_height() / 3, display_get_width(), 0b11001100);
 
-    draw_circle_stroke(display_get_width() / 2, display_get_height() / 2, 50, RGB(0xFF, 0xFF, 0xFF));
-    draw_circle_fill(display_get_width() / 2 + 50, display_get_height() / 2, 50, RGB(0x00, 0x80, 0xFF));
-    draw_rect_stroke(display_get_width() / 2 - 50, display_get_height() / 2 - 50, 100, 100, RGB(0xFF, 0xFF, 0xFF));
+    draw_circle_stroke(display_get_width() / 2, display_get_height() / 2, 50, KLST_DISPLAY_RGB(0xFF, 0xFF, 0xFF));
+    draw_circle_fill(display_get_width() / 2 + 50, display_get_height() / 2, 50, KLST_DISPLAY_RGB(0x00, 0x80, 0xFF));
+    draw_rect_stroke(display_get_width() / 2 - 50, display_get_height() / 2 - 50, 100, 100, KLST_DISPLAY_RGB(0xFF, 0xFF, 0xFF));
 
     for (int i = 0; i < MAX_POINTS; ++i) {
-        draw_set_pixel(points[i].x, points[i].y, GRAY(0xFF));
+        draw_set_pixel(points[i].x, points[i].y, KLST_DISPLAY_GRAY(0xFF));
     }
 
     draw_image(IMAGE_DATA,
@@ -92,18 +91,18 @@ void display_update_event() {
                IMAGE_HEIGHT / 2, IMAGE_WIDTH,
                IMAGE_HEIGHT);
 
-    const std::vector<Point> points = {{x, y},
-                                       {200, 130},
-                                       {200, 200},
-                                       {80, 200}};
-    draw_polygon_stroke(points, true, RGB(0xFF, 0xFF, 0xFF));
+    const std::vector<Point> m_points = {{x, y},
+                                         {200, 130},
+                                         {200, 200},
+                                         {80, 200}};
+    draw_polygon_stroke(m_points, true, KLST_DISPLAY_RGB(0xFF, 0xFF, 0xFF));
 
     draw_text(&Font12,
               x, y,
               "hello",
               TextAlign::LEFT,
-              RGB(0xFF, 0x00, 0x00),
-              GRAY_ALPHA(0x00, 0x00));
+              KLST_DISPLAY_RGB(0xFF, 0x00, 0x00),
+              KLST_DISPLAY_GRAY_ALPHA(0x00, 0x00));
 }
 
 void display_touch_event(TouchEvent* touchevent) {

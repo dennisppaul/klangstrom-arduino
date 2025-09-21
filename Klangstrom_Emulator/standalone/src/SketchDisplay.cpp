@@ -1,5 +1,6 @@
+#ifdef SKETCH_DISPLAY
 /**
- * this example demonstrates how to use the display with touch panel
+* this example demonstrates how to use the display with touch panel
  */
 
 #include <vector>
@@ -15,6 +16,8 @@ void setup() {
 
     display_init(false);
     display_set_backlight(0.9f);
+
+    draw_clear(KLST_DISPLAY_RGB(0xFF, 0x80, 0x00));
 }
 
 void loop() {
@@ -41,3 +44,4 @@ void display_touch_event(TouchEvent* touchevent) {
         console_println("      %d    : %d,%d", i, touchevent->x[i], touchevent->y[i]);
     }
 }
+#endif

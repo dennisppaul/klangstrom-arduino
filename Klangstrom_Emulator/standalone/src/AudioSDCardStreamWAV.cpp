@@ -1,5 +1,6 @@
+#ifdef SKETCH_AUDIO_WAV_STREAM
 /**
- * this example demonstrates load and play a WAV file from an SD card.
+ * this example demonstrates how to stream a WAV file from an SD card.
  */
 
 #include "Arduino.h"
@@ -33,7 +34,7 @@ void filter_wav_files(std::vector<std::string>& result_files) {
     }
 }
 
-void load_header(const std::string& filename) {
+void open_file_and_load_header(const std::string& filename) {
     if (wav_load_header(filename)) {
         console_println("%i samples in WAV file", wav_num_sample_frames());
         if (wav_is_open()) {
@@ -73,7 +74,7 @@ void setup() {
             console_println(" - %s", file.c_str());
         }
         console_println("loading first WAV file: %s", wav_files[0].c_str());
-        load_header(wav_files[0]);
+        open_file_and_load_header(wav_files[0]);
         load_all_samples();
     }
 
@@ -113,3 +114,4 @@ void key_event(const Key* key) {
         }
     }
 }
+#endif
