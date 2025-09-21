@@ -49,6 +49,7 @@ class DrawableDisplay final : public Drawable {
 public:
     const float width;
     const float height;
+    float       brightness = 1.0f;
 
     DrawableDisplay(const uint16_t display_width,
                     const uint16_t display_height) : width(display_width),
@@ -60,36 +61,51 @@ public:
     }
 
     void draw(PGraphics* g_ptr) override {
-        PGraphics& g      = *g_ptr;
-        PImage&    buffer = *fFrameBuffers[fActiveBuffer];
+        if (g_ptr == nullptr) {
+            return;
+        }
+        PGraphics& graphics = *g_ptr;
+        PImage&    buffer   = *fFrameBuffers[fActiveBuffer];
 
-        g.pushMatrix();
-        g.translate(fPosition.x, fPosition.y);
+        graphics.pushMatrix();
+        graphics.translate(fPosition.x, fPosition.y);
 
-        g.fill(1.0f);
-        g.textSize(KlangstromEmulator::DEFAULT_FONT_SIZE * 0.5f);
-        g.text("DISPLAY", -1, -2);
-        g.noFill();
+        graphics.fill(1.0f);
+        graphics.noStroke();
+        graphics.textSize(KlangstromEmulator::DEFAULT_FONT_SIZE * 0.5f);
+        graphics.text("DISPLAY", -1, -2);
+        graphics.noFill();
 
         if (!fDisplayOn) {
-            g.fill(0.0f);
-            g.noStroke();
-            g.rect(0, 0, width, height);
+            graphics.fill(0.0f);
+            graphics.noStroke();
+            graphics.rect(0, 0, width, height);
         } else {
-            display_swap_buffer();
+            if (display_is_double_buffered()) {
+                display_swap_buffer();
+            }
             mouseMoved(); // TODO move this to subscription model
             display_update_event();
             buffer.updatePixels(g_ptr);
-            g.image(&buffer, 0, 0);
+            graphics.fill(brightness);
+            graphics.noStroke();
+            graphics.image(&buffer, 0, 0);
         }
 
-        g.stroke(1, 0.5f);
-        g.rect(-1, -1, width + 2, height + 2);
+        graphics.stroke(1);
+        graphics.noFill();
+        graphics.rect(-1, -1, width + 2, height + 2);
 
-        g.popMatrix();
+        graphics.popMatrix();
     }
 
     void mouseMoved() const {
+        // TODO clamp to display size
+        const float x = KlangstromEmulator::instance()->mouseX() - fPosition.x;
+        const float y = KlangstromEmulator::instance()->mouseY() - fPosition.y;
+        if (x < 0 || x >= width || y < 0 || y >= height) {
+            return;
+        }
         TouchEvent touchevent;
         touchevent.number_of_touches = 1;
         touchevent.gesture_id        = 0;
@@ -178,12 +194,19 @@ int16_t display_get_height() {
     return display_ptr->height;
 }
 
-void display_set_backlight(const float brightness) { // TODO implement
-    (void) brightness;
+void display_set_backlight(const float brightness) {
+    if (display_ptr == nullptr) {
+        return;
+    }
+    display_ptr->brightness = brightness;
 }
 
 void display_enable_automatic_update(const bool sync_to_v_blank) { // TODO implement
     (void) sync_to_v_blank;
+}
+
+void display_request_reload() {
+    warning_in_function_once("display_request_reload() called … not implement in KLST_EMU (WIP)");
 }
 
 void display_swap_buffer() {

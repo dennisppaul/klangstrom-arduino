@@ -25,6 +25,14 @@
 #include "Console.h"
 #include "System.h"
 
+#ifndef KLST_PANDA_EXTMEM_SIZE
+#define KLST_PANDA_EXTMEM_SIZE (16 * 1024 * 1024) // 16 MB
+#endif
+
+#ifndef KLST_PANDA_DISPLAY_FRAMEBUFFER_SIZE_IN_BYTES
+#define KLST_PANDA_DISPLAY_FRAMEBUFFER_SIZE_IN_BYTES (KLST_DISPLAY_WIDTH * KLST_DISPLAY_HEIGHT * 4)
+#endif
+
 #ifdef KLST_PERIPHERAL_ENABLE_GPIO
 #include "gpio.h"
 #endif // KLST_PERIPHERAL_ENABLE_GPIO
@@ -75,7 +83,7 @@ static void system_init_BSP_KLST_PANDA_MX_Init_Modules() {
 #if defined(KLST_PERIPHERAL_ENABLE_AUDIODEVICE) || \
     defined(KLST_PERIPHERAL_ENABLE_IDC_SERIAL) ||  \
     defined(KLST_PERIPHERAL_ENABLE_SD_CARD) ||     \
-    defined(KLST_PERIPHERAL_ENABLE_MIDI) ||\
+    defined(KLST_PERIPHERAL_ENABLE_MIDI) ||        \
     defined(KLST_PERIPHERAL_ENABLE_ON_BOARD_MIC)
     MX_DMA_Init();
 #endif // defined(KLST_PERIPHERAL_ENABLE_AUDIODEVICE) || defined(KLST_PERIPHERAL_ENABLE_IDC_SERIAL) || defined(KLST_PERIPHERAL_ENABLE_MIDI)
@@ -83,8 +91,8 @@ static void system_init_BSP_KLST_PANDA_MX_Init_Modules() {
 #ifdef KLST_PERIPHERAL_ENABLE_EXTERNAL_MEMORY
     MX_OCTOSPI1_Init();
     HAL_Delay(100);
-    externalmemory_init(); // TODO move somewhere better
-//    externalmemory_test();
+    external_memory_init(); // TODO move somewhere better
+//    external_memory_test();
 #endif // KLST_PERIPHERAL_ENABLE_EXTERNAL_MEMORY
 }
 
@@ -146,6 +154,9 @@ void system_init_BSP() {
     system_init_BSP_KLST_PANDA_MX_Init_Modules();
 #ifdef KLST_PANDA_STM32
     system_deactivate_display();
+    const uintptr_t base_address = KLST_DISPLAY_FRAMEBUFFER_ADDRESS + 2u * KLST_PANDA_DISPLAY_FRAMEBUFFER_SIZE_IN_BYTES;
+    const size_t    total_size   = KLST_PANDA_EXTMEM_SIZE - (base_address - KLST_DISPLAY_FRAMEBUFFER_ADDRESS);
+    system_external_memory_init(base_address, total_size);
 #endif // KLST_PANDA_STM32
 }
 

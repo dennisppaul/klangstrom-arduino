@@ -22,6 +22,16 @@
 #include <KlangstromEmulator.h>
 #ifdef KLST_ARCH_IS_EMU
 
+#ifndef KLST_EMU_EXTMEM_SIZE
+#ifdef KLST_PANDA_EMU
+#define KLST_EMU_EXTMEM_SIZE (16 * 1024 * 1024) // 16 MB
+#elif defined(KLST_CATERPILLAR_EMU)
+#define KLST_EMU_EXTMEM_SIZE (0)
+#elif
+#define KLST_EMU_EXTMEM_SIZE (0)
+#endif
+#endif
+
 #include <chrono>
 #include "System.h"
 #include "Console.h"
@@ -80,12 +90,25 @@ AudioDevice* system_init_audiocodec() {
 }
 
 static KlangstromEmulatorClient client;
+static uint8_t*                 emu_extmem_block = nullptr;
+static uintptr_t                emu_base         = 0;
+static size_t                   emu_size         = 0;
 
 void system_init_BSP() {
     console_status("----------------------------------------------------------------------------------------------------");
     console_status("system init: registering client at emulator");
     console_status("----------------------------------------------------------------------------------------------------");
     umfeld::KlangstromEmulator::instance()->register_client(&client);
+
+    /* emulate external memory */
+    if (emu_extmem_block) { free(emu_extmem_block); }
+    emu_extmem_block = static_cast<uint8_t*>(malloc(KLST_EMU_EXTMEM_SIZE));
+    if (!emu_extmem_block) {
+        return;
+    }
+    emu_base = reinterpret_cast<uintptr_t>(emu_extmem_block);
+    emu_size = KLST_EMU_EXTMEM_SIZE;
+    system_external_memory_init(emu_base, emu_size);
 }
 
 uint32_t system_get_ticks_BSP() {

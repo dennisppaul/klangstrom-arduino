@@ -153,8 +153,9 @@ void HAL_LTDC_LineEventCallback(LTDC_HandleTypeDef* hltdc_handle) {
             //
             // cleanup_memory();
             // cleanup_dma2d();
+
             display_swap_buffer();
-            //
+
             // __HAL_DMA2D_ENABLE_IT(&hdma2d, DMA2D_IT_TC | DMA2D_IT_TE | DMA2D_IT_CE);
             // __HAL_LTDC_ENABLE_IT(hltdc_handle, LTDC_IT_LI);
             // hdma2d.Lock        = HAL_UNLOCKED;
@@ -164,6 +165,10 @@ void HAL_LTDC_LineEventCallback(LTDC_HandleTypeDef* hltdc_handle) {
             enable_reload();
         }
     }
+}
+
+void display_request_reload() {
+    enable_reload();
 }
 
 void display_deinit() {
@@ -219,7 +224,9 @@ void display_LTDC_init() {
     /* fill framebuffers with black */
     for (int i = 0; i < KLST_DISPLAY_FRAMEBUFFER_SIZE; i++) {
         reinterpret_cast<uint8_t*>(FRAMEBUFFER1_ADDR)[i] = 0x00;
-        reinterpret_cast<uint8_t*>(FRAMEBUFFER2_ADDR)[i] = 0x00;
+        if (display_is_double_buffered()) {
+            reinterpret_cast<uint8_t*>(FRAMEBUFFER2_ADDR)[i] = 0x00;
+        }
     }
 }
 

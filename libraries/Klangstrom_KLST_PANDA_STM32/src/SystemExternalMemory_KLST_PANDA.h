@@ -29,9 +29,9 @@
 extern "C" {
 #endif
 
-void externalmemory_init();   // implemented as BSP
-void externalmemory_test();   // implemented as BSP
-void externalmemory_deinit(); // implemented as BSP
+void external_memory_init();   // implemented as BSP
+void external_memory_test();   // implemented as BSP
+void external_memory_deinit(); // implemented as BSP
 
 #ifdef __cplusplus
 }

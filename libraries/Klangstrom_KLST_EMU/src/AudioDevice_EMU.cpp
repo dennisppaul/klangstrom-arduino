@@ -56,6 +56,12 @@ public:
         constexpr float    mWidth                     = 512 - 20;
         constexpr uint16_t sample_frame_buffer_length = KLST_EMU_AUDIO_BLOCK;
 
+        graphics.fill(1.0f);
+        graphics.noStroke();
+        graphics.textSize(KlangstromEmulator::DEFAULT_FONT_SIZE * 0.5f);
+        graphics.text("AUDIO", -1, -2 - mHeight / 2);
+        graphics.noFill();
+
         if (fAudioDevice->peripherals->is_paused) {
             graphics.fill(1.0f);
             graphics.noStroke();
