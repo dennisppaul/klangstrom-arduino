@@ -4,9 +4,90 @@ title: Installation
 permalink: /installation/
 ---
 
-⚠️⚠️⚠️ WIP info is outdated ⚠️⚠️⚠️
+- install [Arduino IDE](https://www.arduino.cc/en/software/#ide) (v2.3.6) and/or [`arduino-cli`](https://docs.arduino.cc/arduino-cli/installation/) (v1.3.1)
+- install [STM32duino / Arduino_Core_STM32](https://github.com/stm32duino/Arduino_Core_STM32?tab=readme-ov-file#getting-started) (v2.11.0)
+- install [Umfeld for Arduino](https://github.com/dennisppaul/umfeld-arduino) (v2.4.1)
 
----
+note, the installation below assumes that the paths to the *Arduino Sketchbook* folder and the *Arduino15 Data* folder are known. in a default installation the folders are in the following locations:
+
+```sh
+# macOS
+ARDUINO_SKETCHBOOK_PATH=~/Documents/Arduino/
+ARDUINO15_DATA_PATH=~/Library/Arduino15/
+# Linux
+ARDUINO_SKETCHBOOK_PATH=~/Arduino/
+ARDUINO15_DATA_PATH=~/.arduino15/
+# Windows
+ARDUINO_SKETCHBOOK_PATH=C:\Users\<username>\Documents\Arduino\
+ARDUINO15_DATA_PATH=C:\Users\<username>\AppData\Local\Arduino15\
+```
+
+- download latest release of [Klangstrom for Arduino](https://github.com/Klangstrom/klangstrom-arduino/archive/refs/tags/v1.0.0.zip) (v1.0.0) as `.zip` and unpack:
+    ```sh
+    klangstrom-arduino
+    ├── libraries
+    │   ├── CODING-STYLE.md
+    │   ├── Klangstrom
+    │   ├── Klangstrom_Emulator
+    │   ├── Klangstrom_KLST_EMU
+    │   ├── Klangstrom_KLST_PANDA_STM32
+    │   ├── Klangstrom_KLST_PANDA_STM32_CubeMX
+    │   ├── LICENSE
+    │   ├── README.md
+    │   ├── USBDevices
+    │   └── USBHost
+    ├── variants
+    │   ├── KLST_CATERPILLAR
+    │   └── KLST_PANDA
+    └── ...
+    ```
+- copy all subfolders of `klangstrom-arduino/libraries/` into `ARDUINO_SKETCHBOOK_PATH/libraries/`:
+    ```sh
+    ARDUINO_SKETCHBOOK_PATH
+    ├── hardware
+    │   ├── ...
+    │   └── umfeld-arduino
+    └── libraries
+        ├── ...
+        ├── Klangstrom
+        ├── Klangstrom_Emulator
+        ├── Klangstrom_KLST_EMU
+        ├── Klangstrom_KLST_PANDA_STM32
+        └── Klangstrom_KLST_PANDA_STM32_CubeMX
+    ```
+- now add board definitions to *STM32duino*
+- open `variants` folder:
+    ```sh
+    klangstrom-arduino/variants
+    ├── KLST_CATERPILLAR
+    │   ├── KLST_CATERPILLAR-boards.txt
+    │   └── variant
+    │       ├── PeripheralPins_KLST_CATERPILLAR.c
+    │       ├── variant_KLST_CATERPILLAR.cpp
+    │       ├── variant_KLST_CATERPILLAR.h
+    │       └── variant_KLST_CATERPILLAR.ld
+    └── KLST_PANDA
+        ├── KLST_PANDA-boards.txt
+        └── variant
+            ├── PeripheralPins_KLST_PANDA.c
+            ├── variant_KLST_PANDA.cpp
+            ├── variant_KLST_PANDA.h
+            └── variant_KLST_PANDA.ld
+    ```
+- find `STM32H723ZGT` folder in STM32duino in *Arduino* library folder at: `ARDUINO15_DATA_PATH/packages/STMicroelectronics/hardware/stm32/2.11.0/variants/STM32H7xx/H723Z\(E-G\)T_H730ZBT_H733ZGT/`
+- copy all files from `klangstrom-arduino/variants/KLST_PANDA/variant/` + `klangstrom-arduino/variants/KLST_CATERPILLAR/variant/` to `STM32H723ZGT` folder:
+- next open `boards.txt` file in `ARDUINO15_DATA_PATH/packages/STMicroelectronics/hardware/stm32/2.11.0/`
+- append content of `KLST_CATERPILLAR-boards.txt` and `KLST_PANDA-boards.txt` to `board.txt` file and save
+- now either restart *Arduino IDE* and look under `Tools > Board > STM32 MCU based boards` for `Klangstrom KLST_...` boards
+- or test with `arduino-cli` in console with `arduino-cli board listall | grep KLST` if boards are present:
+    ```sh
+    Klangstrom Emulator                        umfeld-arduino:umfeld:KLST_EMU
+    Klangstrom KLST_CATERPILLAR (STM32H723ZGT) STMicroelectronics:stm32:KLST_CATERPILLAR
+    Klangstrom KLST_PANDA (STM32H723ZGT)       STMicroelectronics:stm32:KLST_PANDA
+    ```
+
+<!--
+⚠️⚠️⚠️ WIP info is outdated ⚠️⚠️⚠️
 
 begin by installing [Arduino](https://www.arduino.cc/en/software) (v1.8.19+).
 
@@ -68,3 +149,4 @@ occasionally the *STM32CubeProgrammer* installer application fails to start prop
 - unzip downloaded file in download folder ( e.g `en.stm32cubeprg-mac_v2-11-0.zip` )
 - open command line interface (CLI) ( e.g to use `Terminal.app` go to `Finder`, open *Utilities* folder via menu ( `Go > Utilities` ) or by pressing `CMD+SHIFT+U`, and start `Terminal.app` )
 - run installer from CLI ( e.g `~/Downloads/en.stm32cubeprg-mac_v2-11-0/SetupSTM32CubeProgrammer-2.11.0.app/Contents/MacOs/SetupSTM32CubeProgrammer-2_11_0_macos` )
+-->

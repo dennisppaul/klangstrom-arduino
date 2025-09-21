@@ -64,6 +64,3 @@ void audioblock(AudioBlock* audio_block) {
         audio_block->output[1][i] = audio_block->input[1][i] + oscillator_right.process();
     }
 }
-
-// arduino-cli compile -u -b klangstrom:emulator:KLST_EMU:board=KLST_PANDA AudioCodec
-// arduino-cli compile -u -b STMicroelectronics:stm32:KLST_PANDA AudioCodec

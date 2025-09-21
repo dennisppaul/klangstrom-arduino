@@ -9,6 +9,8 @@ index: 101
 
 ```c
 void                       system_init()
+AudioDevice*               system_init_audiocodec();
+
 void                       system_register_audiodevice(AudioDevice* audiodevice)
 ArrayList_AudioDevicePtr*  system_get_registered_audiodevices()
 void                       system_register_serialdevice(SerialDevice* serialdevice)
@@ -17,7 +19,6 @@ void                       system_register_gpio_listener(GPIOListener* gpio_list
 ArrayList_GPIOListenerPtr* system_get_registered_gpio_listener()
 void                       system_register_timer(Timer* timer)
 ArrayList_TimerPtr*        system_get_registered_timer()
-uint16_t                   system_get_unique_device_ID()
 bool                       system_is_initialized()
 uint32_t                   system_get_ticks()
 void                       system_enable_cycle_counter(bool enable)
@@ -25,8 +26,19 @@ void                       system_reset_cycles()
 uint32_t                   system_get_cycles()
 uint32_t                   system_clock_frequency()
 float                      system_cycles_to_micros(uint32_t cycles)
-AudioDevice*               system_init_audiocodec();
+
+void                       system_external_memory_init(uintptr_t base_address, size_t total_size)
+void                       system_external_memory_reset()
+size_t                     system_external_memory_available()
+size_t                     system_external_memory_used()
+bool                       system_external_memory_is_in_range(const void* pointer)
+void*                      system_external_memory_allocate(size_t size)
+inline float*              system_external_memory_allocate_float_array(const size_t size)
+inline uint32_t*           system_external_memory_allocate_uint32_array(const size_t size)
+void*                      system_external_memory_allocate_aligned(size_t size, size_t alignment)
 ```
+
+⚠️⚠️⚠️ WIP ⚠️⚠️⚠️
 
 - `system_jump_to_bootloader()` still working?
 - DEMO mit `PeripheralConfiguration_CUSTOM.h`?!? ( "activate specfic peripherals:" )
@@ -46,7 +58,6 @@ AudioDevice*               system_init_audiocodec();
     #define KLST_PERIPHERAL_ENABLE_EXTERNAL_MEMORY
     #define KLST_PERIPHERAL_ENABLE_DISPLAY
     ```
-- GPIO?!?
 
 ## Example
 

@@ -17,13 +17,13 @@ void setup() {
 }
 
 void loop() {
-    led_toggle(0);
-    led_set(1, fLEDIntensity / 255.0);
+    led_toggle(LED_LEFT);
+    led_set(LED_RIGHT, fLEDIntensity / 255.0);
     fLEDIntensity += 16;
 
     console_timestamp(true);
-    console_println("LED 00: %f", led_get(0));
-    console_println("LED 01: %f", led_get(1));
+    console_println("LED_LEFT : %f", led_get(LED_LEFT));
+    console_println("LED_RIGHT: %f", led_get(LED_RIGHT));
 
     delay(500);
 }

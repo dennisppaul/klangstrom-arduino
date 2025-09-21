@@ -6,18 +6,21 @@ layout: home
 
 ![KLST_PANDA]({{ site.baseurl }}{% link assets/2024-03-06-KLST_PANDA-middle.jpg %})
 
-## Quickstart Guide
+## Quick Start
 
-- install [Arduino IDE](https://www.arduino.cc/en/software/#ide)
-- install [STM32duino / Arduino_Core_STM32](https://github.com/stm32duino/Arduino_Core_STM32?tab=readme-ov-file#getting-started)
+⚠️⚠️⚠️ WIP *Quick Start* does not work ATM, see [Installation](/installation) instead ⚠️⚠️⚠️
+
+- install [Arduino IDE](https://www.arduino.cc/en/software/#ide) (v2.3.6)
+- install [STM32duino / Arduino_Core_STM32](https://github.com/stm32duino/Arduino_Core_STM32?tab=readme-ov-file#getting-started) (v2.11.0)
+- install [Umfeld for Arduino](https://github.com/dennisppaul/umfeld-arduino) (v2.4.1)
 - open console and copy-paste [klangstrom-arduino](https://github.com/Klangstrom/klangstrom-arduino) installer below:
 
-⚠️⚠️⚠️ WIP does not work ATM ⚠️⚠️⚠️
 ```sh
+# ⚠️⚠️⚠️ WIP does not work ATM ⚠️⚠️⚠️
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Klangstrom/klangstrom-arduino/main/install.sh)"
 ```
 
-see [Installation](/installation) for detailed installatin instructions.
+see [Installation](/installation) for detailed installation instructions.
 
 ## Operation Manual
 

@@ -1,5 +1,5 @@
 /**
- * this example demonstrates how to use the debugging console to print messages to the serial console.
+ * this example demonstrates how to use the on-board microphone.
 */
 
 #include "Arduino.h"

@@ -1,5 +1,5 @@
 /**
- * this example demonstrates how to use the debugging console to print messages to the serial console.
+ * this example demonstrates how to use the ( analog ) MIDI interface.
 */
 
 #include <string>
@@ -8,7 +8,6 @@
 #include "System.h"
 #include "Console.h"
 #include "MIDI.h"
-#include "KlangstromMIDIParser.h"
 
 SerialDevice* serial_IDC_01;
 
