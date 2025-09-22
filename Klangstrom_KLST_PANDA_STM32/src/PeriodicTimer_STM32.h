@@ -20,26 +20,26 @@
 #pragma once
 
 #include "Klangstrom.h"
-#ifdef KLST_ARCH_IS_EMU
+#ifdef KLST_ARCH_IS_STM32
 
-#include <stdint.h>
-#include "HardwareTimer.h"
+#include "main.h"
+#include "tim.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
 typedef void (*Callback_0_VOID)();
-typedef void (*Callback_1_TIMERPTR)(Timer*);
 
-typedef struct TimerPeripherals {
-    uint16_t       timer_number;
-    HardwareTimer* timer_handle;
-    // Callback_1_TIMERPTR callback;
-} TimerPeripherals;
+typedef struct PeriodicTimerPeripherals {
+    uint16_t           timer_number;
+    TIM_HandleTypeDef* timer_handle;
+    uint32_t           period;
+    uint32_t           prescaler;
+} PeriodicTimerPeripherals;
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif // KLST_ARCH_IS_EMU
+#endif // KLST_ARCH_IS_STM32

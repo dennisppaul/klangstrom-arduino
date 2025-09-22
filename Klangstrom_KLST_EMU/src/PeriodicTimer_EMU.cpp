@@ -22,8 +22,8 @@
 #ifdef KLST_ARCH_IS_EMU
 
 #include "System.h"
-#include "Timer.h"
-#include "Timer_EMU.h"
+#include "PeriodicTimer.h"
+#include "PeriodicTimer_EMU.h"
 #include "Console.h"
 #include "stm32.h"
 
@@ -31,12 +31,12 @@
 extern "C" {
 #endif
 
-extern void HAL_TIM_PeriodElapsedCallback(Timer* htim);
+extern void HAL_TIM_PeriodElapsedCallback(PeriodicTimer* htim);
 
-bool timer_init_peripherals_BSP(Timer* timer) {
-    timer->peripherals = new TimerPeripherals();
+bool periodic_timer_init_peripherals_BSP(PeriodicTimer* timer) {
+    timer->peripherals = new PeriodicTimerPeripherals();
     if (timer->timer_id == 7) {
-        TimerPeripherals& peripherals = *timer->peripherals;
+        PeriodicTimerPeripherals& peripherals = *timer->peripherals;
         peripherals.timer_number      = 7;
         peripherals.timer_handle      = new HardwareTimer(TIM7);
         timer->peripherals->timer_handle->attachInterrupt(
@@ -45,11 +45,11 @@ bool timer_init_peripherals_BSP(Timer* timer) {
                     HAL_TIM_PeriodElapsedCallback(timer);
                 }
             });
-        timer_update_BSP(timer);
+        periodic_timer_update_BSP(timer);
         return true;
     }
     if (timer->timer_id == 13) {
-        TimerPeripherals& peripherals = *timer->peripherals;
+        PeriodicTimerPeripherals& peripherals = *timer->peripherals;
         peripherals.timer_number      = 13;
         peripherals.timer_handle      = new HardwareTimer(TIM13);
         timer->peripherals->timer_handle->attachInterrupt(
@@ -58,11 +58,11 @@ bool timer_init_peripherals_BSP(Timer* timer) {
                     HAL_TIM_PeriodElapsedCallback(timer);
                 }
             });
-        timer_update_BSP(timer);
+        periodic_timer_update_BSP(timer);
         return true;
     }
     if (timer->timer_id == 14) {
-        TimerPeripherals& peripherals = *timer->peripherals;
+        PeriodicTimerPeripherals& peripherals = *timer->peripherals;
         peripherals.timer_number      = 14;
         timer->peripherals->timer_handle->attachInterrupt(
             [timer]() {
@@ -70,17 +70,17 @@ bool timer_init_peripherals_BSP(Timer* timer) {
                     HAL_TIM_PeriodElapsedCallback(timer);
                 }
             });
-        timer_update_BSP(timer);
+        periodic_timer_update_BSP(timer);
         return true;
     }
     return false;
 }
 
-void timer_deinit_peripherals_BSP(Timer* timer) {
+void periodic_timer_deinit_peripherals_BSP(PeriodicTimer* timer) {
     delete timer->peripherals;
 }
 
-void timer_resume(Timer* timer) {
+void periodic_timer_resume(PeriodicTimer* timer) {
     if (timer == nullptr) {
         return;
     }
@@ -88,17 +88,17 @@ void timer_resume(Timer* timer) {
         return;
     }
     if (timer->peripherals->timer_handle == nullptr) {
-        console_println("timer_resume: timer_handle is null");
+        console_println("periodic_timer_resume: timer_handle is null");
         return;
     }
     timer->peripherals->timer_handle->resume();
 }
 
-void timer_pause(Timer* timer) {
+void periodic_timer_pause(PeriodicTimer* timer) {
     timer->peripherals->timer_handle->pause();
 }
 
-void timer_set_prescale_period(Timer* timer, const uint32_t prescaler, const uint32_t period) {
+void periodic_timer_set_prescale_period(PeriodicTimer* timer, const uint32_t prescaler, const uint32_t period) {
     // ( PRESCALER * 1000000 ) / APB_CLK = microseconds per tick
     const uint64_t sysclock_half = system_clock_frequency() / 2;
     const uint64_t tick_duration = prescaler * 1000000 / sysclock_half;
@@ -106,11 +106,11 @@ void timer_set_prescale_period(Timer* timer, const uint32_t prescaler, const uin
     // TODO check if this ^^^^ works
 }
 
-void timer_set_overflow(Timer* timer, const uint32_t duration_us) {
+void periodic_timer_set_overflow(PeriodicTimer* timer, const uint32_t duration_us) {
     timer->peripherals->timer_handle->setOverflow(duration_us, MICROSEC_FORMAT);
 }
 
-void timer_update_BSP(Timer* timer) {
+void periodic_timer_update_BSP(PeriodicTimer* timer) {
     // NOTE this is not necessary for the emulated timer
     (void) timer;
 }
