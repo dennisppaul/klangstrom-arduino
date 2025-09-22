@@ -49,7 +49,7 @@ public:
 
     void init(const uint8_t beat_id) {
         device_id = beat_id;
-        timer     = timer_create(device_id);
+        timer     = ks_timer_create(device_id);
         if (timer) {
             timer->callback = std::bind(&Beat::beat_timer_event, this, std::placeholders::_1);
         }

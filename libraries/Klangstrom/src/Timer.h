@@ -45,8 +45,8 @@ WEAK void timer_event(Timer* timer);
 extern "C" {
 #endif
 
-Timer* timer_create(uint8_t timer_id);
-void   timer_delete(Timer* timer);
+Timer* ks_timer_create(uint8_t timer_id);
+void   ks_timer_delete(Timer* timer);
 
 void timer_resume(Timer* timer);                             // implemented as BSP
 void timer_pause(Timer* timer);                              // implemented as BSP

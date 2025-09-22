@@ -28,7 +28,7 @@ WEAK void timer_event(Timer* timer) {
 extern "C" {
 #endif
 
-Timer* timer_create(const uint8_t timer_id) {
+Timer* ks_timer_create(const uint8_t timer_id) {
     auto* timer     = new Timer();
     timer->timer_id = timer_id;
     timer->callback = timer_event;
@@ -40,7 +40,7 @@ Timer* timer_create(const uint8_t timer_id) {
     return timer;
 }
 
-void timer_delete(Timer* timer) {
+void ks_timer_delete(Timer* timer) {
     timer_deinit_peripherals_BSP(timer);
     delete timer;
 }
