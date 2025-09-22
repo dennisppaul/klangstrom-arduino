@@ -6,19 +6,19 @@
 #include "System.h"
 #include "Console.h"
 #include "Beat.h"
-#include "Timer.h"
+#include "PeriodicTimer.h"
 
 uint8_t counter = 0;
 
-Beat   beat_timer;
-Timer* timer;
+Beat           beat_timer;
+PeriodicTimer* timer;
 
 void setup() {
     system_init();
 
-    timer = timer_create(13);
-    timer_resume(timer);
-    timer_set_overflow(timer, 1000000 / 10);
+    timer = periodic_timer_create(13);
+    periodic_timer_resume(timer);
+    periodic_timer_set_overflow(timer, 1000000 / 10);
 
     beat_timer.init(7);
     beat_timer.set_bpm(60);
@@ -45,6 +45,6 @@ void beat_event(const uint8_t beat_id, const uint16_t beat_counter) {
     console_println("beat: ID %i, counter %03i", beat_id, beat_counter);
 }
 
-void timer_event(Timer* timer) {
+void periodic_timer_event(PeriodicTimer* timer) {
     console_println("timer: ID %i", timer->timer_id);
 }

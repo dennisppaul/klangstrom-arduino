@@ -25,7 +25,7 @@
 #include "stm32h7xx_hal.h"
 #include "AudioDevice_STM32.h"
 #include "SerialDevice_STM32.h"
-#include "Timer_STM32.h"
+#include "PeriodicTimer_STM32.h"
 #include "Console.h"
 
 #ifdef __cplusplus
@@ -266,9 +266,9 @@ void HAL_UART_TxCpltCallback(UART_HandleTypeDef* huart) {
 
 #ifdef KLST_PERIPHERAL_ENABLE_TIMERS
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef* htim) {
-    ArrayList_TimerPtr* mTimers = system_get_registered_timer();
-    for (size_t i = 0; i < mTimers->size; i++) {
-        Timer* t = arraylist_TimerPtr_get(mTimers, i);
+    ArrayList_PeriodicTimerPtr* mPeriodicTimers = system_get_registered_periodic_timers();
+    for (size_t i = 0; i < mPeriodicTimers->size; i++) {
+        PeriodicTimer* t = arraylist_PeriodicTimerPtr_get(mPeriodicTimers, i);
         if (t != nullptr) {
             if (t->peripherals->timer_handle->Instance == htim->Instance) {
                 t->callback(t);

@@ -24,69 +24,69 @@
 #include "main.h"
 #include "tim.h"
 #include "System.h"
-#include "Timer.h"
-#include "Timer_STM32.h"
+#include "PeriodicTimer.h"
+#include "PeriodicTimer_STM32.h"
 #include "Console.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-bool timer_init_peripherals_BSP(Timer* timer) {
-    timer->peripherals = new TimerPeripherals();
+bool periodic_timer_init_peripherals_BSP(PeriodicTimer* timer) {
+    timer->peripherals = new PeriodicTimerPeripherals();
     if (timer->timer_id == 7) {
-        TimerPeripherals& peripherals = *timer->peripherals;
+        PeriodicTimerPeripherals& peripherals = *timer->peripherals;
         peripherals.timer_number      = 7;
         peripherals.timer_handle      = &htim7;
         peripherals.prescaler         = 5500;
         peripherals.period            = 50000;
         MX_TIM7_Init();
-        timer_update_BSP(timer);
+        periodic_timer_update_BSP(timer);
         return true;
     }
     if (timer->timer_id == 13) {
-        TimerPeripherals& peripherals = *timer->peripherals;
+        PeriodicTimerPeripherals& peripherals = *timer->peripherals;
         peripherals.timer_number      = 13;
         peripherals.timer_handle      = &htim13;
         peripherals.prescaler         = 5500;
         peripherals.period            = 50000;
         MX_TIM13_Init();
-        timer_update_BSP(timer);
+        periodic_timer_update_BSP(timer);
         return true;
     }
     if (timer->timer_id == 14) {
-        TimerPeripherals& peripherals = *timer->peripherals;
+        PeriodicTimerPeripherals& peripherals = *timer->peripherals;
         peripherals.timer_number      = 14;
         peripherals.timer_handle      = &htim14;
         peripherals.prescaler         = 5500;
         peripherals.period            = 50000;
         MX_TIM14_Init();
-        timer_update_BSP(timer);
+        periodic_timer_update_BSP(timer);
         return true;
     }
     return false;
 }
 
-void timer_deinit_peripherals_BSP(Timer* timer) {
+void periodic_timer_deinit_peripherals_BSP(PeriodicTimer* timer) {
     // TODO unregister timer from BSP
     delete timer->peripherals;
 }
 
-void timer_resume(Timer* timer) {
+void periodic_timer_resume(PeriodicTimer* timer) {
     const HAL_StatusTypeDef result = HAL_TIM_Base_Start_IT(timer->peripherals->timer_handle);
     if (result != HAL_OK) {
         console_error("timer_resume: ", timer->timer_id);
     }
 }
 
-void timer_pause(Timer* timer) {
+void periodic_timer_pause(PeriodicTimer* timer) {
     const HAL_StatusTypeDef result = HAL_TIM_Base_Stop_IT(timer->peripherals->timer_handle);
     if (result != HAL_OK) {
         console_error("timer_pause: ", timer->timer_id);
     }
 }
 
-void timer_set_prescale_period(Timer* timer, const uint32_t prescaler, const uint32_t period) {
+void periodic_timer_set_prescale_period(PeriodicTimer* timer, const uint32_t prescaler, const uint32_t period) {
     // TODO this is crude and should be improved!
     // ( PRESCALER * 1000000 ) / APB_CLK = microseconds per tick
     timer->peripherals->prescaler = prescaler;
@@ -95,22 +95,22 @@ void timer_set_prescale_period(Timer* timer, const uint32_t prescaler, const uin
     const uint64_t tick_duration  = prescaler * 1000000 / sysclock_half;
     console_println("tick_duration   (µs): %i", static_cast<uint32_t>(tick_duration));
     console_println("period_duration (µs): %i", static_cast<uint32_t>(tick_duration * period));
-    timer_update_BSP(timer);
+    periodic_timer_update_BSP(timer);
 }
 
-void timer_set_overflow(Timer* timer, const uint32_t duration_us) {
+void periodic_timer_set_overflow(PeriodicTimer* timer, const uint32_t duration_us) {
     // TODO this is crude and should be improved!
     // ( PRESCALER * 1000000 ) / APB_CLK = microseconds per tick
     const uint64_t prescaler     = timer->peripherals->prescaler;
     const uint64_t sysclock_half = system_clock_frequency() / 2;
     const uint64_t tick_duration = prescaler * 1000000 / sysclock_half;
     timer->peripherals->period   = duration_us / tick_duration;
-    timer_update_BSP(timer);
+    periodic_timer_update_BSP(timer);
 }
 
-void timer_update_BSP(Timer* timer) {
-    const TimerPeripherals& peripherals = *timer->peripherals;
-    TIM_HandleTypeDef*      htim        = peripherals.timer_handle;
+void periodic_timer_update_BSP(PeriodicTimer* timer) {
+    const PeriodicTimerPeripherals& peripherals = *timer->peripherals;
+    TIM_HandleTypeDef*      htim                = peripherals.timer_handle;
     __HAL_TIM_SET_PRESCALER(htim, peripherals.prescaler - 1);
     __HAL_TIM_SET_AUTORELOAD(htim, peripherals.period - 1);
     __HAL_TIM_SET_COUNTER(htim, 0);

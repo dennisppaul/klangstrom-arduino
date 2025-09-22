@@ -35,7 +35,7 @@
 #include <chrono>
 #include "System.h"
 #include "Console.h"
-#include "Timer_EMU.h"
+#include "PeriodicTimer_EMU.h"
 #include "stm32_hal.h"
 
 #ifdef __cplusplus
@@ -115,13 +115,13 @@ uint32_t system_get_ticks_BSP() {
     return HAL_GetTick();
 }
 
-void HAL_TIM_PeriodElapsedCallback(Timer* htim) {
-    ArrayList_TimerPtr* mTimers = system_get_registered_timer();
+void HAL_TIM_PeriodElapsedCallback(PeriodicTimer* htim) {
+    ArrayList_PeriodicTimerPtr* mTimers = system_get_registered_periodic_timers();
     if (mTimers == nullptr) {
         return;
     }
     for (size_t i = 0; i < mTimers->size; i++) {
-        Timer* t = arraylist_TimerPtr_get(mTimers, i);
+        PeriodicTimer* t = arraylist_PeriodicTimerPtr_get(mTimers, i);
         if (t != nullptr && t->peripherals != nullptr) {
             if (t->peripherals->timer_handle == htim->peripherals->timer_handle &&
                 t->timer_id == htim->timer_id) {

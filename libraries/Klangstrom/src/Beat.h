@@ -21,7 +21,7 @@
 
 #include <functional>
 #include <stdint.h>
-#include "Timer.h"
+#include "PeriodicTimer.h"
 
 #ifndef WEAK
 #define WEAK __attribute__((weak))
@@ -49,7 +49,7 @@ public:
 
     void init(const uint8_t beat_id) {
         device_id = beat_id;
-        timer     = ks_timer_create(device_id);
+        timer     = periodic_timer_create(device_id);
         if (timer) {
             timer->callback = std::bind(&Beat::beat_timer_event, this, std::placeholders::_1);
         }
@@ -63,7 +63,7 @@ public:
             return;
         }
         const uint32_t duration_us = (60.0f / beats_per_minute) * 1000000;
-        timer_set_overflow(timer, duration_us);
+        periodic_timer_set_overflow(timer, duration_us);
     }
 
     void pause() {
@@ -74,7 +74,7 @@ public:
             return;
         }
         fIsRunning = false;
-        timer_pause(timer);
+        periodic_timer_pause(timer);
     }
 
     void start() {
@@ -90,7 +90,7 @@ public:
             return;
         }
         fIsRunning = true;
-        timer_resume(timer);
+        periodic_timer_resume(timer);
     }
 
     bool is_running() const {
@@ -106,13 +106,13 @@ public:
     }
 
 private:
-    Timer*              timer;
+    PeriodicTimer*              timer;
     uint8_t             device_id;
     Callback_2_UI8_UI16 callback_beat;
     uint32_t            beat_counter;
     bool                fIsRunning;
     
-    void beat_timer_event(const Timer* timer) {
+    void beat_timer_event(const PeriodicTimer* timer) {
         beat_counter++;
         if (callback_beat != nullptr) {
             callback_beat(device_id, beat_counter);

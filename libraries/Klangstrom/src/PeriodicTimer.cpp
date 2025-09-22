@@ -18,9 +18,9 @@
 */
 
 #include "System.h"
-#include "Timer.h"
+#include "PeriodicTimer.h"
 
-WEAK void timer_event(Timer* timer) {
+WEAK void periodic_timer_event(PeriodicTimer* timer) {
     (void) timer;
 }
 
@@ -28,20 +28,20 @@ WEAK void timer_event(Timer* timer) {
 extern "C" {
 #endif
 
-Timer* ks_timer_create(const uint8_t timer_id) {
-    auto* timer     = new Timer();
+PeriodicTimer* periodic_timer_create(const uint8_t timer_id) {
+    auto* timer     = new PeriodicTimer();
     timer->timer_id = timer_id;
-    timer->callback = timer_event;
-    if (timer_init_peripherals_BSP(timer)) {
-        system_register_timer(timer);
+    timer->callback = periodic_timer_event;
+    if (periodic_timer_init_peripherals_BSP(timer)) {
+        system_register_periodic_timer(timer);
     } else {
-        timer->timer_id = TIMER_INIT_INCOMPLETE;
+        timer->timer_id = PERIODIC_TIMER_INIT_INCOMPLETE;
     }
     return timer;
 }
 
-void ks_timer_delete(Timer* timer) {
-    timer_deinit_peripherals_BSP(timer);
+void periodic_timer_delete(PeriodicTimer* timer) {
+    periodic_timer_deinit_peripherals_BSP(timer);
     delete timer;
 }
 

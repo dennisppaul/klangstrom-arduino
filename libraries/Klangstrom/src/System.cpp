@@ -27,24 +27,25 @@
 extern "C" {
 #endif
 
+// TODO this must be made BSP
 #define SYSTEM_INITIAL_NUM_AUDIO_DEVICES 3
 #define SYSTEM_INITIAL_NUM_SERIAL_DEVICES 4
-#define SYSTEM_INITIAL_NUM_TIMERS 3
+#define SYSTEM_INITIAL_NUM_PERIODIC_TIMERS 3
 
-static ArrayList_AudioDevicePtr  fAudioDeviceListeners;
-static ArrayList_SerialDevicePtr fSerialDeviceListeners;
-static ArrayList_GPIOListenerPtr fGPIOListeners;
-static ArrayList_TimerPtr        fTimerListeners;
-static uint16_t                  fDeviceID;
-static bool                      fSystemInitialized;
-static uint32_t                  fSystemStartTime;
+static ArrayList_AudioDevicePtr   _audio_device_listeners;
+static ArrayList_SerialDevicePtr  _serial_device_listeners;
+static ArrayList_GPIOListenerPtr  _gpio_listeners;
+static ArrayList_PeriodicTimerPtr _periodic_timer_listeners;
+static uint16_t                   _device_id;
+static bool                       _system_initialized;
+static uint32_t                   _system_start_time;
 
 void system_init() {
-    fDeviceID          = 0;
-    fSystemInitialized = false;
-    arraylist_AudioDevicePtr_init(&fAudioDeviceListeners, SYSTEM_INITIAL_NUM_AUDIO_DEVICES);
-    arraylist_SerialDevicePtr_init(&fSerialDeviceListeners, SYSTEM_INITIAL_NUM_SERIAL_DEVICES);
-    arraylist_TimerPtr_init(&fTimerListeners, SYSTEM_INITIAL_NUM_TIMERS);
+    _device_id          = 0;
+    _system_initialized = false;
+    arraylist_AudioDevicePtr_init(&_audio_device_listeners, SYSTEM_INITIAL_NUM_AUDIO_DEVICES);
+    arraylist_SerialDevicePtr_init(&_serial_device_listeners, SYSTEM_INITIAL_NUM_SERIAL_DEVICES);
+    arraylist_PeriodicTimerPtr_init(&_periodic_timer_listeners, SYSTEM_INITIAL_NUM_PERIODIC_TIMERS);
     system_init_BSP();
     console_clear();
     console_system_info();
@@ -52,52 +53,52 @@ void system_init() {
     console_status("Sub-System (ASP/BSP) initialized");
     console_status("System initialized%s", KLST_CONSOLE_LINE_ENDING);
 
-    fSystemInitialized = true;
-    fSystemStartTime   = system_get_ticks_BSP();
+    _system_initialized = true;
+    _system_start_time  = system_get_ticks_BSP();
 }
 
 bool system_is_initialized() {
-    return fSystemInitialized;
+    return _system_initialized;
 }
 
 uint16_t system_get_unique_device_ID() {
-    return fDeviceID++;
+    return _device_id++;
 }
 
 void system_register_audiodevice(AudioDevice* audiodevice) {
-    arraylist_AudioDevicePtr_add(&fAudioDeviceListeners, audiodevice);
+    arraylist_AudioDevicePtr_add(&_audio_device_listeners, audiodevice);
 }
 
 ArrayList_AudioDevicePtr* system_get_registered_audiodevices() {
-    return &fAudioDeviceListeners;
+    return &_audio_device_listeners;
 }
 
 void system_register_serialdevice(SerialDevice* serialdevice) {
-    arraylist_SerialDevicePtr_add(&fSerialDeviceListeners, serialdevice);
+    arraylist_SerialDevicePtr_add(&_serial_device_listeners, serialdevice);
 }
 
 ArrayList_SerialDevicePtr* system_get_registered_serialdevices() {
-    return &fSerialDeviceListeners;
+    return &_serial_device_listeners;
 }
 
 void system_register_gpio_listener(GPIOListener* gpio_listener) {
-    arraylist_GPIOListenerPtr_add(&fGPIOListeners, gpio_listener);
+    arraylist_GPIOListenerPtr_add(&_gpio_listeners, gpio_listener);
 }
 
 ArrayList_GPIOListenerPtr* system_get_registered_gpio_listener() {
-    return &fGPIOListeners;
+    return &_gpio_listeners;
 }
 
-void system_register_timer(Timer* timer_listener) {
-    arraylist_TimerPtr_add(&fTimerListeners, timer_listener);
+void system_register_periodic_timer(PeriodicTimer* timer) {
+    arraylist_PeriodicTimerPtr_add(&_periodic_timer_listeners, timer);
 }
 
-ArrayList_TimerPtr* system_get_registered_timer() {
-    return &fTimerListeners;
+ArrayList_PeriodicTimerPtr* system_get_registered_periodic_timers() {
+    return &_periodic_timer_listeners;
 }
 
 uint32_t system_get_ticks() {
-    return system_get_ticks_BSP() - fSystemStartTime;
+    return system_get_ticks_BSP() - _system_start_time;
 }
 
 float system_cycles_to_micros(const uint32_t cycles) {
