@@ -32,7 +32,9 @@
 #include "stm32.h"
 
 #include <iostream>
-
+#include <atomic>
+#include <mutex>
+#include <condition_variable>
 typedef enum {
     TICK_FORMAT, // default
     MICROSEC_FORMAT,
