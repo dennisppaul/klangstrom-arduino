@@ -14,7 +14,9 @@
 #include "Draw.h"
 #include "BitmapFont.h"
 
-#include "KLST--ICON--128x128.h"
+#include "KLST--logotype-128x128.h"
+
+KLST__logotype_128x128 img;
 
 class PVector {
 public:
@@ -89,10 +91,11 @@ void display_update_event() {
         draw_set_pixel(points[i].x, points[i].y, KLST_DISPLAY_GRAY(0xFF));
     }
 
-    draw_image(IMAGE_DATA,
+    ;
+    draw_image(const_cast<uint32_t*>(img.DATA),
                move++,
-               IMAGE_HEIGHT / 2, IMAGE_WIDTH,
-               IMAGE_HEIGHT);
+               img.HEIGHT / 2, img.WIDTH,
+               img.HEIGHT);
 
     const std::vector<Point> m_points = {{x, y},
                                          {200, 130},

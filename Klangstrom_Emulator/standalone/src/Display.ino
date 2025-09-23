@@ -1,6 +1,5 @@
-#ifdef DISPLAY
 /**
-* this example demonstrates how to use the display with touch panel
+ * this example demonstrates how to use the display with touch panel
  */
 
 #include <vector>
@@ -44,4 +43,3 @@ void display_touch_event(TouchEvent* touchevent) {
         console_println("      %d    : %d,%d", i, touchevent->x[i], touchevent->y[i]);
     }
 }
-#endif
