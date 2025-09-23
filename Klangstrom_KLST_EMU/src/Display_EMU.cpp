@@ -246,7 +246,19 @@ bool touch_has_event() { // TODO implement
 
 // note that display works internally with ARGB while OpenGL require ABGR ( = RGBA in little endian?!? )
 
+static uint32_t blend_colors(const uint32_t original_color, const uint32_t color, const uint8_t alpha) {
+    const uint8_t  inv   = 0xFF - alpha;
+    const uint8_t  r     = (KLST_DISPLAY_GET_RED(original_color) * inv + KLST_DISPLAY_GET_RED(color) * alpha) >> 8;
+    const uint8_t  g     = (KLST_DISPLAY_GET_GREEN(original_color) * inv + KLST_DISPLAY_GET_GREEN(color) * alpha) >> 8;
+    const uint8_t  b     = (KLST_DISPLAY_GET_BLUE(original_color) * inv + KLST_DISPLAY_GET_BLUE(color) * alpha) >> 8;
+    const uint32_t blend = KLST_DISPLAY_RGBA(r, g, b, 0xFF);
+    return blend;
+}
+
 void display_clear_BSP(const uint32_t color) { // ARGB
+    if (display_ptr == nullptr) {
+        return;
+    }
     display_ptr->clear(KLST_DISPLAY_ARGB_TO_ABGR(color));
 }
 
@@ -271,7 +283,12 @@ void display_set_pixel_alpha_BSP(const uint16_t x, const uint16_t y, const uint3
     display_ptr->set_pixel(x, y, umfeld::color(r / 255.0f, g / 255.0f, b / 255.0f));
 }
 
-uint32_t display_get_pixel_BSP(const uint16_t x, const uint16_t y) { return KLST_DISPLAY_ABGR_TO_ARGB(display_ptr->get_pixel(x, y)); }
+uint32_t display_get_pixel_BSP(const uint16_t x, const uint16_t y) { 
+    if (display_ptr == nullptr) {
+        return 0x00000000;
+    }
+    return KLST_DISPLAY_ABGR_TO_ARGB(display_ptr->get_pixel(x, y)); 
+}
 
 void display_rect_fill_BSP(const uint16_t x, const uint16_t y, const uint16_t width, const uint16_t height, const uint32_t color) {
     if (display_ptr == nullptr) {
@@ -289,8 +306,73 @@ void display_line_horizontal_BSP(uint16_t x, uint16_t y, uint16_t length, uint32
 
 void display_line_vertical_BSP(uint16_t x, uint16_t y, uint16_t length, uint32_t color) {}
 
-void display_image_BSP(uint32_t* data, uint16_t x, uint16_t y, uint16_t width, uint16_t height) {}
+void display_image_BSP(uint32_t* data, uint16_t x, uint16_t y, uint16_t width, uint16_t height) {
+    for (uint32_t i = 0; i < height; i++) {
+        for (uint32_t j = 0; j < width; j++) {
+            const uint32_t color = data[j + i * width];
+            const uint8_t  alpha = KLST_DISPLAY_GET_ALPHA(color);
+            if (alpha == 0xFF) {
+                display_set_pixel_BSP(x + j, y + i, color);
+            } else {
+                const uint32_t original_color = display_get_pixel_BSP(x + j, y + i);
+                const uint32_t blend_color    = blend_colors(original_color, color, alpha);
+                display_set_pixel_BSP(x + j, y + i, blend_color);
+            }
+        }
+    }
+}
 
-void display_char_BSP(BitmapFont* font, uint16_t x, uint16_t y, uint8_t ascii_char, uint32_t color, uint32_t background_color) {}
+static void DrawChar(BitmapFont*    font,
+                     const uint16_t x,
+                     uint16_t       y,
+                     const uint8_t* c,
+                     const uint32_t color,
+                     const uint32_t background_color) {
+    uint32_t line;
+
+    const uint16_t height = font->Height;
+    const uint16_t width  = font->Width;
+    const uint8_t  offset = 8 * ((width + 7) / 8) - width;
+
+    for (uint16_t i = 0; i < height; i++) {
+        const uint8_t* pchar = const_cast<uint8_t*>(c) + (width + 7) / 8 * i;
+        switch ((width + 7) / 8) {
+            case 1:
+                line = pchar[0];
+                break;
+            case 2:
+                line = pchar[0] << 8 | pchar[1];
+                break;
+            case 3:
+            default:
+                line = pchar[0] << 16 | (pchar[1] << 8) | pchar[2];
+                break;
+        }
+
+        for (uint16_t j = 0; j < width; j++) {
+            const bool     mIsForeGroundColor = line & (1 << (width - j + offset - 1));
+            const uint32_t mColor             = mIsForeGroundColor ? color : background_color;
+            const uint8_t  alpha              = KLST_DISPLAY_GET_ALPHA(mColor);
+            if (alpha == 0x00) {
+            } else if (alpha == 0xFF) {
+                display_set_pixel_BSP(x + j, y, mColor);
+            } else if (alpha > 0x00) {
+                const uint32_t pixel       = display_get_pixel_BSP(x + j, y);
+                const uint32_t mBlendColor = blend_colors(pixel, mColor, alpha);
+                display_set_pixel_BSP(x + j, y, mBlendColor);
+            }
+        }
+        y++;
+    }
+}
+
+void display_char_BSP(BitmapFont* font, uint16_t x, uint16_t y, uint8_t ascii_char, uint32_t color, uint32_t background_color) {
+    DrawChar(font,
+            x,
+            y,
+            &font->table[(ascii_char - ' ') * font->Height * ((font->Width + 7) / 8)],
+            color,
+            background_color);
+}
 
 #endif // KLST_ARCH_IS_EMU

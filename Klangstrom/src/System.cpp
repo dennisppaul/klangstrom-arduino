@@ -177,6 +177,21 @@ void* system_external_memory_allocate_aligned(const size_t size, const size_t al
     return reinterpret_cast<void*>(aligned);
 }
 
+int16_t system_get_UID_index() {
+    for (uint8_t i = 0; i < KLST_NUM_OF_U_ID; ++i) {
+        if (system_check_UID(KLST_U_ID[i])) {
+            return i;
+        }
+    }
+    return KLST_NO_ID;
+}
+
+bool system_check_UID(const uint32_t UID[]) {
+    return UID[0] == system_get_UID(0) &&
+           UID[1] == system_get_UID(1) &&
+           UID[2] == system_get_UID(2);
+}
+
 #ifdef __cplusplus
 }
 #endif
