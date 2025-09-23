@@ -8,9 +8,10 @@ project(klangstrom-emulator-standalone LANGUAGES C CXX)
 
 set(HOME_DIR $ENV{HOME})
 set(UMFELD_PATH $ENV{UMFELD_PATH})
-if(NOT DEFINED ENV{UMFELD_PATH} OR "$ENV{UMFELD_PATH}" STREQUAL "")
+set(ARDUINO_SKETCH_FILE "${CMAKE_CURRENT_SOURCE_DIR}/src/DisplayAnimation.ino")
+if (NOT DEFINED ENV{UMFELD_PATH} OR "$ENV{UMFELD_PATH}" STREQUAL "")
     message(STATUS "UMFELD_PATH environment variable is not set.")
-endif()
+endif ()
 
 #set(UMFELD_ARDUINO_PATH "${UMFELD_PATH}" CACHE PATH "Path to 'umfeld-arduino/umfeld' root")
 set(UMFELD_ARDUINO_PATH "${HOME_DIR}/Documents/dev/umfeld/git/umfeld-arduino/umfeld" CACHE PATH "Path to 'umfeld-arduino/umfeld' root") # TODO this needs to handled differently
@@ -34,6 +35,7 @@ message(STATUS "KLST_EMU_UMFELD_PATH : ${KLST_EMU_UMFELD_PATH}")
 message(STATUS "KLST_EMU_VARIANT_PATH: ${KLST_EMU_VARIANT_PATH}")
 message(STATUS "KLST_ENV             : ${KLST_ENV}")
 message(STATUS "KLST_EMU_AUDIO_BLOCK : ${KLST_EMU_AUDIO_BLOCK}")
+message(STATUS "ARDUINO_SKETCH_FILE  : ${ARDUINO_SKETCH_FILE}")
 message(STATUS "----------------------------------------")
 
 # -------------------------
@@ -71,6 +73,8 @@ target_include_directories(klst_common_options INTERFACE
 add_executable(${PROJECT_NAME})
 
 # Keep GLOB but make it reactive; or replace with explicit list if you prefer stricter control.
+file(GLOB SRC_INO CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/src/*.ino")
+# set_source_files_properties(${SRC_INO} PROPERTIES LANGUAGE CXX)
 file(GLOB SRC CONFIGURE_DEPENDS
         "${CMAKE_CURRENT_SOURCE_DIR}/src/*.c"
         "${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp"
