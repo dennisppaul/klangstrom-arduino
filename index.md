@@ -12,7 +12,7 @@ layout: home
 
 - install [Arduino IDE](https://www.arduino.cc/en/software/#ide) (v2.3.6)
 - install [STM32duino / Arduino_Core_STM32](https://github.com/stm32duino/Arduino_Core_STM32?tab=readme-ov-file#getting-started) (v2.11.0)
-- install [Umfeld for Arduino](https://github.com/dennisppaul/umfeld-arduino) (v2.4.1)
+- install [Umfeld for Arduino](https://github.com/dennisppaul/umfeld-arduino) (v2.4.2)
 - open console and copy-paste installer script below. this installs [klangstrom-arduino](https://github.com/Klangstrom/klangstrom-arduino) into the current directory:
 
 ```sh

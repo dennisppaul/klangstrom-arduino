@@ -6,18 +6,18 @@ permalink: /installation/
 
 this instruction guide through the *manual* installation process: 
 
-## Install Prerequisite
+## Prerequisites
 
 install *Arduino IDE*, *Arduino_Core_STM32*, and *Umfeld for Arduino* by following the instructions provided on the projects’ websites:
 
 - install *Arduino IDE* (v2.3.6) by following instructions at [Arduino IDE](https://www.arduino.cc/en/software/#ide) and/or install [`arduino-cli`](https://docs.arduino.cc/arduino-cli/installation/) (v1.3.1) 
 - install *Arduino_Core_STM32* (v2.11.0) by following instructions at [STM32duino / Arduino_Core_STM32](https://github.com/stm32duino/Arduino_Core_STM32?tab=readme-ov-file#getting-started)
-- install *Umfeld* (v2.4.1) by following instructions at [Umfeld](https://github.com/dennisppaul/umfeld?tab=readme-ov-file#quickstart)
-- install *Umfeld for Arduino* (v2.4.1) by following instructions at [Umfeld for Arduino](https://github.com/dennisppaul/umfeld-arduino)
+- install *Umfeld* (v2.4.2) by following instructions at [Umfeld](https://github.com/dennisppaul/umfeld?tab=readme-ov-file#quickstart)
+- install *Umfeld for Arduino* (v2.4.2) by following instructions at [Umfeld for Arduino](https://github.com/dennisppaul/umfeld-arduino)
 
-## Install Klangstrom Boards + Emulator
+## Installation Klangstrom Boards + Emulator
 
-note, the installation below assumes that the paths to the *Arduino Sketchbook* folder and the *Arduino15 Data* folder are known. in a default installation the folders are in the following locations:
+note, the installation below assumes that the paths to the *Arduino Sketchbook* folder and the *Arduino15 Data* folder are known. in a *default* installation the folders are in the following locations:
 
 ```sh
 # macOS
