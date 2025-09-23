@@ -1,4 +1,4 @@
-// #ifdef SKETCH_AUDIO_WAV
+#ifdef SKETCH_AUDIO_WAV
 /**
  * this example demonstrates load and play a WAV file from an SD card.
  */
@@ -116,4 +116,4 @@ void key_event(const Key* key) {
         }
     }
 }
-// #endif
+#endif

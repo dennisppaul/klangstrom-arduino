@@ -1,4 +1,4 @@
-#ifdef SKETCH_DISPLAY
+#ifdef DISPLAY
 /**
 * this example demonstrates how to use the display with touch panel
  */
