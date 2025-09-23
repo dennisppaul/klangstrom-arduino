@@ -1,0 +1,83 @@
+#!/bin/sh
+# usage:
+#   ./png2h.sh input.png            # emit WIDTH/HEIGHT/DATA symbols
+#   ./png2h.sh --struct input.png   # emit a struct with static members
+#
+# requires: ImageMagick
+#   Debian/Ubuntu:   sudo apt install imagemagick
+#   macOS (brew):    brew install imagemagick
+
+set -e
+
+emit_struct=0
+if [ "$1" = "--struct" ]; then
+  emit_struct=1
+  shift
+fi
+
+# choose ImageMagick entrypoint
+if command -v magick >/dev/null 2>&1; then
+  IM_IDENTIFY="magick identify"
+  IM_RGBA_DUMP() { magick "$1" -alpha on -depth 8 rgba:-; }
+elif command -v convert >/dev/null 2>&1 && command -v identify >/dev/null 2>&1; then
+  IM_IDENTIFY="identify"
+  IM_RGBA_DUMP() { convert "$1" rgba:-; }
+else
+  echo "Error: ImageMagick not found. Install with 'sudo apt install imagemagick' or 'brew install imagemagick'." >&2
+  exit 1
+fi
+
+if [ $# -ne 1 ]; then
+  echo "usage: $0 [--struct] input.png" >&2
+  exit 1
+fi
+
+png="$1"
+[ -f "$png" ] || { echo "Error: file not found: $png" >&2; exit 1; }
+
+base_raw=$(basename "$png" .png)
+# sanitize to a valid C/C++ identifier: [A-Za-z_][A-Za-z0-9_]*
+base_c=$(printf "%s" "$base_raw" | sed -E 's/[^A-Za-z0-9_]/_/g; s/^([0-9])/_\1/')
+header="${base_raw}.h"
+
+width=$($IM_IDENTIFY -format "%w" "$png")
+height=$($IM_IDENTIFY -format "%h" "$png")
+
+{
+  echo "#pragma once"
+  echo "#include <cstdint>"
+  echo "// generated from: $base_raw.png"
+  echo
+
+  if [ $emit_struct -eq 1 ]; then
+    # struct style: my_image::WIDTH/HEIGHT/DATA
+    echo "struct ${base_c} {"
+    echo "  static constexpr std::uint32_t WIDTH  = ${width};"
+    echo "  static constexpr std::uint32_t HEIGHT = ${height};"
+    echo "  static inline const std::uint32_t DATA[WIDTH * HEIGHT] = {"
+  else
+    # plain symbols: my_image_WIDTH / my_image_HEIGHT / my_image_DATA[]
+    echo "constexpr std::uint32_t ${base_c}_WIDTH  = ${width};"
+    echo "constexpr std::uint32_t ${base_c}_HEIGHT = ${height};"
+    echo "inline std::uint32_t ${base_c}_DATA[${base_c}_WIDTH * ${base_c}_HEIGHT] = {"
+  fi
+
+  IM_RGBA_DUMP "$png" | \
+  od -An -tx1 -v | \
+  awk -v w="$width" '{
+      for (i = 1; i + 3 <= NF; i += 4) {
+          # RGBA → 0xAARRGGBB
+          argb = "0x" $(i+3) $i $(i+1) $(i+2) ",";
+          printf("  %s", argb);
+          count++;
+          if (count % w == 0) printf("\n");
+      }
+  }'
+
+  echo "};"
+  if [ $emit_struct -eq 1 ]; then
+    echo "};"
+  fi
+} > "$header"
+
+echo "Written $header"
