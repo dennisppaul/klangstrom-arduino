@@ -6,9 +6,11 @@ project(klangstrom-emulator-standalone LANGUAGES C CXX)
 # Configurable options
 # -------------------------
 
+if (NOT ARDUINO_SKETCH_FILE)
+    set(ARDUINO_SKETCH_FILE "${CMAKE_CURRENT_SOURCE_DIR}/src/DisplayAnimation.ino")
+endif ()
 set(HOME_DIR $ENV{HOME})
 set(UMFELD_PATH $ENV{UMFELD_PATH})
-set(ARDUINO_SKETCH_FILE "${CMAKE_CURRENT_SOURCE_DIR}/src/DisplayAnimation.ino")
 if (NOT DEFINED ENV{UMFELD_PATH} OR "$ENV{UMFELD_PATH}" STREQUAL "")
     message(STATUS "UMFELD_PATH environment variable is not set.")
 endif ()
@@ -73,15 +75,20 @@ target_include_directories(klst_common_options INTERFACE
 add_executable(${PROJECT_NAME})
 
 # Keep GLOB but make it reactive; or replace with explicit list if you prefer stricter control.
-file(GLOB SRC_INO CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/src/*.ino")
+#file(GLOB SRC_INO CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/src/*.ino")
 # set_source_files_properties(${SRC_INO} PROPERTIES LANGUAGE CXX)
+set_source_files_properties(${ARDUINO_SKETCH_FILE} PROPERTIES
+        LANGUAGE CXX
+        COMPILE_FLAGS "-x c++"
+)
+
 file(GLOB SRC CONFIGURE_DEPENDS
         "${CMAKE_CURRENT_SOURCE_DIR}/src/*.c"
         "${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp"
         "${KLST_EMU_VARIANT_PATH}/*.c"
         "${KLST_EMU_VARIANT_PATH}/*.cpp"
 )
-target_sources(${PROJECT_NAME} PRIVATE ${SRC})
+target_sources(${PROJECT_NAME} PRIVATE ${SRC} ${ARDUINO_SKETCH_FILE})
 target_link_libraries(${PROJECT_NAME} PRIVATE klst_common_options)
 
 # -------------------------
