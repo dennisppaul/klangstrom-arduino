@@ -9,6 +9,13 @@ KLST_PANDA features a 4.3" TFT display with a 480×272px resolution ( see [Techn
 
 - ④ :: 4.3" TFT display and capacitive touch surface
 
+the internal color model is ARGB. a single `color` is represented by a 32-bit unsigned integer `uint32_t`:
+
+```
+uint32_t m_color = 0xFF7F00FF
+//                   A R G B  -> 255, 127, 0, 255
+```
+
 ## `Display`
 
 ```c
