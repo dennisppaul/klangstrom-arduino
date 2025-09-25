@@ -109,7 +109,7 @@ void loop() {
     }
 }
 
-void audioblock(AudioBlock* audio_block) {
+void audioblock(const AudioBlock* audio_block) {
     if (sample_audio_stream_buffer == nullptr) {
         return;
     }

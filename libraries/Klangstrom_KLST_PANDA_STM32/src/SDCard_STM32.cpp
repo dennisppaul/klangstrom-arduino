@@ -191,7 +191,7 @@ bool sdcard_format(uint8_t format) {
     return true;
 }
 
-bool sdcard_list(std::string path, std::vector<std::string>& files, std::vector<std::string>& directories, bool show_hidden_files) {
+bool sdcard_list(const std::string& path, std::vector<std::string>& files, std::vector<std::string>& directories, bool show_hidden_files) {
     // TODO implement show_hidden_files
     //    println("SDCard: list all directories + files");
     DIR     dir;
@@ -221,7 +221,7 @@ bool sdcard_list(std::string path, std::vector<std::string>& files, std::vector<
     return true;
 }
 
-bool sdcard_file_open(std::string filepath, uint8_t flags) {
+bool sdcard_file_open(const std::string& filepath, uint8_t flags) {
     BYTE mFlags = FA_READ; // TODO not so sure about this … what about the other options?
     switch (flags) {
         case FILE_READ_ONLY:
@@ -243,7 +243,7 @@ bool sdcard_file_open(std::string filepath, uint8_t flags) {
     return true;
 }
 
-uint32_t sdcard_file_write(uint8_t* bytes, uint32_t bytes_to_write) {
+uint32_t sdcard_file_write(const uint8_t* bytes, uint32_t bytes_to_write) {
     println("SDCard: writing to file");
     uint32_t byteswritten;
     FRESULT  res = f_write(&SDFile, bytes, bytes_to_write, (UINT*) &byteswritten);
@@ -276,7 +276,7 @@ bool sdcard_file_close() {
     return true;
 }
 
-bool sdcard_file_create(const std::string filename) {
+bool sdcard_file_create(const std::string& filename) {
     FRESULT res = f_open(&SDFile, filename.c_str(), FA_CREATE_ALWAYS | FA_WRITE);
     if (res != FR_OK) {
         println("SDCard: error creating file: %d", res);

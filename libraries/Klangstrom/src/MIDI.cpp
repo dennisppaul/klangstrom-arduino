@@ -39,7 +39,7 @@ WEAK void midi_note_off(uint8_t channel, uint8_t note, uint8_t velocity) { conso
 
 // TODO add other callbacks
 
-WEAK void midi_event(SerialDevice* serial_device) {
+WEAK void midi_event(const SerialDevice* serial_device) {
     for (uint16_t i = 0; i < serial_device->length; i++) {
         fMIDIParser->parse(serial_device->data[i]);
         //        uint8_t msg = fMIDIParser->parse(serial_device->data[i]);
@@ -58,7 +58,7 @@ WEAK void midi_event(SerialDevice* serial_device) {
 
 KlangstromMIDIParser* midi_parser() { return fMIDIParser; }
 
-static void serial_to_midi(SerialDevice* serial_device) {
+static void serial_to_midi(const SerialDevice* serial_device) {
     if (serial_device->device_id == fSerialDevice->device_id && // TODO might be a bit much checking
         serial_device == fSerialDevice &&
         callback_midi) {

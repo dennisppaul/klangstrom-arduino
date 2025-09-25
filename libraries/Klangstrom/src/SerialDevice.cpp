@@ -25,11 +25,11 @@
 extern "C" {
 #endif
 
-WEAK void serial_event(SerialDevice* serial_device) {
+WEAK void serial_event(const SerialDevice* serial_device) {
     (void) serial_device;
 }
 
-SerialDevice* serialdevice_create(uint8_t device_type, uint32_t buffer_size, uint32_t baud_rate) {
+SerialDevice* serialdevice_create(const uint8_t device_type, const uint32_t buffer_size, const uint32_t baud_rate) {
     auto* serialdevice             = new SerialDevice();
     serialdevice->data_buffer_size = buffer_size;
     serialdevice->device_type      = device_type;

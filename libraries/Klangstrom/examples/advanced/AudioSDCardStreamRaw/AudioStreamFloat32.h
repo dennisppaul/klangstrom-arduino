@@ -61,8 +61,8 @@ public:
     }
 
 private:
-    std::unique_ptr<float[]> fReadBuffer;
     const uint32_t           fBufferSize;
+    std::unique_ptr<float[]> fReadBuffer;
     bool                     fLoop = true;
 
     static void clear_buffer(float* buffer, uint32_t size) {

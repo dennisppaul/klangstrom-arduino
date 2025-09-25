@@ -22,6 +22,7 @@
 #include <functional>
 #include <stdint.h>
 #include "PeriodicTimer.h"
+#include "KlangstromConfiguration.h"
 
 #ifndef WEAK
 #define WEAK __attribute__((weak))
@@ -31,7 +32,7 @@
 extern "C" {
 #endif
 
-WEAK void beat_event(uint8_t beat_id, uint16_t beat_counter);
+void beat_event(uint8_t beat_id, uint16_t beat_counter);
 
 #ifdef __cplusplus
 }
@@ -41,40 +42,40 @@ typedef void (*Callback_2_UI8_UI16)(uint8_t, uint16_t);
 
 class Beat {
 public:
-    explicit Beat() : callback_beat(nullptr),
-                      beat_counter(0),
-                      fIsRunning(false) {
+    explicit Beat() : _callback_beat(nullptr),
+                      _beat_counter(0),
+                      _is_running(false) {
         set_callback(beat_event);
     }
 
-    void init(const uint8_t beat_id) {
-        device_id = beat_id;
-        timer     = periodic_timer_create(device_id);
-        if (timer) {
-            timer->callback = std::bind(&Beat::beat_timer_event, this, std::placeholders::_1);
+    void init(const uint8_t beat_id = KLST_DEFAULT_BEAT_TIMER) {
+        _device_id = beat_id;
+        _timer     = periodic_timer_create(_device_id);
+        if (_timer) {
+            _timer->callback = std::bind(&Beat::beat_timer_event, this, std::placeholders::_1);
         }
     }
 
     void set_bpm(const float beats_per_minute) const {
-        if (timer == nullptr) {
+        if (_timer == nullptr) {
             return;
         }
         if (beats_per_minute == 0) {
             return;
         }
         const uint32_t duration_us = (60.0f / beats_per_minute) * 1000000;
-        periodic_timer_set_overflow(timer, duration_us);
+        periodic_timer_set_overflow(_timer, duration_us);
     }
 
     void pause() {
-        if (timer == nullptr) {
+        if (_timer == nullptr) {
             return;
         }
-        if (!fIsRunning) {
+        if (!_is_running) {
             return;
         }
-        fIsRunning = false;
-        periodic_timer_pause(timer);
+        _is_running = false;
+        periodic_timer_pause(_timer);
     }
 
     void start() {
@@ -83,39 +84,39 @@ public:
     }
 
     void resume() {
-        if (timer == nullptr) {
+        if (_timer == nullptr) {
             return;
         }
-        if (fIsRunning) {
+        if (_is_running) {
             return;
         }
-        fIsRunning = true;
-        periodic_timer_resume(timer);
+        _is_running = true;
+        periodic_timer_resume(_timer);
     }
 
     bool is_running() const {
-        return fIsRunning;
+        return _is_running;
     }
 
     void reset() {
-        beat_counter = 0;
+        _beat_counter = 0;
     }
 
     void set_callback(const Callback_2_UI8_UI16& callback) {
-        callback_beat = callback;
+        _callback_beat = callback;
     }
 
 private:
-    PeriodicTimer*              timer;
-    uint8_t             device_id;
-    Callback_2_UI8_UI16 callback_beat;
-    uint32_t            beat_counter;
-    bool                fIsRunning;
-    
+    PeriodicTimer*      _timer;
+    uint8_t             _device_id;
+    Callback_2_UI8_UI16 _callback_beat;
+    uint32_t            _beat_counter;
+    bool                _is_running;
+
     void beat_timer_event(const PeriodicTimer* timer) {
-        beat_counter++;
-        if (callback_beat != nullptr) {
-            callback_beat(device_id, beat_counter);
+        _beat_counter++;
+        if (_callback_beat != nullptr) {
+            _callback_beat(_device_id, _beat_counter);
         }
     }
 };

@@ -1,7 +1,7 @@
 /*
- * KlangWellen
+ * Klangwellen
  *
- * This file is part of the *KlangWellen* library (https://github.com/dennisppaul/klangwellen).
+ * This file is part of the *Klangwellen* library (https://github.com/dennisppaul/klangwellen).
  * Copyright (c) 2025 Dennis P Paul
  *
  * This library is free software: you can redistribute it and/or modify
@@ -327,7 +327,7 @@ private:
     float                  mStepSize;
 
     void advance_array_ptr() {
-        // mArrayPtr += mStepSize * (mEnableJitter ? (klangwellen::KlangWellen::random() * mJitterRange + 1.0f) : 1.0f);
+        // mArrayPtr += mStepSize * (mEnableJitter ? (klangwellen::Klangwellen::random() * mJitterRange + 1.0f) : 1.0f);
         // mArrayPtr += mStepSize;
         mArrayPtr += mStepSize;
         while (mArrayPtr >= mWavetableSize) {

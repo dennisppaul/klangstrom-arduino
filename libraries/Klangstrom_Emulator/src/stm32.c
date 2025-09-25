@@ -17,26 +17,21 @@
 * along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
-#pragma once
-
-#include "KlangstromEnvironment.h"
-#ifdef KLST_ARCH_IS_EMU
-
 #include "stm32.h"
 
-#ifndef WEAK
-#define WEAK __attribute__((weak))
-#endif
-
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-WEAK void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin);
-WEAK void HAL_TIM_IC_CaptureCallback(TIM_HandleTypeDef* htim);
-
-#ifdef __cplusplus
-}
-#endif
-
-#endif // KLST_ARCH_IS_EMU
+static GPIO_TypeDef GPIOA_storage = { .ID = 0x000 };
+GPIO_TypeDef *GPIOA = &GPIOA_storage;
+static GPIO_TypeDef GPIOB_storage = { .ID = 0x001 };
+GPIO_TypeDef *GPIOB = &GPIOB_storage;
+static GPIO_TypeDef GPIOC_storage = { .ID = 0x002 };
+GPIO_TypeDef *GPIOC = &GPIOC_storage;
+static GPIO_TypeDef GPIOD_storage = { .ID = 0x003 };
+GPIO_TypeDef *GPIOD = &GPIOD_storage;
+static GPIO_TypeDef GPIOE_storage = { .ID = 0x004 };
+GPIO_TypeDef *GPIOE = &GPIOE_storage;
+static GPIO_TypeDef GPIOF_storage = { .ID = 0x005 };
+GPIO_TypeDef *GPIOF = &GPIOF_storage;
+static GPIO_TypeDef GPIOG_storage = { .ID = 0x006 };
+GPIO_TypeDef *GPIOG = &GPIOG_storage;
+static GPIO_TypeDef GPIOH_storage = { .ID = 0x007 };
+GPIO_TypeDef *GPIOH = &GPIOH_storage;

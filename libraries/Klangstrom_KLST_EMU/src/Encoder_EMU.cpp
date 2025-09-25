@@ -27,9 +27,54 @@
 
 #include <string>
 
+#include "stm32_hal.h"
+
+#include "Drawable.h"
+#include "KlangstromEmulator.h"
 #include "Encoder.h"
 #include "Encoder_EMU.h"
 #include "Console.h"
+
+class DrawableEncoder final : public Drawable {
+public:
+    explicit DrawableEncoder(Encoder* encoder) : _encoder(encoder) { (void)_encoder; }
+
+    void draw(umfeld::PGraphics* g) override {
+#ifdef KLST_ENCODER_WIP
+        g->pushMatrix();
+        g->translate(_position.x, _position.y);
+        g->textSize(12);
+        g->fill(1.0f);
+        g->noStroke();
+        g->text(_name.c_str(), 0, -30);
+        g->text(("rot: " + std::to_string(_encoder->rotation)).c_str(), 0, -15);
+        g->fill(1);
+        g->noStroke();
+        g->ellipse(0, 0, _radius, _radius);
+        g->popMatrix();
+#endif
+    }
+
+    void set_name(const std::string& name) {
+        _name = name;
+    }
+
+    void set_position(const float x, const float y) {
+        _position.x = x;
+        _position.y = y;
+    }
+
+private:
+    Encoder*    _encoder;
+#ifdef KLST_ENCODER_WIP
+    float       _radius = 40;
+#endif
+    std::string _name;
+    struct {
+        float x{0};
+        float y{0};
+    } _position;
+};
 
 #ifdef __cplusplus
 extern "C" {
@@ -57,6 +102,26 @@ bool encoder_init_BSP(Encoder* encoder) {
         return false;
     }
     if (encoder->device_type == ENCODER_LEFT || encoder->device_type == ENCODER_RIGHT) {
+        if (encoder->device_type == ENCODER_RIGHT) {
+            static bool initialized = false;
+            if (!initialized) {
+                initialized         = true;
+                const auto drawable = new DrawableEncoder(encoder);
+                drawable->set_name("Encoder RIGHT");
+                drawable->set_position(200, 200);
+                umfeld::KlangstromEmulator::instance()->register_drawable(drawable);
+            }
+        }
+        if (encoder->device_type == ENCODER_LEFT) {
+            static bool initialized = false;
+            if (!initialized) {
+                initialized         = true;
+                const auto drawable = new DrawableEncoder(encoder);
+                drawable->set_name("Encoder LEFT");
+                drawable->set_position(150, 200);
+                umfeld::KlangstromEmulator::instance()->register_drawable(drawable);
+            }
+        }
         return true;
     }
     if (encoder->device_type == ENCODER_TYPE_CUSTOM) {
@@ -79,6 +144,25 @@ void encoder_start(Encoder* encoder) {
 void encoder_stop(Encoder* encoder) {
 }
 
+/**
+ * event handler for encoder ( button and rotation )
+ * TODO maybe move this to System if other peripherals need timer interrupts too
+ */
+void HAL_TIM_IC_CaptureCallback(TIM_HandleTypeDef* htim) {
+    const ArrayList_EncoderPtr& listeners = *encoder_get_listeners();
+    console_println("HAL_TIM_IC_CaptureCallback: timer interrupt received");
+    // for (size_t i = 0; i < listeners.size; i++) {
+    //     Encoder*                  encoder    = listeners.data[i];
+    //     const EncoderPeripherals& peripheral = *encoder->peripherals;
+    //     if (peripheral.timer_handle == htim) {
+    //         const auto event_type   = get_event_type(*htim, peripheral);
+    //         const auto button_state = !HAL_GPIO_ReadPin(peripheral.gpio_port, peripheral.gpio_pin);
+    //         encoder->rotation       = get_encoder_value(htim);
+    //         encoder->button_pressed = button_state;
+    //         encoder->callback(encoder, event_type);
+    //     }
+    // }
+}
 
 #ifdef __cplusplus
 }

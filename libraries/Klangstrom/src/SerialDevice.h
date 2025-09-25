@@ -42,7 +42,7 @@ static constexpr int32_t SERIAL_DEVICE_DEFAULT_BAUD               = -1;
 struct SerialPeripherals; /* BSP or ASP implementation */
 struct SerialDevice;
 
-typedef void (*Callback_1_SERIALDEVICEPTR)(SerialDevice*);
+typedef void (*Callback_1_SERIALDEVICEPTR)(const SerialDevice*);
 
 typedef struct SerialDevice {
     SerialPeripherals*         peripherals           = nullptr;
@@ -60,7 +60,7 @@ typedef struct SerialDevice {
  * callback to be implemented by client application
  * @param serial_device
  */
-WEAK void serial_event(SerialDevice* serial_device);
+void serial_event(const SerialDevice* serial_device);
 
 SerialDevice* serialdevice_create(uint8_t device_type, uint32_t buffer_size = 32, uint32_t baud_rate = 115200);
 void          serialdevice_delete(SerialDevice* serialdevice);

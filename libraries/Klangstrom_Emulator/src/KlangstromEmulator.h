@@ -29,6 +29,7 @@
 
 #include "KlangstromEmulatorClient.h"
 #include "KlangstromEmulatorAudioDevice.h"
+#include "../../Klangstrom/src/Console.h"
 
 #ifndef KLST_EMU_AUDIO_BLOCK
 #define KLST_EMU_AUDIO_BLOCK 128
@@ -95,14 +96,6 @@ namespace umfeld {
         }
 
     public:
-        static float mouseX() {
-            return umfeld::mouseX;
-        }
-
-        static float mouseY() {
-            return umfeld::mouseY;
-        }
-
         template<typename... Args>
         void osc_send(const std::string& addr_pattern, Args... args) {
             mOSC.send(addr_pattern, args...);
@@ -120,6 +113,14 @@ namespace umfeld {
                 delete device;
             }
             task.stop();
+        }
+
+        static float mouseX() {
+            return umfeld::mouseX;
+        }
+
+        static float mouseY() {
+            return umfeld::mouseY;
         }
 
         static KlangstromEmulator* instance();

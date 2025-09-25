@@ -149,7 +149,7 @@ unsigned long system_get_UID(const uint8_t offset) {
     if (offset > 3) {
         return 0;
     }
-    unsigned long _fake_uid[4] = {0x12345678, 0x9ABCDEF0, 0x13579BDF, 0x2468ACE0};
+    constexpr unsigned long _fake_uid[4] = {0x12345678, 0x9ABCDEF0, 0x13579BDF, 0x2468ACE0};
     return _fake_uid[offset];
 }
 

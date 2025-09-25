@@ -35,15 +35,10 @@ typedef enum {
     LEFT     = 0x03
 } TextAlign;
 
-/* NOTE these functions are deliberately NOT placed in `extern "C" {}` block to allow overloading */
-
 // TODO remove color parameter and use global color variables
 // TODO consider getting rid of all `*_stroke` and `*_fill` functions and evaluate color flags instead ( processing.org style )
 
-inline uint32_t color(const uint8_t r, const uint8_t g, const uint8_t b, const uint8_t a) { return (a << 24) | (r << 16) | (g << 8) | b; }
-inline uint32_t color(const uint8_t r, const uint8_t g, const uint8_t b) { return (0xFF << 24) | (r << 16) | (g << 8) | b; }
-inline uint32_t color(const uint8_t gray, const uint8_t a) { return (a << 24) | (gray << 16) | (gray << 8) | gray; }
-inline uint32_t color(const uint8_t gray) { return (0xFF << 24) | (gray << 16) | (gray << 8) | gray; }
+/* NOTE these functions are deliberately NOT placed in `extern "C" {}` block to allow overloading */
 
 void      draw_clear(uint32_t color);
 void      draw_fill(uint32_t color);
@@ -86,4 +81,23 @@ void      draw_char(int16_t x, int16_t y, char ascii_char);
 void      draw_char(int16_t x, int16_t y, char ascii_char, uint8_t scale);
 void      draw_text(int16_t x, int16_t y, const std::string& text);
 void      draw_text(int16_t x, int16_t y, const std::string& text, uint8_t scale);
-uint32_t  draw_blend_colors(uint32_t color_a, uint32_t color_b, uint8_t alpha);
+uint32_t  color_from_gray(float gray);                                           // gray = 0.0 .. 1.0
+uint32_t  color_from_gray_alpha(float gray, float alpha);                        // gray,alpha = 0.0 .. 1.0
+uint32_t  color_from_rgb(float r, float g, float b);                             // r,g,b = 0.0 .. 1.0
+uint32_t  color_from_rgba(float r, float g, float b, float a);                   // r,g,b,a = 0.0 .. 1.0
+uint32_t  color_from_hsv(float h, float s, float v);                             // h = 0 .. 360, s,v = 0.0 .. 1.0
+void      color_to_rgb(uint32_t color, float& r, float& g, float& b);            // r,g,b = 0.0 .. 1.0
+void      color_to_rgba(uint32_t color, float& r, float& g, float& b, float& a); // r,g,b,a = 0.0 .. 1.0
+float     color_to_alpha(uint32_t color);
+float     color_to_red(uint32_t color);
+float     color_to_green(uint32_t color);
+float     color_to_blue(uint32_t color);
+void      color_argb_to_rgba(uint32_t argb, uint32_t& rgba);
+uint32_t  colors_blend(uint32_t color_a, uint32_t color_b, uint8_t alpha);
+#define KLST_IGNORE_SIMPLE_COLOR_OVERLOADS
+#ifndef KLST_IGNORE_SIMPLE_COLOR_OVERLOADS
+inline uint32_t color(const float gray) { return color_from_gray(gray); }
+inline uint32_t color(const float gray, const float alpha) { return color_from_gray_alpha(gray, alpha); }
+inline uint32_t color(const float r, const float g, const float b) { return color_from_rgb(r, g, b); }
+inline uint32_t color(const float r, const float g, const float b, const float a) { return color_from_rgba(r, g, b, a); }
+#endif

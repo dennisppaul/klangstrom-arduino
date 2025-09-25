@@ -20,7 +20,7 @@ audiodevice_resume(audiodevice);
 
 once the audiocodec is started ( with `audiodevice_resume(audiodevice);` ) a callback method is called whenever 
 a new block of sample data is required for output and available from the input. by default the callback is set
-to `void audioblock(AudioBlock* audio_block) {}`. the audio block struct contains the input and output buffers
+to `void audioblock(const AudioBlock* audio_block) {}`. the audio block struct contains the input and output buffers
 as well as further information about the audio device and the sample data. this can be useful when for example 
 multiple audio devices are used in a single system.
 

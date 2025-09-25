@@ -4,3 +4,5 @@ Klangstrom_KLST_EMU/.vscode
 .idea
 Klangstrom_Emulator/delete_this/
 .vscode
+Klangstrom/tools/compile-results.txt
+Klangstrom/tools/compile-results.csv

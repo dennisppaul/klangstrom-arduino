@@ -257,6 +257,14 @@ void umfeld::KlangstromEmulator::keyPressed() {
         }
     }
 #endif // KLST_PANDA_EMU
+#ifdef KLST_ENCODER_WIP
+    if (key == '3') {
+        TIM_HandleTypeDef htim;
+        htim.counter      = 23;
+        htim.timer_handle = 1;
+        HAL_TIM_IC_CaptureCallback(&htim);
+    }
+#endif
 }
 
 void umfeld::KlangstromEmulator::keyReleased() {

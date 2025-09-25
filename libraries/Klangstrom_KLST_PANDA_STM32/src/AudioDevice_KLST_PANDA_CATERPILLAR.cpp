@@ -86,7 +86,7 @@ static void check_audiodevice_config(AudioDevice* audiodevice) {
     }
 }
 
-static void rx_input_callback(AudioDevice* audiodevice, uint8_t callback_type) {
+static void rx_input_callback(const AudioDevice* audiodevice, uint8_t callback_type) {
     if (callback_type == CALLBACK_FULL_COMPLETE) {
         mCurrentInputRXBuffer = &(dma_RX_buffer[audiodevice->audioinfo->block_size * audiodevice->audioinfo->input_channels]);
     } else if (callback_type == CALLBACK_HALF_COMPLETE) {
@@ -94,7 +94,7 @@ static void rx_input_callback(AudioDevice* audiodevice, uint8_t callback_type) {
     }
 }
 
-static void tx_output_callback(AudioDevice* audiodevice, uint8_t callback_type) {
+static void tx_output_callback(const AudioDevice* audiodevice, uint8_t callback_type) {
     if (callback_type == CALLBACK_FULL_COMPLETE) {
         mCurrentOutputTXBuffer = &(dma_TX_buffer[audiodevice->audioinfo->block_size * audiodevice->audioinfo->output_channels]);
     } else if (callback_type == CALLBACK_HALF_COMPLETE) {
@@ -107,7 +107,7 @@ static void tx_output_callback(AudioDevice* audiodevice, uint8_t callback_type) 
     }
 }
 
-static void error_callback(AudioDevice* audiodevice, uint8_t callback_type) {
+static void error_callback(const AudioDevice* audiodevice, uint8_t callback_type) {
     (void) audiodevice;
     (void) callback_type;
     console_error("error in audio device");
@@ -184,7 +184,7 @@ void audiodevice_deinit_peripherals_BSP(AudioDevice* audiodevice) {
     delete audiodevice->peripherals;
 }
 
-void audiodevice_deinit_BSP(AudioDevice* audiodevice) {
+void audiodevice_deinit_BSP(const AudioDevice* audiodevice) {
     (void) audiodevice; // TODO implement
     dma_free_all();
 }

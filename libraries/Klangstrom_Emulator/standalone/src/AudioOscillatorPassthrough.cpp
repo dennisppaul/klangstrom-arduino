@@ -65,7 +65,7 @@ void loop() {
     delay(500);
 }
 
-void audioblock(AudioBlock* audio_block) {
+void audioblock(const AudioBlock* audio_block) {
     // console_once("audioblock block size     : ", audio_block->block_size);
     // console_once("audioblock input channels : ", audio_block->input_channels);
     // console_once("audioblock output channels: ", audio_block->output_channels);

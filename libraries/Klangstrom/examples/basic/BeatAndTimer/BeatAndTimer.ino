@@ -45,6 +45,6 @@ void beat_event(const uint8_t beat_id, const uint16_t beat_counter) {
     console_println("beat: ID %i, counter %03i", beat_id, beat_counter);
 }
 
-void periodic_timer_event(PeriodicTimer* timer) {
+void periodic_timer_event(const PeriodicTimer* timer) {
     console_println("timer: ID %i", timer->timer_id);
 }

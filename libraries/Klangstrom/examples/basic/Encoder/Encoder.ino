@@ -19,7 +19,7 @@ void setup() {
 
 void loop() {}
 
-void encoder_event(Encoder* encoder, uint8_t event) {
+void encoder_event(const Encoder* encoder, const uint8_t event) {
     if (event == ENCODER_EVENT_ROTATION) {
         console_println("ENCODER_EVENT_ROTATION(%i): %i ", encoder->device_type, encoder->rotation);
     }

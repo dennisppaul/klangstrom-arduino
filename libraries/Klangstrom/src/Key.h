@@ -56,9 +56,7 @@ typedef struct Key {
 
 DEFINE_ARRAYLIST(Key*, KeyPtr)
 
-WEAK void key_event(const Key* key); // TODO not sure if it is good to make this const
-                                     //     i.e might be confusing or will lead to implementation errors.
-                                     //     if this remains const it should be consistent with the other callback functions.
+void key_event(const Key* key);
 
 void              key_init(uint8_t number_of_keys = KLST_DEFAULT_NUMBER_OF_KEYS);
 Key*              key_create(uint8_t device_type);

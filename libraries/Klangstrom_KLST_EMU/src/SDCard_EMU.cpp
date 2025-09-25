@@ -41,15 +41,15 @@ class DrawableSDCard : public Drawable {
 public:
     DrawableSDCard() {}
 
-    void draw(PGraphics* g) override {
-        g->pushMatrix();
-        g->translate(0, 0);
+    void draw(PGraphics* graphics) override {
+        graphics->pushMatrix();
+        graphics->translate(0, 0);
         if (mCardDetected) {
-            g->fill(0, 255, 0);
+            graphics->fill(0, 255, 0);
         } else {
-            g->fill(255, 0, 0);
+            graphics->fill(255, 0, 0);
         }
-        g->popMatrix();
+        graphics->popMatrix();
     }
 
 private:
@@ -78,8 +78,8 @@ extern "C" {
 static const char* mFolderPath = nullptr;
 static FILE*       mFile       = nullptr;
 
-static std::string get_full_path(std::string pFile) {
-    return std::string(mFolderPath + pFile);
+static std::string get_full_path(const std::string& file) {
+    return std::string(mFolderPath + file);
 }
 
 static bool is_prefixed(const char* pre, const char* str) {
@@ -94,7 +94,7 @@ bool sdcard_init_dir(const char* pFolderPath) {
 bool sdcard_init() {
     static bool initialized = false;
     if (!initialized) {
-        mFolderPath = tinyfd_selectFolderDialog("Select a directory", NULL);
+        mFolderPath = tinyfd_selectFolderDialog("Select a directory", nullptr);
         if (!mFolderPath) {
             tinyfd_messageBox(
                 "Error",
@@ -159,7 +159,7 @@ bool sdcard_format(uint8_t format) {
     return true;
 }
 
-bool sdcard_list(std::string path, std::vector<std::string>& files, std::vector<std::string>& directories, bool show_hidden_files) {
+bool sdcard_list(const std::string& path, std::vector<std::string>& files, std::vector<std::string>& directories, const bool show_hidden_files) {
     CHECK_MOUNTED(mMounted);
     if (mFolderPath != nullptr) {
         tinydir_dir dir;
@@ -184,7 +184,7 @@ bool sdcard_list(std::string path, std::vector<std::string>& files, std::vector<
     return true;
 }
 
-bool sdcard_file_open(std::string filepath, uint8_t flags) {
+bool sdcard_file_open(const std::string& filepath, const uint8_t flags) {
     CHECK_MOUNTED(mMounted);
     const std::string mFilePath = get_full_path(filepath);
     switch (flags) {
@@ -197,6 +197,7 @@ bool sdcard_file_open(std::string filepath, uint8_t flags) {
         case FILE_READ_WRITE:
             mFile = fopen(mFilePath.c_str(), "r+");
             break;
+        default:;
     }
 
     if (mFile == nullptr) {
@@ -206,13 +207,13 @@ bool sdcard_file_open(std::string filepath, uint8_t flags) {
     return true;
 }
 
-uint32_t sdcard_file_write(uint8_t* bytes, uint32_t bytes_to_write) {
+uint32_t sdcard_file_write(const uint8_t* bytes, const uint32_t bytes_to_write) {
     CHECK_MOUNTED(mMounted);
     CHECK_FILE(mFile);
     return fwrite(bytes, 1, bytes_to_write, mFile);
 }
 
-uint32_t sdcard_file_read(uint8_t* bytes, uint32_t bytes_to_read) {
+uint32_t sdcard_file_read(uint8_t* bytes, const uint32_t bytes_to_read) {
     CHECK_MOUNTED(mMounted);
     CHECK_FILE(mFile);
     return fread(bytes, 1, bytes_to_read, mFile);
@@ -226,9 +227,9 @@ bool sdcard_file_close() {
     return true;
 }
 
-bool sdcard_create_file(const std::string pFileName) {
+bool sdcard_file_create(const std::string& filename) {
     CHECK_MOUNTED(mMounted);
-    const std::string mFilePath = get_full_path(pFileName);
+    const std::string mFilePath = get_full_path(filename);
     mFile                       = fopen(mFilePath.c_str(), "wb");
 
     if (mFile == nullptr) {
@@ -238,7 +239,7 @@ bool sdcard_create_file(const std::string pFileName) {
     return true;
 }
 
-bool sdcard_file_seek(uint32_t position) {
+bool sdcard_file_seek(const uint32_t position) {
     CHECK_MOUNTED(mMounted);
     CHECK_FILE(mFile);
     if (fseek(mFile, position, SEEK_SET)) {
