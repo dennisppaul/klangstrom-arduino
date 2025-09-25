@@ -25,20 +25,20 @@ void setup() {
 void loop() {}
 
 void display_update_event() {
-    draw_clear(GRAY(0x50));
+    draw_clear(color_from_gray(0.3));
 
-    draw_fill(color(0xFF));
-    draw_set_background_color(color(0xFF, 0x00));
+    draw_fill(color_from_gray(1.0f));
+    draw_set_background_color(color_from_gray_alpha(1.0f, 0.0f));
     draw_text(20, display_get_height() / 2 - 25, "HELLO WORLD", 8);
 
-    draw_fill(color(0x00, 0x00));
-    draw_set_background_color(color(0x00, 0x80, 0xFF));
+    draw_fill(color_from_gray_alpha(0.0f, 0.0f));
+    draw_set_background_color(color_from_rgb(0.0f, 0.5f, 1.0f));
     draw_char(x, y, '2', 4);
-    draw_set_background_color(color(0xFF, 0x80, 0x00, 0x80)); // TODO alpha blending does not work
+    draw_set_background_color(color_from_rgba(1.0f, 0.5f, 0.0f, 0.5f)); // TODO alpha blending does not work
     draw_text(x + Font_5x8.width * 4, y, "3 or 42 ... not sure");
 }
 
-void display_touch_event(TouchEvent* touchevent) {
+void display_touch_event(const TouchEvent* touchevent) {
     if (touchevent->number_of_touches == 1) {
         if (touchevent->x[0] >= 0 && touchevent->y[0] >= 0) {
             x = touchevent->x[0];

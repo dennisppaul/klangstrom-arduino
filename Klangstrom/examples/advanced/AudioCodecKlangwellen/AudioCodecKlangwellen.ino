@@ -29,18 +29,18 @@ bool  audiocodec_paused = false;
 void setup() {
     system_init();
 
-    Wavetable::fill(wavetable, 512, KlangWellen::WAVEFORM_SAWTOOTH);
+    Wavetable::fill(wavetable, 512, Klangwellen::WAVEFORM_SAWTOOTH);
     oscillator_left.set_amplitude(0.5f);
 
     oscillator_right.set_amplitude(0.5f);
-    oscillator_right.set_waveform(KlangWellen::WAVEFORM_SINE);
+    oscillator_right.set_waveform(Klangwellen::WAVEFORM_SINE);
 
     fm_synthesis.set_amplitude(0.5f);
     fm_synthesis.get_carrier()->set_frequency(110);
-    fm_synthesis.get_modulator()->set_waveform(KlangWellen::WAVEFORM_TRIANGLE);
+    fm_synthesis.get_modulator()->set_waveform(Klangwellen::WAVEFORM_TRIANGLE);
     fm_synthesis.get_modulator()->set_frequency(55);
 
-    noise.set_type(KlangWellen::NOISE_WHITE);
+    noise.set_type(Klangwellen::NOISE_WHITE);
     simplex_noise.set_step(0.01);
 
     // long init section ...
@@ -74,10 +74,10 @@ void loop() {
     delay(250);
 }
 
-void audioblock(AudioBlock* audio_block) {
+void audioblock(const AudioBlock* audio_block) {
     oscillator_left.set_frequency(osc_frequency + simplex_noise.process() * 200);
     for (int i = 0; i < audio_block->block_size; ++i) {
-        audio_block->output[0][i] = KlangWellen::clamp(oscillator_left.process(), -1, 1) * 0.5f;
+        audio_block->output[0][i] = Klangwellen::clamp(oscillator_left.process(), -1, 1) * 0.5f;
         audio_block->output[1][i] = audio_block->output[0][i];
         // audio_block->output[1][i] = oscillator_right.process();
     }

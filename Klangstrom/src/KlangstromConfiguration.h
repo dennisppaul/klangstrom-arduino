@@ -44,6 +44,9 @@
 #ifndef KLST_AUDIO_CODEC_AUDIO_BUFFER_SIZE
 #define KLST_AUDIO_CODEC_AUDIO_BUFFER_SIZE 128
 #endif
+#ifndef KLST_DEFAULT_BEAT_TIMER
+#define KLST_DEFAULT_BEAT_TIMER 7
+#endif
 
 #if __has_include("KlangstromConfigurationCustom.h")
 #include "KlangstromConfigurationCustom.h"

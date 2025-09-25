@@ -58,7 +58,7 @@ void loop() {
     delay(1000);
 }
 
-void audioblock(AudioBlock* audio_block) {
+void audioblock(const AudioBlock* audio_block) {
     for (int i = 0; i < audio_block->block_size; ++i) {
         audio_block->output[0][i] = audio_block->input[0][i] + oscillator_left.process();
         audio_block->output[1][i] = audio_block->input[1][i] + oscillator_right.process();

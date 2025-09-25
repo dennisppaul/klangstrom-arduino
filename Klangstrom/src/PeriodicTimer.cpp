@@ -20,7 +20,7 @@
 #include "System.h"
 #include "PeriodicTimer.h"
 
-WEAK void periodic_timer_event(PeriodicTimer* timer) {
+WEAK void periodic_timer_event(const PeriodicTimer* timer) {
     (void) timer;
 }
 

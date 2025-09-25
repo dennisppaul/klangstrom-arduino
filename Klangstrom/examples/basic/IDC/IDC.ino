@@ -28,7 +28,7 @@ void loop() {
     delay(1000);
 }
 
-void serial_event(SerialDevice* serial_device) {
+void serial_event(const SerialDevice* serial_device) {
     console_println("client: serial event ID %i", serial_device->device_id);
     if (serial_device == serial_IDC_00) {
         if (serial_device->data != nullptr && serial_device->length > 0) {

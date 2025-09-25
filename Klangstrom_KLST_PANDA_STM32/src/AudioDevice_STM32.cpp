@@ -29,7 +29,7 @@
 extern "C" {
 #endif
 
-void audiodevice_resume(AudioDevice* audiodevice) {
+void audiodevice_resume(const AudioDevice* audiodevice) {
     if (audiodevice->peripherals->audiodevice_sai_tx != nullptr) {
         HAL_SAI_DMAResume(audiodevice->peripherals->audiodevice_sai_tx);
     }
@@ -38,7 +38,7 @@ void audiodevice_resume(AudioDevice* audiodevice) {
     }
 }
 
-void audiodevice_pause(AudioDevice* audiodevice) {
+void audiodevice_pause(const AudioDevice* audiodevice) {
     if (audiodevice->peripherals->audiodevice_sai_tx != nullptr) {
         HAL_SAI_DMAPause(audiodevice->peripherals->audiodevice_sai_tx);
     }

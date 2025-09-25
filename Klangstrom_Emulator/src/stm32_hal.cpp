@@ -34,8 +34,8 @@ using namespace std::chrono;
 
 const static uint64_t mStartTimeOffset = duration_cast<milliseconds>(steady_clock::now().time_since_epoch()).count();
 
-#define GPIO_PORT_COUNT 8 // Ports A-H
-#define GPIO_PIN_COUNT 16 // Pins 0-15
+#define GPIO_PORT_COUNT 8  // Ports A-H
+#define GPIO_PIN_COUNT  16 // Pins 0-15
 
 typedef struct {
     uint16_t port_states[GPIO_PORT_COUNT]; // Each port has 16 pins represented by a 16-bit value
@@ -82,7 +82,7 @@ void GPIO_PrintPorts() {
 uint32_t HAL_GetTick() {
     const uint64_t mCurrentTime = duration_cast<milliseconds>(steady_clock::now().time_since_epoch()).count();
     const uint32_t mDelta       = mCurrentTime - mStartTimeOffset;
-    return static_cast<uint32_t>(mDelta);
+    return mDelta;
 }
 
 uint32_t HAL_RCC_GetSysClockFreq() {

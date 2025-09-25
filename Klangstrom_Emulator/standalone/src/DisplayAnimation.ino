@@ -111,7 +111,7 @@ void display_update_event() {
               KLST_DISPLAY_GRAY_ALPHA(0x00, 0x00));
 }
 
-void display_touch_event(TouchEvent* touchevent) {
+void display_touch_event(const TouchEvent* touchevent) {
     console_clear();
     console_println("TOUCH EVENT: %d", touchevent->number_of_touches);
     for (int i = 0; i < touchevent->number_of_touches; ++i) {

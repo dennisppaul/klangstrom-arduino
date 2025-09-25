@@ -82,7 +82,7 @@ void draw_set_pixel_alpha(const int16_t x, const int16_t y, const uint32_t color
         display_set_pixel_BSP(x, y, color);
     } else if (alpha > 0x00) {
         const uint32_t pixel       = display_get_pixel_BSP(x, y);
-        const uint32_t mBlendColor = draw_blend_colors(pixel, color, alpha);
+        const uint32_t mBlendColor = colors_blend(pixel, color, alpha);
         display_set_pixel_BSP(x, y, mBlendColor);
     }
 }
@@ -445,7 +445,7 @@ void draw_circle_stroke(const int16_t  x,
     }
 }
 
-void draw_circle_fill(int16_t x0, int16_t y0, uint16_t r,
+void draw_circle_fill(const int16_t x0, const int16_t y0, const uint16_t r,
                       const uint32_t color) {
     int16_t f     = 1 - r;
     int16_t ddF_x = 1;
@@ -491,7 +491,7 @@ void draw_triangle(const int16_t x0, const int16_t y0,
 void draw_triangle_stroke(const int16_t x0, const int16_t y0,
                           const int16_t x1, const int16_t y1,
                           const int16_t x2, const int16_t y2,
-                          uint32_t color) {
+                          const uint32_t color) {
     draw_line(x0, y0, x1, y1, color);
     draw_line(x1, y1, x2, y2, color);
     draw_line(x2, y2, x0, y0, color);
@@ -873,13 +873,119 @@ void draw_text(const int16_t x, const int16_t y, const std::string& text, const 
 }
 
 
-uint32_t draw_blend_colors(const uint32_t color_a, const uint32_t color_b, const uint8_t alpha) {
+uint32_t colors_blend(const uint32_t color_a, const uint32_t color_b, const uint8_t alpha) {
     const uint8_t  inv   = 0xFF - alpha;
     const uint8_t  r     = (KLST_DISPLAY_GET_RED(color_a) * inv + KLST_DISPLAY_GET_RED(color_b) * alpha) >> 8;
     const uint8_t  g     = (KLST_DISPLAY_GET_GREEN(color_a) * inv + KLST_DISPLAY_GET_GREEN(color_b) * alpha) >> 8;
     const uint8_t  b     = (KLST_DISPLAY_GET_BLUE(color_a) * inv + KLST_DISPLAY_GET_BLUE(color_b) * alpha) >> 8;
     const uint32_t blend = KLST_DISPLAY_RGBA(r, g, b, 0xFF);
     return blend;
+}
+
+uint32_t color_from_gray(const float gray) {
+    const uint8_t v = static_cast<uint8_t>(gray * 255.0f);
+    return KLST_DISPLAY_RGBA(v, v, v, 0xFF);
+}
+
+uint32_t color_from_gray_alpha(const float gray, const float alpha) {
+    const uint8_t v = static_cast<uint8_t>(gray * 255.0f);
+    const uint8_t a = static_cast<uint8_t>(alpha * 255.0f);
+    return KLST_DISPLAY_RGBA(v, v, v, a);
+}
+
+uint32_t color_from_rgb(const float r, const float g, const float b) {
+    const uint8_t rr = static_cast<uint8_t>(r * 255.0f);
+    const uint8_t gg = static_cast<uint8_t>(g * 255.0f);
+    const uint8_t bb = static_cast<uint8_t>(b * 255.0f);
+    return KLST_DISPLAY_RGBA(rr, gg, bb, 0xFF);
+}
+
+uint32_t color_from_rgba(const float r, const float g, const float b, const float a) {
+    const uint8_t rr = static_cast<uint8_t>(r * 255.0f);
+    const uint8_t gg = static_cast<uint8_t>(g * 255.0f);
+    const uint8_t bb = static_cast<uint8_t>(b * 255.0f);
+    const uint8_t aa = static_cast<uint8_t>(a * 255.0f);
+    return KLST_DISPLAY_RGBA(rr, gg, bb, aa);
+}
+
+uint32_t color_from_hsv(const float h, const float s, const float v) {
+    float       r, g, b;
+    const int   i = static_cast<int>(h / 60.0f) % 6;
+    const float f = h / 60.0f - i;
+    const float p = v * (1.0f - s);
+    const float q = v * (1.0f - f * s);
+    const float t = v * (1.0f - (1.0f - f) * s);
+    switch (i) {
+        case 0:
+            r = v;
+            g = t;
+            b = p;
+            break;
+        case 1:
+            r = q;
+            g = v;
+            b = p;
+            break;
+        case 2:
+            r = p;
+            g = v;
+            b = t;
+            break;
+        case 3:
+            r = p;
+            g = q;
+            b = v;
+            break;
+        case 4:
+            r = t;
+            g = p;
+            b = v;
+            break;
+        case 5:
+            r = v;
+            g = p;
+            b = q;
+            break;
+        default: r = g = b = 0.0f; break;
+    }
+    return color_from_rgb(r, g, b);
+}
+
+void color_to_rgb(const uint32_t color, float& r, float& g, float& b) {
+    r = KLST_DISPLAY_GET_RED(color) / 255.0f;
+    g = KLST_DISPLAY_GET_GREEN(color) / 255.0f;
+    b = KLST_DISPLAY_GET_BLUE(color) / 255.0f;
+}
+
+void color_to_rgba(const uint32_t color, float& r, float& g, float& b, float& a) {
+    r = KLST_DISPLAY_GET_RED(color) / 255.0f;
+    g = KLST_DISPLAY_GET_GREEN(color) / 255.0f;
+    b = KLST_DISPLAY_GET_BLUE(color) / 255.0f;
+    a = KLST_DISPLAY_GET_ALPHA(color) / 255.0f;
+}
+
+void color_argb_to_rgba(const uint32_t argb, uint32_t& rgba) {
+    const uint8_t a = (argb >> 24) & 0xFF;
+    const uint8_t r = (argb >> 16) & 0xFF;
+    const uint8_t g = (argb >> 8) & 0xFF;
+    const uint8_t b = argb & 0xFF;
+    rgba            = (r << 24) | (g << 16) | (b << 8) | a;
+}
+
+float color_to_alpha(const uint32_t color) {
+    return KLST_DISPLAY_GET_ALPHA(color) / 255.0f;
+}
+
+float color_to_red(const uint32_t color) {
+    return KLST_DISPLAY_GET_RED(color) / 255.0f;
+}
+
+float color_to_green(const uint32_t color) {
+    return KLST_DISPLAY_GET_GREEN(color) / 255.0f;
+}
+
+float color_to_blue(const uint32_t color) {
+    return KLST_DISPLAY_GET_BLUE(color) / 255.0f;
 }
 
 #endif // KLST_PERIPHERAL_ENABLE_DISPLAY

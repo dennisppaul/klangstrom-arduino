@@ -37,6 +37,20 @@ typedef enum {
     GPIO_PIN_SET
 } GPIO_PinState;
 
+typedef struct {
+    int32_t       counter;
+    int32_t       timer_handle;
+    GPIO_PinState button;
+    uint8_t       event_type;
+    // if (htim.Channel == r.button_channel) {
+    //     return ENCODER_EVENT_BUTTON;
+    // }
+    // if (htim.Channel == r.encoder_channel_a || htim.Channel == r.encoder_channel_b) {
+    //     return ENCODER_EVENT_ROTATION;
+    // }
+    // return ENCODER_EVENT_NONE;
+} TIM_HandleTypeDef;
+
 typedef enum {
     GPIO_PIN_00 = 0x0000,
     GPIO_PIN_01 = 0x0001,
@@ -56,14 +70,14 @@ typedef enum {
     GPIO_PIN_15 = 0x000F
 } GPIO_Pin;
 
-inline auto GPIOA = new GPIO_TypeDef{.ID = 0x000};
-inline auto GPIOB = new GPIO_TypeDef{.ID = 0x001};
-inline auto GPIOC = new GPIO_TypeDef{.ID = 0x002};
-inline auto GPIOD = new GPIO_TypeDef{.ID = 0x003};
-inline auto GPIOE = new GPIO_TypeDef{.ID = 0x004};
-inline auto GPIOF = new GPIO_TypeDef{.ID = 0x005};
-inline auto GPIOG = new GPIO_TypeDef{.ID = 0x006};
-inline auto GPIOH = new GPIO_TypeDef{.ID = 0x007};
+extern GPIO_TypeDef* GPIOA;
+extern GPIO_TypeDef* GPIOB;
+extern GPIO_TypeDef* GPIOC;
+extern GPIO_TypeDef* GPIOD;
+extern GPIO_TypeDef* GPIOE;
+extern GPIO_TypeDef* GPIOF;
+extern GPIO_TypeDef* GPIOG;
+extern GPIO_TypeDef* GPIOH;
 
 typedef enum {
     TIM1_BASE,
@@ -90,15 +104,15 @@ typedef enum {
     TIM22_BASE
 } TIM_TypeDef;
 
-#define TIM1 ((TIM_TypeDef*) TIM1_BASE)
-#define TIM2 ((TIM_TypeDef*) TIM2_BASE)
-#define TIM3 ((TIM_TypeDef*) TIM3_BASE)
-#define TIM4 ((TIM_TypeDef*) TIM4_BASE)
-#define TIM5 ((TIM_TypeDef*) TIM5_BASE)
-#define TIM6 ((TIM_TypeDef*) TIM6_BASE)
-#define TIM7 ((TIM_TypeDef*) TIM7_BASE)
-#define TIM8 ((TIM_TypeDef*) TIM8_BASE)
-#define TIM9 ((TIM_TypeDef*) TIM9_BASE)
+#define TIM1  ((TIM_TypeDef*) TIM1_BASE)
+#define TIM2  ((TIM_TypeDef*) TIM2_BASE)
+#define TIM3  ((TIM_TypeDef*) TIM3_BASE)
+#define TIM4  ((TIM_TypeDef*) TIM4_BASE)
+#define TIM5  ((TIM_TypeDef*) TIM5_BASE)
+#define TIM6  ((TIM_TypeDef*) TIM6_BASE)
+#define TIM7  ((TIM_TypeDef*) TIM7_BASE)
+#define TIM8  ((TIM_TypeDef*) TIM8_BASE)
+#define TIM9  ((TIM_TypeDef*) TIM9_BASE)
 #define TIM10 ((TIM_TypeDef*) TIM10_BASE)
 #define TIM11 ((TIM_TypeDef*) TIM11_BASE)
 #define TIM12 ((TIM_TypeDef*) TIM12_BASE)

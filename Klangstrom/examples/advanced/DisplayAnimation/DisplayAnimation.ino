@@ -54,23 +54,23 @@ void loop() {
 uint8_t move = 0;
 
 void display_update_event() {
-    draw_clear(KLST_DISPLAY_GRAY(0x00));
+    draw_clear(color_from_gray(0.0f));
 
-    draw_rect_fill(30, 30, 20, 20, KLST_DISPLAY_RGB(0xFF, 0x00, 0x00));
-    draw_rect_fill(50, 30, 20, 20, KLST_DISPLAY_RGB(0x00, 0xFF, 0x00));
-    draw_rect_fill(70, 30, 20, 20, KLST_DISPLAY_RGB(0x00, 0x00, 0xFF));
-    draw_rect_fill(display_get_width() - 40, display_get_height() - 40, 20, 20, KLST_DISPLAY_GRAY(0xFF));
-    draw_rect_fill(x, y, 20, 20, KLST_DISPLAY_RGBA(0xFF, 0xFF, 0xFF, 0x80));
+    draw_rect_fill(30, 30, 20, 20, color_from_rgb(1.0f, 0.0f, 0.0f));
+    draw_rect_fill(50, 30, 20, 20, color_from_rgb(0.0f, 1.0f, 0.0f));
+    draw_rect_fill(70, 30, 20, 20, color_from_rgb(0.0f, 0.0f, 1.0f));
+    draw_rect_fill(display_get_width() - 40, display_get_height() - 40, 20, 20, color_from_gray(1.0f));
+    draw_rect_fill(x, y, 20, 20, color_from_rgba(1.0f, 1.0f, 1.0f, 0.5f));
     draw_rect_fill(x + 5, y + 5, 40, 40, 0x80FF8000);
 
     for (int i = 0; i < 25; ++i) {
-        draw_rect_fill(x + (i % 5) * 30, y + i / 5 * 30, 20, 20, KLST_DISPLAY_RGB(0xFF, 0xFF, 0xFF));
+        draw_rect_fill(x + (i % 5) * 30, y + i / 5 * 30, 20, 20, color_from_rgb(1.0f, 1.0f, 1.0f));
     }
 
-    draw_line_horizontal(0, display_get_height() / 2, display_get_width(), KLST_DISPLAY_RGB(0xFF, 0xFF, 0xFF));
-    draw_line_vertical(display_get_width() / 2, 0, display_get_height(), KLST_DISPLAY_RGB(0xFF, 0xFF, 0xFF));
-    draw_line(0, 0, display_get_width(), display_get_height(), KLST_DISPLAY_RGB(0xFF, 0xFF, 0xFF));
-    draw_line(0, display_get_height(), display_get_width(), 0, KLST_DISPLAY_RGB(0xFF, 0xFF, 0xFF));
+    draw_line_horizontal(0, display_get_height() / 2, display_get_width(), color_from_rgb(1.0f, 1.0f, 1.0f));
+    draw_line_vertical(display_get_width() / 2, 0, display_get_height(), color_from_rgb(1.0f, 1.0f, 1.0f));
+    draw_line(0, 0, display_get_width(), display_get_height(), color_from_rgb(1.0f, 1.0f, 1.0f));
+    draw_line(0, display_get_height(), display_get_width(), 0, color_from_rgb(1.0f, 1.0f, 1.0f));
     draw_line_vertical_pattern(0, display_get_height() / 3, display_get_width(), 0b11001100);
 
     draw_stroke(0xFF0000FF);
@@ -78,12 +78,12 @@ void display_update_event() {
     draw_stroke(0xFFFF0000);
     draw_line_horizontal_pattern(0, display_get_height() / 3, display_get_width(), 0b11001100);
 
-    draw_circle_stroke(display_get_width() / 2, display_get_height() / 2, 50, KLST_DISPLAY_RGB(0xFF, 0xFF, 0xFF));
-    draw_circle_fill(display_get_width() / 2 + 50, display_get_height() / 2, 50, KLST_DISPLAY_RGB(0x00, 0x80, 0xFF));
-    draw_rect_stroke(display_get_width() / 2 - 50, display_get_height() / 2 - 50, 100, 100, KLST_DISPLAY_RGB(0xFF, 0xFF, 0xFF));
+    draw_circle_stroke(display_get_width() / 2, display_get_height() / 2, 50, color_from_rgb(1.0f, 1.0f, 1.0f));
+    draw_circle_fill(display_get_width() / 2 + 50, display_get_height() / 2, 50, color_from_rgb(0.0f, 0.5f, 1.0f));
+    draw_rect_stroke(display_get_width() / 2 - 50, display_get_height() / 2 - 50, 100, 100, color_from_rgb(1.0f, 1.0f, 1.0f));
 
     for (int i = 0; i < MAX_POINTS; ++i) {
-        draw_set_pixel(points[i].x, points[i].y, KLST_DISPLAY_GRAY(0xFF));
+        draw_set_pixel(points[i].x, points[i].y, color_from_gray(1.0f));
     }
 
     draw_image(IMAGE_DATA,
@@ -95,17 +95,17 @@ void display_update_event() {
                                          {200, 130},
                                          {200, 200},
                                          {80, 200}};
-    draw_polygon_stroke(m_points, true, KLST_DISPLAY_RGB(0xFF, 0xFF, 0xFF));
+    draw_polygon_stroke(m_points, true, color_from_rgb(1.0f, 1.0f, 1.0f));
 
     draw_text(&Font12,
               x, y,
               "hello",
               TextAlign::LEFT,
-              KLST_DISPLAY_RGB(0xFF, 0x00, 0x00),
-              KLST_DISPLAY_GRAY_ALPHA(0x00, 0x00));
+              color_from_rgb(1.0f, 0.0f, 0.0f),
+              color_from_gray_alpha(0.0f, 0.0f));
 }
 
-void display_touch_event(TouchEvent* touchevent) {
+void display_touch_event(const TouchEvent* touchevent) {
     console_clear();
     console_println("TOUCH EVENT: %d", touchevent->number_of_touches);
     for (int i = 0; i < touchevent->number_of_touches; ++i) {

@@ -1,7 +1,7 @@
 /*
 * Klangstrom
 *
-* This file is part of the *wellen* library (https://github.com/dennisppaul/wellen).
+* This file is part of the *Klangstrom* library (https://github.com/dennisppaul/klangstrom-libraries).
 * Copyright (c) 2025 Dennis P Paul.
 *
 * This library is free software: you can redistribute it and/or modify
@@ -17,34 +17,25 @@
 * along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
-#pragma once
+#include "KlangstromEnvironment.h"
+#ifdef KLST_ARCH_IS_EMU
 
-#include <stdint.h>
+#include "DACADC.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-static constexpr int8_t  KLST_LED_ALL = -1;
-static constexpr uint8_t LED_LEFT     = 0;
-static constexpr uint8_t LED_RIGHT    = 1;
+void dac_init() {}
+void dac_write(float value) {}
+void dac_start() {}
+void dac_stop() {}
 
-typedef struct LED {
-    float intensity;
-} LED;
-
-void  led_init();
-void  led_on(const int id);
-void  led_off(const int id);
-void  led_toggle(const int id);
-void  led_set(const int id, float intensity);
-float led_get(const int id);
-LED*  led_data();
-
-void    led_init_BSP();
-uint8_t led_total_BSP();
-void    led_set_BSP(const int id, float intensity);
+void  adc_init() {}
+float adc_read() { return 0.0f; }
 
 #ifdef __cplusplus
 }
 #endif
+
+#endif // KLST_ARCH_IS_EMU

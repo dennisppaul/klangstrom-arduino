@@ -27,7 +27,7 @@ void loop() {
     delay(100);
 }
 
-void audioblock(AudioBlock* audio_block) {
+void audioblock(const AudioBlock* audio_block) {
     sum0 = 0.0;
     sum1 = 0.0;
     peak0 *= 0.995f;

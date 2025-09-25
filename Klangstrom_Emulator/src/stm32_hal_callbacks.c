@@ -26,7 +26,8 @@
 extern "C" {
 #endif
 
-    WEAK void HAL_GPIO_EXTI_Callback(const uint16_t GPIO_Pin) {}
+WEAK void HAL_GPIO_EXTI_Callback(const uint16_t GPIO_Pin) { (void) GPIO_Pin; }
+WEAK void HAL_TIM_IC_CaptureCallback(TIM_HandleTypeDef* htim) { (void) htim; }
 
 #ifdef __cplusplus
 }

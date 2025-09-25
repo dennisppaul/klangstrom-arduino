@@ -34,11 +34,10 @@ typedef void (*Callback_1_UI16)(uint16_t);
 
 typedef void (*Callback_2_UI8)(uint8_t, uint8_t);
 typedef void (*Callback_2_UI8_UI16)(uint8_t, uint16_t);
-typedef void (*Callback_2_UI8_VOIDPTR)(const uint8_t, const void*);
+typedef void (*Callback_2_UI8_VOIDPTR)(uint8_t, const void*);
 
 typedef void (*Callback_3_UI8)(uint8_t, uint8_t, uint8_t);
-typedef void (*Callback_3_FLOATPTRPTR_FLOATPTRPTR_UI16)(float**, float**, uint16_t);
-typedef void (*Callback_1_AUDIOBLOCKPTR)(AudioBlock*);
+typedef void (*Callback_1_AUDIOBLOCKPTR)(const AudioBlock*);
 
 #ifdef __cplusplus
 }

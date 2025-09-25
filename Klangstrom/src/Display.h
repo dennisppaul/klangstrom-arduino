@@ -39,15 +39,15 @@
 #define KLST_DISPLAY_CYAN    0xFF00FFFF
 #define KLST_DISPLAY_MAGENTA 0xFFFF00FF
 
-#define KLST_DISPLAY_ARGB_TO_RGBA(argb)             \
-    (((argb) & 0xFF000000) >> 24) |    \
-        (((argb) & 0x00FF0000) >> 8) | \
-        (((argb) & 0x0000FF00) << 8) | \
+#define KLST_DISPLAY_ARGB_TO_RGBA(argb) \
+    (((argb) & 0xFF000000) >> 24) |     \
+        (((argb) & 0x00FF0000) >> 8) |  \
+        (((argb) & 0x0000FF00) << 8) |  \
         (((argb) & 0x000000FF) << 24)
-#define KLST_DISPLAY_RGBA_TO_ARGB(rgba)             \
-    (((rgba) & 0xFF000000) >> 24) |    \
-        (((rgba) & 0x00FF0000) >> 8) | \
-        (((rgba) & 0x0000FF00) << 8) | \
+#define KLST_DISPLAY_RGBA_TO_ARGB(rgba) \
+    (((rgba) & 0xFF000000) >> 24) |     \
+        (((rgba) & 0x00FF0000) >> 8) |  \
+        (((rgba) & 0x0000FF00) << 8) |  \
         (((rgba) & 0x000000FF) << 24)
 #define KLST_DISPLAY_ARGB_TO_ABGR(argb) (((argb & 0xFF000000)) | ((argb & 0x00FF0000) >> 16) | ((argb & 0x0000FF00)) | ((argb & 0x000000FF) << 16))
 #define KLST_DISPLAY_ABGR_TO_ARGB(abgr) (((abgr & 0xFF000000)) | ((abgr & 0x00FF0000) >> 16) | ((abgr & 0x0000FF00)) | ((abgr & 0x000000FF) << 16))
@@ -62,9 +62,9 @@
 #define KLST_DISPLAY_GRAY_ALPHA(b, a) \
     (((uint32_t) (a) << 24) | ((uint32_t) (b) << 16) | ((uint32_t) (b) << 8) | ((uint32_t) (b)))
 #define KLST_DISPLAY_GET_ALPHA(argb) ((uint8_t) ((argb) >> 24))
-#define KLST_DISPLAY_GET_RED(argb) ((uint8_t) ((argb) >> 16))
+#define KLST_DISPLAY_GET_RED(argb)   ((uint8_t) ((argb) >> 16))
 #define KLST_DISPLAY_GET_GREEN(argb) ((uint8_t) ((argb) >> 8))
-#define KLST_DISPLAY_GET_BLUE(argb) ((uint8_t) (argb))
+#define KLST_DISPLAY_GET_BLUE(argb)  ((uint8_t) (argb))
 
 // static constexpr uint8_t BYTES_PER_PIXEL = 4;
 
@@ -83,13 +83,13 @@ extern "C" {
 #endif
 
 typedef void (*Callback_0_VOID)();
-typedef void (*Callback_1_TOUCHEVENTPTR)(TouchEvent*);
+typedef void (*Callback_1_TOUCHEVENTPTR)(const TouchEvent*);
 
 /**
  * callback to be implemented by client application
  */
 WEAK void display_update_event();
-WEAK void display_touch_event(TouchEvent* touchevent);
+WEAK void display_touch_event(const TouchEvent* touchevent);
 
 bool               display_init(bool double_buffered = false, TouchPanelMode touch_panel_mode = INTERRUPT);
 bool               display_init_BSP(TouchPanelMode touch_panel_mode);

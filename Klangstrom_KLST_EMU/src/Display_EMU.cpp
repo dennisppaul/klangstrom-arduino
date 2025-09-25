@@ -100,7 +100,6 @@ public:
     }
 
     void mouseMoved() const {
-        // TODO clamp to display size
         const float x = KlangstromEmulator::instance()->mouseX() - fPosition.x;
         const float y = KlangstromEmulator::instance()->mouseY() - fPosition.y;
         if (x < 0 || x >= width || y < 0 || y >= height) {
@@ -283,11 +282,11 @@ void display_set_pixel_alpha_BSP(const uint16_t x, const uint16_t y, const uint3
     display_ptr->set_pixel(x, y, umfeld::color(r / 255.0f, g / 255.0f, b / 255.0f));
 }
 
-uint32_t display_get_pixel_BSP(const uint16_t x, const uint16_t y) { 
+uint32_t display_get_pixel_BSP(const uint16_t x, const uint16_t y) {
     if (display_ptr == nullptr) {
         return 0x00000000;
     }
-    return KLST_DISPLAY_ABGR_TO_ARGB(display_ptr->get_pixel(x, y)); 
+    return KLST_DISPLAY_ABGR_TO_ARGB(display_ptr->get_pixel(x, y));
 }
 
 void display_rect_fill_BSP(const uint16_t x, const uint16_t y, const uint16_t width, const uint16_t height, const uint32_t color) {
@@ -306,7 +305,7 @@ void display_line_horizontal_BSP(uint16_t x, uint16_t y, uint16_t length, uint32
 
 void display_line_vertical_BSP(uint16_t x, uint16_t y, uint16_t length, uint32_t color) {}
 
-void display_image_BSP(uint32_t* data, uint16_t x, uint16_t y, uint16_t width, uint16_t height) {
+void display_image_BSP(uint32_t* data, const uint16_t x, const uint16_t y, const uint16_t width, const uint16_t height) {
     for (uint32_t i = 0; i < height; i++) {
         for (uint32_t j = 0; j < width; j++) {
             const uint32_t color = data[j + i * width];
@@ -368,11 +367,11 @@ static void DrawChar(BitmapFont*    font,
 
 void display_char_BSP(BitmapFont* font, uint16_t x, uint16_t y, uint8_t ascii_char, uint32_t color, uint32_t background_color) {
     DrawChar(font,
-            x,
-            y,
-            &font->table[(ascii_char - ' ') * font->Height * ((font->Width + 7) / 8)],
-            color,
-            background_color);
+             x,
+             y,
+             &font->table[(ascii_char - ' ') * font->Height * ((font->Width + 7) / 8)],
+             color,
+             background_color);
 }
 
 #endif // KLST_ARCH_IS_EMU

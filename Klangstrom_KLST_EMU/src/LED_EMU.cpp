@@ -24,16 +24,16 @@
 #include "PGraphics.h"
 #include "LED.h"
 
-class DrawableLEDs : public Drawable {
+class DrawableLEDs final : public Drawable {
 public:
-    DrawableLEDs(LED* leds) : mLEDs(leds) {}
+    explicit DrawableLEDs(LED* leds) : mLEDs(leds) {}
 
     void draw(umfeld::PGraphics* g) override {
         g->pushMatrix();
         g->translate(25, 80);
-        const float mRadius  = 40;
-        const float y        = 0;
-        const float x_offset = mRadius / 2;
+        constexpr float mRadius  = 40;
+        constexpr float y        = 0;
+        constexpr float x_offset = mRadius / 2;
         for (uint8_t i = 0; i < led_total_BSP(); ++i) {
             const float mIntensity = mLEDs[i].intensity;
             const float x          = x_offset + i * mRadius * 1.5f;

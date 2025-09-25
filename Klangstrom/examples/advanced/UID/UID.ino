@@ -2,7 +2,6 @@
  * this example demonstrates how to use the display with touch panel
  */
 
-#include <iostream>
 #include <iomanip>
 #include <sstream>
 #include <string>
@@ -17,7 +16,7 @@
 int16_t x = display_get_width() / 2;
 int16_t y = display_get_height() / 2;
 
-std::string formatHex(int num) {
+std::string formatHex(const int num) {
     std::stringstream ss;
     ss << "0x" << std::uppercase << std::setfill('0') << std::setw(8) << std::hex << num;
     return ss.str();
@@ -26,7 +25,6 @@ std::string formatHex(int num) {
 void print_UID() {
     console_print("{");
     for (int i = 0; i < 3; i++) {
-        const int line_height = 40;
         const std::string mUID = formatHex(system_get_UID(i));
         console_print("%s", mUID.c_str());
         if (i < 2) {
@@ -51,10 +49,10 @@ void setup() {
 void loop() {}
 
 void display_update_event() {
-    draw_clear(KLST_DISPLAY_GRAY(0x00));
-    draw_fill(color(0xFF));
-    draw_set_background_color(color(0xFF, 0x00));
-    const int line_height = 40;
+    draw_clear(color_from_gray(0.0f));
+    draw_fill(color_from_gray(1.0f));
+    draw_set_background_color(color_from_gray_alpha(0.0f, 0.0f));
+    constexpr int line_height = 40;
     for (int i = 0; i < 3; i++) {
         const std::string mUID = formatHex(system_get_UID(i));
         draw_text(20, 20 + line_height * i, mUID, 4);

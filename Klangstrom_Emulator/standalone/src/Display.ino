@@ -24,7 +24,7 @@ void loop() {
     delay(1000);
 }
 
-void display_touch_event(TouchEvent* touchevent) {
+void display_touch_event(const TouchEvent* touchevent) {
     for (int i = 0; i < touchevent->number_of_touches; ++i) {
         draw_rect_fill(touchevent->x[i], touchevent->y[i], 8, 8, KLST_DISPLAY_GRAY(0xFF));
     }

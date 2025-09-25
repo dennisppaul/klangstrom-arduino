@@ -5,7 +5,7 @@
  * - the audio data must be read in big chunks ( e.g 512*32 bytes ) due to the SD card overhead
  *
  * on a *normal* SD card the data rate is about 1800 KB/s if the file is read in one big chunk
- * ( and even 10667 KB/s if fast internal RAM is used ). if the file  is read in chunks of
+ * ( and even 10667 KB/s if fast internal RAM is used ). if the file is read in chunks of
  * 512 bytes the data rate is about 232 KB/s. at an audio rate of 48000 Hz, the data rate for
  * a single 32-bit channel is 187.5 KB/s.
 */
@@ -23,7 +23,10 @@ AudioStreamFloat32* audio_stream;
 const uint16_t buffer_multiple     = 32;
 uint16_t       buffer_read_counter = 0;
 
+#ifndef KLST_ARCH_IS_EMU
 #define USE_FAST_INTERNAL_RAM
+#endif
+
 #ifdef USE_FAST_INTERNAL_RAM
 __attribute__((section(".bss")))
 #endif
@@ -82,7 +85,7 @@ void loop() {
     }
 }
 
-void audioblock(AudioBlock* audio_block) {
+void audioblock(const AudioBlock* audio_block) {
     // at 48000 Hz audiorate a data rate of 48000 * 4 = 192000 bytes or 187.5KB per second is required by the SD card
     const int mBufferOffset = audio_block->block_size * buffer_read_counter;
     for (int i = 0; i < audio_block->block_size; ++i) {

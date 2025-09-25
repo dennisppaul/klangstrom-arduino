@@ -24,7 +24,7 @@
 extern "C" {
 #endif
 
-WEAK void audioblock(AudioBlock* audio_block) {
+WEAK void audioblock(const AudioBlock* audio_block) {
     for (int i = 0; i < audio_block->block_size; ++i) {
         for (int j = 0; j < audio_block->output_channels; ++j) {
             audio_block->output[j][i] = 0.0;
@@ -32,7 +32,7 @@ WEAK void audioblock(AudioBlock* audio_block) {
     }
 }
 
-AudioDevice* audiodevice_create_from_audioinfo(AudioInfo* audioinfo) {
+AudioDevice* audiodevice_create_from_audioinfo(const AudioInfo* audioinfo) {
     const auto audiodevice                  = new AudioDevice();
     audiodevice->audioinfo                  = new AudioInfo();
     audiodevice->audioinfo->sample_rate     = audioinfo->sample_rate;
@@ -73,7 +73,7 @@ static void audiodevice_init_custom_device(AudioDevice* audiodevice) {
 
 static bool fCleanUpMemory = false;
 
-AudioDevice* audiodevice_init_audiocodec(AudioInfo* audioinfo) {
+AudioDevice* audiodevice_init_audiocodec(const AudioInfo* audioinfo) {
     fCleanUpMemory = true;
 
     AudioDevice* audiodevice = audiodevice_create_from_audioinfo(audioinfo);
@@ -110,9 +110,9 @@ void audiodevice_deinit(AudioDevice* audiodevice) {
     }
 }
 
-void process_audioblock_data_16_2_2(AudioDevice* audiodevice,
-                                    uint16_t*    input,
-                                    uint16_t*    output) {
+void process_audioblock_data_16_2_2(const AudioDevice* audiodevice,
+                                    const uint16_t*    input,
+                                    uint16_t*          output) {
     if (audiodevice->audioinfo->bit_depth != 16 ||
         audiodevice->audioinfo->output_channels != 2 ||
         audiodevice->audioinfo->input_channels != 2) {

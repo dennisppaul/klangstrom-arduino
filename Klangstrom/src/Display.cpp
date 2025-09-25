@@ -26,7 +26,7 @@ extern "C" {
 #endif
 
 WEAK void display_update_event() {}
-WEAK void display_touch_event(TouchEvent* touchevent) {}
+WEAK void display_touch_event(const TouchEvent* touchevent) { (void) touchevent; }
 
 Callback_0_VOID          fUpdateCallback = display_update_event;
 Callback_1_TOUCHEVENTPTR fTouchCallback  = display_touch_event;

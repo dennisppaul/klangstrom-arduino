@@ -120,7 +120,7 @@ extern "C" {
 #endif
 
 // ReSharper disable once CppParameterMayBeConstPtrOrRef
-void audiodevice_resume(AudioDevice* audiodevice) {
+void audiodevice_resume(const AudioDevice* audiodevice) {
     if (audiodevice == nullptr) {
         error_in_function("audiodevice is nullptr");
         return;
@@ -129,7 +129,7 @@ void audiodevice_resume(AudioDevice* audiodevice) {
 }
 
 // ReSharper disable once CppParameterMayBeConstPtrOrRef
-void audiodevice_pause(AudioDevice* audiodevice) {
+void audiodevice_pause(const AudioDevice* audiodevice) {
     if (audiodevice == nullptr) {
         error_in_function("audiodevice is nullptr");
         return;
@@ -138,7 +138,7 @@ void audiodevice_pause(AudioDevice* audiodevice) {
 }
 
 // ReSharper disable once CppParameterMayBeConstPtrOrRef
-void audiodevice_deinit_BSP(AudioDevice* audiodevice) {
+void audiodevice_deinit_BSP(const AudioDevice* audiodevice) {
     (void) audiodevice;
 }
 
@@ -160,7 +160,7 @@ void audiodevice_deinit_peripherals_BSP(AudioDevice* audiodevice) {
 }
 
 // ReSharper disable once CppParameterMayBeConstPtrOrRef
-static void rx_input_callback(AudioDevice* audiodevice, const uint8_t callback_type) {
+static void rx_input_callback(const AudioDevice* audiodevice, const uint8_t callback_type) {
     if (audiodevice == nullptr) {
         error_in_function("audiodevice is nullptr");
         return;
@@ -172,7 +172,7 @@ static void rx_input_callback(AudioDevice* audiodevice, const uint8_t callback_t
 }
 
 // ReSharper disable once CppParameterMayBeConstPtrOrRef
-static void tx_output_callback(AudioDevice* audiodevice, const uint8_t callback_type) {
+static void tx_output_callback(const AudioDevice* audiodevice, const uint8_t callback_type) {
     if (audiodevice == nullptr) {
         error_in_function("audiodevice is nullptr");
         return;
@@ -186,7 +186,7 @@ static void tx_output_callback(AudioDevice* audiodevice, const uint8_t callback_
 }
 
 // ReSharper disable once CppParameterMayBeConstPtrOrRef
-static void error_callback(AudioDevice* audiodevice, const uint8_t callback_type) {
+static void error_callback(const AudioDevice* audiodevice, const uint8_t callback_type) {
     (void) audiodevice;
     (void) callback_type;
     console_error("error in audio device");

@@ -24,7 +24,7 @@
 extern "C" {
 #endif
 
-WEAK void encoder_event(Encoder* encoder, uint8_t event) {
+WEAK void encoder_event(const Encoder* encoder, const uint8_t event) {
     (void) encoder;
     (void) event;
 }

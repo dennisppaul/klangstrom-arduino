@@ -78,7 +78,7 @@ namespace klangstrom {
         }
 
         bool process_repeated_tasks() {
-            for (auto it = fRepeatedTasks.begin(); it != fRepeatedTasks.end();) {
+            for (const auto it = fRepeatedTasks.begin(); it != fRepeatedTasks.end();) {
                 if (fInterrupt) {
                     return false;
                 }
@@ -91,9 +91,9 @@ namespace klangstrom {
             // priority tasks ( uninterrupted, removed after execution )
             process_priority_tasks();
             // tasks ( interruption possible after each task, remove task after execution )
-            bool mTasksFinished = process_tasks();
+            const bool mTasksFinished = process_tasks();
             // repeated tasks ( interruption possible after each task )
-            bool mRepeatedTasksFinished = process_repeated_tasks();
+            const bool mRepeatedTasksFinished = process_repeated_tasks();
             // interruption: either by flag or by scheduled priority task
             fInterrupt = false;
             // returns true if all tasks are finished

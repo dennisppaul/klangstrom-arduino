@@ -119,9 +119,9 @@ void serialdevice_deinit_BSP(SerialDevice* serialdevice) {
 }
 
 bool serialdevice_init_peripherals_BSP(SerialDevice* serialdevice) {
-    SerialPeripherals* peripherals = new SerialPeripherals();
-    peripherals->port              = 7000;
-    serialdevice->peripherals      = peripherals;
+    const auto peripherals    = new SerialPeripherals();
+    peripherals->port         = 7000;
+    serialdevice->peripherals = peripherals;
     return true;
 }
 

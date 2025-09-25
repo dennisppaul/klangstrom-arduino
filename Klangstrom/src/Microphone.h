@@ -30,7 +30,7 @@ extern "C" {
 #define WEAK __attribute__((weak))
 #endif
 
-typedef void (*Callback_1_AUDIOBLOCKPTR)(AudioBlock*);
+typedef void (*Callback_1_AUDIOBLOCKPTR)(const AudioBlock*);
 
 typedef struct Microphone {
     AudioInfo*               audioinfo           = nullptr;
@@ -42,7 +42,7 @@ typedef struct Microphone {
  * callback to be implemented by client application
  * @param audio_block
  */
-WEAK void audioblock(AudioBlock* audio_block);
+void audioblock(const AudioBlock* audio_block);
 
 Microphone* microphone_init(AudioInfo* audio_info = nullptr);
 void        microphone_deinit(Microphone* microphone);

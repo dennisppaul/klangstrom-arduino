@@ -39,7 +39,7 @@ typedef struct PeriodicTimer {
     std::function<void(PeriodicTimer*)> callback    = nullptr;
 } PeriodicTimer;
 
-WEAK void periodic_timer_event(PeriodicTimer* timer);
+void periodic_timer_event(const PeriodicTimer* timer);
 
 #ifdef __cplusplus
 extern "C" {

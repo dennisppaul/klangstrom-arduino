@@ -47,7 +47,7 @@ static constexpr uint8_t ENCODER_PRESSED         = 1;
 struct EncoderPeripherals; /* BSP or ASP implementation */
 struct Encoder;
 
-typedef void (*Callback_2_ENCODERPTR_UINT8)(Encoder*, uint8_t);
+typedef void (*Callback_2_ENCODERPTR_UINT8)(const Encoder*, uint8_t);
 
 typedef struct Encoder {
     EncoderPeripherals*         peripherals    = nullptr;
@@ -61,13 +61,13 @@ typedef struct Encoder {
 
 DEFINE_ARRAYLIST(Encoder*, EncoderPtr)
 
-WEAK void encoder_event(Encoder* encoder, uint8_t event);
+void encoder_event(const Encoder* encoder, uint8_t event);
 
-Encoder*              encoder_create(uint8_t device_type);
-void                  encoder_delete(Encoder* encoder);
+Encoder* encoder_create(uint8_t device_type);
+void     encoder_delete(Encoder* encoder);
 // int32_t               encoder_get_rotation(const Encoder* encoder); // implemented as BSP
-void                  encoder_start(Encoder* encoder);              // implemented as BSP
-void                  encoder_stop(Encoder* encoder);               // implemented as BSP
+void                  encoder_start(Encoder* encoder); // implemented as BSP
+void                  encoder_stop(Encoder* encoder);  // implemented as BSP
 void                  encoder_register_listener(Encoder* encoder);
 ArrayList_EncoderPtr* encoder_get_listeners();
 

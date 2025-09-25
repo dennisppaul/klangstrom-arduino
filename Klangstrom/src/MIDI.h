@@ -28,12 +28,11 @@
 extern "C" {
 #endif
 
-typedef void (*Callback_1_SERIALDEVICEPTR)(SerialDevice*);
+typedef void (*Callback_1_SERIALDEVICEPTR)(const SerialDevice*);
 
-WEAK void midi_note_on(uint8_t channel, uint8_t note, uint8_t velocity);
-WEAK void midi_note_off(uint8_t channel, uint8_t note, uint8_t velocity);
-
-WEAK void             midi_event(SerialDevice* serial_device);
+void                  midi_note_on(uint8_t channel, uint8_t note, uint8_t velocity);
+void                  midi_note_off(uint8_t channel, uint8_t note, uint8_t velocity);
+void                  midi_event(const SerialDevice* serial_device);
 KlangstromMIDIParser* midi_parser();
 
 bool midi_init();

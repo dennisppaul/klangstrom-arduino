@@ -28,7 +28,7 @@ extern "C" {
 static Microphone* microphone        = nullptr;
 static bool        fCleanUpAudioInfo = false;
 
-WEAK void audioblock(AudioBlock* audio_block) {
+WEAK void audioblock(const AudioBlock* audio_block) {
     (void) audio_block;
 }
 
