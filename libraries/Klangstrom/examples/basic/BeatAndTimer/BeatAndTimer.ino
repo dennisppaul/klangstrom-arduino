@@ -20,7 +20,7 @@ void setup() {
     periodic_timer_resume(timer);
     periodic_timer_set_overflow(timer, 1000000 / 10);
 
-    beat_timer.init(7);
+    beat_timer.init();
     beat_timer.set_bpm(60);
     beat_timer.start();
 }
