@@ -69,7 +69,7 @@ void system_reset_cycles() {
     ARM_CM_DWT_CYCCNT = 0;
 }
 
-uint32_t system_get_cycles_BSP() {
+uint32_t system_get_cycles() {
     if (!cycle_counter_enabled) {
         system_enable_cycle_counter(true);
     }

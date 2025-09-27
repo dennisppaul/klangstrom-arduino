@@ -1,6 +1,7 @@
 /**
  * this example demonstrates how to use the programmer button as a custom key with KLST_PANDA on STM32.
-*/
+ * NOTE this examples does NOT work on the emulator!
+ */
 
 #include "main.h" // this must be first include
 
