@@ -31,10 +31,29 @@
 #include "Console.h"
 #include "stm32.h"
 
-#include <iostream>
 #include <atomic>
 #include <mutex>
 #include <condition_variable>
+
+// Platform-specific includes for priority/affinity
+#if defined(_WIN32)
+#define NOMINMAX
+#include <windows.h>
+#elif defined(__linux__) || (defined(__APPLE__) && defined(__MACH__))
+#include <pthread.h>
+#include <sched.h>
+#include <unistd.h>
+#if defined(__linux__)
+#include <sys/resource.h>
+#include <sys/syscall.h>
+#endif
+#if defined(__APPLE__) && defined(__MACH__)
+#include <mach/mach.h>
+#include <mach/thread_policy.h>
+#include <pthread.h>
+#endif
+#endif
+
 typedef enum {
     TICK_FORMAT, // default
     MICROSEC_FORMAT,
@@ -49,7 +68,10 @@ public:
                                                     fCallback(nullptr),
                                                     fDuration_us(0),
                                                     fRunning(false),
-                                                    fPaused(false) {
+                                                    fPaused(false),
+                                                    fSpinMicros(0),
+                                                    fAffinityCore(-1),
+                                                    fRequestHighPriority(true) {
         (void) fTimerInstance;
     }
 
@@ -94,15 +116,33 @@ public:
         stop();
     }
 
+    // --- Tuning API ---
+    // Busy-wait window before each deadline in microseconds (0 disables busy-wait)
+    void setSpinWindowMicros(const int spin_us) {
+        fSpinMicros = spin_us < 0 ? 0 : spin_us;
+    }
+
+    // Pin timer thread to a specific core (-1 disables pinning)
+    void setAffinityCore(const int coreIndex) {
+        fAffinityCore = coreIndex;
+    }
+
+    // Request elevated scheduling priority (may require privileges on POSIX)
+    void setRequestHighPriority(const bool enable) {
+        fRequestHighPriority = enable;
+    }
+
 private:
     void run() {
-        auto nextCallTime = std::chrono::high_resolution_clock::now();
+        using clock       = std::chrono::steady_clock; // monotonic
+        auto period       = std::chrono::microseconds(fDuration_us);
+        auto nextCallTime = clock::now();
         while (fRunning) {
             {
                 std::unique_lock<std::mutex> lock(fMutex);
                 if (fPaused) {
                     fCV.wait(lock, [this]() { return !fPaused || !fRunning; });
-                    nextCallTime = std::chrono::high_resolution_clock::now();
+                    nextCallTime = clock::now();
                 }
             }
 
@@ -114,13 +154,80 @@ private:
             if (fCallback) {
                 fCallback();
             }
-            std::this_thread::sleep_until(nextCallTime);
+
+            // Sleep-then-optional-spin for higher precision
+            if (fSpinMicros > 0) {
+                auto spinWindow   = std::chrono::microseconds(fSpinMicros);
+                auto sleepUntilTs = nextCallTime - spinWindow;
+                auto now          = clock::now();
+                if (sleepUntilTs > now) {
+                    std::this_thread::sleep_until(sleepUntilTs);
+                }
+                // Busy-wait until deadline
+                while (clock::now() < nextCallTime) {
+#if defined(_MSC_VER)
+                    _mm_pause();
+#elif defined(__x86_64__) || defined(__i386__)
+                    asm volatile("pause");
+#else
+                    asm volatile("" ::: "memory");
+#endif
+                }
+            } else {
+                std::this_thread::sleep_until(nextCallTime);
+            }
         }
     }
 
     void start() {
         fRunning     = true;
-        fTimerThread = std::thread([this]() { run(); });
+        fTimerThread = std::thread([this]() {
+        // Apply affinity/priority best-effort at thread start
+#if defined(_WIN32)
+            if (fRequestHighPriority) {
+                // Elevate thread priority
+                SetThreadPriority(GetCurrentThread(), THREAD_PRIORITY_HIGHEST);
+                // Optional: improve system timer resolution (ignored if unavailable)
+                timeBeginPeriod(1);
+            }
+            if (fAffinityCore >= 0) {
+                DWORD_PTR mask = (DWORD_PTR) 1 << (DWORD) fAffinityCore;
+                SetThreadAffinityMask(GetCurrentThread(), mask);
+            }
+#elif defined(__linux__) || (defined(__APPLE__) && defined(__MACH__))
+            pthread_t thr = pthread_self();
+            if (fRequestHighPriority) {
+#if defined(__linux__)
+                struct sched_param sp{};
+                sp.sched_priority = 80;                      // typical RT range 1..99
+                pthread_setschedparam(thr, SCHED_FIFO, &sp); // may require privileges
+#else
+                struct sched_param sp{};
+                sp.sched_priority = 31;
+                pthread_setschedparam(thr, SCHED_RR, &sp);
+#endif
+            }
+            if (fAffinityCore >= 0) {
+#if defined(__linux__)
+                cpu_set_t cpuset;
+                CPU_ZERO(&cpuset);
+                CPU_SET((size_t) fAffinityCore, &cpuset);
+                pthread_setaffinity_np(thr, sizeof(cpu_set_t), &cpuset);
+#elif defined(__APPLE__) && defined(__MACH__)
+                // Advisory affinity on macOS
+                thread_affinity_policy_data_t policy      = {static_cast<integer_t>(fAffinityCore + 1)};
+                thread_port_t                 mach_thread = pthread_mach_thread_np(thr);
+                thread_policy_set(mach_thread, THREAD_AFFINITY_POLICY, (thread_policy_t) &policy, 1);
+#endif
+            }
+#endif
+            run();
+#if defined(_WIN32)
+            if (fRequestHighPriority) {
+                timeEndPeriod(1);
+            }
+#endif
+        });
     }
 
     void stop() {
@@ -143,4 +250,16 @@ private:
     std::thread             fTimerThread;
     std::mutex              fMutex;
     std::condition_variable fCV;
+
+    // Tuning
+    int  fSpinMicros;   // busy-wait window before deadline (us), 0 to disable
+    int  fAffinityCore; // -1 = no pinning
+    bool fRequestHighPriority;
+
+    // // Platform thread handles
+    // #if defined(_WIN32)
+    //     void* fNativeHandle = nullptr;
+    // #elif defined(__linux__) || (defined(__APPLE__) && defined(__MACH__))
+    //     pthread_t fPthreadHandle{};
+    // #endif
 };

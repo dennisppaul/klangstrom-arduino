@@ -8,7 +8,7 @@ project(klangstrom-emulator-standalone LANGUAGES C CXX)
 
 option(ADD_KLANGWELLEN "Add KlangWellen library" ON)
 set(KLANGWELLEN_PATH "$ENV{HOME}/Documents/dennisppaul/projects/klangwellen/git/klangwellen/") # DEV default path
-set(ARDUINO_SKETCH_FILE "/Users/dennisppaul/Documents/dennisppaul/projects/klangwellen/git/klangwellen/examples/16.Envelope/16.Envelope.ino" CACHE PATH "Path to Arduino sketch file (.ino)")
+set(ARDUINO_SKETCH_FILE "/Users/dennisppaul/Documents/dennisppaul/projects/klangwellen/git/klangwellen/examples/19.NotesAndScales/19.NotesAndScales.ino" CACHE PATH "Path to Arduino sketch file (.ino)")
 
 if (ADD_KLANGWELLEN)
     message(STATUS "KlangWellen library will be included from: ${KLANGWELLEN_PATH}")
