@@ -22,9 +22,12 @@
 #include <KlangstromEmulator.h>
 #ifdef KLST_ARCH_IS_EMU
 
+#define KLST_DISPLAY_WIDTH                 480
+#define KLST_DISPLAY_HEIGHT                272
+
 #ifndef KLST_EMU_EXTMEM_SIZE
 #ifdef KLST_PANDA_EMU
-#define KLST_EMU_EXTMEM_SIZE (16 * 1024 * 1024) // 16 MB
+#define KLST_EMU_EXTMEM_SIZE ((16 * 1024 * 1024) - (KLST_DISPLAY_WIDTH * KLST_DISPLAY_HEIGHT * 4 * 2)) // 16 MB
 #elif defined(KLST_CATERPILLAR_EMU)
 #define KLST_EMU_EXTMEM_SIZE (0)
 #elif

@@ -27,27 +27,35 @@
 
 template<typename T>
 T abs(T value);
+
 template<typename T>
 T constrain(T value, T min, T max) {
-    if (value < min) return min;
-    if (value > max) return max;
+    if (value < min) {
+        return min;
+    }
+    if (value > max) {
+        return max;
+    }
     return value;
 }
 long map(long value, long fromLow, long fromHigh, long toLow, long toHigh);
+
 template<typename T>
 T max(T a, T b) { return (a > b) ? a : b; }
+
 template<typename T>
 T      min(T a, T b) { return (a < b) ? a : b; }
 double pow(double base, double exponent); // from cmath
+
 template<typename T>
 T      sq(T value) { return value * value; }
 double sqrt(double value); // from cmath
 
-void delay(uint32_t milliseconds) {
+void delay(const uint32_t milliseconds) {
     umfeld::KlangstromEmulator::instance()->delay_loop(milliseconds * 1000);
 }
 
-void delayMicroseconds(uint32_t microseconds) {
+void delayMicroseconds(const uint32_t microseconds) {
     umfeld::KlangstromEmulator::instance()->delay_loop(microseconds);
 }
 
@@ -67,70 +75,88 @@ T abs(T value) {
     return (value < 0) ? -value : value;
 }
 
-long map(long value, long fromLow, long fromHigh, long toLow, long toHigh) {
+template<typename T>
+T mapT(const T value,
+       const T start0,
+       const T stop0,
+       const T start1,
+       const T stop1) {
+    const T a = value - start0;
+    const T b = stop0 - start0;
+    const T c = stop1 - start1;
+    const T d = a / b;
+    const T e = d * c;
+    return e + start1;
+}
+
+float mapf(const float value, const float start0, const float stop0, const float start1, const float stop1) {
+    return mapT<float>(value, start0, stop0, start1, stop1);
+}
+
+long map(const long value, const long fromLow, const long fromHigh, const long toLow, const long toHigh) {
     return (value - fromLow) * (toHigh - toLow) / (fromHigh - fromLow) + toLow;
 }
 
-bool isAlpha(char c) {
+bool isAlpha(const char c) {
     return std::isalpha(static_cast<unsigned char>(c));
 }
 
-bool isAlphaNumeric(char c) {
+bool isAlphaNumeric(const char c) {
     return std::isalnum(static_cast<unsigned char>(c));
 }
 
-bool isAscii(char c) {
+bool isAscii(const char c) {
     return static_cast<unsigned char>(c) <= 127;
 }
 
-bool isControl(char c) {
+bool isControl(const char c) {
     return std::iscntrl(static_cast<unsigned char>(c));
 }
 
-bool isDigit(char c) {
+bool isDigit(const char c) {
     return std::isdigit(static_cast<unsigned char>(c));
 }
 
-bool isGraph(char c) {
+bool isGraph(const char c) {
     return std::isgraph(static_cast<unsigned char>(c));
 }
 
-bool isHexadecimalDigit(char c) {
+bool isHexadecimalDigit(const char c) {
     return std::isxdigit(static_cast<unsigned char>(c));
 }
 
-bool isLowerCase(char c) {
+bool isLowerCase(const char c) {
     return std::islower(static_cast<unsigned char>(c));
 }
 
-bool isPrintable(char c) {
+bool isPrintable(const char c) {
     return std::isprint(static_cast<unsigned char>(c));
 }
 
-bool isPunct(char c) {
+bool isPunct(const char c) {
     return std::ispunct(static_cast<unsigned char>(c));
 }
 
-bool isSpace(char c) {
+bool isSpace(const char c) {
     return std::isspace(static_cast<unsigned char>(c));
 }
 
-bool isUpperCase(char c) {
+bool isUpperCase(const char c) {
     return std::isupper(static_cast<unsigned char>(c));
 }
 
-bool isWhitespace(char c) {
+bool isWhitespace(const char c) {
     return std::isspace(static_cast<unsigned char>(c));
 }
 
-long random(long max) {
+long random(const long max) {
     if (max == 0) {
         return 0;
     }
     return std::rand() % max;
 }
 
-long random(long min, long max) {
+long random(const long min, const long max) {
     if (min >= max) {
         return min;
     }
@@ -138,29 +164,29 @@ long random(long min, long max) {
     return min + std::rand() % range;
 }
 
-void randomSeed(uint32_t seed) {
+void randomSeed(const uint32_t seed) {
     std::srand(seed);
 }
 
-uint8_t bit(uint8_t n) {
+uint8_t bit(const uint8_t n) {
     return 1 << n;
 }
 
-uint8_t bitClear(uint8_t value, uint8_t bit) {
+uint8_t bitClear(uint8_t value, const uint8_t bit) {
     value &= ~(1 << bit);
     return value;
 }
 
-bool bitRead(uint8_t value, uint8_t bit) {
+bool bitRead(const uint8_t value, const uint8_t bit) {
     return (value >> bit) & 1;
 }
 
-uint8_t bitSet(uint8_t value, uint8_t bit) {
+uint8_t bitSet(uint8_t value, const uint8_t bit) {
     value |= (1 << bit);
     return value;
 }
 
-uint8_t bitWrite(uint8_t value, uint8_t bit, bool bitValue) {
+uint8_t bitWrite(uint8_t value, const uint8_t bit, const bool bitValue) {
     if (bitValue) {
         value = bitSet(value, bit);
     } else {
@@ -169,11 +195,11 @@ uint8_t bitWrite(uint8_t value, uint8_t bit, bool bitValue) {
     return value;
 }
 
-uint8_t highByte(uint16_t value) {
+uint8_t highByte(const uint16_t value) {
     return value >> 8;
 }
 
-uint8_t lowByte(uint16_t value) {
+uint8_t lowByte(const uint16_t value) {
     return value & 0xFF;
 }
 
