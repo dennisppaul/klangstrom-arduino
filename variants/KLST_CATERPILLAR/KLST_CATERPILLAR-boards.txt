@@ -32,17 +32,17 @@ KLST_CATERPILLAR.menu.pnum.KLST_CATERPILLAR.build.pid=0
 
 # Upload menu
 KLST_CATERPILLAR.menu.upload_method.swdMethod=STM32CubeProgrammer (SWD)
-KLST_CATERPILLAR.menu.upload_method.swdMethod.upload.protocol=0
+KLST_CATERPILLAR.menu.upload_method.swdMethod.upload.protocol=swd
 KLST_CATERPILLAR.menu.upload_method.swdMethod.upload.options=
 KLST_CATERPILLAR.menu.upload_method.swdMethod.upload.tool=stm32CubeProg
 
 KLST_CATERPILLAR.menu.upload_method.serialMethod=STM32CubeProgrammer (Serial)
-KLST_CATERPILLAR.menu.upload_method.serialMethod.upload.protocol=1
+KLST_CATERPILLAR.menu.upload_method.serialMethod.upload.protocol=serial
 KLST_CATERPILLAR.menu.upload_method.serialMethod.upload.options={serial.port.file}
 KLST_CATERPILLAR.menu.upload_method.serialMethod.upload.tool=stm32CubeProg
 
 KLST_CATERPILLAR.menu.upload_method.dfuMethod=STM32CubeProgrammer (DFU)
-KLST_CATERPILLAR.menu.upload_method.dfuMethod.upload.protocol=2
+KLST_CATERPILLAR.menu.upload_method.dfuMethod.upload.protocol=dfu
 KLST_CATERPILLAR.menu.upload_method.dfuMethod.upload.options=
 KLST_CATERPILLAR.menu.upload_method.dfuMethod.upload.tool=stm32CubeProg
 
